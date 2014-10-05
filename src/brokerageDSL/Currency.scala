@@ -3,7 +3,7 @@ package brokerageDSL
 import java.util.Date;
 
 // This sealed keyword prevents Currency from being inherited anywhere but in this source file
-sealed abstract class Currency(code: String)
+sealed class Currency(code: String)
 
 case object USD extends Currency("US Dollar")
 
@@ -45,4 +45,3 @@ case class DiscountBond(
 		val nominal: BigDecimal,
 		val percent: BigDecimal)
 		extends FixedIncome
-
