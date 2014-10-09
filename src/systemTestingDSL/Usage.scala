@@ -2,8 +2,6 @@ package systemTestingDSL
 
 object Usage {
 	def main(args: Array[String]): Unit = {
-			val x = new Test(commandName = "ls",
-					arguments = "-lart").execute
-					println(x)
+		print(new TestCase(commandName = "ls", arguments = "-lart") run)
 	}
 }
