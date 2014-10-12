@@ -9,7 +9,7 @@ trait Runnable {
   def fileName: String
   def arguments: String
   def outputFile: String
-  val separator: String = " "
+  val separator: String = DEFAULT_SEPARATOR
   def execute: String = {
     val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
     val result: String = cmd.!!
