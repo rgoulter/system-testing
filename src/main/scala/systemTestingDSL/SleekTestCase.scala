@@ -1,10 +1,13 @@
 package systemTestingDSL
 
-case class SleekTestCase(commandName: String, outputFile: String = "", currentWorkingDirectory: String = ".", fileName: String = "", arguments: String = "")
+case class SleekTestCase(commandName: String, outputFile: String = "", currentWorkingDirectory: String = ".", fileName: String = "", arguments: String = "", expectedOutput: String = "")
   extends Runnable with Parser {
 
-  def process(s: String): Unit = println(s)
+  var results = List()
+  def process(s: String):Unit  = s :: results
   def run() = this execute
-  def generateTestResults() = this.parse(run, "Valid", DEFAULT_DELIMITER )
+  def generateOutput() = this.parse(run, "Valid", DEFAULT_DELIMITER )
+  def checkResults(): Boolean = results.mkString(".").equals(expectedOutput )
+  def generateTestResults(): Unit = if (checkResults()) println ("Passed") else println("Failed")
 
 }
