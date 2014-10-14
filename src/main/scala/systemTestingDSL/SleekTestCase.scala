@@ -5,6 +5,6 @@ case class SleekTestCase(commandName: String, outputFile: String = "", currentWo
 
   def process(s: String): Unit = println(s)
   def run() = this execute
-  def generateTestResults() = this.parse(run, "rohitmukherjee", DEFAULT_DELIMITER )
+  def generateTestResults() = this.parse(run, "Valid", DEFAULT_DELIMITER )
 
 }
