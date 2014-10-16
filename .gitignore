@@ -2,6 +2,8 @@
 target/
 cache/
 bin/
+*.swp
+swp
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
