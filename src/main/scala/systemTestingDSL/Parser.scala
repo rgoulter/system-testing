@@ -3,7 +3,7 @@ package systemTestingDSL
 trait Parser {
 
   // This should be overloaded
-  def process(s: String): Any
+  def process(text: String, rule: String): Any
 
   /**
    * The matcher function splits a body of text using delimiters, finds matches and then processes them
@@ -17,14 +17,18 @@ trait Parser {
    * If the string matches, it is processed
    */
   def perform(text: String, rule: String): Any = {
-    if (matchString(text, rule))
-      process(text)
+    val matched = matchString(text, rule)
+    matched match {
+      case Some(value) => process(text, value)
+      case None =>
+    }
   }
 
   /**
    * Performs a regex match on a string
    */
-  def matchString(source: String, regex: String) = {
-    source.contains(regex)
+  def matchString(source: String, regex: String): Option[String] = {
+    val pattern = regex.r
+    pattern.findFirstIn(source)
   }
 }

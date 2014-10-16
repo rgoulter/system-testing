@@ -1,13 +1,33 @@
 package systemTestingDSL
 
+import scala.collection.mutable.MutableList
+
 case class SleekTestCase(commandName: String, outputFile: String = "", currentWorkingDirectory: String = ".", fileName: String = "", arguments: String = "", expectedOutput: String = "")
   extends Runnable with Parser {
 
-  var results = List()
-  def process(s: String):Unit  = s :: results
+  var results: MutableList[String] = MutableList()
+  def process(source: String, rule: String): Unit = {
+//    println("Adding to List: " + rule)
+    results += rule
+  }
+
   def run() = this execute
-  def generateOutput() = this.parse(run, "Valid", DEFAULT_DELIMITER )
-  def checkResults(): Boolean = results.mkString(".").equals(expectedOutput )
-  def generateTestResults(): Unit = if (checkResults()) println ("Passed") else println("Failed")
+
+  def generateOutput() = {
+    this.parse(run, "(.*rohitmukherjee.*)|(.*Wheel.*)", DEFAULT_DELIMITER)
+    generateTestResults()
+  }
+
+  def checkResults(): Boolean = {
+    val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
+    if (expectedOutputList.size != results.size)
+    	return false
+    for((x, i) <- results.view.zipWithIndex)
+      if(!x.contains(expectedOutputList(i)))
+        return false
+    return true
+  }
+
+  def generateTestResults(): Unit = if (checkResults()) println("Passed") else println("Failed")
 
 }
