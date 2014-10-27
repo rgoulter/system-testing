@@ -35,6 +35,7 @@ case class SleekTestCase(commandName: String, outputFileName: String = "", curre
   }
 
   def generateTestResults(): Unit = if (checkResults()) println("Passed") else println("Failed")
+
   def generateOutputFile(consoleOutput: String) = {
     printToFile(new File(outputFileName))(p => p.print(consoleOutput))
   }
