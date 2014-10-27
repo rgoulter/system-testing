@@ -8,19 +8,13 @@ trait Runnable {
   def currentWorkingDirectory: String
   def fileName: String
   def arguments: String
-  def outputFile: String
+  def outputFileName: String
   val separator: String = DEFAULT_SEPARATOR
+
   def execute: String = {
     val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
     println(cmd)
     val result: String = cmd.!!
-    if (outputFile.length() > 0)
-      generateOutputFile(result)
     result
   }
-
-  def generateOutputFile(consoleOutput: String) = {
-    printToFile(new File(outputFile))(p => p.print(consoleOutput))
-  }
-
 }
