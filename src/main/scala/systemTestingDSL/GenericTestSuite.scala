@@ -12,14 +12,14 @@ class GenericTestSuite(parentDirectoryName: String, outputFileDirectory: String,
     val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), ".*\\.slk")
     println("number of sleek files found: " + files.size)
     files.foreach(file => println(file.getName()))
-    try {
-      files.foreach(file =>
+    files.foreach(file =>
+      try {
         new SleekTestCase(commandName = defaultCommand,
           fileName = file.getAbsolutePath(),
           arguments = defaultOptions,
-          outputFileName = file.getName().concat(".out")).run())
-    } catch {
-      case ex: Exception =>
-    }
+          outputFileName = file.getName().concat(".out")).run()
+      } catch {
+        case ex: Exception =>
+      })
   }
 }
