@@ -1,0 +1,12 @@
+package systemTestingDSL
+
+/**
+ * Any command that needs to be executed on a system level can be done using GeneralRunnable
+ * Results are returned as string from method execute
+ */
+case class GeneralRunnable(commandName: String,
+  outputFileName: String = "",
+  currentWorkingDirectory: String = ".",
+  fileName: String = "", arguments: String = "",
+  expectedOutput: String = "")
+  extends Runnable

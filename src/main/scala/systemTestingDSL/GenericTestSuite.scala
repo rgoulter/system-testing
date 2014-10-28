@@ -9,9 +9,9 @@ import java.io.File
 class GenericTestSuite(parentDirectoryName: String, outputFileDirectory: String, defaultCommand: String, defaultOptions: String) {
 
   def run: Unit = {
-    val files = getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), ".*\\.slk")
-   println("number of sleek files found: " + files.size)
-   files.foreach(file => println(file.getName()))
+    val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), ".*\\.slk")
+    println("number of sleek files found: " + files.size)
+    files.foreach(file => println(file.getName()))
     files.foreach(file =>
       new SleekTestCase(commandName = defaultCommand,
         fileName = file.getAbsolutePath(),
