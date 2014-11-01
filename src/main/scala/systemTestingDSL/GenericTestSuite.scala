@@ -20,7 +20,7 @@ class GenericTestSuite(parentDirectoryName: String,
     files.foreach(file => println(file.getName()))
     files.foreach(file =>
       try {
-        val builder = new SleekTestCaseBuilder runCommand defaultCommand onFile file.getAbsolutePath withArguments defaultOptions storeOutputIn file.getName().concat(outputFileExtension)
+        val builder = new SleekTestCaseBuilder runCommand defaultCommand onFile file.getAbsolutePath withArguments defaultOptions storeOutputInDirectory outputFileDirectory withOutputFileName file.getName().concat(outputFileExtension)
         builder.build run
       } catch {
         case ex: Exception =>

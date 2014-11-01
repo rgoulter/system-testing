@@ -10,20 +10,27 @@ class SleekTestCaseBuilder {
   var outputDirectory: String = ""
   var outputFileName: String = ""
   var expectedOutput: String = ""
+
   def runCommand(commandName: String): SleekTestCaseBuilder = {
     this.commandName = commandName
     this
   }
+
   def onFile(fileName: String): SleekTestCaseBuilder = {
     this.fileName = fileName
     this
   }
+
   def withArguments(arguments: String): SleekTestCaseBuilder = {
     this.arguments = arguments
     this
   }
-  def and(): SleekTestCaseBuilder = this
-  def storeOutputIn(outputFileName: String): SleekTestCaseBuilder = {
+
+  def storeOutputInDirectory(outputDirectory: String): SleekTestCaseBuilder = {
+    this.outputDirectory = outputDirectory
+    this
+  }
+  def withOutputFileName(outputFileName: String): SleekTestCaseBuilder = {
     this.outputFileName = outputFileName
     this
   }
@@ -41,7 +48,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var arguments = builder.arguments
   var outputFileName = builder.outputFileName
   var expectedOutput = builder.expectedOutput
-  var outputDirectory = ""
+  var outputDirectory = builder.outputDirectory
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
