@@ -2,6 +2,8 @@ package systemTestingDSL
 
 import java.io.File
 import java.io.FileNotFoundException
+import java.nio.file.Paths
+import java.nio.file.Files
 package object fileSystemUtilities {
 
   /**
@@ -26,6 +28,21 @@ package object fileSystemUtilities {
   def getRecursiveListOfFilesWithRegex(dir: File, regex: String): Array[File] = {
     val files = getRecursiveListOfFiles(dir)
     files.filter(file => file.getName().matches(regex))
+  }
+
+  /**
+   * Check if file or folder exists
+   */
+  def fileOrDirectoryExists(path: String) = Files.exists(Paths.get(path))
+
+  /**
+   * Create directory if it doesn't exist
+   */
+  def createDirectory(path: String) = {
+    if (!fileOrDirectoryExists(path)) {
+      val directory = new File(path)
+      directory.mkdir()
+    }
   }
 
   /**

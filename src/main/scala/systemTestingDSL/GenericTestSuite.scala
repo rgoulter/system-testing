@@ -6,20 +6,25 @@ import java.io.File
  * Takes in a list of default options, parent directory and executable and runs all
  * nested files
  */
-class GenericTestSuite(parentDirectoryName: String, outputFileDirectory: String, defaultCommand: String, defaultOptions: String) {
+class GenericTestSuite(parentDirectoryName: String,
+  outputFileDirectory: String,
+  defaultCommand: String,
+  inputFileExtension: String,
+  outputFileExtension: String,
+  defaultOptions: String) {
 
   def run: Unit = {
-    val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), ".*\\.slk")
-    println("number of sleek files found: " + files.size)
+    fileSystemUtilities.createDirectory(outputFileDirectory)
+    val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), inputFileExtension)
+    println("number of relevant files found: " + files.size)
     files.foreach(file => println(file.getName()))
     files.foreach(file =>
       try {
-        new SleekTestCase(commandName = defaultCommand,
-          fileName = file.getAbsolutePath(),
-          arguments = defaultOptions,
-          outputFileName = file.getName().concat(".out")).run()
+        val builder = new SleekTestCaseBuilder runCommand defaultCommand onFile file.getAbsolutePath withArguments defaultOptions storeOutputIn file.getName().concat(outputFileExtension)
+        builder.build run
       } catch {
         case ex: Exception =>
       })
+    // Existing versions are automatically diffed whereas new files are added after asking the user. Highlight new out files to the user and then add them in
   }
 }

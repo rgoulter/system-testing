@@ -6,7 +6,7 @@ package systemTestingDSL
  */
 case class GeneralRunnable(commandName: String,
   outputFileName: String = "",
-  currentWorkingDirectory: String = ".",
+  outputDirectory: String = ".",
   fileName: String = "", arguments: String = "",
   expectedOutput: String = "")
   extends Runnable

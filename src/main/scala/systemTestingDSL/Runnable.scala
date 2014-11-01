@@ -5,7 +5,6 @@ import java.io._
 
 trait Runnable {
   def commandName: String
-  def currentWorkingDirectory: String
   def fileName: String
   def arguments: String
   def outputFileName: String

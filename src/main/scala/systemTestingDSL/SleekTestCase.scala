@@ -3,8 +3,45 @@ package systemTestingDSL
 import scala.collection.mutable.MutableList
 import java.io.File
 
-case class SleekTestCase(commandName: String, outputFileName: String = "", currentWorkingDirectory: String = ".", fileName: String = "", arguments: String = "", expectedOutput: String = "")
+class SleekTestCaseBuilder {
+  var commandName: String = ""
+  var fileName: String = ""
+  var arguments: String = ""
+  var outputDirectory: String = ""
+  var outputFileName: String = ""
+  var expectedOutput: String = ""
+  def runCommand(commandName: String): SleekTestCaseBuilder = {
+    this.commandName = commandName
+    this
+  }
+  def onFile(fileName: String): SleekTestCaseBuilder = {
+    this.fileName = fileName
+    this
+  }
+  def withArguments(arguments: String): SleekTestCaseBuilder = {
+    this.arguments = arguments
+    this
+  }
+  def and(): SleekTestCaseBuilder = this
+  def storeOutputIn(outputFileName: String): SleekTestCaseBuilder = {
+    this.outputFileName = outputFileName
+    this
+  }
+  def checkAgainst(expectedOutput: String): SleekTestCaseBuilder = {
+    this.expectedOutput = expectedOutput
+    this
+  }
+
+  def build: SleekTestCase = new SleekTestCase(this)
+}
+class SleekTestCase(builder: SleekTestCaseBuilder)
   extends Runnable with Parser {
+  var commandName = builder.commandName
+  var fileName = builder.fileName
+  var arguments = builder.arguments
+  var outputFileName = builder.outputFileName
+  var expectedOutput = builder.expectedOutput
+  var outputDirectory = ""
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
@@ -37,6 +74,6 @@ case class SleekTestCase(commandName: String, outputFileName: String = "", curre
   def generateTestResults(): Unit = if (checkResults()) println("Passed") else println("Failed")
 
   def generateOutputFile(consoleOutput: String) = {
-    fileSystemUtilities.printToFile(new File(outputFileName))(p => p.print(consoleOutput))
+    fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
   }
 }
