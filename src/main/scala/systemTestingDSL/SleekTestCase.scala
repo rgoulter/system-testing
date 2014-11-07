@@ -52,7 +52,6 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
-    // println("Adding to List: " + rule)
     results += rule
   }
 
