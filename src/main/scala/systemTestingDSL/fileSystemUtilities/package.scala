@@ -52,7 +52,7 @@ package object fileSystemUtilities {
     var lines = ""
     try {
       val source = scala.io.Source.fromFile(path)
-      lines = source.getLines mkString DEFAULT_DELIMITER
+      lines = source.getLines mkString NEW_LINE
       source.close()
     } catch {
       case ex: FileNotFoundException =>

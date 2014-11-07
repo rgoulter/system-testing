@@ -12,7 +12,8 @@ class GenericTestSuite(parentDirectoryName: String,
   defaultCommand: String,
   inputFileExtension: String,
   outputFileExtension: String,
-  defaultOptions: String) {
+  defaultOptions: String,
+  generatedTestScriptName: String = "testScript.sh") {
 
   def getFiles() = {
     fileSystemUtilities.createDirectory(outputFileDirectory)
@@ -40,15 +41,14 @@ class GenericTestSuite(parentDirectoryName: String,
   def generateTestScript() {
     val files = getFiles()
     var execute: String = ""
-    var script: String = ""
+    var script: String = SCRIPT_PRELUDE.concat(NEW_LINE)
     files.foreach(file =>
       {
-        execute = defaultCommand.concat(DEFAULT_SEPARATOR).concat(file.getAbsolutePath()).concat(DEFAULT_SEPARATOR).concat(defaultOptions).concat(">").concat(outputFileDirectory).concat(file.getName.concat(outputFileExtension)).concat(DEFAULT_DELIMITER)
+        execute = defaultCommand.concat(SPACE).concat(file.getAbsolutePath()).concat(SPACE).concat(defaultOptions).concat(SPACE).concat(REDIRECTION_OPERATOR).concat(SPACE).concat(outputFileDirectory).concat(file.getName.concat(outputFileExtension)).concat(NEW_LINE)
         script = script.concat(execute)
       })
-    fileSystemUtilities.printToFile(new File("script.sh"))(println)
+    fileSystemUtilities.printToFile(new File(generatedTestScriptName))(p => p.print(script))
   }
-
   def generateTestStatistics() {
 
   }

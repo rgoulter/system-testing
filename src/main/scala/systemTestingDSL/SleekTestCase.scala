@@ -63,7 +63,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def generateOutput() = {
-    this.parse(run, "Entail\\s.*.*Valid.*|.*Fail.*", DEFAULT_DELIMITER)
+    this.parse(run, "Entail\\s.*.*Valid.*|.*Fail.*", NEW_LINE)
     generateTestResults()
   }
 

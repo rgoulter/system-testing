@@ -11,13 +11,13 @@ case class DiffMatcher(pathOne: String, pathTwo: String) extends Matcher {
 
   def diff(): String = {
     var resultsAfterReplacement: String = ""
-    val results = Process("diff".concat(DEFAULT_SEPARATOR).concat(pathOne).concat(DEFAULT_SEPARATOR).concat(pathTwo)).lines_!.foreach(line =>
+    val results = Process("diff".concat(SPACE).concat(pathOne).concat(SPACE).concat(pathTwo)).lines_!.foreach(line =>
       if (line.charAt(0) == '>') {
-        resultsAfterReplacement += MATCHER_NEW.concat(line.substring(1)).concat(DEFAULT_DELIMITER)
+        resultsAfterReplacement += MATCHER_NEW.concat(line.substring(1)).concat(NEW_LINE)
       } else if (line.charAt(0) == '<')
-        resultsAfterReplacement += MATCHER_OLD.concat(line.substring(1)).concat(DEFAULT_DELIMITER)
+        resultsAfterReplacement += MATCHER_OLD.concat(line.substring(1)).concat(NEW_LINE)
       else
-        resultsAfterReplacement += line.concat(DEFAULT_DELIMITER))
+        resultsAfterReplacement += line.concat(NEW_LINE))
     resultsAfterReplacement
   }
 }

@@ -8,7 +8,7 @@ trait Parser {
   /**
    * The matcher function splits a body of text using delimiters, finds matches and then processes them
    */
-  def parse(text: String, rule: String, delimiter: String = DEFAULT_DELIMITER) = {
+  def parse(text: String, rule: String, delimiter: String = NEW_LINE) = {
     val lines = text.split(delimiter)
     lines.foreach(perform(_, rule))
   }
