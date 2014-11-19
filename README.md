@@ -11,6 +11,9 @@ Todos
 3. Finish up Test Suite
 4. Configurability
 5. Syntactic Sugar
+6. Syntax highlighter for vim/sublime text
+7. Unit tests
+8. Look into configurability using text encodings
 
 
 References
