@@ -15,7 +15,11 @@ Todos
 7. Unit tests
 8. Look into configurability using text encodings
 
+Documentation
+=============
 
+1. The midterm report is in the reports folder. Generate pdf from the tex source provided.
+2. The midterm evaluation presentation is in the presentations folder with generated pdf
 References
 =========
 
