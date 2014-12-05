@@ -2,6 +2,7 @@ package systemTestingDSL
 
 import java.io.File
 import systemTestingDSL._
+import scala.collection.mutable.MutableList
 
 /**
  * Takes in a list of default options, parent directory and executable and runs all
@@ -15,11 +16,14 @@ class GenericTestSuite(parentDirectoryName: String,
   defaultOptions: String,
   generatedTestScriptName: String = "testScript.sh") {
 
+  var totalTestsToRun = 0;
+  var testFailures = new MutableList[String];
+
   def getFiles() = {
-    fileSystemUtilities.createDirectory(outputFileDirectory)
-    val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), inputFileExtension)
-    println("number of relevant files found: " + files.size)
-    files.foreach(file => println(file.getName()))
+    fileSystemUtilities createDirectory outputFileDirectory
+    lazy val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), inputFileExtension)
+    totalTestsToRun = files.size;
+    println("number of relevant files found: " + totalTestsToRun)
     files
   }
   def run: Unit = {
@@ -49,7 +53,9 @@ class GenericTestSuite(parentDirectoryName: String,
       })
     fileSystemUtilities.printToFile(new File(generatedTestScriptName))(p => p.print(script))
   }
+
   def generateTestStatistics() {
+
 
   }
 }
