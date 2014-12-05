@@ -8,4 +8,7 @@ scalaVersion      := "2.10.3"
 
 publishMavenStyle := true
 
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+val scalaRainbow = "pl.project13.scala" %% "rainbow" % "0.2"
+
+libraryDependencies += scalaRainbow
+

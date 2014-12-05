@@ -1,6 +1,7 @@
 package systemTestingDSL
 
 import scala.collection.mutable.MutableList
+import pl.project13.scala.rainbow._
 import java.io.File
 
 class SleekTestCaseBuilder {
@@ -85,7 +86,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return true
   }
 
-  def generateTestResults(): Unit = if (checkResults()) println("Passed") else println("Failed")
+  def generateTestResults(): Unit = if (checkResults()) println {"Passed".green} else println {"Failed".red}
 
   def generateOutputFile(consoleOutput: String) = {
     fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
