@@ -36,7 +36,7 @@ class GenericTestSuite(parentDirectoryName: String,
   }
 
   /**
-   * Generates a shell - script which can be executed to run tests manually
+   * Generates a shell - script which can be executed to run tests manually. Don't forget to perform a chmod +x on the script otherwise it won't run
    */
   def generateTestScript() {
     val files = getFiles()

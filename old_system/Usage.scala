@@ -1,6 +1,10 @@
 package systemTestingDSL
 
+
+
 import systemTestingDSL.matchers._
+
+
 
 object Usage {
 
@@ -51,6 +55,10 @@ sleek7Test.build generateOutput()
 
 val sleek8Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek8.slk" withArguments "  --dis-lem-gen " storeOutputInDirectory "results" withOutputFileName "sleek8.out" checkAgainst "Valid,"
+sleek8Test.build generateOutput()
+
+val sleek8Test = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek8.slk" withArguments "  --elp " storeOutputInDirectory "results" withOutputFileName "sleek8.out" checkAgainst "Valid,"
 sleek8Test.build generateOutput()
 
 val sleek9Test = 
@@ -107,6 +115,10 @@ baga_testTest.build generateOutput()
 
 val baga_test_2Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/baga-test-2.slk" withArguments " --dis-baga-xpure --dis-eps" storeOutputInDirectory "results" withOutputFileName "baga_test_2.out" checkAgainst "Fail, Fail, Valid, Valid, Fail, Valid, Valid, Fail, Fail, Valid, Fail, Fail, Valid, Valid, Fail"
+baga_test_2Test.build generateOutput()
+
+val baga_test_2Test = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/baga-test-2.slk" withArguments " --baga-xpure" storeOutputInDirectory "results" withOutputFileName "baga_test_2.out" checkAgainst "Fail, Fail, Valid, Valid, Fail, Valid, Valid, Fail, Fail, Valid, Fail, Fail, Valid, Valid, Valid"
 baga_test_2Test.build generateOutput()
 
 val symb_diffTest = 
@@ -173,6 +185,10 @@ val infer_infer12Test =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/infer/infer12.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "infer_infer12.out" checkAgainst "Valid, Fail, Fail, Fail, Fail, Valid, Fail, Fail, Fail, Fail, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Valid"
 infer_infer12Test.build generateOutput()
 
+val infer_infer12Test = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/infer/infer12.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "infer_infer12.out" checkAgainst "Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Valid, Fail, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Valid"
+infer_infer12Test.build generateOutput()
+
 val infer_infer13Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/infer/infer13.slk" withArguments " --sa-en-cont" storeOutputInDirectory "results" withOutputFileName "infer_infer13.out" checkAgainst "Valid, Valid, Valid, Valid, Valid"
 infer_infer13Test.build generateOutput()
@@ -233,13 +249,17 @@ val imm_field_sleek05Test =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/imm-field/sleek05.slk" withArguments "  --field-ann --etcsu1 " storeOutputInDirectory "results" withOutputFileName "imm_field_sleek05.out" checkAgainst "Valid, Fail, Fail, Fail, Fail, Fail, Valid, Valid, Val"
 imm_field_sleek05Test.build generateOutput()
 
-val classic_classic11Test = 
+val classic_classic1Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/classic/classic1.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "classic_classic1.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Fail"
-classic_classic11Test.build generateOutput()
+classic_classic1Test.build generateOutput()
 
 val classic_classic1Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/classic/classic1.slk" withArguments "  --classic" storeOutputInDirectory "results" withOutputFileName "classic_classic1.out" checkAgainst "Fail, Valid, Valid, Valid, Fail, Valid, Fail, Fail"
 classic_classic1Test.build generateOutput()
+
+val classic_classic1aTest = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/classic/classic1a.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "classic_classic1a.out" checkAgainst "Fail, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail"
+classic_classic1aTest.build generateOutput()
 
 val classic_classic1bTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/classic/classic1b.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "classic_classic1b.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Fail, Valid, Fail, Valid, Valid, Fail, Fail, Valid, Fail"
@@ -381,13 +401,29 @@ val conchip_latchTest =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/conchip/latch.slk" withArguments " -tp parahip" storeOutputInDirectory "results" withOutputFileName "conchip_latch.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fa"
 conchip_latchTest.build generateOutput()
 
-val threads_thrd11Test = 
-new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/threads/thrd1.slk" withArguments " --en-para --en-thrd-resource -tp redlog" storeOutputInDirectory "results" withOutputFileName "threads_thrd1.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Val"
-threads_thrd11Test.build generateOutput()
+val .._tree_shares_barrierTest = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/../tree_shares/barrier.slk" withArguments " --eps --dis-field-ann --dis-precise-xpure -perm dperm" storeOutputInDirectory "results" withOutputFileName ".._tree_shares_barrier.out" checkAgainst ""
+.._tree_shares_barrierTest.build generateOutput()
 
-val vperm_vpermTest1= 
+val .._tree_shares_barrier3Test = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/../tree_shares/barrier3.slk" withArguments " --eps --dis-field-ann --dis-precise-xpure -perm dperm" storeOutputInDirectory "results" withOutputFileName ".._tree_shares_barrier3.out" checkAgainst ""
+.._tree_shares_barrier3Test.build generateOutput()
+
+val .._tree_shares_barrier2Test = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/../tree_shares/barrier2.slk" withArguments " --eps --dis-field-ann -perm dperm" storeOutputInDirectory "results" withOutputFileName ".._tree_shares_barrier2.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail"
+.._tree_shares_barrier2Test.build generateOutput()
+
+val .._tree_shares_fractionsTest = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/../tree_shares/fractions.slk" withArguments " --eps --dis-field-ann -perm dperm" storeOutputInDirectory "results" withOutputFileName ".._tree_shares_fractions.out" checkAgainst "Valid, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Valid, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail"
+.._tree_shares_fractionsTest.build generateOutput()
+
+val threads_thrd1Test = 
+new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/threads/thrd1.slk" withArguments " --en-para --en-thrd-resource -tp redlog" storeOutputInDirectory "results" withOutputFileName "threads_thrd1.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Val"
+threads_thrd1Test.build generateOutput()
+
+val vperm_vpermTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/vperm/vperm.slk" withArguments " --ann-vp" storeOutputInDirectory "results" withOutputFileName "vperm_vperm.out" checkAgainst "Valid, Valid, Fail, Valid, Valid, Fail, Fail, Fail, Valid, Valid, Valid"
-vperm_vpermTest1.build generateOutput()
+vperm_vpermTest.build generateOutput()
 
 val vperm_vperm2Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/vperm/vperm2.slk" withArguments " --ann-vp" storeOutputInDirectory "results" withOutputFileName "vperm_vperm2.out" checkAgainst "Valid, Valid, Fail"
@@ -461,9 +497,9 @@ val fracperm_frac3Test =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/frac3.slk" withArguments "--en-para -perm fperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "fracperm_frac3.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Fail, Fail, Fail, Fail"
 fracperm_frac3Test.build generateOutput()
 
-val fracperm_split_simpleTest1 = 
+val fracperm_split_simpleTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/split_simple.slk" withArguments "--en-para -perm fperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "fracperm_split_simple.out" checkAgainst "Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid"
-fracperm_split_simpleTest1.build generateOutput()
+fracperm_split_simpleTest.build generateOutput()
 
 val fracperm_combine_dataTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/combine_data.slk" withArguments "--en-para -perm fperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "fracperm_combine_data.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid"
@@ -473,9 +509,9 @@ val fracperm_combine_simpleTest =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/combine_simple.slk" withArguments "--en-para -perm fperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "fracperm_combine_simple.out" checkAgainst "Valid, Valid, Fail, Valid, Valid, Valid, Valid"
 fracperm_combine_simpleTest.build generateOutput()
 
-val fracperm_split_combineTest1 = 
+val fracperm_split_combineTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/split-combine.slk" withArguments "--en-para -perm fperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "fracperm_split_combine.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid"
-fracperm_split_combineTest1.build generateOutput()
+fracperm_split_combineTest.build generateOutput()
 
 val fracperm_combine2Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/combine2.slk" withArguments "--en-para -perm fperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "fracperm_combine2.out" checkAgainst "Valid, Valid, Valid, Valid"
@@ -493,9 +529,9 @@ val veribsync_bperm_combineTest =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/bperm-combine.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_bperm_combine.out" checkAgainst "Valid, Valid, Valid, Valid"
 veribsync_bperm_combineTest.build generateOutput()
 
-val veribsync_bperm_split_combineTest1 = 
+val veribsync_bperm_split_combineTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/bperm-split-combine.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_bperm_split_combine.out" checkAgainst "Valid, Valid, Valid, Valid, Valid, Valid"
-veribsync_bperm_split_combineTest1.build generateOutput()
+veribsync_bperm_split_combineTest.build generateOutput()
 
 val veribsync_barrier1Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier1.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier1.out" checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Fail"
@@ -513,19 +549,18 @@ val veribsync_barrier_sepTest =
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-sep.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_sep.out" checkAgainst "Valid, Valid, Valid"
 veribsync_barrier_sepTest.build generateOutput()
 
-val veribsync_barrier_staticTest1 = 
+val veribsync_barrier_staticTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_static.out" checkAgainst "Valid, Valid, Valid, Valid, Valid"
-veribsync_barrier_staticTest1.build generateOutput()
+veribsync_barrier_staticTest.build generateOutput()
 
 val veribsync_barrier_dynamicTest = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_dynamic.out" checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid"
 veribsync_barrier_dynamicTest.build generateOutput()
 
-val veribsync_barrier_dynamic2Test1 = 
+val veribsync_barrier_dynamic2Test = 
 new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_dynamic2.out" checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid"
-veribsync_barrier_dynamic2Test1.build generateOutput()
+veribsync_barrier_dynamic2Test.build generateOutput()
 
 }
 
 }
-

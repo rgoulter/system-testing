@@ -1,7 +1,6 @@
 package systemTestingDSL
 
 import scala.collection.mutable.MutableList
-import pl.project13.scala.rainbow._
 import java.io.File
 
 class SleekTestCaseBuilder {
@@ -80,14 +79,14 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   def generateOutput() = {
     this.parse(run, builder.regex, NEW_LINE)
-    printResults()
+//    printResults()
     generateTestResults()
   }
 
   def checkResults(): Boolean = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
-    println("Expect result size: " + expectedOutputList.size)
-    println("Actual result size: " + results.size)
+//    println("Expect result size: " + expectedOutputList.size)
+//    println("Actual result size: " + results.size)
     if (expectedOutputList.size != results.size)
       return false
     for ((x, i) <- results.view.zipWithIndex)
@@ -96,7 +95,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return true
   }
 
-  def generateTestResults(): Unit = if (checkResults()) println {"Passed".green} else println {"Failed".red}
+  def generateTestResults(): String = if (checkResults()) "Passed" else "Failed"
 
   def generateOutputFile(consoleOutput: String) = {
     fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
