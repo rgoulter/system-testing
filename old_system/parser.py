@@ -79,6 +79,11 @@ def construct_test(file_name, arguments, expected_output):
 	# print(test_name + ".build " + "generateOutput()")
 	# print('\n')
 
+def construct_builder_test(file_name, arguments, expected_output):
+	output_file = sanitise_file_name(file_name).replace(".slk", ".out")
+	builder_test = "suite addTest(" + wrap_quotes("sleek") + "," + wrap_quotes(INPUT_DIRECTORY + file_name) + "," + wrap_quotes(arguments) + "," + wrap_quotes(OUTPUT_DIRECTORY) + "," + wrap_quotes(output_file) + "," + wrap_quotes(expected_output) + ")" + NEW_LINE
+	return builder_test
+
 def process_line(line):
 	line = line.strip()
 	test = ''
@@ -87,7 +92,7 @@ def process_line(line):
 		file_name = sanitise_input(components[0])
 		arguments = sanitise_input(components[1])
 		expected_output = parse_expected_output(sanitise_input(components[3]))
-		test = construct_test(file_name, arguments, expected_output)
+		test = construct_builder_test(file_name, arguments, expected_output)
 	return test
 
 

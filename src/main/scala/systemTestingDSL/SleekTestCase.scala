@@ -79,14 +79,12 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   def generateOutput() = {
     this.parse(run, builder.regex, NEW_LINE)
-//    printResults()
+    printResults()
     generateTestResults()
   }
 
   def checkResults(): Boolean = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
-//    println("Expect result size: " + expectedOutputList.size)
-//    println("Actual result size: " + results.size)
     if (expectedOutputList.size != results.size)
       return false
     for ((x, i) <- results.view.zipWithIndex)

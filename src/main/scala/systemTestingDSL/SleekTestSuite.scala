@@ -13,14 +13,18 @@ class SleekTestSuite {
     outputDirectoryName: String,
     outputFileName: String,
     expectedOutput: String,
-    regex: String = ""): Unit = {
+    regex: String = "Entail\\s.*.*Valid.*|.*Fail.*"): Unit = {
     tests +=
       new SleekTestCaseBuilder runCommand commandName onFile fileName withArguments arguments storeOutputInDirectory outputDirectoryName withOutputFileName
       outputFileName checkAgainst expectedOutput usingRegex regex
   }
 
   def runAllTests: Unit = {
-    tests.foreach(test => results += test.build.generateOutput)
+    tests.foreach(test => {
+      val result = test.build.generateOutput
+      results += result
+      println(result)
+    })
   }
 
   def generateTestStatistics: Unit = {
