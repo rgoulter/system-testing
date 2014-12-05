@@ -11,6 +11,7 @@ class SleekTestCaseBuilder {
   var outputDirectory: String = ""
   var outputFileName: String = ""
   var expectedOutput: String = ""
+  var regex: String = "Entail\\s.*.*Valid.*|.*Fail.*"
 
   def runCommand(commandName: String): SleekTestCaseBuilder = {
     this.commandName = commandName
@@ -31,12 +32,19 @@ class SleekTestCaseBuilder {
     this.outputDirectory = outputDirectory
     this
   }
+
   def withOutputFileName(outputFileName: String): SleekTestCaseBuilder = {
     this.outputFileName = outputFileName
     this
   }
+
   def checkAgainst(expectedOutput: String): SleekTestCaseBuilder = {
     this.expectedOutput = expectedOutput
+    this
+  }
+
+  def usingRegex(regex: String): SleekTestCaseBuilder = {
+    this.regex = regex
     this
   }
 
@@ -50,6 +58,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var outputFileName = builder.outputFileName
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
+  var regex = builder.regex
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
@@ -68,8 +77,9 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
       println(result + ", ")
     print("end of results")
   }
+
   def generateOutput() = {
-    this.parse(run, "Entail\\s.*.*Valid.*|.*Fail.*", NEW_LINE)
+    this.parse(run, builder.regex, NEW_LINE)
     printResults()
     generateTestResults()
   }
