@@ -79,7 +79,6 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   def generateOutput() = {
     this.parse(run, builder.regex, NEW_LINE)
-    printResults()
     generateTestResults()
   }
 

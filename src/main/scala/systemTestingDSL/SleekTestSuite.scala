@@ -24,6 +24,7 @@ class SleekTestSuite {
       val result = test.build.generateOutput
       results += result
       displayResult(result)
+      println()
     })
   }
 
