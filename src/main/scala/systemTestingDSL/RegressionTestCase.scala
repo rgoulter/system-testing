@@ -65,6 +65,8 @@ class RegressionTestCase(builder: RegressionTestCaseBuilder)
     return outputToDiffMatcher.matches
   }
 
+  def generateTestResults(): String = if (generateOutput()) "Passed" else "Failed"
+
   def checkOutputDirectory = {
     val outputDirectory = new File(this.outputDirectory)
     if (!outputDirectory.exists())

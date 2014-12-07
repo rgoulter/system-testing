@@ -150,6 +150,6 @@ object SleekTestSuiteUsage {
 
     val cll_dTest =
       new RegressionTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/cll-d.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "cll_d.out"
-    cll_dTest.build generateOutput ()
+    println(cll_dTest.build generateTestResults ())
   }
 }
