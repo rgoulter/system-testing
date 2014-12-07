@@ -72,7 +72,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def printResults() = {
-    for(result <- results)
+    for (result <- results)
       println(result + ", ")
     print("end of results")
   }
@@ -94,7 +94,14 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   def generateTestResults(): String = if (checkResults()) "Passed" else "Failed"
 
+  def checkOutputDirectory = {
+    val outputDirectory = new File(this.outputDirectory)
+    if (!outputDirectory.exists())
+      fileSystemUtilities.createDirectory(this.outputDirectory)
+  }
+
   def generateOutputFile(consoleOutput: String) = {
+    checkOutputDirectory
     fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
   }
 }

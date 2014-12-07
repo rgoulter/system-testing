@@ -30,7 +30,7 @@ class SleekTestSuite {
 
   def displayResult(result: String) = result match {
     case "Passed" => consoleUtilities.success("Passed")
-    case _ => consoleUtilities.error("Passed")
+    case _ => consoleUtilities.error("Failed")
   }
 
   def generateTestStatistics: Unit = {
@@ -40,8 +40,8 @@ class SleekTestSuite {
       if (result.equals("Passed"))
         passed = passed + 1
     })
-    println("Total number of tests passed: " + passed)
-    println("Total number of tests failed: " + (results.length - passed))
+    consoleUtilities.success("Total number of tests passed: " + passed)
+    consoleUtilities.error("Total number of tests failed: " + (results.length - passed))
 
   }
 }
