@@ -4,7 +4,8 @@ import scala.collection.mutable.MutableList
 
 class SleekTestSuite {
   var tests = new MutableList[SleekTestCaseBuilder]()
-  var results = new MutableList[String]()
+  var successes = new MutableList[String]()
+  var failures = new MutableList[String]()
 
   def addTest(
     commandName: String,
@@ -22,7 +23,10 @@ class SleekTestSuite {
   def runAllTests: Unit = {
     tests.foreach(test => {
       val result = test.build.generateOutput
-      results += result
+      result match {
+        case "Passed" => successes += test.fileName
+        case _ => failures += test.fileName
+      }
       displayResult(result)
       println()
     })
@@ -34,14 +38,8 @@ class SleekTestSuite {
   }
 
   def generateTestStatistics: Unit = {
-    println("Total number of tests: " + results.length)
-    var passed = 0;
-    results.foreach(result => {
-      if (result.equals("Passed"))
-        passed = passed + 1
-    })
-    consoleUtilities.success("Total number of tests passed: " + passed)
-    consoleUtilities.error("Total number of tests failed: " + (results.length - passed))
-
+    consoleUtilities.log("Total number of tests: " + successes.length + failures.length)
+    consoleUtilities.success("Total number of tests passed: " + successes.length)
+    consoleUtilities.error("Total number of tests failed: " + failures.length)
   }
 }
