@@ -63,5 +63,5 @@ package object fileSystemUtilities {
   /**
    * Returns the current date in yyyy-mm-dd format
    */
-  def getDateString(): String = "2014-12-02"
+  def getDateString(): String = java.time.LocalDate.now.toString()
 }

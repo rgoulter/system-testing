@@ -38,7 +38,7 @@ class SleekTestSuite {
   }
 
   def generateTestStatistics: Unit = {
-    consoleUtilities.log("Total number of tests: " + successes.length + failures.length)
+    consoleUtilities.log("Total number of tests: " + (successes.length + failures.length))
     consoleUtilities.success("Total number of tests passed: " + successes.length)
     consoleUtilities.error("Total number of tests failed: " + failures.length)
   }
