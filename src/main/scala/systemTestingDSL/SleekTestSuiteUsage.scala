@@ -146,7 +146,7 @@ object SleekTestSuiteUsage {
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_dynamic2.out", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid")
 
 //    suite.runAllTests
-//    suite generateTestStatistics
+//   suite generateTestStatistics
 
     val cll_dTest =
       new RegressionTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/cll-d.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "cll_d.out"

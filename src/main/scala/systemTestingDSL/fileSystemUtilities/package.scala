@@ -59,9 +59,4 @@ package object fileSystemUtilities {
     }
     lines
   }
-
-  /**
-   * Returns the current date in yyyy-mm-dd format
-   */
-  def getDateString(): String = java.time.LocalDate.now.toString()
 }
