@@ -23,8 +23,13 @@ class SleekTestSuite {
     tests.foreach(test => {
       val result = test.build.generateOutput
       results += result
-      println(result)
+      displayResult(result)
     })
+  }
+
+  def displayResult(result: String) = result match {
+    case "Passed" => consoleUtilities.success("Passed")
+    case _ => consoleUtilities.error("Passed")
   }
 
   def generateTestStatistics: Unit = {
