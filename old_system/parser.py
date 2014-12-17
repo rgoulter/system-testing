@@ -1,3 +1,14 @@
+'''
+TODO:
+----
+
+1. Should create template for regression read-fast-tests
+2. Email Loc
+3. Script should take some command line options
+4. Should directly generate outputFiles and intimate user with messages
+
+'''
+
 INPUT_FILE_NAME = "text_input"
 OUTPUT_FILE_NAME = "DSL.scala"
 KEY_IDENTIFIER = "=>"
@@ -71,6 +82,12 @@ def construct_sleek_test_suite(file_name, arguments, expected_output):
 	output_file = sanitise_file_name(file_name).replace(".slk", ".out")
 	builder_test = "suite addTest(" + wrap_quotes("sleek") + "," + wrap_quotes(INPUT_DIRECTORY + file_name) + "," + wrap_quotes(arguments) + "," + wrap_quotes(OUTPUT_DIRECTORY) + "," + wrap_quotes(output_file) + "," + wrap_quotes(expected_output) + ")" + NEW_LINE
 	return builder_test
+
+def construct_regression_test(file_name, arguments):
+	return ""
+
+def construct_regression_test_suite(file_name, arguments):
+	return ""
 
 def process_line(line):
 	line = line.strip()
