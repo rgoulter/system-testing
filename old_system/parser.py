@@ -2,7 +2,7 @@
 TODO:
 ----
 
-1. Should create template for regression read-fast-tests
+1. Should create template for regression tests
 2. Email Loc
 3. Script should take some command line options
 4. Should directly generate outputFiles and intimate user with messages
@@ -52,7 +52,7 @@ def process_script():
 	template_data = read_template(USAGE_TEMPLATE)
 	script_string = ''
 	for line in script:
-		script_string += line + NEW_LINE
+		script_string += process_line(line) + NEW_LINE
 	injected_template = template_data.replace("##", script_string)
 	print(injected_template)
 

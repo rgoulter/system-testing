@@ -2,10 +2,15 @@ package systemTestingDSL
 
 import systemTestingDSL.matchers._
 
-object Usage {
+object SleekTestSuiteUsage {
   def main(args: Array[String]): Unit = {
+  	
+  	val suite = new SleekTestSuite()
 
-  ##
+  	##
+
+  	suite.runAllTests
+  	suite generateTestStatistics
 
   }
 }
