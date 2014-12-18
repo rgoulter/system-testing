@@ -10,7 +10,7 @@ class SleekTestCaseBuilder {
   var outputDirectory: String = ""
   var outputFileName: String = ""
   var expectedOutput: String = ""
-  var regex: String = "Entail\\s.*.*Valid.*|.*Fail.*"
+  var regex: String = "Entail\\s\\d\\d:\\s.*Valid.*|Entail\\s\\d\\d:\\s.*Fail.*"
 
   def runCommand(commandName: String): SleekTestCaseBuilder = {
     this.commandName = commandName
@@ -85,10 +85,18 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def checkResults(): Boolean = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
     if (expectedOutputList.size != results.size)
-      return false
+       { printResults()
+        println("expected: " + expectedOutputList.size)
+        println("actual: " + results.size)
+//        return false
+     } 
     for ((x, i) <- results.view.zipWithIndex)
       if (!x.contains(expectedOutputList(i)))
-        return false
+        {
+          println(x)
+          println(expectedOutputList(i))
+          return false
+        }
     return true
   }
 
