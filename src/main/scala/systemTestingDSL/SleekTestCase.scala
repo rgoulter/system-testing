@@ -86,14 +86,6 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
     println("results size: " + results.size)
     println("expected results size: " + expectedOutput.size)
-    for ((line) <- results) {
-      println(line)
-      println()
-    }
-    for (line <- expectedOutputList) {
-      println(line)
-      println()
-    }
     val filteredResults = results.view.filter(line => line.contains("Entail")).zipWithIndex
     if (filteredResults.size != expectedOutputList.size)
       return false
