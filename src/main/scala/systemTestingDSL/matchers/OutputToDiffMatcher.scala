@@ -21,7 +21,7 @@ case class OutputToDiffMatcher(output: String, pathTwo: String) extends Matcher 
         resultsAfterReplacement += MATCHER_OLD.concat(line.substring(1)).concat(NEW_LINE)
       else
         resultsAfterReplacement += line.concat(NEW_LINE))
-    val remove = Process("rm".concat(SPACE).concat("temp")).lines_!
+    //val remove = Process("rm".concat(SPACE).concat("temp")).lines_!
     resultsAfterReplacement
   }
 }
