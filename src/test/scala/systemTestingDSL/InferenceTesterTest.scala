@@ -4,6 +4,7 @@ import org.junit.Test
 import org.junit.Assert._
 import scala.collection.mutable.LinkedList
 import scala.collection.mutable.MutableList
+import org.junit.Ignore
 
 class InferenceTesterTest {
 
@@ -70,16 +71,17 @@ class InferenceTesterTest {
   def checkCorpusTest(): Unit = {
     new {
     } with InferenceTester {
-//      assertFalse(checkCorpus(sampleCorpus, new MutableList[(String, String)]))
+      assertFalse(checkCorpus(sampleCorpus, new MutableList[(String, String)]))
       val expectedResult = new MutableList[(String, String)]
       expectedResult += new Tuple2("Valid", """Residue:  <1>HP_44(b_43)&a=a_42 & b=b_43&{FLOW,(4,5)=__norm#E}[]
 	 inferred hprel: [H1(y)&true --> y::node<a_42,b_43> * HP_44(b_43)&true(4,5)]
 	[[ COND ==>  InferHeap ==> ]]""")
       expectedResult += new Tuple2("Valid", """Residue:
-	 <1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[]
-	 inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)]
-	[[ COND ==>  InferHeap ==> ]]""")
+	<1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[]
+	inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)]
+	    		  [[ COND ==>  InferHeap ==> ]]""")
       assertTrue(checkCorpus(sampleCorpus, expectedResult))
+
     }
   }
 }
