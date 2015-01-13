@@ -23,7 +23,6 @@ class InferenceTesterTest {
 	[[ COND ==>  InferHeap ==> ]]
 
 
-
 	Entail (2) : Valid.
 
 	Residue:
@@ -31,17 +30,54 @@ class InferenceTesterTest {
 	 inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)]
 	[[ COND ==>  InferHeap ==> ]]
 
-    Stop z3... 61 invocations Stop Omega... 40 invocations
-	SAT Count   : 161
-	SAT % Hit   : 76.39%
-	IMPLY Count : 62
-	IMPLY % Hit : 62.9%
-	Time(cache overhead) : 0.012001 (seconds)
 
-	!!! log(small):(0.089738,289)
-	Total verification time: 0.108005 second(s)
-		Time spent in main process: 0.060003 second(s)
-		Time spent in child processes: 0.048002 second(s)"""
+    Entail (3) : Valid.
+
+	Residue:
+    <1>true&q!=null & n=inf_n_42 & inf_ann_41<=0&{FLOW,(17,18)=__norm}[]
+	inferred heap: [q::ll<inf_n_42>@inf_ann_41[Orig][LHSCase]]
+	inferred pure: [inf_ann_41<=0]
+
+
+    Entail (4) : Fail.(may) cause:15.4 no match for rhs data node: q (may-bug).
+
+    Residue:
+
+
+    Entail (5) : Valid.
+
+Residue:
+    <1>true&n=0 & inf_ann_60<=0 & inf_n_61<=0&{FLOW,(17,18)=__norm}[]
+ inferred heap: [q::ll<inf_n_61>@inf_ann_60[Orig][LHSCase]]
+ inferred pure: [inf_n_61<=0; inf_ann_60<=0]
+
+
+    Entail (6) : Valid.
+
+ Residue:<1>false&false&{FLOW,(17,18)=__norm}[]
+ inferred pure: [n!=0]
+
+
+Entail (7) : Valid.
+
+ Residue:<1>true&n=0 & inf_ann_85<=0 & n=inf_n_86&{FLOW,(17,18)=__norm}[]
+ inferred heap: [q::ll<inf_n_86>@inf_ann_85[Orig][LHSCase]]
+ inferred pure: [n=inf_n_86; inf_ann_85<=0]
+
+
+Entail (8) : Valid.
+
+ Residue:<1>true&n=0 & inf_ann_99<=0 & n=inf_n_100&{FLOW,(17,18)=__norm}[]
+ inferred heap: [q::ll<inf_n_100>@inf_ann_99[Orig][LHSCase]]
+ inferred pure: [n=inf_n_100; inf_ann_99<=0]
+
+
+Entail (9) : Valid.
+
+ Residue:<1>false&false&{FLOW,(17,18)=__norm}[]
+ inferred pure: [n=0]
+
+Stop Omega... 140 invocations"""
 
   @Test
   def entailCheckTest(): Unit = {
@@ -80,6 +116,23 @@ class InferenceTesterTest {
 	<1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[]
 	inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)]
 	    		  [[ COND ==>  InferHeap ==> ]]""")
+      expectedResult += new Tuple2("Valid", """Residue: <1>true&q!=null & n=inf_n_42 & inf_ann_41<=0&{FLOW,(17,18)=__norm}[]
+	 inferred heap: [q::ll<inf_n_42>@inf_ann_41[Orig][LHSCase]]
+	 inferred pure: [inf_ann_41<=0]""")
+      expectedResult += new Tuple2("Fail", """Residue:""")
+      expectedResult += new Tuple2("Valid", """Residue: <1>true&n=0 & inf_ann_60<=0 & inf_n_61<=0&{FLOW,(17,18)=__norm}[]
+ inferred heap: [q::ll<inf_n_61>@inf_ann_60[Orig][LHSCase]]
+ inferred pure: [inf_n_61<=0; inf_ann_60<=0]""")
+      expectedResult += new Tuple2("Valid", """Residue: <1>false&false&{FLOW,(17,18)=__norm}[]
+ inferred pure: [n!=0]""")
+      expectedResult += new Tuple2("Valid", """Residue: <1>true&n=0 & inf_ann_85<=0 & n=inf_n_86&{FLOW,(17,18)=__norm}[]
+ inferred heap: [q::ll<inf_n_86>@inf_ann_85[Orig][LHSCase]]
+ inferred pure: [n=inf_n_86; inf_ann_85<=0]""")
+      expectedResult += new Tuple2("Valid", """Residue: <1>true&n=0 & inf_ann_99<=0 & n=inf_n_100&{FLOW,(17,18)=__norm}[]
+ inferred heap: [q::ll<inf_n_100>@inf_ann_99[Orig][LHSCase]]
+ inferred pure: [n=inf_n_100; inf_ann_99<=0]""")
+      expectedResult += new Tuple2("Valid", """Residue: <1>false&false&{FLOW,(17,18)=__norm}[]
+ inferred pure: [n=0]""")
       assertTrue(checkCorpus(sampleCorpus, expectedResult))
 
     }

@@ -16,9 +16,13 @@ trait InferenceTester {
     def validFormat: Boolean = entail.contains(":") && entail.contains(".") && entail.contains("Residue:")
     lazy val matchResult: Boolean = removeWhiteSpaceCharacters(entail.substring(entail.indexOf(":") + 1, entail.indexOf("."))) equals removeWhiteSpaceCharacters(expectedResult)
     lazy val matchResidue: Boolean = removeWhiteSpaceCharacters(entail.substring(entail.indexOf("Residue:"))) equals removeWhiteSpaceCharacters(expectedResidue)
-    if (validFormat)
+    if (validFormat) {
+//      println(matchResult)
+//      println(matchResidue)
+//      println("actual: " + removeWhiteSpaceCharacters(entail.substring(entail.indexOf("Residue:"))))
+//      println("expected: " + removeWhiteSpaceCharacters(expectedResidue))
       matchResult & matchResidue
-    else validFormat
+    } else validFormat
   }
 
   def removeWhiteSpaceCharacters(text: String): String = text.replace("\n", "").replace("\t", "").replace(" ", "").trim()
@@ -28,8 +32,8 @@ trait InferenceTester {
       return false
     def sanitizeCorpus: String = corpus.substring(0, corpus.indexOf("Stop")).substring(corpus.indexOf("Entail")).replace("\n\n", "\n").replace("\t", "").trim
     val splitCorpus: Array[String] = sanitizeCorpus.split("\n\n")
-    println("Corpus length: " + splitCorpus.length)
-    println("result length: " + results.length)
+//    println("Corpus length: " + splitCorpus.length)
+//    println("result length: " + results.length)
     val zipped = splitCorpus.view.zipWithIndex
     zipped.forall(tuple => entailCheck(tuple._1, results(tuple._2)))
   }
