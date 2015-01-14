@@ -11,12 +11,12 @@ trait InferenceTester {
     val expectedResidue: String = expected._2
     def validFormat: Boolean = entail.contains(InferenceDefaults.ENTAIL) && entail.contains(":") && entail.contains(".") && entail.contains(InferenceDefaults.RESIDUE)
     lazy val matchResult: Boolean = InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(":") + 1, entail.indexOf("."))) equals InferenceDefaults.removeWhiteSpaceCharacters(expectedResult)
-    lazy val matchResidue: Boolean = InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(InferenceDefaults.RESIDUE))) equals InferenceDefaults.removeWhiteSpaceCharacters(expectedResidue)
+    lazy val matchResidue: Boolean = InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(InferenceDefaults.RESIDUE) + InferenceDefaults.RESIDUE.length())) equals InferenceDefaults.removeWhiteSpaceCharacters(expectedResidue)
     if (validFormat) {
-      //      println(matchResult)
-      //      println(matchResidue)
-      //      println("actual: " + removeWhiteSpaceCharacters(entail.substring(entail.indexOf("Residue:"))))
-      //      println("expected: " + removeWhiteSpaceCharacters(expectedResidue))
+//            println(matchResult)
+//            println(matchResidue)
+//            println("actual: " + InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf("Residue:"))))
+//            println("expected: " + InferenceDefaults.removeWhiteSpaceCharacters(expectedResidue))
       matchResult & matchResidue
     } else validFormat
   }
