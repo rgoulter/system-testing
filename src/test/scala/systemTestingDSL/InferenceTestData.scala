@@ -142,4 +142,12 @@ Entail (9) : Valid.
 
 Stop Omega... 140 invocations"""
 
+  val infer4Output: String = """Starting Omega...oc
+
+	Entail (1) : Fail.(may) cause: true |-  y!=null. LOCS:[11;0] (may-bug)
+
+    Residue:
+
+	Stop Omega... 16 invocations"""
+
 }

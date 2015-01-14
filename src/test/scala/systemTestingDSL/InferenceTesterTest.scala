@@ -118,6 +118,10 @@ class InferenceTesterTest {
  inferred pure: [n=0]""")
       assertTrue(checkCorpus(InferenceTestData.infer1Output, expectedResult))
     }
-
+  }
+  @Test
+  def infer4Test(): Unit = {
+    val expectedResult = new ArrayBuffer[(String, String)]
+    expectedResult += new Tuple2("Valid", """Residue:""")
   }
 }
