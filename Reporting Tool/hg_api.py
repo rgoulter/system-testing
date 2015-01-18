@@ -42,5 +42,6 @@ def run():
 	pull()
 	for branch in branches:
 		branch_name = branch.split(" ")[0]
+		print("Checking branch: %s" % branch_name)
 		process_branch(branch_name)
 run()
