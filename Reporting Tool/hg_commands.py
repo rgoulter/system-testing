@@ -1,4 +1,4 @@
-list_all_branches = "hg branches"
+list_all_branches = "hg branches -a"
 
 pull = "hg pull"
 
