@@ -41,5 +41,6 @@ def run():
 	branches = list_all_branches().split("\n")
 	pull()
 	for branch in branches:
-		process_branch(branch)
+		branch_name = branch.split(" ")[0]
+		process_branch(branch_name)
 run()
