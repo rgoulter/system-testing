@@ -1,10 +1,20 @@
 import os
 import time
 import settings
+import subprocess
 import hg_commands as commands
 
+def setup():
+	ensure_output_directory_exists()
+	set_directory()
+
+def ensure_output_directory_exists():
+	directory = settings.app.output_directory_location + settings.app.output_directory_name
+	if not os.path.exists(directory):
+	    os.makedirs(directory)
+
 def set_directory():
-	os.chdir(settings.repository['local'])
+	os.chdir(settings.repository['loris_local'])
 
 def execute(call_string):
 	handle = os.popen(call_string)
@@ -24,6 +34,7 @@ def process_branch(branch_name):
 		checkout_branch(branch_name)
 		if check_last_commit_date():
 			print("Running tests on %s" % branch_name)
+			run_test()
 	except:
 		print("Error processing branch %s" % branch_name)
 
@@ -32,16 +43,18 @@ def last_commit_date():
 
 def check_last_commit_date():
 	current_milli_time = lambda: int(time.time())
-	# print(current_milli_time())
-	# print(int(last_commit_date()))
 	return (current_milli_time() - int(last_commit_date()) <= settings.app['time_period'])
 
+def run_test():
+	p = subprocess.Popen([settings.test.command], cwd = settings.test.directory)
+	p.wait()
+
 def run():
-	set_directory()
-	branches = list_all_branches().split("\n")
+	setup()
 	pull()
+	branches = list_all_branches().split("\n")
 	for branch in branches:
 		branch_name = branch.split(" ")[0]
-		print("Checking branch: %s" % branch_name)
+		# print("Checking branch: %s" % branch_name)
 		process_branch(branch_name)
 run()
