@@ -9,7 +9,7 @@ def ensure_output_directory_exists():
 	    os.makedirs(directory)
 
 def set_directory():
-	os.chdir(settings.repository['local'])
+	os.chdir(settings.repository['loris_local'])
 
 def setup():
 	global hg
@@ -39,6 +39,7 @@ def get_output_file_name(branch_name):
 
 def run_test(branch_name):
 	cwd = os.getcwd()
+	print("Currently in: " + cwd)
 	os.chdir(settings.test['directory'])
 	output_file_name = get_output_file_name(branch_name)
 	output = open(output_file_name, 'w+')
