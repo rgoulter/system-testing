@@ -1,7 +1,10 @@
 import os
 import time
 import settings
+import subprocess
 from hg_api import HgApi
+
+ONE_DAY = 24 * 60 * 60 * 1000
 
 def ensure_output_directory_exists():
 	directory = settings.app['output_directory_location'] + settings.app['output_directory_name']
@@ -32,7 +35,7 @@ def process_branch(branch_name):
 
 def check_last_commit_date():
 	current_milli_time = lambda: int(time.time())
-	return (current_milli_time() - int(hg.last_commit_date()) <= settings.app['time_period'])
+	return (current_milli_time() - int(hg.last_commit_date()) <= (settings.app['time_period'] * ONE_DAY))
 
 def get_output_file_name(branch_name):
 	return settings.test['prefix'] + branch_name + settings.test['file_extension']
