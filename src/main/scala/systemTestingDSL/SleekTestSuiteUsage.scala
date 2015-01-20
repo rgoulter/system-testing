@@ -288,8 +288,15 @@ object SleekTestSuiteUsage {
 
     suite generateTestStatistics
 
-    val cll_dTest =
-      new RegressionTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/cll-d.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "cll_d.out"
-    println(cll_dTest.build generateTestResults ())
+    //    val cll_dTest =
+    //      new RegressionTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/cll-d.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "cll_d.out"
+    //    println(cll_dTest.build generateTestResults ())
+  }
+
+  def inferenceTest: Unit = {
+    val sleek2Test =
+      new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek2.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "sleek2.out" checkAgainst "Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail"
+    val sleek2TestCase: SleekTestCase = sleek2Test.build
+    sleek2TestCase.testInference(null)
   }
 }

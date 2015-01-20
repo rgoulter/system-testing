@@ -2,6 +2,7 @@ package systemTestingDSL
 
 import scala.collection.mutable.MutableList
 import java.io.File
+import scala.collection.mutable.ArrayBuffer
 
 class SleekTestCaseBuilder {
   var commandName: String = ""
@@ -50,7 +51,7 @@ class SleekTestCaseBuilder {
   def build: SleekTestCase = new SleekTestCase(this)
 }
 class SleekTestCase(builder: SleekTestCaseBuilder)
-  extends Runnable with Parser {
+  extends Runnable with Parser with InferenceTester{
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
@@ -58,6 +59,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
+  var output:String = ""
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
@@ -65,10 +67,9 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def run() = {
-    val output = this.execute
+    this.output = this.execute
     if (outputFileName.length > 0)
       generateOutputFile(output)
-    output
   }
 
   def printResults() = {
@@ -78,8 +79,13 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def generateOutput() = {
-    this.parse(run, builder.regex, NEW_LINE)
+    run
+    this.parse(this.output, builder.regex, NEW_LINE)
     generateTestResults()
+  }
+
+  def testInference(results: ArrayBuffer[(String, String)]) = {
+    checkCorpus(this.output, results)
   }
 
   def checkResults(): Boolean = {
