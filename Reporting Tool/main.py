@@ -14,7 +14,7 @@ def set_directory():
 def setup():
 	global hg
 	hg = HgApi()
-	# ensure_output_directory_exists()
+	ensure_output_directory_exists()
 	set_directory()
 
 def execute(call_string):
@@ -35,14 +35,14 @@ def check_last_commit_date():
 	return (current_milli_time() - int(hg.last_commit_date()) <= settings.app['time_period'])
 
 def get_output_file_name(branch_name):
-	return settings.test['output_prefix'] + branch_name + settings.test['output_file_extension']
+	return settings.test['prefix'] + branch_name + settings.test['file_extension']
 
 def run_test(branch_name):
 	cwd = os.getcwd()
 	print("Currently in: " + cwd)
 	os.chdir(settings.test['directory'])
 	output_file_name = get_output_file_name(branch_name)
-	output = open(output_file_name, 'w+')
+	output = open(settings.app['output_directory_location'] + output_file_name, 'w+')
 	print("Running Test on branch %s" % branch_name)
 	handle = subprocess.call([settings.test['command']], shell = True, stdout = output)
 	print("Output stored in file %s" % output_file_name)
