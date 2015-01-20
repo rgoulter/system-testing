@@ -6,14 +6,14 @@ ONE_YEAR = 12 * ONE_MONTH
 vcs = dict(
 	client = "hg",
 	branches = "all"
-	)
+)
 
 # Remote repo URL
 repository = dict(
 	remote = "",
 	loris_local = "/home/rohit/hg/sleek_hip/",
 	local = "/Users/rohitmukherjee/dev/repositories/scalaWorkspace/High-Performance-DSLs/Reporting Tool/test_repo"
-	)
+)
 
 # App settings
 app = dict(
@@ -26,5 +26,7 @@ app = dict(
 
 # Test settings
 test = dict(
-	command = 'sbt run'
-	directory = '/home/rohit/High-Performance-DSLs/')
+	command = 'sbt run',
+	directory = '/home/rohit/High-Performance-DSLs/',
+	output_file_extension = '.out',
+	output_prefix = 'sleek_test_')
