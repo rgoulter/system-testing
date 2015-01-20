@@ -28,5 +28,5 @@ app = dict(
 test = dict(
 	command = 'sbt run',
 	directory = '/home/rohit/High-Performance-DSLs/',
-	output_file_extension = '.out',
-	output_prefix = 'sleek_test_')
+	file_extension = '.out',
+	prefix = 'sleek_test_')
