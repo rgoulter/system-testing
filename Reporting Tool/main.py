@@ -1,6 +1,7 @@
 import os
 import time
 import settings
+import subprocess
 from hg_api import HgApi
 
 def ensure_output_directory_exists():
@@ -42,7 +43,7 @@ def run_test(branch_name):
 	print("Currently in: " + cwd)
 	os.chdir(settings.test['directory'])
 	output_file_name = get_output_file_name(branch_name)
-	output = open(settings.app['output_directory_location'] + output_file_name, 'w+')
+	output = open(settings.app['output_directory_location'] + settings.app['output_directory_name'] + '/' +  output_file_name, 'w+')
 	print("Running Test on branch %s" % branch_name)
 	handle = subprocess.call([settings.test['command']], shell = True, stdout = output)
 	print("Output stored in file %s" % output_file_name)
@@ -56,4 +57,5 @@ def run():
 		branch_name = branch.split(" ")[0]
 		process_branch(branch_name)
 
+#run_test("default")
 run()
