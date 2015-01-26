@@ -20,7 +20,7 @@ def setup():
 	global settings
 	settings = yaml.load(open('settings.yaml').read())
 	hg = HgApi()
-	# ensure_output_directory_exists()
+	ensure_output_directory_exists()
 	set_directory()
 
 def execute(call_string):
@@ -30,15 +30,20 @@ def execute(call_string):
 def process_branch(branch_name):
 	try:
 		hg.checkout_branch(branch_name)
-		if check_last_commit_date():
+		if check_last_commit_date(hg.commit_date):
 			print("Running tests on %s" % branch_name)
-			run_test(branch_name)
+			# Checkout each rev, create directory accordingly and run
+			commit_list = hg.get_commit_list()
+			for commit in commit_list:
+				if check_last_commit_date(commit[1]):
+					print(commit[0])
+			print("Done with commits branch %s" % branch_name)
 	except:
 		print("Error processing branch %s" % branch_name)
 
-def check_last_commit_date():
+def check_last_commit_date(commit_date):
 	current_milli_time = lambda: int(time.time())
-	return (current_milli_time() - int(hg.last_commit_date()) <= (settings['app']['time_period'] * ONE_DAY))
+	return (current_milli_time() - int(commit_date()) <= (settings['app']['time_period'] * ONE_DAY))
 
 def get_output_file_name(branch_name):
 	return settings['test']['prefix'] + branch_name + settings['test']['file_extension']
@@ -62,6 +67,5 @@ def run():
 		branch_name = branch.split(" ")[0]
 		process_branch(branch_name)
 
-#run()
-setup()
-print(hg.get_commit_list())
+run()
+#setup()

@@ -8,6 +8,8 @@ last_commit_date = 'hg log -r tip -T "{date|hgdate}\n"'
 
 log = "hg log"
 
+revert = "hg revert -C -r "
+
 whitespace = ' '
 
 max_number = '-l50'

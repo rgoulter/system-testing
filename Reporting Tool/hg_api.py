@@ -27,6 +27,9 @@ class HgApi:
 	def last_commit_date(self):
 		return self._execute(commands.last_commit_date).split()[0]
 
+	def revert(self):
+		self._execute(commands.revert)
+
 	def get_commit_list(self):
 		commit_list = self._execute(commands.commit_list).split("\n")
 		commits = []
