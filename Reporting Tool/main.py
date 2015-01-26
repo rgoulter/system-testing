@@ -7,7 +7,7 @@ import subprocess
 import yaml # pip install pyyaml
 from hg_api import HgApi
 
-ONE_DAY = 24 * 60 * 60 * 1000
+ONE_DAY = 24 * 60 * 60
 
 def ensure_output_directory_exists():
 	directory = settings['app']['output_directory_location'] + settings['app']['output_directory_name']
@@ -46,6 +46,10 @@ def process_branch(branch_name):
 
 def check_last_commit_date(commit_date):
 	current_milli_time = lambda: int(time.time())
+	print(current_milli_time())
+	print(int(commit_date))
+	print(current_milli_time() - int(commit_date))
+	print(settings['app']['time_period'] * ONE_DAY)
 	return (current_milli_time() - int(commit_date) <= (settings['app']['time_period'] * ONE_DAY))
 
 def get_output_file_name(branch_name):
@@ -71,4 +75,7 @@ def run():
 		process_branch(branch_name)
 
 run()
-#setup()
+# setup()
+# print(hg.get_commit_list())
+# print(check_last_commit_date(1413039744))
+# print(check_last_commit_date(1413039748))

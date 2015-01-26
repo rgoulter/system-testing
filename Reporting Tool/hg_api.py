@@ -31,7 +31,7 @@ class HgApi:
 		self._execute(commands.revert)
 
 	def get_commit_list(self):
-		commit_list = self._execute(commands.commit_list).split("\n")
+		commit_list = self._execute(commands.commit_list).split("\n")[:-1]
 		commits = []
 		for commit in commit_list:
 			commit_info = commit.split("_")
