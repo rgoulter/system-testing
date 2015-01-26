@@ -46,10 +46,6 @@ def process_branch(branch_name):
 
 def check_last_commit_date(commit_date):
 	current_milli_time = lambda: int(time.time())
-	print(current_milli_time())
-	print(int(commit_date))
-	print(current_milli_time() - int(commit_date))
-	print(settings['app']['time_period'] * ONE_DAY)
 	return (current_milli_time() - int(commit_date) <= (settings['app']['time_period'] * ONE_DAY))
 
 def get_output_file_name(branch_name):
