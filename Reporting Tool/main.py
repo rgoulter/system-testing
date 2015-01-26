@@ -32,7 +32,7 @@ def execute(call_string):
 def process_branch(branch_name):
 	try:
 		hg.checkout_branch(branch_name)
-		if check_last_commit_date(hg.last_commit_date()):
+		if check_last_commit_date(hg.last_commit_date(branch_name)):
 			print("Running tests on %s" % branch_name)
 			# Checkout each rev, create directory accordingly and run
 			commit_list = hg.get_commit_list()
@@ -66,6 +66,7 @@ def run():
 	setup()
 	hg.pull()
 	branches = hg.list_all_branches().split("\n")
+	print(branches)
 	for branch in branches:
 		branch_name = branch.split(" ")[0]
 		process_branch(branch_name)

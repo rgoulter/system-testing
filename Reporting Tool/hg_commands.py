@@ -4,7 +4,7 @@ pull = "hg pull"
 
 update = "hg update -C"
 	
-last_commit_date = 'hg log -r tip -T "{date|hgdate}\n"'
+last_commit_date = 'hg log -l 1 -T "{date|hgdate}\n" --only-branch'
 
 log = "hg log"
 

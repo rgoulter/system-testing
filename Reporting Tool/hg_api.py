@@ -24,8 +24,8 @@ class HgApi:
 	def checkout_branch(self, branch_name):
 		self._execute(commands.update + " " + branch_name)
 
-	def last_commit_date(self):
-		return self._execute(commands.last_commit_date).split()[0]
+	def last_commit_date(self, branch_name):
+		return self._execute(commands.last_commit_date + " " + branch_name).split()[0]
 
 	def revert(self):
 		self._execute(commands.revert)
