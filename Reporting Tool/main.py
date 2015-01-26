@@ -1,6 +1,8 @@
 import os
 import time
 import settings
+import sys
+import traceback
 import subprocess
 import yaml # pip install pyyaml
 from hg_api import HgApi
@@ -13,7 +15,7 @@ def ensure_output_directory_exists():
 	    os.makedirs(directory)
 
 def set_directory():
-	os.chdir(settings['repository']['local'])
+	os.chdir(settings['repository']['loris_local'])
 
 def setup():
 	global hg
@@ -40,6 +42,7 @@ def process_branch(branch_name):
 			print("Done with commits branch %s" % branch_name)
 	except:
 		print("Error processing branch %s" % branch_name)
+		print traceback.format_exc()
 
 def check_last_commit_date(commit_date):
 	current_milli_time = lambda: int(time.time())
