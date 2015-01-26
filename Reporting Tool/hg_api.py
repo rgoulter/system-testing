@@ -26,3 +26,11 @@ class HgApi:
 
 	def last_commit_date(self):
 		return self._execute(commands.last_commit_date).split()[0]
+
+	def get_commit_list(self):
+		commit_list = self._execute(commands.commit_list).split("\n")
+		commits = []
+		for commit in commit_list:
+			commit_info = commit.split("_")
+			commits.append((commit_info[0], commit_info[-1]))
+		return commits

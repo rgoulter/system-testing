@@ -13,14 +13,14 @@ def ensure_output_directory_exists():
 	    os.makedirs(directory)
 
 def set_directory():
-	os.chdir(settings['repository']['loris_local'])
+	os.chdir(settings['repository']['local'])
 
 def setup():
 	global hg
 	global settings
 	settings = yaml.load(open('settings.yaml').read())
 	hg = HgApi()
-	ensure_output_directory_exists()
+	# ensure_output_directory_exists()
 	set_directory()
 
 def execute(call_string):
@@ -62,4 +62,6 @@ def run():
 		branch_name = branch.split(" ")[0]
 		process_branch(branch_name)
 
-run()
+#run()
+setup()
+print(hg.get_commit_list())
