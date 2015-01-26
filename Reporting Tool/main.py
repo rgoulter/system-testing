@@ -32,7 +32,7 @@ def execute(call_string):
 def process_branch(branch_name):
 	try:
 		hg.checkout_branch(branch_name)
-		if check_last_commit_date(hg.commit_date):
+		if check_last_commit_date(hg.last_commit_date()):
 			print("Running tests on %s" % branch_name)
 			# Checkout each rev, create directory accordingly and run
 			commit_list = hg.get_commit_list()
@@ -46,7 +46,7 @@ def process_branch(branch_name):
 
 def check_last_commit_date(commit_date):
 	current_milli_time = lambda: int(time.time())
-	return (current_milli_time() - int(commit_date()) <= (settings['app']['time_period'] * ONE_DAY))
+	return (current_milli_time() - int(commit_date) <= (settings['app']['time_period'] * ONE_DAY))
 
 def get_output_file_name(branch_name):
 	return settings['test']['prefix'] + branch_name + settings['test']['file_extension']
