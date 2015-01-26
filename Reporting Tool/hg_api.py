@@ -35,5 +35,5 @@ class HgApi:
 		commits = []
 		for commit in commit_list:
 			commit_info = commit.split("_")
-			commits.append((commit_info[0], commit_info[-1]))
+			commits.append((commit_info[0], commit_info[-1].split("-")[0]))
 		return commits
