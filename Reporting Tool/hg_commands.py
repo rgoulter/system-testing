@@ -3,8 +3,10 @@ list_all_branches = "hg branches -a"
 pull = "hg pull"
 
 update = "hg update -C"
+
+checkout_commit = 'hg update -c' # Takes one parameter <cset>
 	
-last_commit_date = 'hg log -l 1 -T "{date|hgdate}\n" --only-branch'
+last_commit_date = 'hg log -l 1 -T "{date|hgdate}\n" --only-branch' # Takes one parameter <branch_name>
 
 log = "hg log"
 

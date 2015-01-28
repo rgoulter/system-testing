@@ -15,7 +15,7 @@ class HgApi:
 		return handle.read()
 
 	def list_all_branches(self):
-		return self._execute(commands.list_all_branches)
+		return self._execute(commands.list_all_branches)[:-1]
 
 	# Executes an 'hg pull' in cwd
 	def pull(self):
@@ -23,6 +23,9 @@ class HgApi:
 
 	def checkout_branch(self, branch_name):
 		self._execute(commands.update + " " + branch_name)
+
+	def checkout_commit(self, commit_hash):
+		self._execute(commands.checkout_commit + ' ' + commit_hash)
 
 	def last_commit_date(self, branch_name):
 		return self._execute(commands.last_commit_date + " " + branch_name).split()[0]
