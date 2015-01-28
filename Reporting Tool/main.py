@@ -9,10 +9,12 @@ from hg_api import HgApi
 
 ONE_DAY = 24 * 60 * 60
 
-def ensure_output_directory_exists():
-	directory = settings['app']['output_directory_location'] + settings['app']['output_directory_name']
+def create_directory(directory):
 	if not os.path.exists(directory):
 	    os.makedirs(directory)
+
+def ensure_output_directory_exists():
+	create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'])
 
 def set_directory():
 	os.chdir(settings['repository']['loris_local'])
@@ -34,11 +36,15 @@ def process_branch(branch_name):
 		hg.checkout_branch(branch_name)
 		if check_last_commit_date(hg.last_commit_date(branch_name)):
 			print("Running tests on %s" % branch_name)
+			create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name)
 			# Checkout each rev, create directory accordingly and run
 			commit_list = hg.get_commit_list()
 			for commit in commit_list:
 				if check_last_commit_date(commit[1]):
-					print(commit[0])
+					# Create output directory
+					create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + commit[0])
+					# Check out commit
+					# Run tests
 			print("Done with commits branch %s" % branch_name)
 	except:
 		print("Error processing branch %s" % branch_name)
@@ -51,15 +57,15 @@ def check_last_commit_date(commit_date):
 def get_output_file_name(branch_name):
 	return settings['test']['prefix'] + branch_name + settings['test']['file_extension']
 
-def run_test(branch_name):
+def run_test(branch_name, commit_hash):
 	cwd = os.getcwd()
 	print("Currently in: " + cwd)
 	os.chdir(settings['test']['directory'])
 	output_file_name = get_output_file_name(branch_name)
-	output = open(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' +  output_file_name, 'w+')
+	output = open(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + commit_hash + '/' + output_file_name, 'w+')
 	print("Running Test on branch %s" % branch_name)
 	handle = subprocess.call([settings['test']['command']], shell = True, stdout = output)
-	print("Output stored in file %s" % output_file_name)
+	print("Output stored in directory %s/%s" % (commit_hash, output_file_name))
 	os.chdir(cwd)
 
 def run():
