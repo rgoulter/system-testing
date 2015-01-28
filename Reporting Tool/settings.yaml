@@ -10,7 +10,7 @@ repository:
 # Application Settings
 app:
   # Time period to run tests in days
-  time_period: 93 # Run tests for commits made in the last months
+  time_period: 180  # Run tests for commits made in the last months
   output_directory_name: Sleek_Test_Results
   # Must end with a '/'
   output_directory_location: /home/rohit/High-Performance-DSLs/Reporting Tool/

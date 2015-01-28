@@ -48,9 +48,9 @@ def process_branch(branch_name):
 		print traceback.format_exc()
 
 def run_test_on_commit(branch_name, commit_hash):
-	create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + commit[0])
+	create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name)
 	hg.checkout_commit(commit_hash)
-	run_test(commit_hash)
+	run_test(commit_hash, branch_name)
 
 def check_last_commit_date(commit_date):
 	current_milli_time = lambda: int(time.time())
@@ -59,12 +59,12 @@ def check_last_commit_date(commit_date):
 def get_output_file_name(branch_name):
 	return settings['test']['prefix'] + branch_name + settings['test']['file_extension']
 
-def run_test(commit_hash):
+def run_test(commit_hash, branch_name):
 	cwd = os.getcwd()
 	print("Currently in: " + cwd)
 	os.chdir(settings['test']['directory'])
 	output_file_name = get_output_file_name(commit_hash)
-	output = open(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + commit_hash, 'w+')
+	output = open(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + commit_hash, 'w+')
 	print("Running Test on branch %s" % branch_name)
 	handle = subprocess.call([settings['test']['command']], shell = True, stdout = output)
 	print("Output stored in directory %s/%s" % (commit_hash, output_file_name))
