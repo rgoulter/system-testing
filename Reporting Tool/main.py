@@ -69,7 +69,7 @@ def run_test(commit_hash, branch_name):
         print("Running Test on commit %s" % commit_hash)
         handle = subprocess.call([settings['test']['command']], shell = True, stdout = output)
         print("Output stored in directory %s/%s" % (commit_hash, output_file_name))
-        os.chdir(cwd)
+    os.chdir(cwd)
 
 def run():
 	setup()
