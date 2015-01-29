@@ -59,11 +59,14 @@ def check_last_commit_date(commit_date):
 def get_output_file_name(branch_name):
 	return settings['test']['prefix'] + branch_name + settings['test']['file_extension']
 
+def get_output_directory(branch_name):
+    return settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/'
+
 def run_test(commit_hash, branch_name):
     cwd = os.getcwd()
     print("Currently in: " + cwd)
     os.chdir(settings['test']['directory'])
-    output_file_name = settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + commit_hash + '.out'
+    output_file_name = get_output_directory(branch_name) + commit_hash + settings['test']['output_file_extension']
     if not os.path.isfile(output_file_name):
         output = open(output_file_name, 'w+')
         print("Running Test on commit %s" % commit_hash)
@@ -80,7 +83,3 @@ def run():
 		process_branch(branch_name)
 
 run()
-# setup()
-# print(hg.get_commit_list())
-# print(check_last_commit_date(1413039744))
-# print(check_last_commit_date(1413039748))
