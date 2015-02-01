@@ -47,7 +47,7 @@ def check_last_commit_date(commit_date):
 	return (current_milli_time() - int(commit_date) <= (settings['app']['time_period'] * ONE_DAY))
 
 def get_output_file_name(branch_name):
-	return settings['test'][0]['prefix'] + branch_name + settings['test'][0]['file_extension']
+	return settings['tests'][0]['prefix'] + branch_name + settings['tests'][0]['file_extension']
 
 def get_output_directory(branch_name):
     return settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/'
@@ -55,12 +55,12 @@ def get_output_directory(branch_name):
 def run_test(commit_hash, branch_name):
     cwd = os.getcwd()
     print("Currently in: " + cwd)
-    os.chdir(settings['test'][0]['directory'])
-    output_file_name = get_output_directory(branch_name) + commit_hash + settings['test'][0]['output_file_extension']
+    os.chdir(settings['tests'][0]['directory'])
+    output_file_name = get_output_directory(branch_name) + commit_hash + settings['tests'][0]['output_file_extension']
     if not os.path.isfile(output_file_name):
         output = open(output_file_name, 'w+')
         print("Running Test on commit %s" % commit_hash)
-        handle = subprocess.call([settings['test'][0]['command']], shell = True, stdout = output)
+        handle = subprocess.call([settings['tests'][0]['command']], shell = True, stdout = output)
         print("Output stored in directory %s/%s" % (commit_hash, output_file_name))
     os.chdir(cwd)
 
