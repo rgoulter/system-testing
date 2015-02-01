@@ -16,8 +16,16 @@ app:
   output_directory_location: /home/rohit/High-Performance-DSLs/Reporting Tool/
 
 # Test specific settings
-test:
-  command: sbt run
-  directory: /home/rohit/High-Performance-DSLs/
-  file_extension: .out
-  prefix: sleek_test_
+tests:
+  -
+   name: sleek tests
+   command: sbt run
+   directory: /home/rohit/High-Performance-DSLs/
+   file_extension: .out
+   prefix: sleek_test_
+  # Add more tests by following this format:
+  #-
+  # command: sbt run2
+  # directory: /home/rohit/High-Performance-DSLs/
+  # file_extension: .out
+  # prefix: sleek_test_
