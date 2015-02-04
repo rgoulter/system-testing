@@ -38,12 +38,12 @@ def process_branch(branch_name):
 		print traceback.format_exc()
 
 def run_all_tests(branch_name, commit_hash):
-    for test_number in range(0, len(settings['tests']):
+    for test_number in range(0, len(settings['tests'])):
         utilities.create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + settings['tests'][test_number]['name'])
         run_test(commit_hash, branch_name, test_number)
 
 def run_tests_on_commit(branch_name, commit_hash, test_number):
-	hg.checkout_commit(commit_hash)
+    hg.checkout_commit(commit_hash)
     run_test(commit_hash, branch_name, test_number)
 
 def check_last_commit_date(commit_date):
