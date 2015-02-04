@@ -31,7 +31,7 @@ def process_branch(branch_name):
 			commit_list = hg.get_commit_list()
 			for commit in commit_list:
 				if check_last_commit_date(commit[1]):
-					run_tests_on_commit(branch_name, commit[0])
+					run_all_tests(branch_name, commit[0])
 			print("Done with commits branch %s" % branch_name)
 	except:
 		print("Error processing branch %s" % branch_name)
@@ -57,7 +57,7 @@ def run_test(commit_hash, branch_name, test_number):
     cwd = os.getcwd()
     print("Currently in: " + cwd)
     os.chdir(settings['tests'][test_number]['directory'])
-    output_file_name = get_output_directory(branch_name, test_number) + commit_hash + settings['tests'][test_number]['output_file_extension']
+    output_file_name = get_output_directory(branch_name, test_number) + commit_hash + settings['tests'][test_number]['file_extension']
     if not os.path.isfile(output_file_name):
         output = open(output_file_name, 'w+')
         print("Running Test on commit %s" % commit_hash)
