@@ -3,6 +3,8 @@ package systemTestingDSL
 import scala.collection.mutable.MutableList
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
+import systemTestingDSL.outputGenerator.OutputGenerator
+import systemTestingDSL.outputGenerator.OutputGenerator
 
 class SleekTestCaseBuilder {
   var commandName: String = ""
@@ -51,7 +53,7 @@ class SleekTestCaseBuilder {
   def build: SleekTestCase = new SleekTestCase(this)
 }
 class SleekTestCase(builder: SleekTestCaseBuilder)
-  extends Runnable with Parser with InferenceTester{
+  extends Runnable with Parser with InferenceTester with OutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
@@ -59,7 +61,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
-  var output:String = ""
+  var output: String = ""
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
@@ -69,7 +71,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      generateOutputFile(output)
+      writeToFile(this.fileName, this.outputDirectory, output)
   }
 
   def printResults() = {
@@ -95,8 +97,8 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
       return false
     for ((x, i) <- filteredResults)
       if (!x.contains(expectedOutputList(i))) {
-        println("Had: " + x)
-        println("Expected: " + expectedOutputList(i))
+        consoleUtilities.actual("Had: " + x)
+        consoleUtilities.expected("Expected: " + expectedOutputList(i))
         return false
       }
     return true
@@ -104,14 +106,8 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   def generateTestResults(): String = if (checkResults()) "Passed" else "Failed"
 
-  def checkOutputDirectory = {
-    val outputDirectory = new File(this.outputDirectory)
-    if (!outputDirectory.exists())
-      fileSystemUtilities.createDirectory(this.outputDirectory)
-  }
-
   def generateOutputFile(consoleOutput: String) = {
-    checkOutputDirectory
+    fileSystemUtilities.checkOutputDirectory(this.outputDirectory)
     fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
   }
 }

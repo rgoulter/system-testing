@@ -6,5 +6,9 @@ package object consoleUtilities {
 
   def success(successText: String) = println(Console.GREEN + successText + Console.RESET)
 
+  def expected(expectedText: String) = println(Console.BLUE + expectedText + Console.RESET)
+
+  def actual(actualText: String) = println(Console.MAGENTA + actualText + Console.RESET)
+
   def log(logText: String) = println(Console.YELLOW + logText + Console.RESET)
 }
