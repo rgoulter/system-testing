@@ -3,8 +3,7 @@ package systemTestingDSL
 import scala.collection.mutable.MutableList
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
-import systemTestingDSL.outputGenerator.OutputGenerator
-import systemTestingDSL.outputGenerator.OutputGenerator
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
 class SleekTestCaseBuilder {
   var commandName: String = ""
@@ -53,7 +52,7 @@ class SleekTestCaseBuilder {
   def build: SleekTestCase = new SleekTestCase(this)
 }
 class SleekTestCase(builder: SleekTestCaseBuilder)
-  extends Runnable with Parser with InferenceTester with OutputGenerator {
+  extends Runnable with Parser with InferenceTester with ConsoleOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
@@ -71,7 +70,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName , this.outputDirectory, output)
+      writeToFile(this.outputFileName, this.outputDirectory, output)
   }
 
   def printResults() = {
@@ -95,19 +94,14 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     val filteredResults = results.view.filter(line => line.contains("Entail")).zipWithIndex
     if (filteredResults.size != expectedOutputList.size)
       return false
-    for ((x, i) <- filteredResults)
-      if (!x.contains(expectedOutputList(i))) {
-        consoleUtilities.actual("Had: " + x)
-        consoleUtilities.expected("Expected: " + expectedOutputList(i))
+    for ((result, i) <- filteredResults)
+      if (!result.contains(expectedOutputList(i))) {
+        had(result)
+        expected(expectedOutputList(i))
         return false
       }
     return true
   }
 
   def generateTestResults(): String = if (checkResults()) "Passed" else "Failed"
-
-  def generateOutputFile(consoleOutput: String) = {
-    fileSystemUtilities.checkOutputDirectory(this.outputDirectory)
-    fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
-  }
 }
