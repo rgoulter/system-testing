@@ -71,7 +71,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      writeToFile(this.fileName, this.outputDirectory, output)
+      writeToFile(this.outputFileName , this.outputDirectory, output)
   }
 
   def printResults() = {
