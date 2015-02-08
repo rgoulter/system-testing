@@ -30,17 +30,17 @@ def process_branch(branch_name):
 			# Checkout each rev, create directory accordingly and run
 			commit_list = hg.get_commit_list()
 			for commit in commit_list:
-				if check_last_commit_date(commit[1]):
-					run_all_tests(branch_name, commit[0])
+				if check_last_commit_date(commit.date):
+					run_all_tests(branch_name, commit)
 			print("Done with commits branch %s" % branch_name)
 	except:
 		print("Error processing branch %s" % branch_name)
 		print traceback.format_exc()
 
-def run_all_tests(branch_name, commit_hash):
+def run_all_tests(branch_name, commit):
     for test_number in range(0, len(settings['tests'])):
         utilities.create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + settings['tests'][test_number]['name'])
-        run_test(commit_hash, branch_name, test_number)
+        run_test(commit, branch_name, test_number)
 
 def run_tests_on_commit(branch_name, commit_hash, test_number):
     hg.checkout_commit(commit_hash)
@@ -53,16 +53,16 @@ def check_last_commit_date(commit_date):
 def get_output_directory(branch_name, test_number):
     return settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name + '/' + settings['tests'][test_number]['name'] + '/'
 
-def run_test(commit_hash, branch_name, test_number):
+def run_test(commit, branch_name, test_number):
     cwd = os.getcwd()
     print("Currently in: " + cwd)
     os.chdir(settings['tests'][test_number]['directory'])
-    output_file_name = get_output_directory(branch_name, test_number) + commit_hash + settings['tests'][test_number]['file_extension']
+    output_file_name = get_output_directory(branch_name, test_number) + commit.rev_id + settings['tests'][test_number]['file_extension']
     if not os.path.isfile(output_file_name):
         output = open(output_file_name, 'w+')
-        print("Running Test on commit %s" % commit_hash)
+        print("Running Test on commit %s" % commit.hash)
         handle = subprocess.call([settings['tests'][test_number]['command']], shell = True, stdout = output)
-        print("Output stored in directory %s/%s" % (commit_hash, output_file_name))
+        print("Output stored in directory %s/%s" % (commit.hash, output_file_name))
     os.chdir(cwd)
 
 def run():
