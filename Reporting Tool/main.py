@@ -1,12 +1,12 @@
 import os
 import time
-import settings
 import sys
 import traceback
 import subprocess
 import utilities
 import yaml # pip install pyyaml
 from hg_api import HgApi
+from commit import Commit
 
 ONE_DAY = 24 * 60 * 60
 

@@ -1,7 +1,7 @@
 import os
 import time
 import hg_commands as commands
-import commit
+from commit import Commit
 
 class HgApi:
 	'''
