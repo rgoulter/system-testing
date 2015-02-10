@@ -2,8 +2,9 @@ package systemTestingDSL
 
 import scala.collection.mutable.MutableList
 import systemTestingDSL.outputGenerator.HTMLOutputGenerator
+import java.io.PrintWriter
 
-class SleekTestSuite extends HTMLOutputGenerator {
+class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends HTMLOutputGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
@@ -23,13 +24,15 @@ class SleekTestSuite extends HTMLOutputGenerator {
 
   def runAllTests: Unit = {
     tests.foreach(test => {
-      val result = test.build.generateOutput
-      result match {
+      lazy val result = test.build.generateOutput
+      result._2 match {
         case "Passed" => successes += test.fileName
         case _ => failures += test.fileName
       }
-      displayResult(result)
-      println()
+      displayResult(result._2)
+      if (result._1.isDefined)
+        writer.println(result._1)
+      writer.println
     })
   }
 
@@ -39,8 +42,8 @@ class SleekTestSuite extends HTMLOutputGenerator {
   }
 
   def generateTestStatistics: Unit = {
-    log("Total number of tests: " + (successes.length + failures.length))
-    success("Total number of tests passed: " + successes.length)
-    error("Total number of tests failed: " + failures.length)
+    writer.println(log("Total number of tests: " + (successes.length + failures.length)))
+    writer.println(success("Total number of tests passed: " + successes.length))
+    writer.println(error("Total number of tests failed: " + failures.length))
   }
 }

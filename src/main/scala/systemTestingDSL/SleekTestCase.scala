@@ -73,35 +73,35 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
       writeToFile(this.outputFileName, this.outputDirectory, output)
   }
 
-  def printResults() = {
-    for (result <- results)
-      println(result + ", ")
-    print("end of results")
-  }
-
-  def generateOutput() = {
+  def generateOutput(): (Option[String], String) = {
     run
     this.parse(this.output, builder.regex, NEW_LINE)
-    generateTestResults()
+    generateTestResult
   }
 
   def testInference(results: ArrayBuffer[(String, String)]) = {
     checkCorpus(this.output, results)
   }
 
-  def checkResults(): Boolean = {
+  def checkResults(): (Option[String], Boolean) = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
-    val filteredResults = results.view.filter(line => line.contains("Entail")).zipWithIndex
+    var resultOutput = ""
+    val filteredResults = results.view.filter(_.contains("Entail")).zipWithIndex
     if (filteredResults.size != expectedOutputList.size)
-      return false
+      return (None, false)
     for ((result, i) <- filteredResults)
       if (!result.contains(expectedOutputList(i))) {
-        had(result)
-        expected(expectedOutputList(i))
-        return false
+        resultOutput += had(result)
+        resultOutput += expected(expectedOutputList(i))
+        return (Some(resultOutput), false)
       }
-    return true
+    return (None, true)
   }
 
-  def generateTestResults(): String = if (checkResults()) "Passed" else "Failed"
+  def generateTestResult(): (Option[String], String) = {
+    val (testOutput, result) = checkResults()
+    if (result)
+      (None, "Passed")
+    else (testOutput, "Failed")
+  }
 }
