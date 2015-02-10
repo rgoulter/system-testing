@@ -12,15 +12,15 @@ trait HTMLOutputGenerator extends OutputGenerator {
 
   def failed = error("Failed")
 
-  def error(errorText: String) = paragraph(errorText, "red")
+  def error(errorText: String) = println(paragraph(errorText, "red"))
 
-  def success(successText: String) = paragraph(successText, "green")
+  def success(successText: String) = println(paragraph(successText, "green"))
 
-  def expect(expectedText: String) = paragraph(expectedText, "blue")
+  def expect(expectedText: String) = println(paragraph(expectedText, "blue"))
 
-  def actual(actualText: String) = paragraph(actualText, "magenta")
+  def actual(actualText: String) = println(paragraph(actualText, "magenta"))
 
-  def log(logText: String) = paragraph(logText, "yellow")
+  def log(logText: String) = println(paragraph(logText, "yellow"))
 
   private def paragraph(content: String, colour: String = "black"): String = (s"""<p style = "color: $colour ;"> $content </p>""")
 
