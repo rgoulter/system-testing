@@ -99,9 +99,9 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def generateTestResult(): (Option[String], String) = {
-    val (testOutput, result) = checkResults()
-    if (result)
+    val results = checkResults()
+    if (results._2)
       (None, "Passed")
-    else (testOutput, "Failed")
+    else (results._1, "Failed")
   }
 }
