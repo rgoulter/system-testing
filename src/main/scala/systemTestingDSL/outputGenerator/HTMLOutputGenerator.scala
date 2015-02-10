@@ -20,7 +20,7 @@ trait HTMLOutputGenerator extends OutputGenerator {
 
   def actual(actualText: String) = paragraph(actualText, "magenta")
 
-  def log(logText: String) = paragraph(logText, "yellow")
+  def log(logText: String) = paragraph(logText, "rgb(207, 207, 58)")
 
   private def paragraph(content: String, colour: String = "black"): String = (s"""<p style = "color: $colour ;"> $content </p>""")
 

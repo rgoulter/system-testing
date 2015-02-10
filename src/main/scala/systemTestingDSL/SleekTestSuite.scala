@@ -31,14 +31,14 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
       }
       displayResult(result._2)
       if (result._1.isDefined)
-        writer.println(result._1)
+        writer.println(result._1.get)
       writer.println
     })
   }
 
   def displayResult(result: String) = result match {
-    case "Passed" => passed
-    case _ => failed
+    case "Passed" => println(passed)
+    case _ => println(failed)
   }
 
   def generateTestStatistics: Unit = {
