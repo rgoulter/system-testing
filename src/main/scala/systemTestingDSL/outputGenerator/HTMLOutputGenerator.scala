@@ -4,7 +4,7 @@ trait HTMLOutputGenerator extends OutputGenerator {
 
   def had(hadResult: String): Unit = actual(s"Had: $hadResult")
 
-  def expect(expectedResult: String): Unit = expected(s"Expected: $expectedResult")
+  def expected(expectedResult: String): Unit = expect(s"Expected: $expectedResult")
 
   def writeToFile(name: String, directory: String, content: String) = super.writeToFile(name, directory, content, ".html")
 
@@ -16,7 +16,7 @@ trait HTMLOutputGenerator extends OutputGenerator {
 
   def success(successText: String) = paragraph(successText, "green")
 
-  def expected(expectedText: String) = paragraph(expectedText, "blue")
+  def expect(expectedText: String) = paragraph(expectedText, "blue")
 
   def actual(actualText: String) = paragraph(actualText, "magenta")
 

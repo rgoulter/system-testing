@@ -1,8 +1,9 @@
 package systemTestingDSL
 
 import scala.collection.mutable.MutableList
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
-class RegressionTestSuite {
+class RegressionTestSuite extends ConsoleOutputGenerator{
   var tests = new MutableList[RegressionTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
@@ -32,13 +33,13 @@ class RegressionTestSuite {
   }
 
   def displayResult(result: String) = result match {
-    case "Passed" => consoleUtilities.success("Passed")
-    case _ => consoleUtilities.error("Failed")
+    case "Passed" => passed
+    case _ => failed
   }
 
   def generateTestStatistics: Unit = {
-    consoleUtilities.log("Total number of tests: " + (successes.length + failures.length))
-    consoleUtilities.success("Total number of tests passed: " + successes.length)
-    consoleUtilities.error("Total number of tests failed: " + failures.length)
+    log("Total number of tests: " + (successes.length + failures.length))
+    success("Total number of tests passed: " + successes.length)
+    error("Total number of tests failed: " + failures.length)
   }
 }
