@@ -3,7 +3,7 @@ package systemTestingDSL
 import scala.collection.mutable.MutableList
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
-import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
+import systemTestingDSL.outputGenerator.HTMLOutputGenerator
 
 class SleekTestCaseBuilder {
   var commandName: String = ""
@@ -52,7 +52,7 @@ class SleekTestCaseBuilder {
   def build: SleekTestCase = new SleekTestCase(this)
 }
 class SleekTestCase(builder: SleekTestCaseBuilder)
-  extends Runnable with Parser with InferenceTester with ConsoleOutputGenerator {
+  extends Runnable with Parser with InferenceTester with HTMLOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
