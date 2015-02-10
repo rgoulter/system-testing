@@ -6,4 +6,6 @@ trait HTMLOutputGenerator extends OutputGenerator {
 
   def expected(expectedResult: String): Unit = println(s"Expected: $expectedResult")
 
+  def writeToFile(name: String, directory: String, content: String) = super.writeToFile(name, directory, content, ".html")
+
 }
