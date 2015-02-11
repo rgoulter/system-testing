@@ -8,28 +8,25 @@ import yaml # pip install pyyaml
 from hg_api import HgApi
 from commit import Commit
 
-
-def ensure_output_directory_exists():
-	utilities.create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'])
-
 def setup():
 	global hg
 	global settings
 	settings = yaml.load(open('settings.yaml').read())
 	hg = HgApi()
-	ensure_output_directory_exists()
+	utilities.ensure_output_directory_exists(settings['app']['output_directory_location'], settings['app']['output_directory_name'])
 	utilities.set_directory(settings['repository']['loris_local'])
 
 def process_branch(branch_name):
 	try:
 		hg.checkout_branch(branch_name)
-		if utilities.check_last_commit_date(hg.last_commit_date(branch_name)):
+		time_period = settings['app']['time_period']
+		if utilities.check_last_commit_date(hg.last_commit_date(branch_name), time_period):
 			print("Running tests on %s" % branch_name)
 			utilities.create_directory(settings['app']['output_directory_location'] + settings['app']['output_directory_name'] + '/' + branch_name)
 			# Checkout each rev, create directory accordingly and run
 			commit_list = hg.get_commit_list()
 			for commit in commit_list:
-				if utilities.check_last_commit_date(commit.date):
+				if utilities.check_last_commit_date(commit.date, time_period):
 					run_all_tests(branch_name, commit)
 			print("Done with commits branch %s" % branch_name)
 	except:
