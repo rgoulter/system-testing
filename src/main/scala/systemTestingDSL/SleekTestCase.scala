@@ -101,15 +101,17 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def matchUnequalFailedTests(filteredResults: Seq[String], expectedOutputList: Seq[String]): (Option[String], Boolean) = {
     val minSize = Math.min(filteredResults.length, expectedOutputList.size)
     var count, i = 0
-    var unmatchedResults = "" 
+    var unmatchedResults = ""
     for (count <- 0 until minSize) {
       if (!filteredResults(count).contains(expectedOutputList(count)))
         unmatchedResults += had(filteredResults(count))
       unmatchedResults += expected(expectedOutputList(count))
     }
-    unmatchedResults += "\nUnmatched\n"
+    unmatchedResults += "Unmatched\n"
+    unmatchedResults += "Extra Sleek Entail Output\n"
     for (i <- count until filteredResults.length)
       unmatchedResults += filteredResults(i)
+    unmatchedResults += "Extra Results\n"
     for (i <- count until expectedOutputList.length)
       unmatchedResults += expectedOutputList(i)
     return (Some(unmatchedResults), false)
