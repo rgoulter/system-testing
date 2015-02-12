@@ -2,9 +2,9 @@ package systemTestingDSL.outputGenerator
 
 trait HTMLOutputGenerator extends OutputGenerator {
 
-  def had(hadResult: String): Unit = actual(s"Had: $hadResult")
+  def had(hadResult: String): String = actual(s"Had: $hadResult")
 
-  def expected(expectedResult: String): Unit = expect(s"Expected: $expectedResult")
+  def expected(expectedResult: String): String = expect(s"Expected: $expectedResult")
 
   def writeToFile(name: String, directory: String, content: String) = super.writeToFile(name, directory, content, ".html")
 

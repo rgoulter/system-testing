@@ -88,7 +88,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     var resultOutput = ""
     val filteredResults = results.view.filter(_.contains("Entail")).zipWithIndex
     if (filteredResults.size != expectedOutputList.size)
-      return (None, false)
+      matchUnequalFailedTests(results, expectedOutputList)
     for ((result, i) <- filteredResults)
       if (!result.contains(expectedOutputList(i))) {
         resultOutput += had(result)
@@ -98,6 +98,22 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return (None, true)
   }
 
+  def matchUnequalFailedTests(filteredResults: Seq[String], expectedOutputList: Seq[String]): (Option[String], Boolean) = {
+    val minSize = Math.min(filteredResults.length, expectedOutputList.size)
+    var count, i = 0
+    val unmatchedResults = new ArrayBuffer[String]
+    for (count <- 0 until minSize) {
+      if (!filteredResults(count).contains(expectedOutputList(count)))
+        unmatchedResults += had(filteredResults(count))
+      unmatchedResults += expected(expectedOutputList(count))
+    }
+    unmatchedResults += "\nUnmatched\n"
+    for (i <- count until filteredResults.length)
+      unmatchedResults += filteredResults(i)
+    for (i <- count until expectedOutputList.length)
+      unmatchedResults += expectedOutputList(i)
+    return (None, false)
+  }
   def generateTestResult(): (Option[String], String) = {
     val results = checkResults()
     if (results._2)
