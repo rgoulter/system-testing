@@ -1,10 +1,10 @@
 package systemTestingDSL
 
 import scala.collection.mutable.MutableList
-import systemTestingDSL.outputGenerator.HTMLOutputGenerator
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
 
-class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends HTMLOutputGenerator {
+class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends ConsoleOutputGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
