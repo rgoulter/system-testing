@@ -120,5 +120,41 @@ Total verification time: 0.472028 second(s)
 	Time spent in main process: 0.244015 second(s)
 	Time spent in child processes: 0.228013 second(s)
 	"""
+  val sleek3Output = """!!! init_tp : Using Z3 by default
+Starting z3...
+Starting Omega.../usr/local/bin/oc
 
+Entailing lemma lem_12: Valid.
+
+Valid Lemmas : [lem_12:==>] added to lemma store.
+
+Entail 1: Valid.
+
+Residue:
+ <1>emp&{FLOW,(4,5)=__norm#E}[]
+[[ SEARCH ==>  (Lemma ==> lem_12(x,x)) ==> (left: lem_12) ==>  COND ==>  Match(x,x) ==> ]]
+
+
+
+Entail 2: Fail.(must) cause: (((x=1 & 1<=10) | (x=null & 10=0))) & n=10 |-  11<n. LOCS:[1;3;0;17] (must-bug)
+
+
+Entail 3: Valid.
+
+Residue:
+ <1>y::node<Anon_14,Anon_15>&0+1+1=c & r_187=r1 & Anon_186=Anon_170 & aa=null & 10<b & Anon_192=Anon_171 & r_193=aa&{FLOW,(4,5)=__norm#E}[]
+[[ Fold ==>  SEARCH ==>  Match(x,x) ==>  Fold ==>  SEARCH ==>  Match(r1,r_187) ==>  COND ==>  BaseCaseFold ==> ]]
+
+
+Stop z3... 66 invocations Stop Omega... 17 invocations
+SAT Count   : 231
+SAT % Hit   : 80.95%
+IMPLY Count : 39
+IMPLY % Hit : 43.58%
+Time(cache overhead) : 0.004 (seconds)
+
+!!! log(small):(0.109943,318)
+Total verification time: 0.108005 second(s)
+	Time spent in main process: 0.052003 second(s)
+	Time spent in child processes: 0.056002 second(s)"""
 }

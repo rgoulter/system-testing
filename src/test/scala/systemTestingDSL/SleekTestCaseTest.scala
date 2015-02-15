@@ -716,8 +716,8 @@ Total verification time: 3.348209 second(s)
         count += 1
       else println(token)
     assertEquals(5, count)
-
   }
+
   @Test
   def veribsyncBarrierStaticTest() = {
     val veribsync_barrier_staticTest = new SleekTestCase(

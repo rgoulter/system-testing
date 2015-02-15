@@ -87,7 +87,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
     var resultOutput = ""
     val filteredResults = results.view.filter(_.matches(builder.regex)).zipWithIndex
-    if(filteredResults.isEmpty)
+    if (filteredResults.isEmpty)
       return (Some("Binary failed to execute. Please investigate \n"), false)
     //    println(filteredResults.length)
     //    println(expectedOutputList.length)

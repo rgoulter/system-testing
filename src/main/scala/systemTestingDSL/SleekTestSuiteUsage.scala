@@ -166,7 +166,7 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg_case.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg_case", "Valid, Valid, Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/ll.slk", "  --elp ", "results", "lemmas_ll", "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/ll.slk", "  --elp ", "results", "lemmas_ll", "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/ll_tail.slk", "  --elp ", "results", "lemmas_ll_tail", "Valid, Valid")
 
@@ -182,15 +182,15 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/dseg1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_dseg1", "Valid, Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/odd-lseg.slk", "  --elp --dis-lem-gen --dis-eps", "results", "lemmas_odd_lseg", "Fail, Valid")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/odd-lseg.slk", "  --elp --dis-lem-gen --dis-eps", "results", "lemmas_odd_lseg", "Valid, Valid, Fail, Valid, Valid, Fail, Valid, Fail, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg_complex.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg_complex", "Valid, Valid, Fail")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg_complex.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg_complex", "Valid, Valid, Valid, Valid, Valid, Fail")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/split_simple.slk", "--en-para -perm fperm -tp redlog", "results", "fracperm_split_simple", "Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/fracperm/split-combine.slk", "--en-para -perm fperm -tp redlog", "results", "fracperm_split_combine", "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/vperm/vperm.slk", " --ann-vp", "results", "vperm_vperm", "Valid, Valid, Fail, Valid, Valid, Fail, Fail, Fail, Valid, Valid, Valid")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/vperm/vperm.slk", " --ann-vp", "results", "vperm_vperm", "Valid, Valid, Fail, Valid, Valid, Fail, Fail, Fail, Valid, Valid, Valid, Valid, Fail, Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/bperm-split-combine.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_bperm_split_combine", "Valid, Valid, Valid, Valid, Valid, Valid")
 
@@ -280,7 +280,7 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_static", "Valid, Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_dynamic", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_dynamic", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_dynamic2", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid")
 
