@@ -12,7 +12,7 @@ class SleekTestCaseBuilder {
   var outputDirectory: String = ""
   var outputFileName: String = ""
   var expectedOutput: String = ""
-  var regex: String = "Entail\\s\\d\\d:\\s.*Valid.*|Entail\\s\\d\\d:\\s.*Fail.*"
+  var regex: String = "Entail\\s\\d\\d:\\s.*Valid.*|Entail\\s\\d\\d:\\s.*Fail.*|Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*"
 
   def runCommand(commandName: String): SleekTestCaseBuilder = {
     this.commandName = commandName
@@ -83,7 +83,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     checkCorpus(this.output, results)
   }
 
-  def checkResults(): (Option[String], Boolean) = {
+  def checkResults(expectedOutput: String, result: Seq[String]): (Option[String], Boolean) = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
     var resultOutput = ""
     val filteredResults = results.view.filter(_.contains("Entail")).zipWithIndex
@@ -117,7 +117,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return (Some(unmatchedResults), false)
   }
   def generateTestResult(): (Option[String], String) = {
-    val results = checkResults()
+    val results = checkResults(expectedOutput, this.results)
     if (results._2)
       (None, "Passed")
     else (results._1, "Failed")
