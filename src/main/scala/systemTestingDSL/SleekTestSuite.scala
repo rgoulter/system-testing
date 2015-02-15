@@ -16,7 +16,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
     outputDirectoryName: String,
     outputFileName: String,
     expectedOutput: String,
-    regex: String = "Entail\\s.*.*Valid.*|.*Fail.*"): Unit = {
+    regex: String = "Entail.*:\\s.*Valid.*|Entail.*:\\s.*Fail.*|Entailing lemma.*:*Valid.*|Entailing lemma.*:.*Fail.*"): Unit = {
     tests +=
       new SleekTestCaseBuilder runCommand commandName onFile fileName withArguments arguments storeOutputInDirectory outputDirectoryName withOutputFileName
       outputFileName checkAgainst expectedOutput usingRegex regex
