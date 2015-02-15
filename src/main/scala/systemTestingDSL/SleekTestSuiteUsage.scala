@@ -196,7 +196,7 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_static", "Valid, Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_dynamic2", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk", "--en-para -perm bperm -tp redlog", "results", "veribsync_barrier_dynamic2", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Fail, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/threads/thrd1.slk", " --en-para --en-thrd-resource -tp redlog", "results", "threads_thrd1", "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Val")
 
