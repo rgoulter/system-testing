@@ -86,7 +86,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def checkResults(expectedOutput: String, result: Seq[String]): (Option[String], Boolean) = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
     var resultOutput = ""
-    val filteredResults = results.view.filter(_.contains("Entail")).zipWithIndex
+    val filteredResults = results.view.filter(_.matches(builder.regex)).zipWithIndex
     if (filteredResults.size != expectedOutputList.size)
       return matchUnequalFailedTests(results, expectedOutputList)
     for ((result, i) <- filteredResults)
@@ -107,11 +107,11 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
         unmatchedResults += had(filteredResults(count))
       unmatchedResults += expected(expectedOutputList(count))
     }
-    unmatchedResults += "Unmatched\n"
-    unmatchedResults += "Extra Sleek Entail Output\n"
+    unmatchedResults += "\nUnmatched\n"
+    unmatchedResults += "\nExtra Sleek Entail Output\n\n"
     for (i <- count until filteredResults.length)
       unmatchedResults += filteredResults(i)
-    unmatchedResults += "Extra Results\n"
+    unmatchedResults += "\nExtra Results\n"
     for (i <- count until expectedOutputList.length)
       unmatchedResults += expectedOutputList(i)
     return (Some(unmatchedResults), false)

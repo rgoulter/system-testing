@@ -22,39 +22,39 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek2.slk", " ", "results", "sleek2", "Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek3.slk", " --elp", "results", "sleek3", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek3.slk", " --elp", "results", "sleek3", "Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek4.slk", " ", "results", "sleek4", "Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek6.slk", " ", "results", "sleek6", "Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek7.slk", "  --dis-lem-gen ", "results", "sleek7", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek7.slk", "  --dis-lem-gen ", "results", "sleek7", "Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek8.slk", "  --dis-lem-gen ", "results", "sleek8", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek8.slk", "  --dis-lem-gen ", "results", "sleek8", "Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek8.slk", "  --elp ", "results", "sleek8", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek8.slk", "  --elp ", "results", "sleek8", "Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek9.slk", "  --elp ", "results", "sleek9", "Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek9.slk", "  --elp ", "results", "sleek9", "Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek12-lend.slk", " ", "results", "sleek12_lend", "Valid, Fail, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek13-lend.slk", " ", "results", "sleek13_lend", "Valid, Valid, Valid, Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lst-under1.slk", " --inv-test", "results", "lst_under1", "Valid, Fail,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lst-under1.slk", " --inv-test", "results", "lst_under1", "Valid, Fail")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lst-under2.slk", " --inv-test", "results", "lst_under2", "Fail, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1a.slk", "  --inv-test --baga-xpure ", "results", "ll_under1a", "Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1a.slk", "  --inv-test --baga-xpure ", "results", "ll_under1a", "Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1b.slk", "  --inv-test --baga-xpure ", "results", "ll_under1b", "Fail, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1b.slk", "  --inv-test --baga-xpure ", "results", "ll_under1b", "Fail, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1c.slk", "  --inv-test --baga-xpure ", "results", "ll_under1c", "Valid, Fail,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1c.slk", "  --inv-test --baga-xpure ", "results", "ll_under1c", "Valid, Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1d.slk", "  --inv-test --baga-xpure ", "results", "ll_under1d", "Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1d.slk", "  --inv-test --baga-xpure ", "results", "ll_under1d", "Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1e.slk", "  --inv-test --baga-xpure ", "results", "ll_under1e", "Fail, Fail,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1e.slk", "  --inv-test --baga-xpure ", "results", "ll_under1e", "Fail, Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1f.slk", "  --inv-test --baga-xpure ", "results", "ll_under1f", "Valid, Fail,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/ll-under1f.slk", "  --inv-test --baga-xpure ", "results", "ll_under1f", "Valid, Fail")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/baga-test-eps.slk", " --eps", "results", "baga_test_eps", "Fail, Fail, Valid, Valid, Fail, Valid, Valid, Fail, Fail, Valid, Fail, Fail, Valid, Valid, Valid")
 
@@ -146,27 +146,27 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/infinity.slk", "--dsd --en-inf --dis-eps", "results", "infinity", "Fail, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Fail, Valid, Fail, Valid, Fail, Fail, Valid, Valid, Fail, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Valid, Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/inflem.slk", "  --en-inf --elp --dis-eps", "results", "inflem", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/inflem.slk", "  --en-inf --elp --dis-eps", "results", "inflem", "Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/sort2.slk", "  --elp --dis-lem-gen ", "results", "lemmas_sort2", "Fail, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/sort2.slk", "  --elp --dis-lem-gen ", "results", "lemmas_sort2", "Fail, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg", "Valid, Valid, Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg", "Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg1", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg1", "Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/rlseg.slk", "  --elp --dis-lem-gen", "results", "lemmas_rlseg", "Valid, Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/rlseg.slk", "  --elp --dis-lem-gen", "results", "lemmas_rlseg", "Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lemma-fold.slk", "  --elp ", "results", "lemmas_lemma_fold", "Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lemma-fold.slk", "  --elp ", "results", "lemmas_lemma_fold", "Valid, Valid, ")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/rd-lem-1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_rd_lem_1", "Fail, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/rd-lem-1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_rd_lem_1", "Fail, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/rd-lem-2.slk", " ", "results", "lemmas_rd_lem_2", "Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/app-tail.slk", "  --elp ", "results", "lemmas_app_tail", "Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/app-tail.slk", "  --elp ", "results", "lemmas_app_tail", "Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg_case.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg_case", "Valid, Valid, Valid, Valid, Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg_case.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg_case", "Valid, Valid, Valid, Valid, Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/ll.slk", "  --elp ", "results", "lemmas_ll", "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/ll.slk", "  --elp ", "results", "lemmas_ll", "Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/ll_tail.slk", "  --elp ", "results", "lemmas_ll_tail", "Valid, Valid")
 
@@ -178,11 +178,11 @@ object SleekTestSuiteUsage {
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/sll_tailL.slk", "  --elp ", "results", "lemmas_sll_tailL", "Valid, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/dseg-new.slk", "  --elp --dis-lem-gen ", "results", "lemmas_dseg_new", "Valid, Fail, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/dseg-new.slk", "  --elp --dis-lem-gen ", "results", "lemmas_dseg_new", "Valid, Fail, Valid")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/dseg1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_dseg1", "Valid, Fail,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/dseg1.slk", "  --elp --dis-lem-gen ", "results", "lemmas_dseg1", "Valid, Fail")
 
-    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/odd-lseg.slk", "  --elp --dis-lem-gen --dis-eps", "results", "lemmas_odd_lseg", "Valid, Valid,")
+    suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/odd-lseg.slk", "  --elp --dis-lem-gen --dis-eps", "results", "lemmas_odd_lseg", "Valid, Valid")
 
     suite addTest ("sleek", "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg_complex.slk", "  --elp --dis-lem-gen ", "results", "lemmas_lseg_complex", "Valid, Valid, Valid")
 
