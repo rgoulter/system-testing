@@ -4,7 +4,7 @@ import systemTestingDSL.matchers._
 
 object SleekTestSuiteUsage {
 
-  def main(args: Array[String]): Unit = {
+  def run(): Unit = {
 
     val suite = new SleekTestSuite()
 
