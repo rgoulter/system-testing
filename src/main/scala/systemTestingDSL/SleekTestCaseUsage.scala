@@ -526,6 +526,5 @@ object Usage {
     veribsync_barrier_dynamic2Test1.build generateOutput ()
 
   }
-
 }
 

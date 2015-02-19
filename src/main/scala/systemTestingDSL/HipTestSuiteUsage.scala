@@ -1,0 +1,5 @@
+package systemTestingDSL
+
+object HipTestSuiteUsage {
+
+}
