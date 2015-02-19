@@ -2,8 +2,8 @@ package systemTestingDSL
 
 import java.io.File
 import java.io.FileNotFoundException
-import java.nio.file.Paths
 import java.nio.file.Files
+import java.nio.file.Paths
 package object fileSystemUtilities {
 
   /**
@@ -58,5 +58,14 @@ package object fileSystemUtilities {
       case ex: FileNotFoundException =>
     }
     lines
+  }
+
+  /**
+   * Checks whether given directory exists and creates one if it doesn't
+   */
+  def checkOutputDirectory(outputDirectoryName: String) = {
+    val outputDirectory = new File(outputDirectoryName)
+    if (!outputDirectory.exists())
+      createDirectory(outputDirectoryName)
   }
 }

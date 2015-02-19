@@ -1,6 +1,7 @@
 import os
 import time
 import hg_commands as commands
+from commit import Commit
 
 class HgApi:
 	'''
@@ -33,10 +34,14 @@ class HgApi:
 	def revert(self):
 		self._execute(commands.revert)
 
+	"""
+		Returns a list of Commit objects (see commit.py) with attributes (rev_id, commit_hash, commit_date)
+	"""
 	def get_commit_list(self):
 		commit_list = self._execute(commands.commit_list).split("\n")[:-1]
 		commits = []
 		for commit in commit_list:
 			commit_info = commit.split("_")
-			commits.append((commit_info[0], commit_info[-1].split("-")[0]))
+			new_commit = Commit(commit_info[0], commit_info[1], commit_info[-1].split("-")[0])
+			commits.append(new_commit)
 		return commits

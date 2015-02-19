@@ -1,8 +1,10 @@
 package systemTestingDSL
 
 import scala.collection.mutable.MutableList
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
+import java.io.PrintWriter
 
-class SleekTestSuite {
+class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends ConsoleOutputGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
@@ -14,7 +16,7 @@ class SleekTestSuite {
     outputDirectoryName: String,
     outputFileName: String,
     expectedOutput: String,
-    regex: String = "Entail\\s.*.*Valid.*|.*Fail.*"): Unit = {
+    regex: String = "Entail.*:\\s.*Valid.*|Entail.*:\\s.*Fail.*|Entailing lemma.*:*Valid.*|Entailing lemma.*:.*Fail.*"): Unit = {
     tests +=
       new SleekTestCaseBuilder runCommand commandName onFile fileName withArguments arguments storeOutputInDirectory outputDirectoryName withOutputFileName
       outputFileName checkAgainst expectedOutput usingRegex regex
@@ -22,24 +24,26 @@ class SleekTestSuite {
 
   def runAllTests: Unit = {
     tests.foreach(test => {
-      val result = test.build.generateOutput
-      result match {
+      lazy val result = test.build.generateOutput
+      result._2 match {
         case "Passed" => successes += test.fileName
         case _ => failures += test.fileName
       }
-      displayResult(result)
-      println()
+      displayResult(result._2)
+      if (result._1.isDefined)
+        writer.println(result._1.get)
+      writer.println
     })
   }
 
   def displayResult(result: String) = result match {
-    case "Passed" => consoleUtilities.success("Passed")
-    case _ => consoleUtilities.error("Failed")
+    case "Passed" => println(passed)
+    case _ => println(failed)
   }
 
   def generateTestStatistics: Unit = {
-    consoleUtilities.log("Total number of tests: " + (successes.length + failures.length))
-    consoleUtilities.success("Total number of tests passed: " + successes.length)
-    consoleUtilities.error("Total number of tests failed: " + failures.length)
+    writer.println(log("Total number of tests: " + (successes.length + failures.length)))
+    writer.println(success("Total number of tests passed: " + successes.length))
+    writer.println(error("Total number of tests failed: " + failures.length))
   }
 }

@@ -20,4 +20,6 @@ template_option = '-T'
 
 commit_template = r'"{node}_{date|hgdate}\n"'
 
-commit_list = log + whitespace + max_number + whitespace + template_option + whitespace + r'"{node}_{date|hgdate}\n"'
+local_commit_tempalte = r'"{rev}_{date|hgdate}\n"'
+
+commit_list = log + whitespace + max_number + whitespace + template_option + whitespace + r'"{rev}_{node}_{date|hgdate}\n"'
