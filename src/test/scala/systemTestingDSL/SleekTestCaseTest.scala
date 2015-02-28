@@ -682,7 +682,6 @@ Total verification time: 3.348209 second(s)
     for (token <- tokenized)
       if (token.matches(this.regex))
         count += 1
-      else println(token)
     assertEquals(27, count)
     assertTrue("Entail 1: Valid.".matches(this.regex))
   }
@@ -702,9 +701,7 @@ Total verification time: 3.348209 second(s)
     val barrierDynamic2Test = new SleekTestCase(
       new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_dynamic2" checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Fail, Valid")
     barrierDynamic2Test.parse(barrierDynamicOutput, this.regex, "\n")
-    println(barrierDynamic2Test.results)
     val barrierDynamicResults = barrierDynamic2Test.generateTestResult._1
-    println(barrierDynamicResults)
   }
 
   @Test
@@ -714,7 +711,6 @@ Total verification time: 3.348209 second(s)
     for (token <- tokenized)
       if (token.matches(this.regex))
         count += 1
-      else println(token)
     assertEquals(5, count)
   }
 

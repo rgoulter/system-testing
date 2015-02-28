@@ -3,6 +3,7 @@ package systemTestingDSL
 import scala.collection.mutable.MutableList
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.HashMap
 
 class HipTestCaseBuilder {
   var commandName: String = ""
@@ -11,7 +12,7 @@ class HipTestCaseBuilder {
   var outputDirectory: String = ""
   var outputFileName: String = ""
   var expectedOutput: String = ""
-  var regex: String = "Entail\\s\\d\\d:\\s.*Valid.*|Entail\\s\\d\\d:\\s.*Fail.*"
+  var regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"
 
   def runCommand(commandName: String): HipTestCaseBuilder = {
     this.commandName = commandName
@@ -66,6 +67,12 @@ class HipTestCase(builder: HipTestCaseBuilder)
     results += rule
   }
 
+  def buildExpectedOutputMap(results: String): HashMap[String, String] = {
+    val outputMap = new HashMap[String, String]
+    results.split(",").foreach(result => outputMap.put(result.substring(0, result.indexOf(":")).trim, result.substring(result.indexOf(":") + 1).trim))
+    outputMap
+  }
+
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
@@ -84,21 +91,20 @@ class HipTestCase(builder: HipTestCaseBuilder)
     generateTestResults()
   }
 
-  def testInference(results: ArrayBuffer[(String, String)]) = {
-    checkCorpus(this.output, results)
-  }
-
   def checkResults(): Boolean = {
-    val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
-    val filteredResults = results.view.filter(line => line.contains("Entail")).zipWithIndex
-    if (filteredResults.size != expectedOutputList.size)
+    val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
+    val filteredResults = results.view.filter(_.matches(this.regex))
+    if (filteredResults.size != expectedOutputMap.size)
       return false
-    for ((x, i) <- filteredResults)
-      if (!x.contains(expectedOutputList(i))) {
-        println("Had: " + x)
-        println("Expected: " + expectedOutputList(i))
+    for (outputLine <- filteredResults) {
+      var methodName = outputLine.split(" ")(1)
+      methodName = methodName.substring(0, methodName.indexOf("$"))
+      val result: String = if (outputLine.contains("FAIL"))
+        "FAIL"
+      else "SUCCESS"
+      if (!expectedOutputMap(methodName).equals(result))
         return false
-      }
+    }
     return true
   }
 
