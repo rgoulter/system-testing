@@ -89,7 +89,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   def generateOutput() = {
     run
     this.parse(this.output, builder.regex, NEW_LINE)
-    generateTestResults()
+    generateTestResult()
   }
 
   def checkResults(expectedOutput: String, result: String): (Option[String], Boolean) = {
@@ -115,7 +115,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
     return (None, true)
   }
 
-  def generateTestResults(): (Option[String], String) = {
+  def generateTestResult(): (Option[String], String) = {
     val results = checkResults(expectedOutput, this.expectedOutput)
     if (results._2)
       (None, "Passed")
