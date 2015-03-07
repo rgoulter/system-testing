@@ -1,5 +1,0 @@
-package systemTestingDSL
-
-class TestSuite {
-
-}

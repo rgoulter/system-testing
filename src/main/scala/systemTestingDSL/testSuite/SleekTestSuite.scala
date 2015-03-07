@@ -1,8 +1,9 @@
-package systemTestingDSL
+package systemTestingDSL.testSuite
 
 import scala.collection.mutable.MutableList
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
+import systemTestingDSL.SleekTestCaseBuilder
 
 class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends ConsoleOutputGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()

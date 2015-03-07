@@ -1,6 +1,7 @@
 package systemTestingDSL
 
 import systemTestingDSL.matchers._
+import systemTestingDSL.testSuite.SleekTestSuite
 
 object SleekTestSuiteUsage {
 

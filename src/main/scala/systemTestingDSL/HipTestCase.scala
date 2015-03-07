@@ -4,6 +4,7 @@ import scala.collection.mutable.MutableList
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.HashMap
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
 class HipTestCaseBuilder {
   var commandName: String = ""
@@ -52,7 +53,7 @@ class HipTestCaseBuilder {
   def build: HipTestCase = new HipTestCase(this)
 }
 class HipTestCase(builder: HipTestCaseBuilder)
-  extends Runnable with Parser with InferenceTester {
+  extends Runnable with Parser with ConsoleOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
@@ -76,7 +77,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      generateOutputFile(output)
+      writeToFile(this.outputFileName, this.outputDirectory, output)
   }
 
   def printResults() = {
@@ -91,33 +92,33 @@ class HipTestCase(builder: HipTestCaseBuilder)
     generateTestResults()
   }
 
-  def checkResults(): Boolean = {
-    val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
+  def checkResults(expectedOutput: String, result: String): (Option[String], Boolean) = {
+    val expectedOutputMap = buildExpectedOutputMap(result)
+    var resultOutput = ""
     val filteredResults = results.view.filter(_.matches(this.regex))
+    if (filteredResults.isEmpty)
+      return (Some("Binary failed to execute. Please investigate \n"), false)
     if (filteredResults.size != expectedOutputMap.size)
-      return false
+      return (None, false)
     for (outputLine <- filteredResults) {
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
       val result: String = if (outputLine.contains("FAIL"))
         "FAIL"
       else "SUCCESS"
-      if (!expectedOutputMap(methodName).equals(result))
-        return false
+      if (!expectedOutputMap(methodName).equals(result)) {
+        resultOutput += had(result)
+        resultOutput += expected(expectedOutputMap(methodName))
+        return (Some(resultOutput), false)
+      }
     }
-    return true
+    return (None, true)
   }
 
-  def generateTestResults(): String = if (checkResults()) "Passed" else "Failed"
-
-  def checkOutputDirectory = {
-    val outputDirectory = new File(this.outputDirectory)
-    if (!outputDirectory.exists())
-      fileSystemUtilities.createDirectory(this.outputDirectory)
-  }
-
-  def generateOutputFile(consoleOutput: String) = {
-    checkOutputDirectory
-    fileSystemUtilities.printToFile(new File(outputDirectory.concat(File.separator).concat(outputFileName)))(p => p.print(consoleOutput))
+  def generateTestResults(): (Option[String], String) = {
+    val results = checkResults(expectedOutput, this.expectedOutput)
+    if (results._2)
+      (None, "Passed")
+    else (results._1, "Failed")
   }
 }
