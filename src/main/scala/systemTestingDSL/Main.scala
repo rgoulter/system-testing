@@ -22,7 +22,7 @@ object Main {
     SleekTestSuiteUsage run
   }
 
-  private def runHipTests(): Unit = println(error("Not implemented yet"))
+  private def runHipTests(): Unit = HipTestSuiteUsage run
 
   private def showHelpText(): Unit = {
     println(error("Supported Options: sbt run [sleek/hip/all]"))
