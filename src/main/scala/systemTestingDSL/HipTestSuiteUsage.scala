@@ -825,57 +825,75 @@ object HipTestSuiteUsage {
 
   def addMemTests(suite: HipTestSuite): Unit = {
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/eps.ss", " --baga-xpure", "results", "eps.out", " get_next: SUCCESS, get_next_next: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/dag.ss", "-tp om --mem --ramify", "results", "dag.out", "mark: SUCCESS, mark2: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/append.ss", " --baga-xpure", "results", "append.out", " append: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/dag_values.ss", "-tp om --mem --ramify", "results", "dag_values.out", "mark: SUCCESS, mark2: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/append-tail.ss", " --baga-xpure", "results", "append_tail.out", "append: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/dag_values_infer.ss", "-tp om --mem --ramify --infer-mem", "results", "dag_values_infer.out", "mark: SUCCESS, mark2: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/avl-bind.ss", " --baga-xpure", "results", "avl_bind.out", " height: SUCCESS,  rotate_left: SUCCESS,  rotate_right: SUCCESS,  get_max: SUCCESS,  rotate_double_left: SUCCESS, rotate_double_right: SUCCESS, build_avl1: SUCCESS, build_avl2: SUCCESS, insert: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph.ss", "-tp om --mem --ramify", "results", "graph.out", "mark: SUCCESS, mark2: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/avl.ss", " --baga-xpure", "results", "avl.out", " height: SUCCESS, rotate_left: SUCCESS, rotate_right: SUCCESS, get_max: SUCCESS, rotate_double_left: SUCCESS, rotate_double_right: SUCCESS, build_avl1: SUCCESS, build_avl2: SUCCESS, insert: SUCCESS, insert_inline: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_values.ss", "-tp om --mem --ramify", "results", "graph_values.out", "mark: SUCCESS, mark2: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/avl-orig-2.ss", " --baga-xpure", "results", "avl_orig_2.out", "height: SUCCESS, get_max: SUCCESS, insert: SUCCESS, double_left_child: SUCCESS, double_right_child: SUCCESS, rotate_left_child: SUCCESS,  rotate_right_child: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_values_infer.ss", "-tp om --mem --ramify --infer-mem", "results", "graph_values_infer.out", "mark: SUCCESS, mark2: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/avl-orig3.ss", " --baga-xpure", "results", "avl_orig3.out", " height: SUCCESS, get_max: SUCCESS, insert: SUCCESS,  double_left_child: SUCCESS, double_right_child: SUCCESS,  rotate_left_child: SUCCESS, rotate_right_child: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/dag_1.ss", "-tp om --mem --ramify", "results", "dag_1.out", "mark: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/bll.ss", " --baga-xpure", "results", "bll.out", " insert: SUCCESS, delete: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/dag_1_ramify.ss", "-tp om --mem --ramify", "results", "dag_1_ramify.out", "mark: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/bubble.ss", " --baga-xpure", "results", "bubble.out", " id2: SUCCESS, id3: SUCCESS, bubble: SUCCESS, bsort: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_1.ss", "-tp om --mem --ramify", "results", "graph_1.out", "mark: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/cll.ss", " --baga-xpure", "results", "cll.out", " test: SUCCESS, insert: SUCCESS, count_rest: SUCCESS, count: SUCCESS, delete: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_1_ramify.ss", "-tp om --mem --ramify", "results", "graph_1_ramify.out", "mark: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/complete.ss", " --baga-xpure", "results", "complete.out", " maxim: SUCCESS, minim: SUCCESS, height: SUCCESS, min_height: SUCCESS, insert: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/dag_copy.ss", "-tp om --mem --ramify", "results", "dag_copy.out", "copy_dag: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/dll.ss", " --baga-xpure", "results", "dll.out", " insert: SUCCESS, delete: SUCCESS, delete1: SUCCESS, test_del: SUCCESS, test_del2: SUCCESS, test_fold: SUCCESS, append: SUCCESS, append1: SUCCESS, f1: SUCCESS, f2: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/garbage_collector.ss", "-tp om --mem --ramify", "results", "garbage_collector.out", "mark: SUCCESS, sweep: SUCCESS, collect: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/heaps.ss", " --baga-xpure", "results", "heaps.out", " insert: SUCCESS, deleteoneel: SUCCESS, deleteone: SUCCESS, ripple: SUCCESS, deletemax: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/garbage_collector_values.ss", "-tp om --mem --ramify", "results", "garbage_collector_values.out", "mark: SUCCESS, sweep: SUCCESS, collect: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/insertion.ss", " --baga-xpure", "results", "insertion.out", " insert: SUCCESS, insertion_sort: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/garbage_collector_values_infer.ss", "-tp om --mem --ramify --infer-mem", "results", "garbage_collector_values_infer.out", "mark: SUCCESS, sweep: SUCCESS, collect: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/ll.ss", " --baga-xpure", "results", "ll.out", " append: SUCCESS, ret_first: SUCCESS, get_next: SUCCESS, set_next: SUCCESS, set_null: SUCCESS, get_next_next: SUCCESS, insert: SUCCESS, delete: SUCCESS, create_list: SUCCESS, reverse: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/llsortll.ss", "-tp om --mem --eps", "results", "llsortll.out", "overlaid_insert: SUCCESS, delete2: SUCCESS, insert2: SUCCESS, get_tail: SUCCESS, insertion_sort: SUCCESS, id: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/merge.ss", " --baga-xpure", "results", "merge.out", " count: SUCCESS, split_func: SUCCESS, merge_sort: SUCCESS, merge: SUCCESS, insert: SUCCESSxw")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/infer_llsortll.ss", "-tp om --mem --eps --infer-mem", "results", "infer_llsortll.out", "overlaid_insert: SUCCESS, delete2: SUCCESS, insert2: SUCCESS, get_tail: SUCCESS, insertion_sort: SUCCESS, id: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/perfect.ss", " --baga-xpure", "results", "perfect.out", " simple_insert: SUCCESS, create: SUCCESS, maxim: SUCCESS, height: SUCCESS, insert: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/lltree.ss", "-tp om --mem", "results", "lltree.out", "move_request: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/qsort.ss", " --baga-xpure", "results", "qsort.out", " partition: SUCCESS, append_bll: SUCCESS, qsort: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/infer_lltree.ss", "-tp om --mem --infer-mem", "results", "infer_lltree.out", "move_request: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/selection.ss", " --baga-xpure", "results", "selection.out", " find_min: SUCCESS, delete_min: SUCCESS, selection_sort: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/lltree2.ss", "-tp om --mem --eps", "results", "lltree2.out", "move_request: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/sll.ss", " --baga-xpure", "results", "sll.out", " insert: SUCCESS, insert2: SUCCESS, delete: SUCCESS, get_tail: SUCCESS, insertion_sort: SUCCESS, id: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/infer_lltree2.ss", "-tp om --mem --eps --infer-mem", "results", "infer_lltree2.out", "move_request: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/trees.ss", " --baga-xpure", "results", "trees.out", " append: SUCCESS, count: SUCCESS, flatten: SUCCESS, insert: SUCCESS, remove_min: SUCCESS, delete: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/nodell.ss", "-tp om --mem --ramify", "results", "nodell.out", "delete_cache: SUCCESS, delete: SUCCESS, add_L: SUCCESS, caching: SUCCESS, add_in: SUCCESS, find: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/rb.ss", " --baga-xpure", "results", "rb.out", " rotate_case_3: SUCCESS, case_2: SUCCESS, rotate_case_3r: SUCCESS, case_2r: SUCCESS, is_red: SUCCESS, is_black: SUCCESS, del_6: SUCCESS, del_6r: SUCCESS, del_5: SUCCESS, del_5r: SUCCESS, del_4: SUCCESS, del_4r: SUCCESS, del_3: SUCCESS, del_3r: SUCCESS, del_2: SUCCESS, remove_min: SUCCESS, del: SUCCESS, insert: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/nodell_infer.ss", "-tp om --mem --ramify --infer-mem", "results", "nodell_infer.out", "delete_cache: SUCCESS, delete: SUCCESS, add_L: SUCCESS, caching: SUCCESS, add_in: SUCCESS, find: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/global-ll.ss", " --baga-xpure", "results", "global_ll.out", " insert_rec: SUCCESS, delete_last_rec: SUCCESS, insert: SUCCESS, delete_last: SUCCESS, main: SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/pll.ss", "-tp om --mem", "results", "pll.out", "length: SUCCESS, sum: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/modular_examples/dll-modular.ss", " --overeps --baga-xpure", "results", "modular_examples_dll_modular.out", "append:  SUCCESS,  append1:  SUCCESS,  append2:  SUCCESS, delete:  SUCCESS,  delete1:  SUCCESS,  f1:  SUCCESS, f2:  SUCCESS,  insert:  SUCCESS,  test_del:  SUCCESS, test_del2:  SUCCESS,  test_fold:  SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/pll_ramify.ss", "-tp om --mem --ramify", "results", "pll_ramify.out", "length: SUCCESS, sum: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/modular_examples/selection-modular.ss", " --overeps --lda --baga-xpure", "results", "modular_examples_selection_modular.out", "delete_min:  SUCCESS,  find_min:  SUCCESS,  selection_sort:  SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/pll_infer.ss", "-tp om --mem --infer-mem", "results", "pll_infer.out", "length: SUCCESS, sum: SUCCESS")
 
-    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/hip_baga/modular_examples/qsort-modular.ss", " --overeps --lda --baga-xpure", "results", "modular_examples_qsort_modular.out", "append_bll:  SUCCESS,  partition:  SUCCESS,  qsort:  SUCCESS")
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/pll_ramify_infer.ss", "-tp om --mem --ramify --infer-mem", "results", "pll_ramify_infer.out", "length: SUCCESS, sum: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/doubly_circular_list.ss", "-tp om --mem", "results", "doubly_circular_list.out", "insert_node_dcll: SUCCESS, insert_lln: SUCCESS, insert_llt: SUCCESS, insert_dcll: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/infer_doubly_circular_list.ss", "-tp om --mem --infer-mem", "results", "infer_doubly_circular_list.out", "insert_node_dcll: SUCCESS, insert_lln: SUCCESS, insert_llt: SUCCESS, insert_dcll: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/process_schedular.ss", "-tp om --mem", "results", "process_schedular.out", "insert_process: SUCCESS, insert_rll: SUCCESS, insert_pll: SUCCESS, insert_sll: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/process_schedular_ramify.ss", "-tp om --mem --ramify", "results", "process_schedular_ramify.out", "insert_process: SUCCESS, insert_rll: SUCCESS, insert_pll: SUCCESS, insert_sll: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/ramified-cells.ss", "--mem --ramify", "results", "ramified_cells.out", "ex0: SUCCESS, ex1: SUCCESS, mark: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/ramified-pairs.ss", "--mem --ramify", "results", "ramified_pairs.out", "mark: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/jsvarstore.ss", "--mem --ramify", "results", "jsvarstore.out", "ex1: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_spanning.ss", "-tp om --mem --ramify --eps", "results", "graph_spanning.out", "spanning: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_spanning_infer.ss", "-tp om --mem --ramify --eps --infer-mem", "results", "graph_spanning_infer.out", "spanning: SUCCESS")
 
   }
 
