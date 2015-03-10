@@ -98,15 +98,13 @@ class HipTestCase(builder: HipTestCaseBuilder)
     val filteredResults = results.view.filter(_.matches(this.regex))
     if (filteredResults.isEmpty)
       return (Some("Binary failed to execute. Please investigate \n"), false)
-//    if (filteredResults.size != expectedOutputMap.size)
-//      return (None, false)
     for (outputLine <- filteredResults) {
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
       val result: String = if (outputLine.contains("FAIL"))
         "FAIL"
       else "SUCCESS"
-      if (!expectedOutputMap(methodName).equals(result)) {
+      if (expectedOutputMap.contains(methodName) && !expectedOutputMap(methodName).equals(result)) {
         resultOutput += had(result)
         resultOutput += expected(expectedOutputMap(methodName))
         return (Some(resultOutput), false)
