@@ -13,7 +13,8 @@ object HipTestSuiteUsage {
     //    addImmTests(suite)
     //    addThreadTests(suite)
     //    addHipBagaTests(suite)
-    addMemTests(suite)
+    //    addMemTests(suite)
+    addVeribsyncTests(suite)
 
     // Debug this one
     suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/imm-field/sll.ss", "-tp oc --field-ann --etcsu1 ", "results", "sll.out", "delete: SUCCESS, get_tail: SUCCESS, insert: SUCCESS, insert2: SUCCESS")
@@ -894,6 +895,74 @@ object HipTestSuiteUsage {
     suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_spanning.ss", "-tp om --mem --ramify --eps", "results", "graph_spanning.out", "spanning: SUCCESS")
 
     suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/mem/graph_spanning_infer.ss", "-tp om --mem --ramify --eps --infer-mem", "results", "graph_spanning_infer.out", "spanning: SUCCESS")
+
+  }
+
+  def addVeribsyncTests(suite: HipTestSuite): Unit = {
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/while-loop.ss", "  --en-para -perm bperm -tp redlog", "results", "while_loop.out", "fun: SUCCESS, fun3: SUCCESS, loop_fun: SUCCESS, loop_fun3: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/while-loop2.ss", "  --en-para -perm bperm -tp redlog", "results", "while_loop2.out", "fun: SUCCESS, fun3: SUCCESS, fun4: SUCCESS, fun5: SUCCESS, fun6: SUCCESS, fun7: SUCCESS, fun8: SUCCESS, fun9: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/hip-bperm1.ss", "  --en-para -perm bperm -tp redlog", "results", "hip_bperm1.out", "destroyCellFail: FAIL, readCell: SUCCESS, testNewCell: SUCCESS, testNewCell2: SUCCESS, updateCell: SUCCESS, updateCellFail: FAIL")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/bperm-exp.ss", "  --en-para -perm bperm -tp redlog", "results", "bperm_exp.out", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-primitives.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_primitives.out", "main: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-exp1.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_exp1.out", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-exp2.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_exp2.out", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-exp3.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_exp3.out", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-complex.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_complex.out", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-complex2.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_complex2.out", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-complex3.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_complex3.out", "main: SUCCESS, thread: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-multiple.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_multiple.out", "main: SUCCESS, main_fail: SUCCESS, participant: SUCCESS, participant_fail: FAIL")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-static-consistency.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_static_consistency.out", "main: SUCCESS, main_fail: FAIL, participant: SUCCESS, participant1: SUCCESS, participant_fail: FAIL")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp1.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp1.out", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp2.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp2.out", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp3.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp3.out", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp4.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp4.out", "childthread1: SUCCESS, childthread2: SUCCESS, main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp5.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp5.out", "main: SUCCESS, thread: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp6.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp6.out", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/barrier-dynamic-exp7.ss", "  --en-para -perm bperm -tp redlog", "results", "barrier_dynamic_exp7.out", "CalculationInTask: SUCCESS, main: SUCCESS")
+
+    suite addTest ("hip", "/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/barnes.ss", "  --en-para -perm bperm -tp redlog", "results", "benchmark_barnes.out", "ANLinit: SUCCESS,  ComputeForces: SUCCESS, Housekeep: SUCCESS, find_my_bodies: SUCCESS, hackcofm: SUCCESS, maketree: SUCCESS, stepsystem: SUCCESS, find_my_initial_bodies: SUCCESS, SlaveStart: SUCCESS, diagnostics: SUCCESS, initoutput: SUCCESS, initparam: SUCCESS, startrun: SUCCESS, tab_init: SUCCESS, main: SUCCESS, output: SUCCESS")
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/ocean.ss","  --en-para -perm bperm -tp redlog","results","benchmark_ocean.out","gets: SUCCESS, main: SUCCESS, multig: SUCCESS, slave2: SUCCESS, slave: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/raytrace.ss","  --en-para -perm bperm -tp redlog","results","benchmark_raytrace.out","BuildHierarchy_Uniform: SUCCESS, PrintStatistics: SUCCESS, ReadEnvFile: SUCCESS, ReadGeoFile: SUCCESS, StartRayTrace: SUCCESS, gets: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/volrend.ss","  --en-para -perm bperm -tp redlog","results","benchmark_volrend.out","Compute_Base: SUCCESS, Compute_Normal: SUCCESS, Compute_Octree: SUCCESS, Compute_Opacity: SUCCESS, Init_Decomposition: SUCCESS, Init_Options: SUCCESS, Load_Map: SUCCESS, Load_Normal: SUCCESS, Load_Opacity: SUCCESS, Frame: SUCCESS, Normal_Compute: SUCCESS, Opacity_Compute: SUCCESS, Or_Neighbors_In_Base: SUCCESS, Ray_Trace: SUCCESS, Render: SUCCESS, Render_Loop: SUCCESS, getAdaptive: SUCCESS, getNumNodes: SUCCESS, getRotateSteps: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/water-nsquared.ss","  --en-para -perm bperm -tp redlog","results","benchmark_water_nsquared.out","INTERF: SUCCESS, INTRAF: SUCCESS, POTENG: SUCCESS, PREDIC: SUCCESS, MDMAIN: SUCCESS, WorkStart: SUCCESS, getNPRINT: SUCCESS, getNSAVE: SUCCESS, getNSTEP: SUCCESS, gets: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/water-spatial.ss","  --en-para -perm bperm -tp redlog","results","benchmark_water_spatial.out","INTERF: SUCCESS, INTRAF: SUCCESS, POTENG: SUCCESS, PREDIC: SUCCESS, MDMAIN: SUCCESS, WorkStart: SUCCESS, getNPRINT: SUCCESS, getNSAVE: SUCCESS, getNSTEP: SUCCESS, gets: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/cholesky.ss","  --en-para -perm bperm -tp redlog","results","benchmark_cholesky.out","AssignBlocksNow: SUCCESS, ComputeTargetBlockSize: SUCCESS, PreProcessFO: SUCCESS, Go: SUCCESS, InitOneFreeList: SUCCESS, MallocInit: SUCCESS, ReadSparse: SUCCESS, gets: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/fft.ss","  --en-para -perm bperm -tp redlog","results","benchmark_fft.out","FFT1DOnce: SUCCESS, FFT1D: SUCCESS, SlaveStart: SUCCESS, gets: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/lu.ss","  --en-para -perm bperm -tp redlog","results","benchmark_lu.out","lu: SUCCESS, OneSolve: SUCCESS, SlaveStart: SUCCESS, gets: SUCCESS, main: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/radix.ss","  --en-para -perm bperm -tp redlog","results","benchmark_radix.out","getNumProcs: SUCCESS, main: SUCCESS, slave_sort: SUCCESS")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/radiosity.ss","  --en-para -perm bperm -tp redlog","results","benchmark_radiosity.out","init_ray_tasks: SUCCESS, process_tasks: SUCCESS, init_global: SUCCESS, init_visibility_module: SUCCESS, input: SUCCESS, parse_args: SUCCESS, main: SUCCESS, radiosity: FAIL")
+
+suite addTest("hip","/home/rohit/hg/sleek_hip/examples/working/hip/veribsync/benchmark/fmm.ss","  --en-para -perm bperm -tp redlog","results","benchmark_fmm.out","MergeLocalGridSize: SUCCESS, DetermineGridSize: SUCCESS, MergeLocalGrid: SUCCESS, ConstructGrid: SUCCESS, ConstructLists: SUCCESS, CostZonesHelper: SUCCESS, CostZones: SUCCESS, ZeroBox: SUCCESS, CreateBoxes: SUCCESS, CreateDistribution: SUCCESS, CreateParticleList: SUCCESS, gets: SUCCESS, GetArguments: SUCCESS, InitExpTables: SUCCESS, InitGlobalMemory: SUCCESS, InitParticleList: SUCCESS, generateNumBoxes: SUCCESS, ParallelExecute: SUCCESS, PrintGrid: SUCCESS, main: SUCCESS")
+
 
   }
 
