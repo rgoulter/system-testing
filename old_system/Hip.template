@@ -1,0 +1,19 @@
+package systemTestingDSL.testsuite
+
+import systemTestingDSL.matchers._
+
+object HipTestSuiteUsage {
+  
+  val WORKING_DIR = "/home/rohit/hg/sleek_hip/examples/working/hip/"
+
+  def run(): Unit = {
+  	
+  	val suite = new HipTestSuite()
+
+  	##
+
+  	suite.runAllTests
+  	suite generateTestStatistics
+
+  }
+}

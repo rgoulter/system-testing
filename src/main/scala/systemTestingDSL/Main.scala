@@ -18,11 +18,18 @@ object Main {
   }
 
   private def runSleekTests(): Unit = {
+    println(success("******************"))
     println(success("Running Sleek Tests"))
+    println(success("******************"))
     SleekTestSuiteUsage run
   }
 
-  private def runHipTests(): Unit = println(error("Not implemented yet"))
+  private def runHipTests(): Unit = {
+    println(success("******************"))
+    println(success("Running Hip Tests"))
+    println(success("******************"))
+    HipTestSuiteUsage run
+  }
 
   private def showHelpText(): Unit = {
     println(error("Supported Options: sbt run [sleek/hip/all]"))
