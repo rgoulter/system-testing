@@ -22,7 +22,6 @@ object HipTestSuiteUsage {
     addVpermTests(suite)
     addHipTests(suite)
     addHipBarrTests(suite)
-
     suite addTest ("hip", BASE_DIR + "imm-field/sll.ss", "-tp oc --field-ann --etcsu1 ", "results", "sll.out", "delete: SUCCESS, get_tail: SUCCESS, insert: SUCCESS, insert2: SUCCESS")
     suite.runAllTests
     suite generateTestStatistics
