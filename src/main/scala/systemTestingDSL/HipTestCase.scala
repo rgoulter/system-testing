@@ -53,7 +53,7 @@ class HipTestCaseBuilder {
   def build: HipTestCase = new HipTestCase(this)
 }
 class HipTestCase(builder: HipTestCaseBuilder)
-  extends Runnable with Parser with ConsoleOutputGenerator {
+    extends Runnable with Parser with ConsoleOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments

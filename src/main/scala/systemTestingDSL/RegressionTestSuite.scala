@@ -3,7 +3,7 @@ package systemTestingDSL
 import scala.collection.mutable.MutableList
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
-class RegressionTestSuite extends ConsoleOutputGenerator{
+class RegressionTestSuite extends ConsoleOutputGenerator {
   var tests = new MutableList[RegressionTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()

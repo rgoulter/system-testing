@@ -9,4 +9,4 @@ case class GeneralRunnable(commandName: String,
   outputDirectory: String = ".",
   fileName: String = "", arguments: String = "",
   expectedOutput: String = "")
-  extends Runnable
+    extends Runnable

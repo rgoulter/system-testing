@@ -9,12 +9,12 @@ import scala.collection.mutable.MutableList
  * nested files
  */
 class GenericTestSuite(parentDirectoryName: String,
-  outputFileDirectory: String,
-  defaultCommand: String,
-  inputFileExtension: String,
-  outputFileExtension: String,
-  defaultOptions: String,
-  generatedTestScriptName: String = "testScript.sh") {
+    outputFileDirectory: String,
+    defaultCommand: String,
+    inputFileExtension: String,
+    outputFileExtension: String,
+    defaultOptions: String,
+    generatedTestScriptName: String = "testScript.sh") {
 
   var totalTestsToRun = 0;
   var testFailures = new MutableList[String];
@@ -55,7 +55,6 @@ class GenericTestSuite(parentDirectoryName: String,
   }
 
   def generateTestStatistics() {
-
 
   }
 }

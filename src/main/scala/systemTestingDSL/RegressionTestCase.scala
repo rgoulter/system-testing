@@ -41,7 +41,7 @@ class RegressionTestCaseBuilder {
 }
 
 class RegressionTestCase(builder: RegressionTestCaseBuilder)
-  extends Runnable {
+    extends Runnable {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments

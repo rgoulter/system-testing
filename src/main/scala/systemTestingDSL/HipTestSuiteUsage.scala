@@ -1,10 +1,11 @@
 package systemTestingDSL
 
 import systemTestingDSL.testSuite.HipTestSuite
+import com.typesafe.config.Config
 
-object HipTestSuiteUsage {
+class HipTestSuiteUsage(configuration: Config) {
 
-  val BASE_DIR = """/home/rohit/hg/sleek_hip/examples/working/hip/"""
+  val BASE_DIR = configuration.getString("HIP_DIR")
 
   def run(): Unit = {
     val suite = new HipTestSuite()

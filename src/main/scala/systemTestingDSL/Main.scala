@@ -1,5 +1,7 @@
 package systemTestingDSL
 
+import com.typesafe.config.ConfigFactory
+
 object Main {
 
   def main(args: Array[String]): Unit = {
@@ -21,14 +23,14 @@ object Main {
     println(success("******************"))
     println(success("Running Sleek Tests"))
     println(success("******************"))
-    SleekTestSuiteUsage run
+    new SleekTestSuiteUsage(ConfigFactory.load()).run()
   }
 
   private def runHipTests(): Unit = {
     println(success("******************"))
     println(success("Running Hip Tests"))
     println(success("******************"))
-    HipTestSuiteUsage run
+    new HipTestSuiteUsage(ConfigFactory.load()).run()
   }
 
   private def showHelpText(): Unit = {

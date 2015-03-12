@@ -2,15 +2,17 @@ package systemTestingDSL
 
 import systemTestingDSL.matchers._
 import systemTestingDSL.testSuite.SleekTestSuite
+import com.typesafe.config.Config
 
-object SleekTestSuiteUsage {
+class SleekTestSuiteUsage(configuration: Config) {
 
-  val WORKING_DIR = """/home/rohit/hg/sleek_hip/examples/working/"""
+  val WORKING_DIR = configuration.getString("SLEEK_DIR")
+
   def run(): Unit = {
 
     val suite = new SleekTestSuite()
 
-    suite addTest ("sleek", WORKING_DIR + "sleek/sleek.slk", " ", "results", "sleek", "Valid, Valid, Valid, Fail")
+    suite addTest ("sleek", WORKING_DIR + "/sleek/sleek.slk", " ", "results", "sleek", "Valid, Valid, Valid, Fail")
 
     suite addTest ("sleek", WORKING_DIR + "/sleek/cll-d.slk", " ", "results", "cll_d", "Valid")
 
