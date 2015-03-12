@@ -1,4 +1,4 @@
-package systemTestingDSL
+package systemTestingDSL.testsuite
 
 import systemTestingDSL.matchers._
 

@@ -1,14 +1,3 @@
-'''
-TODO:
-----
-
-1. Should create template for regression tests
-2. Email Loc
-3. Script should take some command line options
-4. Should directly generate outputFiles and intimate user with messages
-
-'''
-
 INPUT_FILE_NAME = "text_input"
 OUTPUT_FILE_NAME = "DSL.scala"
 KEY_IDENTIFIER = "=>"
@@ -17,6 +6,7 @@ INPUT_DIRECTORY = "/home/rohit/hg/sleek_hip/examples/working/sleek/"
 COMMENT = "#"
 USAGE_TEMPLATE = "Usage.template"
 NEW_LINE = '\n'
+
 ''' 
 Examples:
 
@@ -99,7 +89,6 @@ def process_line(line):
 		expected_output = parse_expected_output(sanitise_input(components[3]))
 		test = construct_sleek_test_suite(file_name, arguments, expected_output)
 	return test
-
 
 read_script()
 process_script()

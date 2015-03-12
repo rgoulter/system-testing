@@ -1,10 +1,9 @@
-INPUT_FILE_NAME = "hip_input.pl"
+INPUT_FILE_NAME = "source_translation/hip_baga.pl"
 OUTPUT_FILE_NAME = "Hip.scala"
 KEY_IDENTIFIER = "=>"
 OUTPUT_DIRECTORY = "results"
-INPUT_DIRECTORY = "/home/rohit/hg/sleek_hip/examples/working/hip/"
+BASE_DIRECTORY = "/home/rohit/hg/sleek_hip/examples/working/hip/"
 COMMENT = "#"
-USAGE_TEMPLATE = "Hip.template"
 NEW_LINE = '\n'
 
 ''' 
@@ -13,7 +12,10 @@ Examples:
 Input
 -----
 
-"array"=>[
+test_directory_name =>
+		[source_file_name, number_of_methods, name_of_method_1, "SU`CCESS/FAIL", name_of_method_2, "SUCCESS/FAIL".......]
+
+"array"=>
 		["arr_at.java",1,"","main","SUCCESS"],
 		["arr_binarysearch.java",1,"","binary_search","SUCCESS"],
 		["arr_search_decrease_less_than_two.java",1,"","searchzero","FAIL"], # induction required
@@ -34,14 +36,7 @@ Input
 		["arr_selectionsort.java",2,"","array_index_of_max","SUCCESS","selection_sort","SUCCESS"],
 		["arr_selectionsort_perm.java",2,"","array_index_of_max","SUCCESS","selection_sort","SUCCESS"],
 		["arr_sparse.java",3,"--imm","create","SUCCESS","get","SUCCESS","setsa","SUCCESS"],
-		["arr_sum.java",2,"","sigmaright","SUCCESS","sigmaleft","SUCCESS"] # there is an axiom that requires induction
-	],
-
-DSL output:
-----------
-new SleekTestCaseBuilder runCommand "sleek" onFile 
-"/home/rohit/hg/sleek_hip/examples/working/sleek/sleek9.slk" 
-withArguments "--elp" storeOutputInDirectory "results" withOutputFileName "sleek9.out" checkAgainst "Valid, Fail, Valid, Valid"
+		["arr_sum.java",2,"","sigmaright","SUCCESS","sigmaleft","SUCCESS"],
 '''
 
 def read_script():
@@ -72,7 +67,7 @@ def construct_hip_test_in_suite(file_name, arguments, expected_output, current_t
 	output_file = sanitise_file_name(file_name).replace(".java", ".out").replace(".ss", ".out").replace('"',"")
 	arguments = arguments.replace('"', "")
 	file_name = file_name.replace('"', "")
-	builder_test = "suite addTest(" + '"hip"' + "," + wrap_quotes(INPUT_DIRECTORY + current_test_directory + "/" + file_name) + "," + wrap_quotes(arguments) + "," + wrap_quotes(OUTPUT_DIRECTORY) + "," + wrap_quotes(output_file) + "," + wrap_quotes(expected_output) + ")" + NEW_LINE
+	builder_test = "suite addTest(" + '"hip"' + "," + wrap_quotes(BASE_DIRECTORY + current_test_directory + "/" + file_name) + "," + wrap_quotes(arguments) + "," + wrap_quotes(OUTPUT_DIRECTORY) + "," + wrap_quotes(output_file) + "," + wrap_quotes(expected_output) + ")" + NEW_LINE
 	# print(builder_test)
 	return builder_test
 
