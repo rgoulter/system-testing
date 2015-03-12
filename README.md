@@ -65,6 +65,19 @@ Modifying/Adding Sleek Tests
 
     *  Eg:  'suite addTest ("sleek", WORKING_DIR + "/sleek/label-basic.slk", " --dis-eps", "results", "label_basic", "Fail, Valid, Valid, Fail")'
 
+Translating code from run-fast-tests.pl
+---------------------------------------
+The tests in run-fast-tests.pl have been already translated and coded into the existing system. However, if further translation is required, please follow the following instructions.
+
+Due to the complexity of the `run-fast-tests.pl`, there are 2 parser scripts that do parsing from components of run-fast-tests.pl > DSL. 
+
+These scripts can be found in `/old_system/parsers/`. There are 2 parsers - sleek_parser.py and hip_parser.py. The inputs taken by them are there in the script files themselves as comments. 
+
+Examples of these inputs can be found in /old_system/source_translations/. Make sure to change the **INPUT_FILE** field in the scripts based on the name of your input. 
+
+then just run, `python hip_parser.py` or python `sleek_parser.py`. It should print the generated DSL to the console. Just copy this over to the `src/main/scala/systemTestingDSL/SleekTestSuiteUsage.scala` or `src/main/scala/systemTestingDSL/HipTestSuiteUsage.scala` based on whether you are parsing hip/sleek.
+
+
 Reports and Presentations
 -------------------------
 
