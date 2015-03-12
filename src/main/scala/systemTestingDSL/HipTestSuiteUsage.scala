@@ -15,14 +15,14 @@ class HipTestSuiteUsage(configuration: Config) {
     addTermTests(suite)
     addListTests(suite)
     addImmTests(suite)
-    addThreadTests(suite)
+    //    addThreadTests(suite)
     addHipBagaTests(suite)
     addMemTests(suite)
     addVeribsyncTests(suite)
     addParahipTests(suite)
-    addVpermTests(suite)
+    //    addVpermTests(suite)
     addHipTests(suite)
-    addHipBarrTests(suite)
+    //    addHipBarrTests(suite)
     suite addTest ("hip", BASE_DIR + "imm-field/sll.ss", "-tp oc --field-ann --etcsu1 ", "results", "sll.out", "delete: SUCCESS, get_tail: SUCCESS, insert: SUCCESS, insert2: SUCCESS")
     suite.runAllTests
     suite generateTestStatistics
