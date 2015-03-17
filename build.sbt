@@ -16,4 +16,6 @@ libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
 
+libraryDependencies += "org.scala-lang" % "scala-actors" % "2.10.0-M6" 
+
 scalariformSettings
