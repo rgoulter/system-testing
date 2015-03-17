@@ -6,6 +6,8 @@ import scala.sys.process._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.actors.threadpool.TimeoutException
+import com.typesafe.config.ConfigFactory
+import java.io.FileNotFoundException
 
 trait Runnable {
   def commandName: String
@@ -15,8 +17,9 @@ trait Runnable {
   val separator: String = SPACE
 
   def execute: String = {
+    val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
+    val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
     val executeFuture: Future[String] = Future {
-      val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
       println(cmd)
       val result: String = cmd.!!
       result
@@ -25,6 +28,7 @@ trait Runnable {
       Await.result(executeFuture, 300 seconds)
     } catch {
       case ex: TimeoutException => "The above computation timed out"
+      case ex: FileNotFoundException => "The file could not be found, please check the executable paths"
     }
   }
 

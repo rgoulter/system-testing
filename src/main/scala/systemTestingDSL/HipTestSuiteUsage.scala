@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 class HipTestSuiteUsage(configuration: Config) {
 
   val BASE_DIR = configuration.getString("HIP_DIR")
-  val OUTPUT_DIR = configuration.getString("HIP_OUTPUT_DIR")
+  val OUTPUT_DIR = configuration.getString("HIP_OUTPUT_DIRECTORY")
 
   def run(): Unit = {
     val suite = new HipTestSuite()

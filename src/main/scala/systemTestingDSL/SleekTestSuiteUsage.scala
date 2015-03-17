@@ -7,7 +7,7 @@ import com.typesafe.config.Config
 class SleekTestSuiteUsage(configuration: Config) {
 
   val WORKING_DIR = configuration.getString("SLEEK_DIR")
-  val OUTPUT_DIR = configuration.getString("SLEEK_OUTPUT_DIR")
+  val OUTPUT_DIR = configuration.getString("SLEEK_OUTPUT_DIRECTORY")
 
   def run(): Unit = {
 
