@@ -24,6 +24,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
   }
 
   def runAllTests: Unit = {
+    var startTime = System.currentTimeMillis
     tests.foreach(test => {
       lazy val result = test.build.generateOutput
       result._2 match {
@@ -35,6 +36,8 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
         writer.println(result._1.get)
       writer.println
     })
+    var endTime = System.currentTimeMillis
+    writer.println(log("Total time taken to run all tests: " + (endTime - startTime)))
   }
 
   def displayResult(result: String) = result match {

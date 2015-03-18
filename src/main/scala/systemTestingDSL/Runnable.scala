@@ -38,7 +38,7 @@ trait Runnable {
     var startTime = System.currentTimeMillis
     val result = execute
     endTime = System.currentTimeMillis
-    println("Total time taken + ", (endTime - startTime))
+    //    println("Total time taken + ", (endTime - startTime))
     result
   }
 

@@ -23,6 +23,7 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true))
   }
 
   def runAllTests(): Unit = {
+    var startTime = System.currentTimeMillis
     tests.foreach(test => {
       lazy val result = test.build.generateOutput
       result._2 match {
@@ -34,6 +35,8 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true))
         writer.println(result._1.get)
       writer.println
     })
+    var endTime = System.currentTimeMillis
+    writer.println(log("Total time taken to run all tests: " + (endTime - startTime)))
   }
   def displayResult(result: String) = result match {
     case "Passed" => println(passed)
