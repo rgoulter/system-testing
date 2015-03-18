@@ -16,7 +16,7 @@ trait Runnable {
   def outputFileName: String
   val separator: String = SPACE
 
-  def executeFuture: String = {
+  def executeInner: String = {
     val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
     val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
 
@@ -36,7 +36,7 @@ trait Runnable {
   def execute: String = {
     var endTime: Long = 0
     var startTime = System.currentTimeMillis
-    val result = execute
+    val result = executeInner
     endTime = System.currentTimeMillis
     //    println("Total time taken + ", (endTime - startTime))
     result
