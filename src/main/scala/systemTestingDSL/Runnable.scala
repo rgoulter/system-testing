@@ -16,20 +16,30 @@ trait Runnable {
   def outputFileName: String
   val separator: String = SPACE
 
-  def execute: String = {
+  def executeFuture: String = {
     val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
     val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
+
     val executeFuture: Future[String] = Future {
       println(cmd)
       val result: String = cmd.!!
       result
     }
     try {
-      Await.result(executeFuture, 300 seconds)
+      Await.result(executeFuture, timeout seconds)
     } catch {
       case ex: TimeoutException => "The above computation timed out"
       case ex: FileNotFoundException => "The file could not be found, please check the executable paths"
     }
+  }
+
+  def execute: String = {
+    var endTime: Long = 0
+    var startTime = System.currentTimeMillis
+    val result = execute
+    endTime = System.currentTimeMillis
+    println("Total time taken + ", (endTime - startTime))
+    result
   }
 
 }
