@@ -11,5 +11,4 @@ case class GenericTestCase(commandName: String, fileName: String, arguments: Str
     if (outputFileName.length > 0)
       writeToFile(this.outputFileName, this.outputDirectoryName, output)
   }
-
 }

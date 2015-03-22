@@ -8,7 +8,7 @@ import scala.collection.mutable.MutableList
  * Takes in a list of default options, parent directory and executable and runs all
  * nested files
  */
-class GenericTestSuite(parentDirectoryName: String,
+class ScriptGeneratorTestSuite(parentDirectoryName: String,
     outputFileDirectory: String,
     defaultCommand: String,
     inputFileExtension: String,
