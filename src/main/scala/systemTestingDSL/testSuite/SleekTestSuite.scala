@@ -37,7 +37,8 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
       writer.println
     })
     var endTime = System.currentTimeMillis
-    writer.println(log("Total time taken to run all tests: " + (endTime - startTime)))
+    val timeTaken = (endTime - startTime)
+    writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
   }
 
   def displayResult(result: String) = result match {

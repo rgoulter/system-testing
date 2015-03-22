@@ -13,6 +13,7 @@ Installation
     * pip
     * pyyaml module: `pip install pyyaml`
     * git
+    * hg version > 3.0.1
 
 2. Clone the repository: 
 

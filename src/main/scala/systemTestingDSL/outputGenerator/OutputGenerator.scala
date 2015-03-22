@@ -2,12 +2,12 @@ package systemTestingDSL.outputGenerator
 
 import java.io.File
 
-import systemTestingDSL.fileSystemUtilities
+import systemTestingDSL.FileSystemUtilities
 
 trait OutputGenerator {
   def writeToFile(name: String, directory: String, content: String, extension: String = ".out") = {
-    fileSystemUtilities.checkOutputDirectory(directory)
-    fileSystemUtilities.printToFile(new File(directory.concat(File.separator).concat(name).concat(extension)))(_.print(content))
+    FileSystemUtilities.checkOutputDirectory(directory)
+    FileSystemUtilities.printToFile(new File(directory.concat(File.separator).concat(name).concat(extension)))(_.print(content))
   }
 
   def passed = success("Passed")

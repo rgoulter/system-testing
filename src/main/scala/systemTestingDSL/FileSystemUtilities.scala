@@ -1,10 +1,11 @@
 package systemTestingDSL
 
 import java.io.File
+import systemTestingDSL._
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Paths
-package object fileSystemUtilities {
+object FileSystemUtilities {
 
   /**
    * Convenience Method to write data to a file
@@ -28,6 +29,10 @@ package object fileSystemUtilities {
   def getRecursiveListOfFilesWithRegex(dir: File, regex: String): Array[File] = {
     val files = getRecursiveListOfFiles(dir)
     files.filter(file => file.getName().matches(regex))
+  }
+
+  def getRecursiveListOfFilesWithRegex(directoryName: String, regex: String): Array[File] = {
+    getRecursiveListOfFilesWithRegex(new File(directoryName), regex)
   }
 
   /**

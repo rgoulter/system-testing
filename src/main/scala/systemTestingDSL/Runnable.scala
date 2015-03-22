@@ -16,7 +16,7 @@ trait Runnable {
   def outputFileName: String
   val separator: String = SPACE
 
-  def executeInner: String = {
+  private def executeInner: String = {
     val cmd = commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
     val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
 

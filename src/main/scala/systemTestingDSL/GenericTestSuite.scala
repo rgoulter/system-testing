@@ -20,8 +20,8 @@ class GenericTestSuite(parentDirectoryName: String,
   var testFailures = new MutableList[String];
 
   def getFiles() = {
-    fileSystemUtilities createDirectory outputFileDirectory
-    lazy val files = fileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), inputFileExtension)
+    FileSystemUtilities createDirectory outputFileDirectory
+    lazy val files = FileSystemUtilities.getRecursiveListOfFilesWithRegex(new File(parentDirectoryName), inputFileExtension)
     totalTestsToRun = files.size;
     println("number of relevant files found: " + totalTestsToRun)
     files
@@ -51,7 +51,7 @@ class GenericTestSuite(parentDirectoryName: String,
         execute = defaultCommand.concat(SPACE).concat(file.getAbsolutePath()).concat(SPACE).concat(defaultOptions).concat(SPACE).concat(REDIRECTION_OPERATOR).concat(SPACE).concat(outputFileDirectory).concat(file.getName.concat(outputFileExtension)).concat(NEW_LINE)
         script = script.concat(execute)
       })
-    fileSystemUtilities.printToFile(new File(generatedTestScriptName))(p => p.print(script))
+    FileSystemUtilities.printToFile(new File(generatedTestScriptName))(p => p.print(script))
   }
 
   def generateTestStatistics() {

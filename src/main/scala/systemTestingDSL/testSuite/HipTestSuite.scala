@@ -36,7 +36,8 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true))
       writer.println
     })
     var endTime = System.currentTimeMillis
-    writer.println(log("Total time taken to run all tests: " + (endTime - startTime)))
+    val timeTaken = (endTime - startTime)
+    writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
   }
   def displayResult(result: String) = result match {
     case "Passed" => println(passed)

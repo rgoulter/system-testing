@@ -13,7 +13,7 @@ case class OutputToDiffMatcher(output: String, pathTwo: String) extends Matcher 
   def diff(): String = {
     var resultsAfterReplacement: String = ""
     val tempFile = "/home/rohit/High-Performance-DSLs/temp"
-    fileSystemUtilities.printToFile(new File(tempFile))(p => p.print(output))
+    FileSystemUtilities.printToFile(new File(tempFile))(p => p.print(output))
     val results = Process("diff".concat(SPACE).concat("temp").concat(SPACE).concat(pathTwo)).lines_!.foreach(line =>
       if (line.charAt(0) == '>') {
         resultsAfterReplacement += MATCHER_NEW.concat(line.substring(1)).concat(NEW_LINE)
