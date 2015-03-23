@@ -7,14 +7,14 @@ import scala.collection.mutable.ArrayBuffer
 class RegressionTestReferenceBuilder(configuration: Config) {
 
   private def getFileList(directory: String): Array[String] = {
-    FileSystemUtilities.getRecursiveListOfFilesWithRegex(directory, "*.ss").map(_.getAbsolutePath())
+    FileSystemUtilities.getRecursiveListOfFilesWithRegex(directory, ".ss").map(_.getAbsolutePath())
   }
 
   def buildHipTests(): ArrayBuffer[GenericTestCase] = {
     val files = getFileList(configuration.getString("HIP_REF_SOURCE_DIRECTORY"))
     val outputDirectory = configuration.getString("HIP_REF_OUTPUT_DIRECTORY")
     val referenceRuns = ArrayBuffer[GenericTestCase]()
-    files.foreach(file => referenceRuns += new GenericTestCase("hip", file, "", outputDirectory, file.concat(".out")))
+    files.foreach(file => referenceRuns += new GenericTestCase("hip", file, "", outputDirectory, file.substring(file.lastIndexOf("/") + 1)))
     referenceRuns
   }
 

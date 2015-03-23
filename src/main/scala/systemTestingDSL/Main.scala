@@ -10,6 +10,7 @@ object Main {
       case "sleek" => runSleekTests
       case "hip" => runHipTests
       case "all" => runAllTests
+      case "buildReference" => buildReference
       case _ => showHelpText
     }
   }
@@ -19,22 +20,28 @@ object Main {
     runHipTests
   }
 
+  private def buildReference(): Unit = {
+    val regression = new RegressionTestReferenceBuilder(ConfigFactory.load()).run
+
+  }
   private def runSleekTests(): Unit = {
-    println(success("******************"))
-    println(success("Running Sleek Tests"))
-    println(success("******************"))
+    printHeader("Running Sleek Tests")
     new SleekTestSuiteUsage(ConfigFactory.load()).run()
   }
 
   private def runHipTests(): Unit = {
-    println(success("******************"))
-    println(success("Running Hip Tests"))
-    println(success("******************"))
+    printHeader("Running Hip Tests")
     new HipTestSuiteUsage(ConfigFactory.load()).run()
   }
 
   private def showHelpText(): Unit = {
     println(error("Supported Options: sbt run [sleek/hip/all]"))
+  }
+
+  private def printHeader(header: String) = {
+    println(success("******************"))
+    println(success(header))
+    println(success("******************"))
   }
 
   private def error(errorText: String): String = Console.CYAN + errorText + Console.RESET + '\n'

@@ -28,8 +28,8 @@ trait Runnable {
     try {
       Await.result(executeFuture, timeout seconds)
     } catch {
-      case ex: TimeoutException => "The above computation timed out"
-      case ex: FileNotFoundException => "The file could not be found, please check the executable paths"
+      case ex: TimeoutException => return "The above computation timed out"
+      case ex: FileNotFoundException => return "The file could not be found, please check the executable paths"
     }
   }
 

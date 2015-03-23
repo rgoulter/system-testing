@@ -289,14 +289,10 @@ class SleekTestSuiteUsage(configuration: Config) {
 
     suite addTest ("sleek", WORKING_DIR + "veribsync/barrier-dynamic2.slk", "--en-para -perm bperm -tp redlog", OUTPUT_DIR, "veribsync_barrier_dynamic2", "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid")
 
-    //    suite.runAllTests
-    //    suite generateTestStatistics
-    regressionBuilderTests
+    suite.runAllTests
+    suite generateTestStatistics
   }
 
-  def regressionBuilderTests(): Unit = {
-    val regression = new RegressionTestReferenceBuilder(configuration).run
-  }
   def inferenceTest: Unit = {
     val sleek2Test =
       new SleekTestCaseBuilder runCommand "sleek" onFile WORKING_DIR + "sleek2.slk" withArguments " " storeOutputInDirectory OUTPUT_DIR withOutputFileName "sleek2" checkAgainst "Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail"

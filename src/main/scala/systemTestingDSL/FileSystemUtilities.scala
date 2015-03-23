@@ -28,7 +28,7 @@ object FileSystemUtilities {
    */
   def getRecursiveListOfFilesWithRegex(dir: File, regex: String): Array[File] = {
     val files = getRecursiveListOfFiles(dir)
-    files.filter(file => file.getName().matches(regex))
+    files.filter(file => file.getName().endsWith(regex))
   }
 
   def getRecursiveListOfFilesWithRegex(directoryName: String, regex: String): Array[File] = {
