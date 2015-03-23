@@ -5,10 +5,14 @@ import scala.concurrent.Future
 import scala.sys.process._
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.actors.threadpool.TimeoutException
+import java.util.concurrent.TimeoutException
 import com.typesafe.config.ConfigFactory
 import java.io.FileNotFoundException
 
+/**
+ * This trait models anything that is runnable. It only depends on the config object for a TIMEOUT value which states how long
+ * the executable is supposed to run for on the OS
+ */
 trait Runnable {
   def commandName: String
   def fileName: String
@@ -29,7 +33,7 @@ trait Runnable {
       Await.result(executeFuture, timeout seconds)
     } catch {
       case ex: TimeoutException => return "The above computation timed out"
-      case ex: FileNotFoundException => return "The file could not be found, please check the executable paths"
+      case ex: FileNotFoundException => "The file could not be found, please check the executable paths"
     }
   }
 
@@ -38,7 +42,6 @@ trait Runnable {
     var startTime = System.currentTimeMillis
     val result = executeInner
     endTime = System.currentTimeMillis
-    //    println("Total time taken + ", (endTime - startTime))
     result
   }
 

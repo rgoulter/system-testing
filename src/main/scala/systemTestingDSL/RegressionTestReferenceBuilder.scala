@@ -11,21 +11,24 @@ class RegressionTestReferenceBuilder(configuration: Config) {
   }
 
   def buildTests(): ArrayBuffer[GenericTestCase] = {
-    val refTests = configuration.getConfigList("REFERENCE_TESTS")
-    println(refTests)
+    val refTests = configuration.getConfigList("BUILD_REFERENCE_TESTS")
     val referenceRuns = ArrayBuffer[GenericTestCase]()
     for (configuration <- refTests) {
-      val files = getFileList(configuration.getString("SOURCE_DIRECTORY"), configuration.getString("EXTENSION"))
+      val files = getFileList(configuration.getString("SOURCE_DIRECTORY"), configuration.getString("SOURCE_EXTENSION"))
       val outputDirectory = configuration.getString("REF_OUTPUT_DIRECTORY")
       val commandName = configuration.getString("COMMAND_NAME")
       val arguments = configuration.getString("ARGUMENTS")
-      files.foreach(file => referenceRuns += new GenericTestCase(commandName, file, "", outputDirectory, file.substring(file.lastIndexOf("/") + 1)))
+      //      val referenceFileExtension = configuration.getString("REF_EXTENSION")
+      val referenceFileExtension = ".ref"
+      files.foreach(file => referenceRuns += new GenericTestCase(commandName, file, arguments, outputDirectory,
+        file.substring(file.lastIndexOf("/") + 1),
+        referenceFileExtension))
     }
     referenceRuns
   }
 
   def run(): Unit = {
     val references = this.buildTests()
-        references.foreach(_.run)
+    references.foreach(_.run)
   }
 }

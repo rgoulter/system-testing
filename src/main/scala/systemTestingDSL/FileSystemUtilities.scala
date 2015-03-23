@@ -5,6 +5,9 @@ import systemTestingDSL._
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Paths
+/**
+ * This object provides some convenient methods/functions to provide fileSystem related operations
+ */
 object FileSystemUtilities {
 
   /**

@@ -5,11 +5,9 @@ import scala.sys.process._
 /**
  * Takes two files as data sources and performs a diff on them
  */
-case class DiffMatcher(pathOne: String, pathTwo: String) extends Matcher {
+object DiffMatcher {
 
-  def matches(): Boolean = diff().length == 0
-
-  def diff(): String = {
+  def diff(pathOne: String, pathTwo: String): String = {
     var resultsAfterReplacement: String = ""
     val results = Process("diff".concat(SPACE).concat(pathOne).concat(SPACE).concat(pathTwo)).lines_!.foreach(line =>
       if (line.charAt(0) == '>') {
