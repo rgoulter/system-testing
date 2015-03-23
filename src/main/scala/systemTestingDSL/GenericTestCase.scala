@@ -9,7 +9,7 @@ case class GenericTestCase(commandName: String, fileName: String, arguments: Str
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectoryName, output)
+      writeToFile(this.outputFileName, this.outputDirectoryName, output, outputFileExtension)
   }
 
   def runAndReturnOutput(): String = {
