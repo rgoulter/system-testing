@@ -26,7 +26,9 @@ class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator 
       for (file <- files) {
         new GenericTestCase(commandName, file, arguments, referenceDirectory,
           file.substring(file.lastIndexOf("/") + 1), ".out").run
-        diffOutput = DiffMatcher.diff(referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".out", referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".ref")
+        diffOutput += file + "\n"
+        diffOutput += "*************************\n"
+        diffOutput += DiffMatcher.diff(referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".out", referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".ref")
       }
     }
     println(diffOutput)
