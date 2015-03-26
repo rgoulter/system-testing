@@ -15,6 +15,7 @@ class RegressionTestReferenceBuilder(configuration: Config) {
     val referenceRuns = ArrayBuffer[GenericTestCase]()
     for (configuration <- refTests) {
       val files = getFileList(configuration.getString("SOURCE_DIRECTORY"), configuration.getString("SOURCE_EXTENSION"))
+      println(files)
       val outputDirectory = configuration.getString("REF_OUTPUT_DIRECTORY")
       val commandName = configuration.getString("COMMAND_NAME")
       val arguments = configuration.getString("ARGUMENTS")
