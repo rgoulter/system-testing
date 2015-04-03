@@ -4,11 +4,15 @@ import scala.collection.mutable.MutableList
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
 import systemTestingDSL.SleekTestCaseBuilder
+import com.typesafe.config.Config
+import systemTestingDSL.FileSystemUtilities
 
-class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends ConsoleOutputGenerator {
+class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends ConsoleOutputGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
+  var THRESHOLD = configuration.getLong("SIGNIFICANT_TIME_THRESHOLD")
+  var performanceOutput = ""
 
   def addTest(
     commandName: String,
@@ -25,6 +29,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
 
   def runAllTests: Unit = {
     var startTime = System.currentTimeMillis
+    val thredholdTime = configuration.getLong("SIGNIFICANT_TIME_THRESHOLD")
     tests.foreach(test => {
       lazy val result = test.build.generateOutput
       result._2 match {
@@ -34,13 +39,21 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
       displayResult(result._2)
       if (result._1.isDefined)
         writer.println(result._1.get)
-      writer.println
+      if (result._3 > THRESHOLD) {
+        performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + "\n"
+        writer.println(s"""Runtime was $result._3""")
+      }
     })
     var endTime = System.currentTimeMillis
-    val timeTaken = (endTime - startTime)
+    val timeTaken = (endTime - startTime) / 1000
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
+    createPerformanceReport
   }
 
+  def createPerformanceReport(): Unit = {
+    val fileName: String = "sleek_performance_report.perf"
+    writeToFile(configuration.getString("SLEEK_OUTPUT_DIRECTORY"), fileName, performanceOutput)
+  }
   def displayResult(result: String) = result match {
     case "Passed" => println(passed)
     case _ => println(failed)

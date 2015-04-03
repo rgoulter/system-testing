@@ -61,7 +61,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
-  var output: String = ""
+  var output: (String, Long) = ("", 0)
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
@@ -77,7 +77,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, output)
+      writeToFile(this.outputFileName, this.outputDirectory, output._1)
   }
 
   def printResults() = {
@@ -88,7 +88,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
 
   def generateOutput() = {
     run
-    this.parse(this.output, builder.regex, NEW_LINE)
+    this.parse(this.output._1, builder.regex, NEW_LINE)
     generateTestResult()
   }
 
@@ -113,10 +113,10 @@ class HipTestCase(builder: HipTestCaseBuilder)
     return (None, true)
   }
 
-  def generateTestResult(): (Option[String], String) = {
+  def generateTestResult(): (Option[String], String, Long) = {
     val results = checkResults(expectedOutput, this.expectedOutput)
     if (results._2)
-      (None, "Passed")
-    else (results._1, "Failed")
+      (None, "Passed", output._2)
+    else (results._1, "Failed", output._2)
   }
 }

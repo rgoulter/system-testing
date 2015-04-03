@@ -3,6 +3,7 @@ package systemTestingDSL
 import systemTestingDSL.matchers._
 import systemTestingDSL.testSuite.SleekTestSuite
 import com.typesafe.config.Config
+import java.io.PrintWriter
 
 class SleekTestSuiteUsage(configuration: Config) {
 
@@ -11,7 +12,7 @@ class SleekTestSuiteUsage(configuration: Config) {
 
   def run(): Unit = {
 
-    val suite = new SleekTestSuite()
+    val suite = new SleekTestSuite(new PrintWriter(System.out, true), configuration)
 
     suite addTest ("sleek", WORKING_DIR + "sleek.slk", " ", OUTPUT_DIR, "sleek", "Valid, Valid, Valid, Fail")
 
@@ -291,12 +292,5 @@ class SleekTestSuiteUsage(configuration: Config) {
 
     suite.runAllTests
     suite generateTestStatistics
-  }
-
-  def inferenceTest: Unit = {
-    val sleek2Test =
-      new SleekTestCaseBuilder runCommand "sleek" onFile WORKING_DIR + "sleek2.slk" withArguments " " storeOutputInDirectory OUTPUT_DIR withOutputFileName "sleek2" checkAgainst "Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail"
-    val sleek2TestCase: SleekTestCase = sleek2Test.build
-    sleek2TestCase.testInference(null)
   }
 }
