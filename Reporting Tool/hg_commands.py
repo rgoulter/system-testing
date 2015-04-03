@@ -1,25 +1,42 @@
-list_all_branches = "hg branches -a"
+class HgCommands():
 
-pull = "hg pull"
+	''' Encapsulates string commands for mercurial command line API'''
 
-update = "hg update -C"
+	whitespace = ' '
 
-checkout_commit = 'hg update -c' # Takes one parameter <cset>
+	max_number = '-l50'
 
-last_commit_date = 'hg log -l 1 -T "{date|hgdate}\n" --only-branch' # Takes one parameter <branch_name>
+	template_option = '-T'
 
-log = "hg log"
+	def __init__(self):
+		pass
 
-revert = "hg revert -C -r "
+	def list_all_branches(self):
+		return "hg branches -a"
 
-whitespace = ' '
+	def pull(self):
+		return "hg pull"
 
-max_number = '-l50'
+	def update(self):
+		return "hg update -C"
 
-template_option = '-T'
+	def checkout_commit(self):
+		return 'hg update -c' # Takes one parameter <cset>
 
-commit_template = r'"{node}_{date|hgdate}\n"'
+	def last_commit_date(self):
+		return 'hg log -l 1 -T "{date|hgdate}\n" --only-branch' # Takes one parameter <branch_name>
 
-local_commit_tempalte = r'"{rev}_{date|hgdate}\n"'
+	def log(self):
+		return "hg log"
 
-commit_list = log + whitespace + max_number + whitespace + template_option + whitespace + r'"{rev}_{node}_{date|hgdate}\n"'
+	def revert(self):
+		return "hg revert -C -r "
+
+	def commit_template(self):
+		return r'"{node}_{date|hgdate}\n"'
+
+	def local_commit_template(self):
+		return r'"{rev}_{date|hgdate}\n"'
+
+	def commit_list(self):
+		return (self.log() + self.whitespace + self.max_number + self.whitespace + self.template_option + self.whitespace + r'"{rev}_{node}_{date|hgdate}\n"')
