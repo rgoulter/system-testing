@@ -7,11 +7,10 @@ import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import com.typesafe.config.Config
 import systemTestingDSL.FileSystemUtilities
 
-case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends ConsoleOutputGenerator {
+case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[HipTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
-  val MILLI_CONVERSION_FACTOR = 1000
   var THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
   var performanceOutput = ""
 
@@ -46,12 +45,7 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     var endTime = System.currentTimeMillis
     val timeTaken = (endTime - startTime)
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
-    createPerformanceReport
-  }
-
-  def createPerformanceReport(): Unit = {
-    val fileName: String = "sleek_performance_report_" + FileSystemUtilities.getCurrentDateString
-    writeToFile(fileName, configuration.getString("SLEEK_OUTPUT_DIRECTORY"), performanceOutput, ".perf")
+    createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
 
   def displayResult(result: String) = result match {

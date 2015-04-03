@@ -7,11 +7,10 @@ import systemTestingDSL.SleekTestCaseBuilder
 import com.typesafe.config.Config
 import systemTestingDSL.FileSystemUtilities
 
-class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends ConsoleOutputGenerator {
+class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
-  val MILLI_CONVERSION_FACTOR = 1000
   var THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
   var performanceOutput = ""
 
@@ -28,9 +27,8 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), co
       outputFileName checkAgainst expectedOutput usingRegex regex
   }
 
-  def runAllTests: Unit = {
+  def runAllTests(): Unit = {
     var startTime = System.currentTimeMillis
-    val thredholdTime = configuration.getLong("SIGNIFICANT_TIME_THRESHOLD")
     tests.foreach(test => {
       lazy val result = test.build.generateOutput
       result._2 match {
@@ -48,16 +46,12 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), co
     var endTime = System.currentTimeMillis
     val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
-    createPerformanceReport
+    createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
 
-  def createPerformanceReport(): Unit = {
-    val fileName: String = "sleek_performance_report_" + FileSystemUtilities.getCurrentDateString
-    writeToFile(fileName, configuration.getString("SLEEK_OUTPUT_DIRECTORY"), performanceOutput, ".perf")
-  }
   def displayResult(result: String) = result match {
-    case "Passed" => println(passed)
-    case _ => println(failed)
+    case "Passed" => writer.println(passed)
+    case _ => writer.println(failed)
   }
 
   def generateTestStatistics: Unit = {
