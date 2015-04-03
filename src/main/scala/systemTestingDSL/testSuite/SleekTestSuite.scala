@@ -41,7 +41,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), co
         writer.println(result._1.get)
       if (result._3 > THRESHOLD) {
         performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + "\n"
-        writer.println(s"""Runtime was $result._3""")
+        writer.println("Runtime: " + result._3 + "seconds")
       }
     })
     var endTime = System.currentTimeMillis
@@ -51,8 +51,8 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), co
   }
 
   def createPerformanceReport(): Unit = {
-    val fileName: String = "sleek_performance_report.perf"
-    writeToFile(configuration.getString("SLEEK_OUTPUT_DIRECTORY"), fileName, performanceOutput)
+    val fileName: String = "sleek_performance_report"
+    writeToFile(fileName, configuration.getString("SLEEK_OUTPUT_DIRECTORY"), performanceOutput, ".perf")
   }
   def displayResult(result: String) = result match {
     case "Passed" => println(passed)
