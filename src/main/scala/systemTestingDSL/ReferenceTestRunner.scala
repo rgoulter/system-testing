@@ -4,7 +4,6 @@ import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import systemTestingDSL.matchers.DiffMatcher
 import scala.collection.mutable.ArrayBuffer
 import collection.JavaConversions._
-import util.control._
 import com.typesafe.config.Config
 
 class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator {
@@ -25,18 +24,12 @@ class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator 
       //      val referenceFileExtension = configuration.getString("REF_EXTENSION")
       val referenceFileExtension = ".ref"
       for (file <- files) {
-        val loop = new Breaks
-        loop.breakable {
-          try {
-
-            new GenericTestCase(commandName, file, arguments, referenceDirectory,
-              file.substring(file.lastIndexOf("/") + 1), ".out").run
-            diffOutput += file + "\n"
-            diffOutput += "*************************\n"
-            diffOutput += DiffMatcher.diff(referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".out", referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".ref")
-          } catch {
-            case _: Throwable => loop.break
-          }
+        scala.util.control.Exception.ignoring(classOf[Exception]) {
+          new GenericTestCase(commandName, file, arguments, referenceDirectory,
+            file.substring(file.lastIndexOf("/") + 1), ".out").run
+          diffOutput += file + "\n"
+          diffOutput += "*************************\n"
+          diffOutput += DiffMatcher.diff(referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".out", referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".ref")
         }
       }
     }
