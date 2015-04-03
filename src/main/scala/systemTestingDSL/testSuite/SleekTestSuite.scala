@@ -11,7 +11,8 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), co
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
-  var THRESHOLD = configuration.getLong("SIGNIFICANT_TIME_THRESHOLD")
+  val MILLI_CONVERSION_FACTOR = 1000
+  var THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
   var performanceOutput = ""
 
   def addTest(
@@ -40,18 +41,18 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), co
       if (result._1.isDefined)
         writer.println(result._1.get)
       if (result._3 > THRESHOLD) {
-        performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + "\n"
-        writer.println("Runtime: " + result._3 + "seconds")
+        performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + " milliseconds \n"
+        writer.println("Runtime: " + result._3 + "milliseconds")
       }
     })
     var endTime = System.currentTimeMillis
-    val timeTaken = (endTime - startTime) / 1000
+    val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
     createPerformanceReport
   }
 
   def createPerformanceReport(): Unit = {
-    val fileName: String = "sleek_performance_report"
+    val fileName: String = "sleek_performance_report_" + FileSystemUtilities.getCurrentDateString
     writeToFile(fileName, configuration.getString("SLEEK_OUTPUT_DIRECTORY"), performanceOutput, ".perf")
   }
   def displayResult(result: String) = result match {
