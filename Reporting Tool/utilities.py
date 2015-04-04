@@ -26,7 +26,7 @@ class Utilities():
 
 	def check_last_commit_date(self, commit_date, time_period):
 		current_milli_time = lambda: int(time.time())
-		return (current_milli_time() - int(commit_date) <= time_period * ONE_DAY)
+		return (current_milli_time() - int(commit_date) <= time_period * self.ONE_DAY)
 
 	def ensure_output_directory_exists(self, directory_location, directory_name):
 		self.create_directory(directory_location + directory_name)
