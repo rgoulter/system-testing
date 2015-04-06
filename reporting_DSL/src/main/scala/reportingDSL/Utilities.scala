@@ -5,6 +5,7 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import java.io.File
 import java.util.Date
+import java.io.PrintWriter
 
 /**
  * Singleton class with utility methods for use by Mercurial API
@@ -20,7 +21,7 @@ object Utilities {
   def createDirectory(path: String) = {
     if (!fileOrDirectoryExists(path)) {
       val directory = new File(path)
-      directory.mkdir()
+      directory.mkdirs()
     }
   }
 
@@ -29,6 +30,9 @@ object Utilities {
    */
   def fileOrDirectoryExists(path: String) = Files.exists(Paths.get(path))
 
+  def convertTimestampToString(timestamp: String): String = {
+    convertTimestampToString(timestamp.toLong)
+  }
   def convertTimestampToString(timestamp: Long): String = {
     new Date(timestamp * this.SECONDS_TO_MILLI).toString()
   }
@@ -42,10 +46,23 @@ object Utilities {
     (currentTime - commitDate) <= (timePeriod * this.ONE_DAY)
   }
 
+  def checkLastCommitDate(commitDate: String, timePeriod: Long): Boolean = {
+    checkLastCommitDate(commitDate.toLong, timePeriod)
+  }
+
   def ensureOutputDirectoryExists(directoryLocation: String, directoryName: String): Unit = {
     val fullyQualifiedPath = directoryLocation.concat(directoryName)
     if (!fileOrDirectoryExists(fullyQualifiedPath))
       createDirectory(directoryLocation.concat(directoryName))
+  }
+
+  def printToFile(f: java.io.File)(op: PrintWriter => Unit) {
+    val p = new java.io.PrintWriter(f)
+    try { op(p) } finally { p.close() }
+  }
+
+  def writeToFile(file: String, content: String) = {
+    printToFile(new File(file))(_.print(content))
   }
 
 }

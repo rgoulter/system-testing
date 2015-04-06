@@ -1,12 +1,7 @@
 package reportingDSL
 
 object HgApi extends Execute {
-  type Command = String
   type Branch = String
-
-  private def executeInDirectory(command: Command, repository: String): Seq[String] = {
-    execute(command.split(" "), repository)
-  }
 
   def listAllBranches(repository: String): Seq[String] = {
     executeInDirectory(HgCommands.listAllBranches, repository)

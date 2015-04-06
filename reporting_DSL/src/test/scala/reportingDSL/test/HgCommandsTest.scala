@@ -28,4 +28,9 @@ class HgCommandsTest {
       Commit("0", "31880e923d1573b5df995fdf1711ea4564b7362a", "1428298991"))
     assertEquals(expected, HgApi.getCommitList("/Users/rohitmukherjee/dev/repositories/play_area/repo"))
   }
+
+  @Test
+  def hgCheckoutBranchTest(): Unit = {
+    println(HgApi.checkoutBranch("/Users/rohitmukherjee/dev/repositories/play_area/repo/", "branch-2"))
+  }
 }
