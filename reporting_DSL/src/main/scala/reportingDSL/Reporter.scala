@@ -2,22 +2,21 @@ package reportingDSL
 
 import java.io.FileNotFoundException
 
-class Reporter(
-    repository: String,
-    timePeriod: Int,
-    outputDirectoryLocation: String,
-    outputDirectoryName: String,
 
-    testName: String,
-    testCommand: String,
-    testDirectory: String,
-    testOutputPrefix: String = "",
-    testOutputFileExtension: String = ".out") extends Execute {
+class Reporter(builder: RepositoryTest) extends Execute {
+  var repository = builder.repository
+  var outputDirectoryLocation = builder.outputDirectoryLocation
+  var testOutputPrefix = builder.testOutputPrefix
+  var testOutputFileExtension = builder.testOutputFileExtension
+  var testName = builder.testName
+  var timePeriod = builder.timePeriod
+  var testDirectory = builder.testDirectory
+  var testCommand = builder.testCommand
 
   type Branch = String
 
   def setup(): Unit = {
-    Utilities.ensureOutputDirectoryExists(outputDirectoryLocation, outputDirectoryName)
+    Utilities.ensureOutputDirectoryExists(outputDirectoryLocation, testName)
     HgApi.pull(repository)
   }
 
@@ -26,11 +25,11 @@ class Reporter(
   }
 
   def getOutputDirectoryName(branch: Branch): String = {
-    outputDirectoryLocation.concat(outputDirectoryName).concat("/").concat(branch).concat("/").concat(testName)
+    outputDirectoryLocation.concat("/").concat(branch).concat("/").concat(testName)
   }
 
   def getOutputFileName(directoryName: String, commit: Commit): String = {
-    directoryName.concat(commit.revisionId).concat("_").concat(Utilities.convertTimestampToString(commit.date)).concat(testOutputFileExtension)
+    directoryName.concat(testName).concat(commit.revisionId).concat("_").concat(Utilities.convertTimestampToString(commit.date)).concat(testOutputFileExtension)
   }
 
   def runTestsOnCommit(branch: Branch, commit: Commit) = {
@@ -44,29 +43,24 @@ class Reporter(
     if (!Utilities.fileOrDirectoryExists(fullyQualifiedOutputFileName)) {
       println("Running test on commit ", commit.hash)
       val output = executeInDirectory(testCommand, testDirectory)
-      print(output)
-      Utilities.writeToFile(fullyQualifiedOutputFileName, output.toString)
+      var outputString = ""
+      output.foreach(outputString += _ + "\n")
+      Utilities.writeToFile(fullyQualifiedOutputFileName, outputString)
       println(s"""Output stored in directory $fullyQualifiedOutputFileName""")
     }
   }
 
   def processBranch(branch: Branch) = {
-    //try {
     HgApi.checkoutBranch(repository, branch)
     if (Utilities.checkLastCommitDate(HgApi.getLastCommitDate(repository, branch), timePeriod)) {
       println(s"""Running tests on $branch""")
-      Utilities.createDirectory(outputDirectoryLocation.concat(outputDirectoryName).concat("/").concat(branch).concat("/").concat(testName))
+      Utilities.createDirectory(outputDirectoryLocation.concat(testName).concat("/").concat(branch).concat("/").concat(testName))
       val commits = HgApi.getCommitList(repository)
       commits.foreach(commit => {
-        //println(commit.date + "|" + commit.hash)
         if (Utilities.checkLastCommitDate(commit.date, timePeriod))
           runTest(commit, branch)
       })
-
     }
-    //} catch {
-    //case _: Exception => println("Error occured")
-    //}
   }
 
   def runTests(): Unit = {
@@ -74,7 +68,12 @@ class Reporter(
     val currentBranch = HgApi.getCurrentBranch(repository)
     println(s"""The current branch is $currentBranch""")
     val branches: Seq[String] = HgApi.listAllBranches(repository)
-    branches.foreach(branch => processBranch(branch.split(" ")(0)))
-    reset(currentBranch)
+    try {
+      branches.foreach(branch => processBranch(branch.split(" ")(0)))
+    } catch {
+      case _: Exception => println(s"""An exception occured, rolling back to $currentBranch""")
+    } finally {
+      reset(currentBranch)
+    }
   }
 }
