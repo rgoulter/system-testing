@@ -7,7 +7,7 @@ object Usage {
       outputDirectoryLocation = "/home/rohit/High-Performance-DSLs/Reporting Tool/",
       outputDirectoryName = "scala_reporting_dsl_results",
       testName = "sleek_tests",
-      testCommand = """sbt "run sleek""",
+      testCommand = """./sleek.sh""",
       testDirectory = "/home/rohit/High-Performance-DSLs/")
     firstTest.runTests
   }
