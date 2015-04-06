@@ -3,22 +3,26 @@ package reportingDSL
 import java.io.FileNotFoundException
 
 class Reporter(
-    repository: String,
-    timePeriod: Int,
-    outputDirectoryLocation: String,
-    outputDirectoryName: String,
+  repository: String,
+  timePeriod: Int,
+  outputDirectoryLocation: String,
+  outputDirectoryName: String,
 
-    testName: String,
-    testCommand: String,
-    testDirectory: String,
-    testOutputPrefix: String = "",
-    testOutputFileExtension: String = ".out") extends Execute {
+  testName: String,
+  testCommand: String,
+  testDirectory: String,
+  testOutputPrefix: String = "",
+  testOutputFileExtension: String = ".out") extends Execute {
 
   type Branch = String
 
   def setup(): Unit = {
     Utilities.ensureOutputDirectoryExists(outputDirectoryLocation, outputDirectoryName)
     HgApi.pull(repository)
+  }
+
+  def reset(original: Branch): Unit = {
+    HgApi.checkoutBranch(repository, original)
   }
 
   def getOutputDirectoryName(branch: Branch): String = {
@@ -52,6 +56,7 @@ class Reporter(
         Utilities.createDirectory(outputDirectoryLocation.concat(outputDirectoryName).concat("/").concat(branch).concat("/").concat(testName))
         val commits = HgApi.getCommitList(repository)
         commits.foreach(commit => {
+          println(commit.date + "|" + commit.hash )
           if (Utilities.checkLastCommitDate(commit.date, timePeriod))
             runTest(commit, branch)
         })
@@ -64,7 +69,10 @@ class Reporter(
 
   def runTests(): Unit = {
     setup
+    val currentBranch = HgApi.getCurrentBranch(repository)
+    println(s"""The current branch is $currentBranch""")
     val branches: Seq[String] = HgApi.listAllBranches(repository)
     branches.foreach(branch => processBranch(branch.split(" ")(0)))
+    reset(currentBranch)
   }
 }

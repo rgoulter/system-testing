@@ -31,6 +31,11 @@ class HgCommandsTest {
 
   @Test
   def hgCheckoutBranchTest(): Unit = {
-    println(HgApi.checkoutBranch("/Users/rohitmukherjee/dev/repositories/play_area/repo/", "branch-2"))
+    HgApi.checkoutBranch("/Users/rohitmukherjee/dev/repositories/play_area/repo/", "branch-2").foreach(println _)
+  }
+
+  @Test
+  def hgTestCurrentBranch(): Unit = {
+    assertEquals("branch-2", HgApi.getCurrentBranch("/Users/rohitmukherjee/dev/repositories/play_area/repo/"))
   }
 }

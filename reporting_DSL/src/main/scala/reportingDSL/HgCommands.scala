@@ -6,6 +6,8 @@ object HgCommands {
 
   val pull = "hg pull"
 
+  val currentBranch = "hg branch"
+
   val update = "hg update -C"
 
   val checkoutCommit = "hg update -c"
