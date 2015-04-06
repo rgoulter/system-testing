@@ -1,8 +1,8 @@
-package hg
+package reportingDSL
 
 object HgCommands {
 
-  val listAllBranches = "hg branches -a"
+  val listAllBranches = "hg branches"
 
   val pull = "hg pull"
 
@@ -10,7 +10,7 @@ object HgCommands {
 
   val checkoutCommit = "hg update -c"
 
-  val last_commit_date = """hg log -l 1 -T "{date|hgdate}\n" --only-branch"""
+  val lastCommitDate = """hg log -l 1 -T "{date|hgdate}\n" --only-branch"""
 
   val log = "hg log"
 
@@ -26,6 +26,6 @@ object HgCommands {
 
   val localCommitTemplate = """"{rev}_{date|hgdate}\n""""
 
-  val commit_list = log + whitespace + maxNumber + whitespace + templateOption + whitespace + """"{rev}_{node}_{date|hgdate}\n""""
+  val commitList = log + whitespace + maxNumber + whitespace + templateOption + whitespace + """"{rev}_{node}_{date|hgdate}\n""""
 
 }

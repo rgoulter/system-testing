@@ -9,8 +9,10 @@ scalaVersion      := "2.10.3"
 publishMavenStyle := true
 
 libraryDependencies ++= Seq(
-   "junit" % "junit" % "4.8.1" % "test"
-   )
+  "junit" % "junit" % "4.11" % Test,
+    "com.novocode" % "junit-interface" % "0.11" % Test
+      exclude("junit", "junit-dep")
+ )
 
 resolvers += Classpaths.typesafeResolver
 

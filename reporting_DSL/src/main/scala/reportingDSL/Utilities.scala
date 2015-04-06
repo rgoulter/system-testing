@@ -4,17 +4,15 @@ import sys.process._
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.io.File
+import java.util.Date
 
 /**
  * Singleton class with utility methods for use by Mercurial API
  */
 object Utilities {
 
-  val ONE_DAY = 24 * 60 * 60 * 60
-
-  private def execute(command: String, cwd: String): String = {
-    sys.process.Process(Seq(command), new java.io.File(cwd)).!!
-  }
+  val ONE_DAY = 24 * 60 * 60
+  val SECONDS_TO_MILLI = 1000
 
   /**
    * Create directory if it doesn't exist
@@ -32,11 +30,16 @@ object Utilities {
   def fileOrDirectoryExists(path: String) = Files.exists(Paths.get(path))
 
   def convertTimestampToString(timestamp: Long): String = {
-    ""
+    new Date(timestamp * this.SECONDS_TO_MILLI).toString()
   }
 
+  /**
+   * Checks if the date of particular commit is within the given time period
+   * NOTE: Time Period must be in days
+   */
   def checkLastCommitDate(commitDate: Long, timePeriod: Long): Boolean = {
-    false
+    val currentTime: Long = System.currentTimeMillis() / this.SECONDS_TO_MILLI
+    (currentTime - commitDate) <= (timePeriod * this.ONE_DAY)
   }
 
   def ensureOutputDirectoryExists(directoryLocation: String, directoryName: String): Unit = {
