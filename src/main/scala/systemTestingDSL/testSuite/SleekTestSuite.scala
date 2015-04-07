@@ -4,11 +4,15 @@ import scala.collection.mutable.MutableList
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
 import systemTestingDSL.SleekTestCaseBuilder
+import com.typesafe.config.Config
+import systemTestingDSL.FileSystemUtilities
 
-class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends ConsoleOutputGenerator {
+class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
+  var THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
+  var performanceOutput = ""
 
   def addTest(
     commandName: String,
@@ -23,7 +27,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
       outputFileName checkAgainst expectedOutput usingRegex regex
   }
 
-  def runAllTests: Unit = {
+  def runAllTests(): Unit = {
     var startTime = System.currentTimeMillis
     tests.foreach(test => {
       lazy val result = test.build.generateOutput
@@ -34,16 +38,20 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) ex
       displayResult(result._2)
       if (result._1.isDefined)
         writer.println(result._1.get)
-      writer.println
+      if (result._3 > THRESHOLD) {
+        performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + " milliseconds \n"
+        writer.println("Runtime: " + result._3 + "milliseconds")
+      }
     })
     var endTime = System.currentTimeMillis
-    val timeTaken = (endTime - startTime)
+    val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
+    createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
 
   def displayResult(result: String) = result match {
-    case "Passed" => println(passed)
-    case _ => println(failed)
+    case "Passed" => writer.println(passed)
+    case _ => writer.println(failed)
   }
 
   def generateTestStatistics: Unit = {

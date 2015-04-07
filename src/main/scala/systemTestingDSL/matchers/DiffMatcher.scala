@@ -9,13 +9,8 @@ object DiffMatcher {
 
   def diff(pathOne: String, pathTwo: String): String = {
     var resultsAfterReplacement: String = ""
-    val results = Process("diff".concat(SPACE).concat(pathOne).concat(SPACE).concat(pathTwo)).lines_!.foreach(line =>
-      if (line.charAt(0) == '>') {
-        resultsAfterReplacement += MATCHER_NEW.concat(line.substring(1)).concat(NEW_LINE)
-      } else if (line.charAt(0) == '<')
-        resultsAfterReplacement += MATCHER_OLD.concat(line.substring(1)).concat(NEW_LINE)
-      else
-        resultsAfterReplacement += line.concat(NEW_LINE))
+    val results = Process("sdiff".concat(SPACE).concat(pathOne).concat(SPACE).concat(pathTwo)).lines_!.foreach(line =>
+      resultsAfterReplacement += line.concat(NEW_LINE))
     resultsAfterReplacement
   }
 }

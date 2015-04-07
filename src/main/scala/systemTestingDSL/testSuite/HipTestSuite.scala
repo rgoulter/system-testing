@@ -4,11 +4,15 @@ import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import systemTestingDSL.HipTestCaseBuilder
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
+import com.typesafe.config.Config
+import systemTestingDSL.FileSystemUtilities
 
-case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true)) extends ConsoleOutputGenerator {
+case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[HipTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
+  var THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
+  var performanceOutput = ""
 
   def addTest(commandName: String,
     fileName: String,
@@ -33,12 +37,17 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true))
       displayResult(result._2)
       if (result._1.isDefined)
         writer.println(result._1.get)
-      writer.println
+      if (result._3 > THRESHOLD) {
+        performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + " milliseconds \n"
+        writer.println("Runtime: " + result._3 + "milliseconds")
+      }
     })
     var endTime = System.currentTimeMillis
     val timeTaken = (endTime - startTime)
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
+    createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
+
   def displayResult(result: String) = result match {
     case "Passed" => println(passed)
     case _ => println(failed)

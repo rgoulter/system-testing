@@ -4,8 +4,9 @@ import scala.collection.mutable.MutableList
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
+import com.typesafe.config.Config
 
-class SleekTestCaseBuilder {
+class SleekTestCaseBuilder() {
   var commandName: String = ""
   var fileName: String = ""
   var arguments: String = ""
@@ -60,7 +61,8 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
-  var output: String = ""
+  // (String,Long) tuple signifies that Runnable.execute returns (ConsoleOutput, TimeOfExecution)
+  var output: (String, Long) = ("", 0)
 
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
@@ -70,17 +72,14 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def run() = {
     this.output = this.execute
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, output)
+      writeToFile(this.outputFileName, this.outputDirectory, output._1)
   }
 
-  def generateOutput(): (Option[String], String) = {
+  def generateOutput(): (Option[String], String, Long) = {
     run
-    this.parse(this.output, builder.regex, NEW_LINE)
+    this.parse(this.output._1, builder.regex, NEW_LINE)
     generateTestResult
-  }
 
-  def testInference(results: ArrayBuffer[(String, String)]) = {
-    checkCorpus(this.output, results)
   }
 
   def checkResults(expectedOutput: String, result: Seq[String]): (Option[String], Boolean) = {
@@ -118,10 +117,11 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
       unmatchedResults += expectedOutputList(i)
     return (Some(unmatchedResults), false)
   }
-  def generateTestResult(): (Option[String], String) = {
+
+  def generateTestResult(): (Option[String], String, Long) = {
     val results = checkResults(expectedOutput, this.results)
     if (results._2)
-      (None, "Passed")
-    else (results._1, "Failed")
+      (None, "Passed", output._2)
+    else (results._1, "Failed", output._2)
   }
 }

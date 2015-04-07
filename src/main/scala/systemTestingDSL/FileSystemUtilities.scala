@@ -5,6 +5,8 @@ import systemTestingDSL._
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.text.SimpleDateFormat
+import java.util.Date
 /**
  * This object provides some convenient methods/functions to provide fileSystem related operations
  */
@@ -75,5 +77,13 @@ object FileSystemUtilities {
     val outputDirectory = new File(outputDirectoryName)
     if (!outputDirectory.exists())
       createDirectory(outputDirectoryName)
+  }
+
+  /**
+   * Get Current date as string
+   */
+  def getCurrentDateString(): String = {
+    val formatter = new SimpleDateFormat("dd_mm_yy")
+    formatter.format(new Date())
   }
 }

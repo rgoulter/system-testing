@@ -21,14 +21,17 @@ class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator 
       val referenceDirectory = configuration.getString("REF_DIRECTORY")
       val commandName = configuration.getString("COMMAND_NAME")
       val arguments = configuration.getString("ARGUMENTS")
-      //      val referenceFileExtension = configuration.getString("REF_EXTENSION")
-      val referenceFileExtension = ".ref"
+      val referenceFileExtension = configuration.getString("REF_EXTENSION")
       for (file <- files) {
-        new GenericTestCase(commandName, file, arguments, referenceDirectory,
-          file.substring(file.lastIndexOf("/") + 1), ".out").run
-        diffOutput += file + "\n"
-        diffOutput += "*************************\n"
-        diffOutput += DiffMatcher.diff(referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".out", referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".ref")
+        scala.util.control.Exception.ignoring(classOf[Exception]) {
+          new GenericTestCase(commandName, file, arguments, referenceDirectory,
+            file.substring(file.lastIndexOf("/") + 1), ".out").run
+          diffOutput += file + "\n"
+          diffOutput += "*************************\n"
+          val referenceFileName = referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".ref"
+          if (FileSystemUtilities.fileOrDirectoryExists(referenceFileName))
+            diffOutput += DiffMatcher.diff(referenceDirectory + file.substring(file.lastIndexOf("/") + 1) + ".out", referenceFileName)
+        }
       }
     }
     println(diffOutput)

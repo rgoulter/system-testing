@@ -2,6 +2,7 @@ package systemTestingDSL
 
 import systemTestingDSL.testSuite.HipTestSuite
 import com.typesafe.config.Config
+import java.io.PrintWriter
 
 class HipTestSuiteUsage(configuration: Config) {
 
@@ -9,7 +10,7 @@ class HipTestSuiteUsage(configuration: Config) {
   val OUTPUT_DIR = configuration.getString("HIP_OUTPUT_DIRECTORY")
 
   def run(): Unit = {
-    val suite = new HipTestSuite()
+    val suite = new HipTestSuite(new PrintWriter(System.out, true), configuration)
     addInfinityTests(suite)
     addArrayTests(suite)
     addListTests(suite)

@@ -37,12 +37,12 @@ trait Runnable {
     }
   }
 
-  def execute: String = {
+  def execute: (String, Long) = {
     var endTime: Long = 0
     var startTime = System.currentTimeMillis
     val result = executeInner
     endTime = System.currentTimeMillis
-    result
+    (result, endTime - startTime)
   }
 
 }

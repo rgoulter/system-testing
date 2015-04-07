@@ -19,8 +19,7 @@ class RegressionTestReferenceBuilder(configuration: Config) {
       val outputDirectory = configuration.getString("REF_OUTPUT_DIRECTORY")
       val commandName = configuration.getString("COMMAND_NAME")
       val arguments = configuration.getString("ARGUMENTS")
-      //      val referenceFileExtension = configuration.getString("REF_EXTENSION")
-      val referenceFileExtension = ".ref"
+      val referenceFileExtension = configuration.getString("REF_EXTENSION")
       files.foreach(file => referenceRuns += new GenericTestCase(commandName, file, arguments, outputDirectory,
         file.substring(file.lastIndexOf("/") + 1),
         referenceFileExtension))
