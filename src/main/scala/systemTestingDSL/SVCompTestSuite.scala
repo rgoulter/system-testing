@@ -3,20 +3,20 @@ package systemTestingDSL
 import scala.collection.mutable.HashMap
 
 case class SVCompTestSuite(directory: String,
-  arguments: String = """-infer "@term" --svcomp-compete""",
-  fileType: String = ".c") extends GetFileList {
+    arguments: String = """-infer "@term" --svcomp-compete""",
+    fileType: String = ".c") extends GetFileList {
 
   def buildResultMap(): HashMap[String, String] = {
-    val files = getFileList(directory, fileType)
+    val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
     var resultMap = new HashMap[String, String]()
     files.foreach(file => resultMap.put(file, getResultFromFileName(extractFileNameFromPath(file))))
     resultMap
   }
   def getResultFromFileName(fileName: String): String = {
     if (fileName.contains("true") || fileName.contains("TRUE"))
-      "TRUE"
+      return "TRUE"
     else if (fileName.contains("false") || fileName.contains("FALSE"))
-      "FALSE"
+      return "FALSE"
     "UNKNOWN"
   }
 

@@ -12,6 +12,7 @@ object Main {
       case "all" => runAllTests
       case "buildReference" => buildReference
       case "runReference" => runReference
+      case "svcomp" => runSVCompTests
       case _ => showHelpText
     }
   }
@@ -42,6 +43,7 @@ object Main {
 
   private def runSVCompTests(): Unit = {
     printHeader("Running SVComp Tests")
+    SVCompTestSuiteUsage.run()
   }
 
   private def showHelpText(): Unit = {
