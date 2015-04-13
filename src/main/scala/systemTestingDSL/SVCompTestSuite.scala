@@ -36,7 +36,7 @@ case class SVCompTestSuite(directory: String,
     buildResultMap().foreach(expectedResult => {
       val actualResult = tests.get(expectedResult._1).get.runAndReturn
       result += log(expectedResult._1)
-      if (expectedResult._2.toLowerCase().contains(actualResult.toLowerCase()))
+      if (actualResult.toLowerCase().contains(expectedResult._2.toLowerCase()))
         result += success("Passed")
       else {
         result += error("Failed")
