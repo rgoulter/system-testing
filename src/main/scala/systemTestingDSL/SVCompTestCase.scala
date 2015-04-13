@@ -8,13 +8,13 @@ case class SVCompTestCase(commandName: String,
   outputDirectoryName: String = "",
   outputFileName: String = "",
   outputFileExtension: String = ".out")
-    extends Runnable with ConsoleOutputGenerator {
+  extends Runnable with ConsoleOutputGenerator {
   var output: (String, Long) = ("", 0)
 
   /**
    * Overriding traits implementation because the order of the arguments and file name is different
    */
-  def formCommand(): String = {
+  override def formCommand(): String = {
     commandName.concat(separator).concat(fileName).concat(separator).concat(arguments)
   }
   /**

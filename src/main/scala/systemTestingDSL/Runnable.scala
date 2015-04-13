@@ -20,9 +20,8 @@ trait Runnable {
   def outputFileName: String
   val separator: String = SPACE
 
-  private def formCommand(): String = {
-    commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
-  }
+  def formCommand: String
+
   private def executeInner: String = {
     val cmd = formCommand
     val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
