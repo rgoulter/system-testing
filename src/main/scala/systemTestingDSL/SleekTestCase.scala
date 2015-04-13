@@ -64,6 +64,9 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   // (String,Long) tuple signifies that Runnable.execute returns (ConsoleOutput, TimeOfExecution)
   var output: (String, Long) = ("", 0)
 
+  override def formCommand(): String = {
+    commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
+  }
   var results: MutableList[String] = MutableList()
   def process(source: String, rule: String): Unit = {
     results += rule

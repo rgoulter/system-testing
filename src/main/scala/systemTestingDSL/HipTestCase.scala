@@ -68,6 +68,9 @@ class HipTestCase(builder: HipTestCaseBuilder)
     results += rule
   }
 
+  override def formCommand(): String = {
+    commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
+  }
   def buildExpectedOutputMap(results: String): HashMap[String, String] = {
     val outputMap = new HashMap[String, String]
     results.split(",").foreach(result => outputMap.put(result.substring(0, result.indexOf(":")).trim, result.substring(result.indexOf(":") + 1).trim))

@@ -8,7 +8,7 @@ case class GenericTestCase(commandName: String,
   outputDirectoryName: String = "",
   outputFileName: String = "",
   outputFileExtension: String = ".out")
-  extends Runnable with ConsoleOutputGenerator {
+    extends Runnable with ConsoleOutputGenerator {
   var output: (String, Long) = ("", 0)
 
   override def formCommand(): String = {

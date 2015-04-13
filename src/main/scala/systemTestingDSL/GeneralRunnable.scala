@@ -9,4 +9,8 @@ case class GeneralRunnable(commandName: String,
   outputDirectory: String = ".",
   fileName: String = "", arguments: String = "",
   expectedOutput: String = "")
-    extends Runnable
+    extends Runnable {
+  override def formCommand(): String = {
+    commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
+  }
+}
