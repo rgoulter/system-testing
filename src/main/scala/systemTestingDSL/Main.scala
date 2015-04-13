@@ -40,6 +40,10 @@ object Main {
     new HipTestSuiteUsage(ConfigFactory.load()).run()
   }
 
+  private def runSVCompTests(): Unit = {
+    printHeader("Running SVComp Tests")
+  }
+
   private def showHelpText(): Unit = {
     println(error("Supported Options: sbt run [sleek/hip/all]"))
   }
