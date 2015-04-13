@@ -4,11 +4,7 @@ import com.typesafe.config.Config
 import scala.collection.mutable.ArrayBuffer
 import collection.JavaConversions._
 
-class RegressionTestReferenceBuilder(configuration: Config) {
-
-  private def getFileList(directory: String, extension: String): Array[String] = {
-    FileSystemUtilities.getRecursiveListOfFilesWithRegex(directory, extension).map(_.getAbsolutePath())
-  }
+class RegressionTestReferenceBuilder(configuration: Config) extends GetFileList {
 
   def buildTests(): ArrayBuffer[GenericTestCase] = {
     val refTests = configuration.getConfigList("BUILD_REFERENCE_TESTS")
