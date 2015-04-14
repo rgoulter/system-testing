@@ -6,11 +6,13 @@ import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
 
 case class SVCompTestSuite(directory: String,
-    commandName: String = "hip",
-    arguments: String = """-infer "@term" --svcomp-compete""",
-    fileType: String = ".c",
-    printer: PrintWriter = new PrintWriter(System.out, true)) extends GetFileList with ConsoleOutputGenerator {
+  commandName: String = "hip",
+  arguments: String = """-infer "@term" --svcomp-compete""",
+  fileType: String = ".c",
+  printer: PrintWriter = new PrintWriter(System.out, true)) extends GetFileList with ConsoleOutputGenerator {
   var tests = new HashMap[String, SVCompTestCase]
+  var failures: Int = 0
+  var successes: Int = 0
 
   def buildResultMap(): HashMap[String, String] = {
     val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
@@ -36,15 +38,24 @@ case class SVCompTestSuite(directory: String,
     buildResultMap().foreach(expectedResult => {
       val actualResult = tests.get(expectedResult._1).get.runAndReturn
       result += log(expectedResult._1)
-      if (actualResult.toLowerCase().contains(expectedResult._2.toLowerCase()))
+      if (actualResult.toLowerCase().contains(expectedResult._2.toLowerCase())) {
         result += success("Passed")
-      else {
+        successes += 1
+      } else {
         result += error("Failed")
         result += expected(expectedResult._2)
         result += had(actualResult)
+        failures += 1
       }
     })
     printer.println(result)
+    printTestStatistics
+  }
+
+  def printTestStatistics(): Unit = {
+    log("Total Number of tests: " + (successes + failures))
+    success("Total Number of tests passed: " + successes)
+    error("Total number of tests failed: " + failures)
   }
 
 }
