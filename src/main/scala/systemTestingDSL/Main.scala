@@ -5,6 +5,11 @@ import com.typesafe.config.ConfigFactory
 object Main {
 
   def main(args: Array[String]): Unit = {
+    if (args.isEmpty) {
+      showHelpText
+      return
+    }
+
     val command = args(0)
     command match {
       case "sleek" => runSleekTests
