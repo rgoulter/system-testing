@@ -20,8 +20,9 @@ class HipTestCaseTest {
     arrSumTest.parse(HipTestCaseData.arr_sumOutput, "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
 
     val result = arrSumTest.generateTestResult
+    val (err, passOrFail, time) = result
 
-    assertEquals(None, result._1)
-    assertEquals("Passed", result._2)
+    assertEquals(None, err)
+    assertEquals("Passed", passOrFail)
   }
 }

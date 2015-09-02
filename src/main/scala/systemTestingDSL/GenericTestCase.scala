@@ -14,17 +14,21 @@ case class GenericTestCase(commandName: String,
   override def formCommand(): String = {
     commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
   }
+
   /**
-   * *
    * This function does not write to file but just returns the console output
    */
   def runAndReturn(): String = {
-    this.execute._1
+    val (outp, time) = this.execute
+    outp
   }
 
   def run(): Unit = {
     this.output = this.execute
+
+    val (outp, time) = this.output
+
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectoryName, output._1, outputFileExtension)
+      writeToFile(this.outputFileName, this.outputDirectoryName, outp, outputFileExtension)
   }
 }

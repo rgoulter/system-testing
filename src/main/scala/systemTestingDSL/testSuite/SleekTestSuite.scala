@@ -42,21 +42,21 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     var startTime = System.currentTimeMillis
 
     tests.foreach(test => {
-      lazy val result = test.build.generateOutput
+      lazy val (err, passOrFail, time) = test.build.generateOutput
 
-      result._2 match {
+      passOrFail match {
         case "Passed" => successes += test.fileName
         case _ => failures += test.fileName
       }
 
-      displayResult(result._2)
+      displayResult(passOrFail)
 
-      if (result._1.isDefined)
-        writer.println(result._1.get)
+      if (err.isDefined)
+        writer.println(err.get)
 
-      if (result._3 > THRESHOLD) {
-        performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + " milliseconds \n"
-        writer.println("Runtime: " + result._3 + "milliseconds")
+      if (time > THRESHOLD) {
+        performanceOutput += test.fileName + "\n" + "Runtime was " + time + " milliseconds \n"
+        writer.println("Runtime: " + time + "milliseconds")
       }
     })
 

@@ -75,14 +75,21 @@ class HipTestCase(builder: HipTestCaseBuilder)
 
   def buildExpectedOutputMap(results: String): HashMap[String, String] = {
     val outputMap = new HashMap[String, String]
-    results.split(",").foreach(result => outputMap.put(result.substring(0, result.indexOf(":")).trim, result.substring(result.indexOf(":") + 1).trim))
+
+    results.split(",").foreach(result =>
+      outputMap.put(result.substring(0, result.indexOf(":")).trim,
+                    result.substring(result.indexOf(":") + 1).trim))
+
     outputMap
   }
 
   def run() = {
     this.output = this.execute
+
+    val (outp,time) = this.output
+
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, output._1)
+      writeToFile(this.outputFileName, this.outputDirectory, outp)
   }
 
   def printResults() = {
@@ -93,10 +100,14 @@ class HipTestCase(builder: HipTestCaseBuilder)
 
   def generateOutput() = {
     run
-    this.parse(this.output._1, builder.regex, NEW_LINE)
+
+    val (outp,time) = this.output
+
+    this.parse(outp, builder.regex, NEW_LINE)
     generateTestResult()
   }
 
+  // TODO: Return type of Either would make more sense here?
   def checkResults(expectedOutput: String, result: String): (Option[String], Boolean) = {
     val expectedOutputMap = buildExpectedOutputMap(result)
     val filteredResults = results.view.filter(_.matches(this.regex))
@@ -105,6 +116,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
 
     if (filteredResults.isEmpty)
       return (Some("Binary failed to execute. Please investigate \n"), false)
+
     for (outputLine <- filteredResults) {
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
@@ -126,11 +138,13 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   def generateTestResult(): (Option[String], String, Long) = {
-    val results = checkResults(expectedOutput, this.expectedOutput)
+    val (err, passed) = checkResults(expectedOutput, this.expectedOutput)
 
-    if (results._2)
-      (None, "Passed", output._2)
+    val (outp, time) = this.output
+
+    if (passed)
+      (None, "Passed", time)
     else
-      (results._1, "Failed", output._2)
+      (err, "Failed", time)
   }
 }

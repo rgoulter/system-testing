@@ -41,6 +41,7 @@ case class SVCompTestSuite(directory: String,
     "UNKNOWN"
   }
 
+  // TODO: a.k.a. basename
   def extractFileNameFromPath(path: String): String = {
     path.substring(path.lastIndexOf("/") + 1)
   }
@@ -49,16 +50,17 @@ case class SVCompTestSuite(directory: String,
     var result = ""
 
     buildResultMap().foreach(expectedResult => {
-      val actualResult = tests.get(expectedResult._1).get.runAndReturn
+      val (filename, expResult) = expectedResult
+      val actualResult = tests.get(filename).get.runAndReturn
 
-      result += log(expectedResult._1)
+      result += log(filename)
 
-      if (actualResult.toLowerCase().contains(expectedResult._2.toLowerCase())) {
+      if (actualResult.toLowerCase().contains(expResult.toLowerCase())) {
         result += success("Passed")
         successes += 1
       } else {
         result += error("Failed")
-        result += expected(expectedResult._2)
+        result += expected(expResult)
         result += had(actualResult)
         failures += 1
       }

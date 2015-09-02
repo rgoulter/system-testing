@@ -76,16 +76,22 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def run() = {
     this.output = this.execute
 
+    val (outp, time) = this.output
+
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, output._1)
+      writeToFile(this.outputFileName, this.outputDirectory, outp)
   }
 
   def generateOutput(): (Option[String], String, Long) = {
     run
-    this.parse(this.output._1, builder.regex, NEW_LINE)
+
+    val (outp, time) = this.output
+
+    this.parse(outp, builder.regex, NEW_LINE)
     generateTestResult
   }
 
+  // TODO: Either would make a better return type here.
   def checkResults(expectedOutput: String, result: Seq[String]): (Option[String], Boolean) = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
     val filteredResults = results.view.filter(_.matches(builder.regex)).zipWithIndex
@@ -137,11 +143,13 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def generateTestResult(): (Option[String], String, Long) = {
-    val results = checkResults(expectedOutput, this.results)
+    val (err, passed) = checkResults(expectedOutput, this.results)
 
-    if (results._2)
-      (None, "Passed", output._2)
+    val (outp, time) = this.output
+
+    if (passed)
+      (None, "Passed", time)
     else
-      (results._1, "Failed", output._2)
+      (err, "Failed", time)
   }
 }

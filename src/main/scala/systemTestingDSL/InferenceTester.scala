@@ -7,8 +7,7 @@ trait InferenceTester {
 
   def entailCheck(entail: String, expected: (String, String)): Boolean = {
     //        println(entail)
-    val expectedResult: String = expected._1
-    val expectedResidue: String = expected._2
+    val (expectedResult, expectedResidue) = expected
 
     def validFormat: Boolean =
       entail.contains(InferenceDefaults.ENTAIL) && entail.contains(":") && entail.contains(".")
@@ -57,6 +56,6 @@ trait InferenceTester {
     //    println("result length: " + results.length)
 
     val zipped = splitCorpus.view.zipWithIndex
-    zipped.forall(tuple => entailCheck(tuple._1, results(tuple._2)))
+    zipped.forall({ case (text, idx) => entailCheck(text, results(idx)) })
   }
 }

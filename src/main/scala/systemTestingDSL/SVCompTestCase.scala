@@ -19,18 +19,19 @@ case class SVCompTestCase(commandName: String,
   }
 
   /**
-   * *
    * This function does not write to file but just returns the console output
    */
   def runAndReturn(): String = {
-    this.execute._1
+    val (outp, time) = this.execute
+    outp
   }
 
   def run(): Unit = {
     this.output = this.execute
 
-    if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectoryName, output._1, outputFileExtension)
-  }
+    val (outp, time) = this.output
 
+    if (outputFileName.length > 0)
+      writeToFile(this.outputFileName, this.outputDirectoryName, outp, outputFileExtension)
+  }
 }
