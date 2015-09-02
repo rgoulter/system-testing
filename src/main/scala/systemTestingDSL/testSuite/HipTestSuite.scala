@@ -1,11 +1,13 @@
 package systemTestingDSL.testSuite
 
 import java.io.PrintWriter
+
 import scala.collection.mutable.MutableList
+
+import com.typesafe.config.Config
+
 import systemTestingDSL.HipTestCaseBuilder
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
-import com.typesafe.config.Config
-import systemTestingDSL.FileSystemUtilities
 
 case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[HipTestCaseBuilder]()

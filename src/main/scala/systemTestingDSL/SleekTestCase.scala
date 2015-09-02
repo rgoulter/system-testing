@@ -1,10 +1,8 @@
 package systemTestingDSL
 
 import scala.collection.mutable.MutableList
-import java.io.File
-import scala.collection.mutable.ArrayBuffer
+
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
-import com.typesafe.config.Config
 
 class SleekTestCaseBuilder() {
   var commandName: String = ""

@@ -1,9 +1,10 @@
 package systemTestingDSL
 
-import scala.collection.mutable.HashMap
-import scala.collection.mutable.ArrayBuffer
-import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
+
+import scala.collection.mutable.HashMap
+
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
 case class SVCompTestSuite(directory: String,
   commandName: String = "hip",

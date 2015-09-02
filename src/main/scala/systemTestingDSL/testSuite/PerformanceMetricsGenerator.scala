@@ -1,6 +1,7 @@
 package systemTestingDSL.testSuite
 
 import com.typesafe.config.Config
+
 import systemTestingDSL.FileSystemUtilities
 
 trait PerformanceMetricsGenerator extends {

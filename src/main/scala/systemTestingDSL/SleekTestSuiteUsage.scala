@@ -1,9 +1,10 @@
 package systemTestingDSL
 
-import systemTestingDSL.matchers._
-import systemTestingDSL.testSuite.SleekTestSuite
-import com.typesafe.config.Config
 import java.io.PrintWriter
+
+import com.typesafe.config.Config
+
+import systemTestingDSL.testSuite.SleekTestSuite
 
 class SleekTestSuiteUsage(configuration: Config) {
 

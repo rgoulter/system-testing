@@ -1,8 +1,10 @@
 package systemTestingDSL
 
-import systemTestingDSL.testSuite.HipTestSuite
-import com.typesafe.config.Config
 import java.io.PrintWriter
+
+import com.typesafe.config.Config
+
+import systemTestingDSL.testSuite.HipTestSuite
 
 class HipTestSuiteUsage(configuration: Config) {
 

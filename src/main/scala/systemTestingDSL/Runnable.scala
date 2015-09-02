@@ -1,13 +1,15 @@
 package systemTestingDSL
 
+import java.io.FileNotFoundException
+import java.util.concurrent.TimeoutException
+
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.sys.process._
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import java.util.concurrent.TimeoutException
+import scala.concurrent.duration.DurationInt
+import scala.sys.process.stringToProcess
+
 import com.typesafe.config.ConfigFactory
-import java.io.FileNotFoundException
 
 /**
  * This trait models anything that is runnable. It only depends on the config object for a TIMEOUT value which states how long

@@ -1,9 +1,8 @@
 package systemTestingDSL
 
-import scala.collection.mutable.MutableList
-import java.io.File
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.HashMap
+import scala.collection.mutable.MutableList
+
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
 class HipTestCaseBuilder {

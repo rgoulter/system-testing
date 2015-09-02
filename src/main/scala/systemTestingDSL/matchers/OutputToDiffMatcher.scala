@@ -1,7 +1,14 @@
 package systemTestingDSL.matchers
+
 import java.io.File
-import systemTestingDSL._
-import scala.sys.process._
+
+import scala.sys.process.Process
+
+import systemTestingDSL.FileSystemUtilities
+import systemTestingDSL.MATCHER_NEW
+import systemTestingDSL.MATCHER_OLD
+import systemTestingDSL.NEW_LINE
+import systemTestingDSL.SPACE
 
 /**
  * Takes two files as data sources and performs a diff on them

@@ -1,11 +1,13 @@
 package systemTestingDSL.testSuite
 
-import scala.collection.mutable.MutableList
-import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 import java.io.PrintWriter
-import systemTestingDSL.SleekTestCaseBuilder
+
+import scala.collection.mutable.MutableList
+
 import com.typesafe.config.Config
-import systemTestingDSL.FileSystemUtilities
+
+import systemTestingDSL.SleekTestCaseBuilder
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
 class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[SleekTestCaseBuilder]()

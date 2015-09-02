@@ -1,7 +1,5 @@
 package systemTestingDSL
 
-import systemTestingDSL.matchers._
-
 object Usage {
 
   def runSleekTests(): Unit = {

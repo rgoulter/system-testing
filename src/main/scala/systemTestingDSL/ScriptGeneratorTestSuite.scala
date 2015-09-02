@@ -1,7 +1,7 @@
 package systemTestingDSL
 
 import java.io.File
-import systemTestingDSL._
+
 import scala.collection.mutable.MutableList
 
 /**

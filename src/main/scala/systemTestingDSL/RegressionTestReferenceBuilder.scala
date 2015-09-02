@@ -1,8 +1,9 @@
 package systemTestingDSL
 
-import com.typesafe.config.Config
+import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.mutable.ArrayBuffer
-import collection.JavaConversions._
+
+import com.typesafe.config.Config
 
 class RegressionTestReferenceBuilder(configuration: Config) extends GetFileList {
 

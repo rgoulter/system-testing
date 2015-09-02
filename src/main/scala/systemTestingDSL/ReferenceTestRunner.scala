@@ -1,10 +1,12 @@
 package systemTestingDSL
 
-import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
-import systemTestingDSL.matchers.DiffMatcher
+import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.mutable.ArrayBuffer
-import collection.JavaConversions._
+
 import com.typesafe.config.Config
+
+import systemTestingDSL.matchers.DiffMatcher
+import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
 class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator {
 
