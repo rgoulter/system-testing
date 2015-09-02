@@ -6,6 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.Date
+
 /**
  * This object provides some convenient methods/functions to provide fileSystem related operations
  */
@@ -59,6 +60,7 @@ object FileSystemUtilities {
    */
   def readFile(path: String): String = {
     var lines = ""
+
     try {
       val source = scala.io.Source.fromFile(path)
       lines = source.getLines mkString NEW_LINE
@@ -66,6 +68,7 @@ object FileSystemUtilities {
     } catch {
       case ex: FileNotFoundException =>
     }
+
     lines
   }
 
@@ -74,6 +77,7 @@ object FileSystemUtilities {
    */
   def checkOutputDirectory(outputDirectoryName: String) = {
     val outputDirectory = new File(outputDirectoryName)
+
     if (!outputDirectory.exists())
       createDirectory(outputDirectoryName)
   }

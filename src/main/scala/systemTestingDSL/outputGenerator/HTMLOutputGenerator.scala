@@ -1,7 +1,6 @@
 package systemTestingDSL.outputGenerator
 
 trait HTMLOutputGenerator extends OutputGenerator {
-
   def error(errorText: String) = paragraph(errorText, "red")
 
   def success(successText: String) = paragraph(successText, "green")
@@ -12,6 +11,6 @@ trait HTMLOutputGenerator extends OutputGenerator {
 
   def log(logText: String) = paragraph(logText, "rgb(207, 207, 58)")
 
-  private def paragraph(content: String, colour: String = "black"): String = (s"""<p style = "color: $colour ;"> $content </p>""")
-
+  private def paragraph(content: String, colour: String = "black"): String =
+    (s"""<p style = "color: $colour ;"> $content </p>""")
 }

@@ -17,34 +17,45 @@ import com.typesafe.config.ConfigFactory
  */
 trait Runnable {
   def commandName: String
+
   def fileName: String
+
   def arguments: String
+
   def outputFileName: String
-  val separator: String = SPACE
 
   def formCommand: String
+
+  val separator: String = SPACE
 
   private def executeInner: String = {
     val cmd = formCommand
     val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
+
     val executeFuture: Future[String] = Future {
       println(cmd)
       val result: String = cmd.!!
       result
     }
+
     try {
       Await.result(executeFuture, timeout seconds)
     } catch {
-      case ex: TimeoutException => return "The above computation timed out"
-      case ex: FileNotFoundException => "The file could not be found, please check the executable paths"
+      case ex: TimeoutException =>
+        return "The above computation timed out"
+      case ex: FileNotFoundException =>
+        "The file could not be found, please check the executable paths"
     }
   }
 
   def execute: (String, Long) = {
     var endTime: Long = 0
     var startTime = System.currentTimeMillis
+
     val result = executeInner
+
     endTime = System.currentTimeMillis
+
     (result, endTime - startTime)
   }
 

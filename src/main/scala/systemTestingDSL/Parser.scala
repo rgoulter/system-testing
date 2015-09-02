@@ -1,7 +1,6 @@
 package systemTestingDSL
 
 trait Parser {
-
   // This should be overloaded
   def process(text: String, rule: String): Any
 
@@ -18,6 +17,7 @@ trait Parser {
    */
   def perform(text: String, rule: String): Any = {
     val matched = matchString(text, rule)
+
     matched match {
       case Some(value) => process(text, value)
       case None =>

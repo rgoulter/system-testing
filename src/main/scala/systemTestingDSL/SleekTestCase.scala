@@ -50,6 +50,7 @@ class SleekTestCaseBuilder() {
 
   def build: SleekTestCase = new SleekTestCase(this)
 }
+
 class SleekTestCase(builder: SleekTestCaseBuilder)
     extends Runnable with Parser with InferenceTester with ConsoleOutputGenerator {
   var commandName = builder.commandName
@@ -62,16 +63,19 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   // (String,Long) tuple signifies that Runnable.execute returns (ConsoleOutput, TimeOfExecution)
   var output: (String, Long) = ("", 0)
 
+  var results: MutableList[String] = MutableList()
+
   override def formCommand(): String = {
     commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
   }
-  var results: MutableList[String] = MutableList()
+
   def process(source: String, rule: String): Unit = {
     results += rule
   }
 
   def run() = {
     this.output = this.execute
+
     if (outputFileName.length > 0)
       writeToFile(this.outputFileName, this.outputDirectory, output._1)
   }
@@ -80,49 +84,64 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     run
     this.parse(this.output._1, builder.regex, NEW_LINE)
     generateTestResult
-
   }
 
   def checkResults(expectedOutput: String, result: Seq[String]): (Option[String], Boolean) = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
-    var resultOutput = ""
     val filteredResults = results.view.filter(_.matches(builder.regex)).zipWithIndex
+
+    var resultOutput = ""
+
     if (filteredResults.isEmpty)
       return (Some("Binary failed to execute. Please investigate \n"), false)
+
     if (filteredResults.size != expectedOutputList.size)
       return matchUnequalFailedTests(results, expectedOutputList)
+
     for ((result, i) <- filteredResults)
       if (!result.contains(expectedOutputList(i))) {
         resultOutput += had(result)
         resultOutput += expected(expectedOutputList(i))
+
         return (Some(resultOutput), false)
       }
+
     return (None, true)
   }
 
   def matchUnequalFailedTests(filteredResults: Seq[String], expectedOutputList: Seq[String]): (Option[String], Boolean) = {
     val minSize = Math.min(filteredResults.length, expectedOutputList.size)
+
     var count, i = 0
     var unmatchedResults = ""
+
     for (count <- 0 until minSize) {
       if (!filteredResults(count).contains(expectedOutputList(count)))
         unmatchedResults += had(filteredResults(count))
+
       unmatchedResults += expected(expectedOutputList(count))
     }
+
     unmatchedResults += "\nUnmatched\n"
     unmatchedResults += "\nExtra Sleek Entail Output\n\n"
+
     for (i <- count until filteredResults.length)
       unmatchedResults += filteredResults(i)
+
     unmatchedResults += "\nExtra Results\n"
+
     for (i <- count until expectedOutputList.length)
       unmatchedResults += expectedOutputList(i)
+
     return (Some(unmatchedResults), false)
   }
 
   def generateTestResult(): (Option[String], String, Long) = {
     val results = checkResults(expectedOutput, this.results)
+
     if (results._2)
       (None, "Passed", output._2)
-    else (results._1, "Failed", output._2)
+    else
+      (results._1, "Failed", output._2)
   }
 }

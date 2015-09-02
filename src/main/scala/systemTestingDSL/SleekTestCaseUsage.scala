@@ -1,7 +1,6 @@
 package systemTestingDSL
 
 object Usage {
-
   def runSleekTests(): Unit = {
     val sleekTest =
       new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/sleek.slk" withArguments " " storeOutputInDirectory "results" withOutputFileName "sleek" checkAgainst "Valid, Valid, Valid, Fail"
@@ -522,7 +521,6 @@ object Usage {
     val veribsync_barrier_dynamic2Test1 =
       new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_dynamic2" checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Valid, Fail, Valid, Valid, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid"
     veribsync_barrier_dynamic2Test1.build generateOutput ()
-
   }
 }
 

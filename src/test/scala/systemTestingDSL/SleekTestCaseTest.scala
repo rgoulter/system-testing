@@ -7,7 +7,6 @@ import systemTestingDSL.SleekTestCase
 import systemTestingDSL.SleekTestCaseBuilder
 import org.junit.Ignore
 class SleekTestCaseTest {
-
   val regex = "Entail.*:\\s.*Valid.*|Entail.*:\\s.*Fail.*|Entailing lemma.*:*Valid.*|Entailing lemma.*:.*Fail.*"
 
   val barrierDynamicOutput = """!!! init_tp : Using Z3 by default
@@ -663,14 +662,19 @@ Time(cache overhead) : 0.080008 (seconds)
 Total verification time: 3.348209 second(s)
 	Time spent in main process: 0.868054 second(s)
 	Time spent in child processes: 2.480155 second(s)"""
+
   @Test
   def splitOnRegexLemmasTest() = {
     var count = 0
+
     assertFalse(SleekTestCaseData.lemmaOutput.matches("Entail\\s\\d\\d:\\s.*Valid.*|Entail\\s\\d\\d:\\s.*Fail.*"))
+
     val splitResults = SleekTestCaseData.lemmaOutput.split("\n")
+
     for (line <- splitResults)
       if (line.stripMargin.matches("Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*"))
         count += 1
+
     assertEquals(2, count)
     assertTrue(SleekTestCaseData.lemmaOutput.contains("Entail"))
   }
@@ -678,10 +682,13 @@ Total verification time: 3.348209 second(s)
   @Test
   def barrierRegexTest() = {
     val tokenized = barrierDynamicOutput.split("\n")
+    
     var count = 0
+
     for (token <- tokenized)
       if (token.matches(this.regex))
         count += 1
+
     assertEquals(27, count)
     assertTrue("Entail 1: Valid.".matches(this.regex))
   }
@@ -689,9 +696,19 @@ Total verification time: 3.348209 second(s)
   @Test
   def sleekTestCaseTest() = {
     val lemmasLsegTest = new SleekTestCase(
-      new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg.slk" withArguments "  --elp --dis-lem-gen " storeOutputInDirectory "results" withOutputFileName "lemmas_lseg" checkAgainst "Valid, Valid")
-    lemmasLsegTest.parse(SleekTestCaseData.lemmaOutput, "Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*", "\n")
+      new SleekTestCaseBuilder runCommand "sleek"
+                               onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg.slk"
+                               withArguments "  --elp --dis-lem-gen "
+                               storeOutputInDirectory "results"
+                               withOutputFileName "lemmas_lseg"
+                               checkAgainst "Valid, Valid")
+
+    lemmasLsegTest.parse(SleekTestCaseData.lemmaOutput,
+                         "Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*",
+                         "\n")
+
     val generatedResults = lemmasLsegTest.generateTestResult._1
+
     assertEquals(None, generatedResults)
     assertTrue("Entail 1: Valid ".matches(regex))
   }
@@ -699,27 +716,45 @@ Total verification time: 3.348209 second(s)
   @Test
   def barrierDynamic2Test() = {
     val barrierDynamic2Test = new SleekTestCase(
-      new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_dynamic2" checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Fail, Valid")
+      new SleekTestCaseBuilder runCommand "sleek"
+                               onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk"
+                               withArguments "--en-para -perm bperm -tp redlog"
+                               storeOutputInDirectory "results"
+                               withOutputFileName "veribsync_barrier_dynamic2"
+                               checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Fail, Valid")
+
     barrierDynamic2Test.parse(barrierDynamicOutput, this.regex, "\n")
+
     val barrierDynamicResults = barrierDynamic2Test.generateTestResult._1
   }
 
   @Test
   def veribsyncBarrierStaticRegexTest() = {
     val tokenized = SleekTestCaseData.veribsyncBarrierStaticOutput.split("\n")
+
     var count = 0
+
     for (token <- tokenized)
       if (token.matches(this.regex))
         count += 1
+
     assertEquals(5, count)
   }
 
   @Test
   def veribsyncBarrierStaticTest() = {
     val veribsync_barrier_staticTest = new SleekTestCase(
-      new SleekTestCaseBuilder runCommand "sleek" onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk" withArguments "--en-para -perm bperm -tp redlog" storeOutputInDirectory "results" withOutputFileName "veribsync_barrier_static" checkAgainst "Valid, Valid, Valid, Valid, Valid")
+      new SleekTestCaseBuilder runCommand "sleek"
+                               onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk"
+                               withArguments "--en-para -perm bperm -tp redlog"
+                               storeOutputInDirectory "results"
+                               withOutputFileName "veribsync_barrier_static"
+                               checkAgainst "Valid, Valid, Valid, Valid, Valid")
+
     veribsync_barrier_staticTest.parse(SleekTestCaseData.veribsyncBarrierStaticOutput, this.regex, "\n")
+
     val result = veribsync_barrier_staticTest.generateTestResult._1
+
     assertEquals(None, result)
   }
 }

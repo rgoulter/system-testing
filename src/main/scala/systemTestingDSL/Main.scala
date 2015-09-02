@@ -3,7 +3,6 @@ package systemTestingDSL
 import com.typesafe.config.ConfigFactory
 
 object Main {
-
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       showHelpText
@@ -31,11 +30,12 @@ object Main {
     printHeader("Running Reference Tests")
     new ReferenceTestRunner(ConfigFactory.load()).run
   }
+
   private def buildReference(): Unit = {
     printHeader("Building References")
     new RegressionTestReferenceBuilder(ConfigFactory.load()).run
-
   }
+
   private def runSleekTests(): Unit = {
     printHeader("Running Sleek Tests")
     new SleekTestSuiteUsage(ConfigFactory.load()).run()
@@ -61,8 +61,9 @@ object Main {
     println(success("******************"))
   }
 
-  private def error(errorText: String): String = Console.CYAN + errorText + Console.RESET + '\n'
+  private def error(errorText: String): String =
+    Console.CYAN + errorText + Console.RESET + '\n'
 
-  private def success(successText: String): String = Console.GREEN + successText + Console.RESET + '\n'
-
+  private def success(successText: String): String =
+    Console.GREEN + successText + Console.RESET + '\n'
 }

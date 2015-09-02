@@ -51,6 +51,7 @@ class HipTestCaseBuilder {
 
   def build: HipTestCase = new HipTestCase(this)
 }
+
 class HipTestCase(builder: HipTestCaseBuilder)
     extends Runnable with Parser with ConsoleOutputGenerator {
   var commandName = builder.commandName
@@ -63,6 +64,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   var output: (String, Long) = ("", 0)
 
   var results: MutableList[String] = MutableList()
+
   def process(source: String, rule: String): Unit = {
     results += rule
   }
@@ -70,6 +72,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   override def formCommand(): String = {
     commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
   }
+
   def buildExpectedOutputMap(results: String): HashMap[String, String] = {
     val outputMap = new HashMap[String, String]
     results.split(",").foreach(result => outputMap.put(result.substring(0, result.indexOf(":")).trim, result.substring(result.indexOf(":") + 1).trim))
@@ -96,29 +99,38 @@ class HipTestCase(builder: HipTestCaseBuilder)
 
   def checkResults(expectedOutput: String, result: String): (Option[String], Boolean) = {
     val expectedOutputMap = buildExpectedOutputMap(result)
-    var resultOutput = ""
     val filteredResults = results.view.filter(_.matches(this.regex))
+
+    var resultOutput = ""
+
     if (filteredResults.isEmpty)
       return (Some("Binary failed to execute. Please investigate \n"), false)
     for (outputLine <- filteredResults) {
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
-      val result: String = if (outputLine.contains("FAIL"))
-        "FAIL"
-      else "SUCCESS"
+
+      val result: String =
+        if (outputLine.contains("FAIL"))
+          "FAIL"
+        else
+          "SUCCESS"
+
       if (expectedOutputMap.contains(methodName) && !expectedOutputMap(methodName).equals(result)) {
         resultOutput += had(result)
         resultOutput += expected(expectedOutputMap(methodName))
         return (Some(resultOutput), false)
       }
     }
+
     return (None, true)
   }
 
   def generateTestResult(): (Option[String], String, Long) = {
     val results = checkResults(expectedOutput, this.expectedOutput)
+
     if (results._2)
       (None, "Passed", output._2)
-    else (results._1, "Failed", output._2)
+    else
+      (results._1, "Failed", output._2)
   }
 }

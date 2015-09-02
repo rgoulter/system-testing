@@ -7,12 +7,10 @@ import com.typesafe.config.Config
 import systemTestingDSL.testSuite.SleekTestSuite
 
 class SleekTestSuiteUsage(configuration: Config) {
-
   val WORKING_DIR = configuration.getString("SLEEK_DIR")
   val OUTPUT_DIR = configuration.getString("SLEEK_OUTPUT_DIRECTORY")
 
   def run(): Unit = {
-
     val suite = new SleekTestSuite(new PrintWriter(System.out, true), configuration)
 
     suite addTest ("sleek", WORKING_DIR + "sleek.slk", " ", OUTPUT_DIR, "sleek", "Valid, Valid, Valid, Fail")

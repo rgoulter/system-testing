@@ -9,7 +9,9 @@ import com.typesafe.config.Config
 import systemTestingDSL.HipTestCaseBuilder
 import systemTestingDSL.outputGenerator.ConsoleOutputGenerator
 
-case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true), configuration: Config) extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
+case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
+                        configuration: Config)
+    extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   var tests = new MutableList[HipTestCaseBuilder]()
   var successes = new MutableList[String]()
   var failures = new MutableList[String]()
@@ -17,35 +19,48 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
   var performanceOutput = ""
 
   def addTest(commandName: String,
-    fileName: String,
-    arguments: String,
-    outputDirectoryName: String,
-    outputFileName: String,
-    expectedOutput: String,
-    regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"): Unit = {
+              fileName: String,
+              arguments: String,
+              outputDirectoryName: String,
+              outputFileName: String,
+              expectedOutput: String,
+              regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"): Unit = {
     tests +=
-      new HipTestCaseBuilder runCommand commandName onFile fileName withArguments arguments storeOutputInDirectory outputDirectoryName withOutputFileName
-      outputFileName checkAgainst expectedOutput usingRegex regex
+      (new HipTestCaseBuilder runCommand commandName
+                              onFile fileName
+                              withArguments arguments
+                              storeOutputInDirectory outputDirectoryName
+                              withOutputFileName outputFileName
+                              checkAgainst expectedOutput
+                              usingRegex regex)
   }
 
   def runAllTests(): Unit = {
     var startTime = System.currentTimeMillis
+
     tests.foreach(test => {
       lazy val result = test.build.generateOutput
+
       result._2 match {
         case "Passed" => successes += test.fileName
         case _ => failures += test.fileName
       }
+
       displayResult(result._2)
+
       if (result._1.isDefined)
         writer.println(result._1.get)
+
       if (result._3 > THRESHOLD) {
         performanceOutput += test.fileName + "\n" + "Runtime was " + result._3 + " milliseconds \n"
         writer.println("Runtime: " + result._3 + "milliseconds")
       }
     })
+
     var endTime = System.currentTimeMillis
+
     val timeTaken = (endTime - startTime)
+
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
     createPerformanceReport(performanceOutput, configuration, writeToFile)
   }

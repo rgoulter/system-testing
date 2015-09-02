@@ -7,7 +7,9 @@ import systemTestingDSL.FileSystemUtilities
 trait OutputGenerator {
   def writeToFile(name: String, directory: String, content: String, extension: String = ".out") = {
     FileSystemUtilities.checkOutputDirectory(directory)
-    FileSystemUtilities.printToFile(new File(directory.concat(File.separator).concat(name).concat(extension)))(_.print(content))
+    
+    val filename = directory.concat(File.separator).concat(name).concat(extension)
+    FileSystemUtilities.printToFile(new File(filename))(_.print(content))
   }
 
   def passed = success("Passed")
@@ -27,5 +29,4 @@ trait OutputGenerator {
   def success(successText: String): String
 
   def log(logText: String): String
-
 }

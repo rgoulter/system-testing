@@ -1,7 +1,6 @@
 package systemTestingDSL.outputGenerator
 
 trait ConsoleOutputGenerator extends OutputGenerator {
-
   def error(errorText: String): String = Console.RED + errorText + Console.RESET + '\n'
 
   def actual(errorText: String): String = Console.BLUE + errorText + Console.RESET + '\n'

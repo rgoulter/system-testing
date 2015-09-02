@@ -8,7 +8,6 @@ import org.junit.Ignore
 import scala.collection.mutable.ArrayBuffer
 
 class InferenceTesterTest {
-
   @Test
   def entailCheckTest(): Unit = {
     new {
@@ -90,6 +89,7 @@ class InferenceTesterTest {
     new {
     } with InferenceTester {
       val expectedResult = new ArrayBuffer[(String, String)]
+
       // Entail 1
       expectedResult += new Tuple2("Valid", """ <1>true&q=null & n=inf_n_27 & inf_ann_26<=0&{FLOW,(17,18)=__norm}[]
  inferred heap: [q::ll<inf_n_27>@inf_ann_26[Orig][LHSCase]]
@@ -134,6 +134,7 @@ class InferenceTesterTest {
       expectedResult += new Tuple2("Valid", """
     <1>false&false&{FLOW,(17,18)=__norm}[]
  inferred pure: [n=0]""")
+
       assertFalse(checkCorpus(InferenceTestData.infer1Output, expectedResult))
     }
   }
@@ -141,6 +142,7 @@ class InferenceTesterTest {
   @Test
   def infer4Test(): Unit = {
     val expectedResult = new ArrayBuffer[(String, String)]
+
     expectedResult += new Tuple2("Valid", """""")
   }
 }

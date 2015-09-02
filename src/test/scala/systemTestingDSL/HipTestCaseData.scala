@@ -1,7 +1,6 @@
 package test.scala.systemTestingDSL
 
 object HipTestCaseData {
-
   val arr_sumOutput = """!!!Full processing file "hip/array/arr_sum.ss"
 Parsing file "hip/array/arr_sum.ss" by default parser...
 WARNING : parsing problem dom is neither a ranking function nor a relation nor a heap predicate
