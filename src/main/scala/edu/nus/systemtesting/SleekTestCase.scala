@@ -52,7 +52,7 @@ class SleekTestCaseBuilder() {
 }
 
 class SleekTestCase(builder: SleekTestCaseBuilder)
-    extends Runnable with Parser with InferenceTester with ConsoleOutputGenerator {
+    extends Runnable with Parser with ConsoleOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
