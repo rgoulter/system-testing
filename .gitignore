@@ -25,6 +25,8 @@ hs_err_pid*
 logs/
 results/
 
+*conf
+
 # Created by https://www.gitignore.io/api/scala,sbt,eclipse,python
 
 ### Scala ###
