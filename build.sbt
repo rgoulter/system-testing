@@ -1,8 +1,8 @@
-name              := "SystemTestingDSL"
+name              := "system-testing"
 
-version           := "0.1.0-SNAPSHOT"
+version           := "0.2.0-SNAPSHOT"
 
-organization      := "com.rohitmukherjee"
+organization      := "edu.nus"
 
 scalaVersion      := "2.10.3"
 
@@ -16,6 +16,6 @@ libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test
 
 libraryDependencies += "com.typesafe" % "config" % "1.2.1"
 
-libraryDependencies += "org.scala-lang" % "scala-actors" % "2.10.0-M6" 
+libraryDependencies += "org.scala-lang" % "scala-actors" % "2.10.3"
 
 scalariformSettings
