@@ -30,10 +30,10 @@ trait InferenceTester {
         }
 
         if (isValid(actualResult)) {
-          //          println("Result: Valid")
-          //          println("actual: " + InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(InferenceDefaults.ANGLE_OPEN))))
-          //          println("Residue Match Result:" + matchResidue)
-          //          println("expected: " + InferenceDefaults.removeWhiteSpaceCharacters(expectedResidue))
+          //  println("Result: Valid")
+          //  println("actual: " + InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(InferenceDefaults.ANGLE_OPEN))))
+          //  println("Residue Match Result:" + matchResidue)
+          //  println("expected: " + InferenceDefaults.removeWhiteSpaceCharacters(expectedResidue))
           return matchResidue
         }
       }
@@ -48,7 +48,10 @@ trait InferenceTester {
     if (corpus.length() == 0 || results.length == 0)
       return false
 
-    lazy val sanitizeCorpus: String = corpus.substring(0, corpus.indexOf(InferenceDefaults.STOP)).substring(corpus.indexOf(InferenceDefaults.ENTAIL)).replace(InferenceDefaults.DOUBLE_NEW_LINE, InferenceDefaults.NEW_LINE).replace("\t", "").trim
+    val tillStop = corpus.substring(0, corpus.indexOf(InferenceDefaults.STOP))
+    val fromEntail = tillStop.substring(corpus.indexOf(InferenceDefaults.ENTAIL))
+    val doubleLined = fromEntail.replace(InferenceDefaults.DOUBLE_NEW_LINE, InferenceDefaults.NEW_LINE)
+    lazy val sanitizeCorpus: String = doubleLined.replace("\t", "").trim
     //    println (sanitizeCorpus)
 
     val splitCorpus: Array[String] = sanitizeCorpus.split(InferenceDefaults.DOUBLE_NEW_LINE)
