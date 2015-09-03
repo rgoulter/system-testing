@@ -8,7 +8,7 @@ trait OutputGenerator {
   def writeToFile(name: String, directory: String, content: String, extension: String = ".out") = {
     FileSystemUtilities.checkOutputDirectory(directory)
 
-    val filename = directory.concat(File.separator).concat(name).concat(extension)
+    val filename = Seq(directory, File.separator, name, extension).mkString
     FileSystemUtilities.printToFile(new File(filename))(_.print(content))
   }
 

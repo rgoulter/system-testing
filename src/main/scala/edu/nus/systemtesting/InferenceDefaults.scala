@@ -16,9 +16,9 @@ object InferenceDefaults {
 
   val NEW_LINE: String = "\n"
 
-  val DOUBLE_NEW_LINE: String = NEW_LINE.concat(NEW_LINE)
+  val DOUBLE_NEW_LINE: String = NEW_LINE * 2
 
-  val TRIPLE_NEW_LINE: String = NEW_LINE.concat(NEW_LINE).concat(NEW_LINE)
+  val TRIPLE_NEW_LINE: String = NEW_LINE * 3
 
   val ANGLE_OPEN: String = "<"
 }

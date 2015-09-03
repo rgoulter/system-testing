@@ -12,9 +12,9 @@ object DiffMatcher {
   def diff(pathOne: String, pathTwo: String): String = {
     var resultsAfterReplacement: String = ""
 
-    val procCmd = "sdiff".concat(SPACE).concat(pathOne).concat(SPACE).concat(pathTwo)
+    val procCmd = Seq("sdiff", pathOne, pathTwo).mkString(SPACE)
     val results = Process(procCmd).lines_!.foreach(line =>
-      resultsAfterReplacement += line.concat(NEW_LINE))
+      resultsAfterReplacement += line + NEW_LINE)
 
     resultsAfterReplacement
   }

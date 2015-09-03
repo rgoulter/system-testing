@@ -20,17 +20,17 @@ case class OutputToDiffMatcher(output: String, pathTwo: String) extends Matcher 
 
     FileSystemUtilities.printToFile(new File(tempFile))(p => p.print(output))
 
-    val diffProcName = "diff".concat(SPACE).concat("temp").concat(SPACE).concat(pathTwo)
+    val diffProcName = Seq("diff", "temp", pathTwo).mkString(SPACE)
     val results = Process(diffProcName).lines_!.foreach(line =>
       if (line.charAt(0) == '>') {
-        resultsAfterReplacement += MATCHER_NEW.concat(line.substring(1)).concat(NEW_LINE)
+        resultsAfterReplacement += MATCHER_NEW + line.substring(1) + NEW_LINE
       } else if (line.charAt(0) == '<') {
-        resultsAfterReplacement += MATCHER_OLD.concat(line.substring(1)).concat(NEW_LINE)
+        resultsAfterReplacement += MATCHER_OLD + line.substring(1) + NEW_LINE
       } else {
-        resultsAfterReplacement += line.concat(NEW_LINE)
+        resultsAfterReplacement += line + NEW_LINE
       })
 
-    //val remove = Process("rm".concat(SPACE).concat("temp")).lines_!
+    //val remove = Process(Seq("rm", "temp").mkString(SPACE)).lines_!
     resultsAfterReplacement
   }
 }

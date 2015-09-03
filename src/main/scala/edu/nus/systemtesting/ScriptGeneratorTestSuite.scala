@@ -40,7 +40,7 @@ class ScriptGeneratorTestSuite(parentDirectoryName: String,
             onFile file.getAbsolutePath
             withArguments defaultOptions
             storeOutputInDirectory outputFileDirectory
-            withOutputFileName file.getName().concat(outputFileExtension))
+            withOutputFileName (file.getName() + outputFileExtension))
 
         builder.build run
       } catch {
@@ -60,11 +60,16 @@ class ScriptGeneratorTestSuite(parentDirectoryName: String,
     val files = getFiles()
 
     var execute: String = ""
-    var script: String = SCRIPT_PRELUDE.concat(NEW_LINE)
+    var script: String = SCRIPT_PRELUDE + NEW_LINE
 
     files.foreach(file => {
-      execute = defaultCommand.concat(SPACE).concat(file.getAbsolutePath()).concat(SPACE).concat(defaultOptions).concat(SPACE).concat(REDIRECTION_OPERATOR).concat(SPACE).concat(outputFileDirectory).concat(file.getName.concat(outputFileExtension)).concat(NEW_LINE)
-      script = script.concat(execute)
+      execute = Seq(defaultCommand,
+                    file.getAbsolutePath(),
+                    defaultOptions,
+                    REDIRECTION_OPERATOR,
+                    (outputFileDirectory + file.getName + outputFileExtension)).mkString(SPACE) +
+                NEW_LINE
+      script += execute
     })
     FileSystemUtilities.printToFile(new File(generatedTestScriptName))(p => p.print(script))
   }

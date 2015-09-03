@@ -66,7 +66,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var results: MutableList[String] = MutableList()
 
   override def formCommand(): String = {
-    commandName.concat(separator).concat(arguments).concat(separator).concat(fileName)
+    Seq(commandName, arguments, fileName).mkString(separator)
   }
 
   def process(source: String, rule: String): Unit = {

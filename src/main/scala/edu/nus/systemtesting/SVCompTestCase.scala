@@ -15,7 +15,7 @@ case class SVCompTestCase(commandName: String,
    * Overriding traits implementation because the order of the arguments and file name is different
    */
   override def formCommand(): String = {
-    commandName.concat(separator).concat(fileName).concat(separator).concat(arguments)
+    Seq(commandName, fileName, arguments).mkString(separator)
   }
 
   /**
