@@ -45,6 +45,8 @@ trait Runnable {
         return "The above computation timed out"
       case ex: FileNotFoundException =>
         "The file could not be found, please check the executable paths"
+      case ex: RuntimeException =>
+        "Non-zero exit code"
     }
   }
 
