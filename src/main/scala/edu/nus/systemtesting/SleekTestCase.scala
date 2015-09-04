@@ -4,6 +4,7 @@ import scala.collection.mutable.MutableList
 
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
+import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
 
 class SleekTestCaseBuilder() {
   var commandName: String = ""
@@ -94,8 +95,15 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
     var resultOutput = ""
 
-    if (filteredResults.isEmpty)
-      return (Some("Binary failed to execute. Please investigate \n"), false)
+    if (filteredResults.isEmpty) {
+      val testFlags = arguments.split(" ").filter(isFlag)
+      val SleekFlags = flagsOfProgram(commandName)
+      val invalidFlags = testFlags.filterNot(SleekFlags.contains)
+
+      val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n").mkString
+
+      return (Some("Binary failed to execute. Please investigate\n" + flagsStr), false)
+    }
 
     if (filteredResults.size != expectedOutputList.size)
       return matchUnequalFailedTests(results, expectedOutputList)
