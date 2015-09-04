@@ -27,6 +27,10 @@ results/
 
 *conf
 
+# Used by Hip/Sleek
+oc.out
+a.omega
+
 # Created by https://www.gitignore.io/api/scala,sbt,eclipse,python
 
 ### Scala ###
