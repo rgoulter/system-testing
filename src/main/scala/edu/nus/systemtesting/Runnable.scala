@@ -46,7 +46,6 @@ trait Runnable {
 
     // An IOException is thrown if `cmd` doesn't refer to an executable file.
 
-    println(cmd)
     val proc = cmd.run(collectAllLogger)
 
     // Use Future/Await to handle timeout

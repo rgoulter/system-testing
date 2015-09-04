@@ -67,6 +67,10 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
   }
 
   override def displayResult(result : TestCaseResult) = {
+    // Assuming that execCmd is of same form as run in Runnable
+    val execCmd = Seq(result.command, result.arguments, result.filename).mkString(" ")
+    writer.println(execCmd)
+
     result.result match {
       case TestPassed => writer.println(passed)
       case TestFailed => writer.println(failed)
