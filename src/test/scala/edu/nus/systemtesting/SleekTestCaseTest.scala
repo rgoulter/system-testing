@@ -699,12 +699,12 @@ Total verification time: 3.348209 second(s)
         withOutputFileName "lemmas_lseg"
         checkAgainst "Valid, Valid")
 
-    lemmasLsegTest.parse(SleekTestCaseData.lemmaOutput,
-      "Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*",
-      "\n")
+    val execOut = new ExecutionOutput(SleekTestCaseData.lemmaOutput.split("\n"), Array(), 0)
 
-    // a null value here is bad, but so is a hard-coded directory above.
-    val (generatedResults, _, _) = lemmasLsegTest.generateTestResult(null, 200L)
+    // Previously, was with regex
+    // "Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*"
+
+    val (generatedResults, _, _) = lemmasLsegTest.generateTestResult(execOut, 200L)
 
     assertEquals(None, generatedResults)
     assertTrue("Entail 1: Valid ".matches(regex)) // TODO: But this isn't a function of generateTestResult??
@@ -720,9 +720,12 @@ Total verification time: 3.348209 second(s)
         withOutputFileName "veribsync_barrier_dynamic2"
         checkAgainst "Valid, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Fail, Valid, Valid, Valid, Fail, Fail, Valid")
 
-    barrierDynamic2Test.parse(barrierDynamicOutput, this.regex, "\n")
+    val execOut = new ExecutionOutput(barrierDynamicOutput.split("\n"), Array(), 0)
 
-    val (barrierDynamicResults, _, _) = barrierDynamic2Test.generateTestResult(null, 200L)
+    // Previously, was with regex
+    // this.regex
+
+    val (barrierDynamicResults, _, _) = barrierDynamic2Test.generateTestResult(execOut, 200L)
 
     // TODO: But nothing is asserted (for ScalaTest) here??
   }
@@ -750,9 +753,12 @@ Total verification time: 3.348209 second(s)
         withOutputFileName "veribsync_barrier_static"
         checkAgainst "Valid, Valid, Valid, Valid, Valid")
 
-    veribsync_barrier_staticTest.parse(SleekTestCaseData.veribsyncBarrierStaticOutput, this.regex, "\n")
+    val execOut = new ExecutionOutput(SleekTestCaseData.veribsyncBarrierStaticOutput.split("\n"), Array(), 0)
 
-    val (result, _, _) = veribsync_barrier_staticTest.generateTestResult(null, 200L)
+    // Previously, was with regex
+    // this.regex
+
+    val (result, _, _) = veribsync_barrier_staticTest.generateTestResult(execOut, 200L)
 
     assertEquals(None, result)
     // TODO: But not asserting pass or fail?

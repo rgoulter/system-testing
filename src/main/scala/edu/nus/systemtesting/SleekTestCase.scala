@@ -2,6 +2,7 @@ package edu.nus.systemtesting
 
 import scala.collection.mutable.MutableList
 
+import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 class SleekTestCaseBuilder() {
@@ -52,7 +53,7 @@ class SleekTestCaseBuilder() {
 }
 
 class SleekTestCase(builder: SleekTestCaseBuilder)
-    extends Runnable with Parser with ConsoleOutputGenerator {
+    extends Runnable with ConsoleOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
@@ -61,14 +62,8 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
 
-  var results: MutableList[String] = MutableList()
-
   override def formCommand(): String = {
     Seq(commandName, arguments, fileName).mkString(" ")
-  }
-
-  def process(source: String, rule: String): Unit = {
-    results += rule
   }
 
   def run() = {
@@ -83,17 +78,17 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   def generateOutput(): (Option[String], String, Long) = {
     val (outp, time) = run
 
-    // `parse` is responsible for populating `results` with
-    // lines which match `builder.regex`.
-    this.parse(outp.output, builder.regex, NEW_LINE)
-
     generateTestResult(outp, time)
   }
 
   // TODO: Either would make a better return type here.
-  def checkResults(expectedOutput: String, result: Seq[String]): (Option[String], Boolean) = {
+  def checkResults(expectedOutput: String, output : ExecutionOutput): (Option[String], Boolean) = {
     val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
-    val filteredResults = results.view.filter(_.matches(builder.regex)).zipWithIndex
+
+    // `parse` is responsible for populating `results` with
+    // lines which match `builder.regex`.
+    val results = filterLinesMatchingRegex(output.output, regex)
+    val filteredResults = results.zipWithIndex
 
     var resultOutput = ""
 
@@ -142,7 +137,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def generateTestResult(output : ExecutionOutput, time : Long): (Option[String], String, Long) = {
-    val (err, passed) = checkResults(expectedOutput, this.results)
+    val (err, passed) = checkResults(expectedOutput, output)
 
     if (passed)
       (None, "Passed", time)

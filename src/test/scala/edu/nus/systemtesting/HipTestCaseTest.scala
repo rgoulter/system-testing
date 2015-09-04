@@ -14,10 +14,12 @@ class HipTestCaseTest {
         withOutputFileName "arr_sum"
         checkAgainst "sigmaleft: FAIL, sigmaright: FAIL, test: SUCCESS")
 
-    arrSumTest.parse(HipTestCaseData.arr_sumOutput, "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
+    val execOut = new ExecutionOutput(HipTestCaseData.arr_sumOutput.split("\n"), Array(), 0)
 
-    // a null value here is bad, but so is a hard-coded directory above.
-    val result = arrSumTest.generateTestResult(null, 200L)
+    // Previously, was with regex
+    // "Procedure.*FAIL.*|Procedure.*SUCCESS.*"
+
+    val result = arrSumTest.generateTestResult(execOut, 200L)
 
     val (err, passOrFail, time) = result
 

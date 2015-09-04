@@ -3,6 +3,7 @@ package edu.nus.systemtesting
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.MutableList
 
+import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 class HipTestCaseBuilder {
@@ -53,7 +54,7 @@ class HipTestCaseBuilder {
 }
 
 class HipTestCase(builder: HipTestCaseBuilder)
-    extends Runnable with Parser with ConsoleOutputGenerator {
+    extends Runnable with ConsoleOutputGenerator {
   var commandName = builder.commandName
   var fileName = builder.fileName
   var arguments = builder.arguments
@@ -61,11 +62,6 @@ class HipTestCase(builder: HipTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
-  var results: MutableList[String] = MutableList()
-
-  def process(source: String, rule: String): Unit = {
-    results += rule
-  }
 
   override def formCommand(): String = {
     Seq(commandName, arguments, fileName).mkString(" ")
@@ -90,33 +86,33 @@ class HipTestCase(builder: HipTestCaseBuilder)
     res
   }
 
-  def printResults() = {
-    for (result <- results)
-      println(result + ", ")
-    print("end of results")
-  }
+//  def printResults() = {
+//    for (result <- results)
+//      println(result + ", ")
+//    print("end of results")
+//  }
 
   def generateOutput() = {
     val (outp, time) = run
-
-    // `parse` is responsible for populating `results` with
-    // lines which match `builder.regex`.
-    this.parse(outp.output, builder.regex, NEW_LINE)
 
     generateTestResult(outp, time)
   }
 
   // TODO: Return type of Either would make more sense here?
-  def checkResults(expectedOutput: String, result: String): (Option[String], Boolean) = {
-    val expectedOutputMap = buildExpectedOutputMap(result)
-    val filteredResults = results.view.filter(_.matches(this.regex))
+  def checkResults(expectedOutput: String, output : ExecutionOutput): (Option[String], Boolean) = {
+    val expectedOutputMap = buildExpectedOutputMap(output.output)
+
+    // `parse` is responsible for populating `results` with
+    // lines which match `builder.regex`.
+    val results = filterLinesMatchingRegex(output.output, regex)
+    val filteredResults = results.zipWithIndex
 
     var resultOutput = ""
 
     if (filteredResults.isEmpty)
       return (Some("Binary failed to execute. Please investigate \n"), false)
 
-    for (outputLine <- filteredResults) {
+    for ((outputLine, idx) <- filteredResults) {
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
 
@@ -137,7 +133,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   def generateTestResult(output : ExecutionOutput, time : Long): (Option[String], String, Long) = {
-    val (err, passed) = checkResults(expectedOutput, this.expectedOutput)
+    val (err, passed) = checkResults(expectedOutput, output)
 
     if (passed)
       (None, "Passed", time)

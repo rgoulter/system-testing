@@ -1,34 +1,21 @@
 package edu.nus.systemtesting
 
-trait Parser {
-  // This should be overloaded
-  def process(text: String, rule: String): Any
-
+/**
+ * Used to filter a text to the lines which match a given regular expression.
+ */
+object Parser {
   /**
-   * The matcher function splits a body of text using delimiters, finds matches and then processes them
+   * The matcher function splits a body of text using delimiters,
+   * and returns an Array of lines which match the given regex.
+   *
+   * regex is matched using `Pattern.findFirstIn`.
    */
-  def parse(text: String, rule: String, delimiter: String = NEW_LINE) = {
-    val lines = text.split(delimiter)
-    lines.foreach(perform(_, rule))
-  }
+  def filterLinesMatchingRegex(text : String, regex : String) = {
+    val lines = text.split("\n")
 
-  /**
-   * If the string matches, it is processed
-   */
-  def perform(text: String, rule: String): Any = {
-    val matched = matchString(text, rule)
-
-    matched match {
-      case Some(value) => process(text, value)
-      case None =>
-    }
-  }
-
-  /**
-   * Performs a regex match on a string
-   */
-  def matchString(source: String, regex: String): Option[String] = {
-    val pattern = regex.r
-    pattern.findFirstIn(source)
+    lines.map(line => {
+      val pattern = regex.r
+      pattern.findFirstIn(line)
+    }).flatten
   }
 }
