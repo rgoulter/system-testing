@@ -27,16 +27,14 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     arguments: String,
     outputDirectoryName: String,
     outputFileName: String,
-    expectedOutput: String,
-    regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"): Unit = {
+    expectedOutput: String): Unit = {
     tests +=
       (new HipTestCaseBuilder runCommand commandName
         onFile fileName
         withArguments arguments
         storeOutputInDirectory outputDirectoryName
         withOutputFileName outputFileName
-        checkAgainst expectedOutput
-        usingRegex regex)
+        checkAgainst expectedOutput)
   }
 
   def runAllTests(): Unit = {

@@ -8,8 +8,7 @@ trait TestSuite {
               arguments: String,
               outputDirectoryName: String,
               outputFileName: String,
-              expectedOutput: String,
-              regex: String): Unit
+              expectedOutput: String): Unit
 
   def runAllTests(): Unit
 
