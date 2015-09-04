@@ -703,7 +703,8 @@ Total verification time: 3.348209 second(s)
       "Entailing lemma.*:\\sValid.*|Entailing lemma.*:\\sFail.*",
       "\n")
 
-    val (generatedResults, _, _) = lemmasLsegTest.generateTestResult
+    // a null value here is bad, but so is a hard-coded directory above.
+    val (generatedResults, _, _) = lemmasLsegTest.generateTestResult(null, 200L)
 
     assertEquals(None, generatedResults)
     assertTrue("Entail 1: Valid ".matches(regex)) // TODO: But this isn't a function of generateTestResult??
@@ -721,7 +722,7 @@ Total verification time: 3.348209 second(s)
 
     barrierDynamic2Test.parse(barrierDynamicOutput, this.regex, "\n")
 
-    val (barrierDynamicResults, _, _) = barrierDynamic2Test.generateTestResult
+    val (barrierDynamicResults, _, _) = barrierDynamic2Test.generateTestResult(null, 200L)
 
     // TODO: But nothing is asserted (for ScalaTest) here??
   }
@@ -751,7 +752,7 @@ Total verification time: 3.348209 second(s)
 
     veribsync_barrier_staticTest.parse(SleekTestCaseData.veribsyncBarrierStaticOutput, this.regex, "\n")
 
-    val (result, _, _) = veribsync_barrier_staticTest.generateTestResult
+    val (result, _, _) = veribsync_barrier_staticTest.generateTestResult(null, 200L)
 
     assertEquals(None, result)
     // TODO: But not asserting pass or fail?

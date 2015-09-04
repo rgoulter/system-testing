@@ -60,8 +60,6 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
-  // (String,Long) tuple signifies that Runnable.execute returns (ConsoleOutput, TimeOfExecution)
-  var output: (String, Long) = ("", 0)
 
   var results: MutableList[String] = MutableList()
 
@@ -74,21 +72,22 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   }
 
   def run() = {
-    this.output = this.execute
-
-    val (outp, time) = this.output
+    val res@(outp, time) = this.execute
 
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, outp)
+      writeToFile(this.outputFileName, this.outputDirectory, outp.output)
+
+    res
   }
 
   def generateOutput(): (Option[String], String, Long) = {
-    run
+    val (outp, time) = run
 
-    val (outp, time) = this.output
+    // `parse` is responsible for populating `results` with
+    // lines which match `builder.regex`.
+    this.parse(outp.output, builder.regex, NEW_LINE)
 
-    this.parse(outp, builder.regex, NEW_LINE)
-    generateTestResult
+    generateTestResult(outp, time)
   }
 
   // TODO: Either would make a better return type here.
@@ -142,10 +141,8 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return (Some(unmatchedResults), false)
   }
 
-  def generateTestResult(): (Option[String], String, Long) = {
+  def generateTestResult(output : ExecutionOutput, time : Long): (Option[String], String, Long) = {
     val (err, passed) = checkResults(expectedOutput, this.results)
-
-    val (outp, time) = this.output
 
     if (passed)
       (None, "Passed", time)

@@ -16,7 +16,9 @@ class HipTestCaseTest {
 
     arrSumTest.parse(HipTestCaseData.arr_sumOutput, "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
 
-    val result = arrSumTest.generateTestResult
+    // a null value here is bad, but so is a hard-coded directory above.
+    val result = arrSumTest.generateTestResult(null, 200L)
+
     val (err, passOrFail, time) = result
 
     assertEquals(None, err)

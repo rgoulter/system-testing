@@ -9,8 +9,6 @@ case class SVCompTestCase(commandName: String,
   outputFileName: String = "",
   outputFileExtension: String = ".out")
     extends Runnable with ConsoleOutputGenerator {
-  var output: (String, Long) = ("", 0)
-
   /**
    * Overriding traits implementation because the order of the arguments and file name is different
    */
@@ -23,15 +21,13 @@ case class SVCompTestCase(commandName: String,
    */
   def runAndReturn(): String = {
     val (outp, time) = this.execute
-    outp
+    outp.output
   }
 
   def run(): Unit = {
-    this.output = this.execute
-
-    val (outp, time) = this.output
+    val (outp, time) = this.execute
 
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectoryName, outp, outputFileExtension)
+      writeToFile(this.outputFileName, this.outputDirectoryName, outp.output, outputFileExtension)
   }
 }

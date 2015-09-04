@@ -61,8 +61,6 @@ class HipTestCase(builder: HipTestCaseBuilder)
   var expectedOutput = builder.expectedOutput
   var outputDirectory = builder.outputDirectory
   var regex = builder.regex
-  var output: (String, Long) = ("", 0)
-
   var results: MutableList[String] = MutableList()
 
   def process(source: String, rule: String): Unit = {
@@ -84,12 +82,12 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   def run() = {
-    this.output = this.execute
-
-    val (outp, time) = this.output
+    val res@(execOutp, time) = this.execute
 
     if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, outp)
+      writeToFile(this.outputFileName, this.outputDirectory, execOutp.output)
+
+    res
   }
 
   def printResults() = {
@@ -99,12 +97,13 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   def generateOutput() = {
-    run
+    val (outp, time) = run
 
-    val (outp, time) = this.output
+    // `parse` is responsible for populating `results` with
+    // lines which match `builder.regex`.
+    this.parse(outp.output, builder.regex, NEW_LINE)
 
-    this.parse(outp, builder.regex, NEW_LINE)
-    generateTestResult()
+    generateTestResult(outp, time)
   }
 
   // TODO: Return type of Either would make more sense here?
@@ -137,10 +136,8 @@ class HipTestCase(builder: HipTestCaseBuilder)
     return (None, true)
   }
 
-  def generateTestResult(): (Option[String], String, Long) = {
+  def generateTestResult(output : ExecutionOutput, time : Long): (Option[String], String, Long) = {
     val (err, passed) = checkResults(expectedOutput, this.expectedOutput)
-
-    val (outp, time) = this.output
 
     if (passed)
       (None, "Passed", time)

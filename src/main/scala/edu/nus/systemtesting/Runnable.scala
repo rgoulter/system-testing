@@ -10,6 +10,16 @@ import scala.collection.mutable.ArrayBuffer
 
 import com.typesafe.config.ConfigFactory
 
+class ExecutionOutput(val stdoutLines : Array[String],
+                      val stderrLines : Array[String],
+                      val exitValue : Int) {
+  /** `STDOUT` output from the execution. */
+  def output = stdoutLines.mkString("\n")
+
+  /** `STDERR` output from the execution. */
+  def errOutput = stderrLines.mkString("\n")
+}
+
 /**
  * This trait provides methods to execute some [[formCommand]], with
  * time taken (and a timeout value)
@@ -18,20 +28,21 @@ import com.typesafe.config.ConfigFactory
  */
 trait Runnable {
   /** The full command to be executed by the [[Runnable]] object. */
-  def formCommand: String
+  def formCommand : String
 
   /**
    * Run the command, without worrying about timing.
    * Blocks until execution is done, or times out.
    */
-  private def executeInner: (Int, String) = {
+  private def executeInner : ExecutionOutput = {
     val cmd = formCommand
     val timeout = ConfigFactory.load().getInt("TIMEOUT")
 
     // Collected lines from proc's STDOUT, ignore from STDERR.
     val stdoutLines = ArrayBuffer[String]()
+    val stderrLines = ArrayBuffer[String]()
     val collectAllLogger = ProcessLogger(line => stdoutLines += line,
-                                         line => ())
+                                         line => stderrLines += line)
 
     // An IOException is thrown if `cmd` doesn't refer to an executable file.
 
@@ -44,7 +55,7 @@ trait Runnable {
       // Block until proc done
       val exitVal = proc.exitValue()
 
-      (exitVal, stdoutLines.mkString("\n"))
+      new ExecutionOutput(stdoutLines.toArray, stderrLines.toArray, exitVal)
     }
 
     try {
@@ -53,7 +64,7 @@ trait Runnable {
       case ex: TimeoutException => {
         proc.destroy()
 
-        (-2, "The computation timed out")
+        new ExecutionOutput(Array(), Array("TIMEOUT"), -2)
       }
     }
   }
@@ -61,14 +72,13 @@ trait Runnable {
   /**
    * Runs the command given by [[formCommand]], returns tuple of `(output, time taken)`.
    */
-  def execute: (String, Long) = {
-    var endTime = 0L
-    var startTime = System.currentTimeMillis
+  def execute: (ExecutionOutput, Long) = {
+    val startTime = System.currentTimeMillis
 
-    val (exitVal, output) = executeInner
+    val execOutput = executeInner
 
-    endTime = System.currentTimeMillis
+    val endTime = System.currentTimeMillis
 
-    (output, endTime - startTime)
+    (execOutput, endTime - startTime)
   }
 }
