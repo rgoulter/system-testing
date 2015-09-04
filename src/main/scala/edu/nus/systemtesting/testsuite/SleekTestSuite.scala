@@ -12,10 +12,11 @@ import edu.nus.systemtesting.output.ConsoleOutputGenerator
 class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
   configuration: Config)
     extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
-  var tests = new MutableList[SleekTestCaseBuilder]()
-  var successes = new MutableList[String]()
-  var failures = new MutableList[String]()
-  var THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
+  val tests = new MutableList[SleekTestCaseBuilder]()
+  val successes = new MutableList[String]()
+  val failures = new MutableList[String]()
+  val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
+
   var performanceOutput = ""
 
   val DEFAULT_TEST_REGEX =
@@ -39,7 +40,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
   }
 
   def runAllTests(): Unit = {
-    var startTime = System.currentTimeMillis
+    val startTime = System.currentTimeMillis
 
     tests.foreach(test => {
       lazy val (err, passOrFail, time) = test.build.generateOutput
@@ -60,7 +61,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
       }
     })
 
-    var endTime = System.currentTimeMillis
+    val endTime = System.currentTimeMillis
 
     val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
 

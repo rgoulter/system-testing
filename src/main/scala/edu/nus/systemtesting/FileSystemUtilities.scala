@@ -11,7 +11,6 @@ import java.util.Date
  * This object provides some convenient methods/functions to provide fileSystem related operations
  */
 object FileSystemUtilities {
-
   /**
    * Convenience Method to write data to a file
    */

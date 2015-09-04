@@ -54,13 +54,13 @@ class SleekTestCaseBuilder() {
 
 class SleekTestCase(builder: SleekTestCaseBuilder)
     extends Runnable with ConsoleOutputGenerator {
-  var commandName = builder.commandName
-  var fileName = builder.fileName
-  var arguments = builder.arguments
-  var outputFileName = builder.outputFileName
-  var expectedOutput = builder.expectedOutput
-  var outputDirectory = builder.outputDirectory
-  var regex = builder.regex
+  val commandName = builder.commandName
+  val fileName = builder.fileName
+  val arguments = builder.arguments
+  val outputFileName = builder.outputFileName
+  val expectedOutput = builder.expectedOutput
+  val outputDirectory = builder.outputDirectory
+  val regex = builder.regex
 
   override def formCommand(): String = {
     Seq(commandName, arguments, fileName).mkString(" ")
