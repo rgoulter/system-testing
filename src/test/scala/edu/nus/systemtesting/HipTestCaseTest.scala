@@ -1,6 +1,7 @@
 package edu.nus.systemtesting
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HipTestCaseTest {
@@ -21,9 +22,7 @@ class HipTestCaseTest {
 
     val result = arrSumTest.generateTestResult(execOut, 200L)
 
-    val (err, passOrFail, time) = result
-
-    assertEquals(None, err)
-    assertEquals("Passed", passOrFail)
+    assertTrue(result.remarks.isEmpty)
+    assertEquals(TestPassed, result.result)
   }
 }

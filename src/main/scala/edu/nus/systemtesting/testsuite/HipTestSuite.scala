@@ -8,6 +8,9 @@ import com.typesafe.config.Config
 
 import edu.nus.systemtesting.HipTestCaseBuilder
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
+import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.TestPassed
+import edu.nus.systemtesting.TestFailed
 
 case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
   configuration: Config)
@@ -40,22 +43,19 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     val startTime = System.currentTimeMillis
 
     tests.foreach(test => {
-      lazy val (err, passOrFail, time) = test.build.generateOutput
+      val testResult = test.build.generateOutput
 
-      passOrFail match {
-        case "Passed" => successes += test.fileName
-        case _ => failures += test.fileName
+      testResult.result match {
+        case TestPassed => successes += test.fileName
+        case TestFailed => failures += test.fileName
       }
 
-      displayResult(passOrFail)
-
-      if (err.isDefined)
-        writer.println(err.get)
-
-      if (time > THRESHOLD) {
-        performanceOutput += test.fileName + "\n" + "Runtime was " + time + " milliseconds \n"
-        writer.println("Runtime: " + time + "milliseconds")
+      if (testResult.executionTime > THRESHOLD) {
+        performanceOutput += testResult.filename + "\n"
+        performanceOutput += "Runtime was " + testResult.executionTime + " milliseconds\n"
       }
+
+      displayResult(testResult)
     })
 
     val endTime = System.currentTimeMillis
@@ -66,9 +66,19 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
 
-  def displayResult(result: String) = result match {
-    case "Passed" => println(passed)
-    case _ => println(failed)
+  override def displayResult(result : TestCaseResult) = {
+    result.result match {
+      case TestPassed => writer.println(passed)
+      case TestFailed => writer.println(failed)
+    }
+
+    result.remarks.foreach(writer.println)
+
+    val time = result.executionTime
+
+    if (time > THRESHOLD) {
+      writer.println("Runtime: " + time + " milliseconds")
+    }
   }
 
   def generateTestStatistics: Unit = {

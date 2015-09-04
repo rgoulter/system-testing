@@ -75,7 +75,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     res
   }
 
-  def generateOutput(): (Option[String], String, Long) = {
+  def generateOutput(): TestCaseResult = {
     val (outp, time) = run
 
     generateTestResult(outp, time)
@@ -109,7 +109,8 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return (None, true)
   }
 
-  def matchUnequalFailedTests(filteredResults: Seq[String], expectedOutputList: Seq[String]): (Option[String], Boolean) = {
+  private def matchUnequalFailedTests(filteredResults : Seq[String],
+                                      expectedOutputList : Seq[String]) : (Option[String], Boolean) = {
     val minSize = Math.min(filteredResults.length, expectedOutputList.size)
 
     var count, i = 0
@@ -136,12 +137,11 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     return (Some(unmatchedResults), false)
   }
 
-  def generateTestResult(output : ExecutionOutput, time : Long): (Option[String], String, Long) = {
+  def generateTestResult(output : ExecutionOutput, time : Long) : TestCaseResult = {
     val (err, passed) = checkResults(expectedOutput, output)
 
-    if (passed)
-      (None, "Passed", time)
-    else
-      (err, "Failed", time)
+    val result = if (passed) TestPassed else TestFailed
+
+    new TestCaseResult(commandName, fileName, arguments, output, time, result, remarks = err.toList)
   }
 }

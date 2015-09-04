@@ -1,5 +1,7 @@
 package edu.nus.systemtesting.testsuite
 
+import edu.nus.systemtesting.TestCaseResult
+
 trait TestSuite {
   def addTest(commandName: String,
               fileName: String,
@@ -11,5 +13,5 @@ trait TestSuite {
 
   def runAllTests(): Unit
 
-  def displayResult(result: String): Unit
+  def displayResult(result : TestCaseResult) : Unit
 }

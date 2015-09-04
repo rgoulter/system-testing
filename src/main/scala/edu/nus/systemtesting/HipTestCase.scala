@@ -126,12 +126,11 @@ class HipTestCase(builder: HipTestCaseBuilder)
     return (None, true)
   }
 
-  def generateTestResult(output : ExecutionOutput, time : Long): (Option[String], String, Long) = {
+  def generateTestResult(output : ExecutionOutput, time : Long) : TestCaseResult = {
     val (err, passed) = checkResults(expectedOutput, output)
 
-    if (passed)
-      (None, "Passed", time)
-    else
-      (err, "Failed", time)
+    val result = if (passed) TestPassed else TestFailed
+
+    new TestCaseResult(commandName, fileName, arguments, output, time, result, remarks = err.toList)
   }
 }
