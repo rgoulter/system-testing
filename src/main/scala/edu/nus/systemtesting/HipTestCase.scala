@@ -68,11 +68,12 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   def buildExpectedOutputMap(results: String): HashMap[String, String] = {
+    // expected output is a string like "proc: SUCCESS, proc: FAIL"
     val outputMap = new HashMap[String, String]
 
     results.split(",").foreach(result =>
       outputMap.put(result.substring(0, result.indexOf(":")).trim,
-        result.substring(result.indexOf(":") + 1).trim))
+                    result.substring(result.indexOf(":") + 1).trim))
 
     outputMap
   }
@@ -94,7 +95,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
 
   // TODO: Return type of Either would make more sense here?
   def checkResults(expectedOutput: String, output : ExecutionOutput): (Option[String], Boolean) = {
-    val expectedOutputMap = buildExpectedOutputMap(output.output)
+    val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
     // `parse` is responsible for populating `results` with
     // lines which match `builder.regex`.
