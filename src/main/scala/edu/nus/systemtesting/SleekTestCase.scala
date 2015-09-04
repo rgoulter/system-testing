@@ -100,9 +100,17 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
       val SleekFlags = flagsOfProgram(commandName)
       val invalidFlags = testFlags.filterNot(SleekFlags.contains)
 
-      val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n").mkString
+      if (!invalidFlags.isEmpty) {
+        val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n").mkString
 
-      return (Some("Binary failed to execute. Please investigate\n" + flagsStr), false)
+        return (Some("Binary failed to execute. Please investigate\n" + flagsStr), false)
+      } else {
+
+        return (Some("Binary failed to execute. Please investigate\n" +
+                     "Output was:\n" +
+                     output.output),
+                false)
+      }
     }
 
     if (filteredResults.size != expectedOutputList.size)
