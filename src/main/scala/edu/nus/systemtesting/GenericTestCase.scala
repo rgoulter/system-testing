@@ -12,7 +12,7 @@ case class GenericTestCase(commandName: String,
   var output: (String, Long) = ("", 0)
 
   override def formCommand(): String = {
-    Seq(commandName, arguments, fileName).mkString(separator)
+    Seq(commandName, arguments, fileName).mkString(" ")
   }
 
   /**

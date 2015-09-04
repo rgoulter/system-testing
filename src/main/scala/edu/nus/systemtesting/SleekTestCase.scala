@@ -66,7 +66,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   var results: MutableList[String] = MutableList()
 
   override def formCommand(): String = {
-    Seq(commandName, arguments, fileName).mkString(separator)
+    Seq(commandName, arguments, fileName).mkString(" ")
   }
 
   def process(source: String, rule: String): Unit = {

@@ -70,7 +70,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   override def formCommand(): String = {
-    Seq(commandName, arguments, fileName).mkString(separator)
+    Seq(commandName, arguments, fileName).mkString(" ")
   }
 
   def buildExpectedOutputMap(results: String): HashMap[String, String] = {
