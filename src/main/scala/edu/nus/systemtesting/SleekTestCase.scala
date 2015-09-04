@@ -13,9 +13,7 @@ class SleekTestCaseBuilder() {
   var outputDirectory: String = ""
   var outputFileName: String = ""
   var expectedOutput: String = ""
-  // Regex with entailing lemma:
-  // "Entail.*:\\s.*Valid.*|Entail.*:\\s.*Fail.*|Entailing lemma.*:.*Valid.*|Entailing lemma.*:.*Fail.*"
-  var regex: String = "Entail .*:\\s.*(Valid|Fail).*"
+  var regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*"
 
   def runCommand(commandName: String): SleekTestCaseBuilder = {
     this.commandName = commandName
