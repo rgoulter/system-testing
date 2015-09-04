@@ -115,26 +115,25 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
                                       expectedOutputList : Seq[String]) : (Option[String], Boolean) = {
     val minSize = Math.min(filteredResults.length, expectedOutputList.size)
 
-    var count, i = 0
-    var unmatchedResults = ""
+    val resultsIter = filteredResults.iterator
+    val expectedIter = expectedOutputList.iterator
+
+    var unmatchedResults = "\nUnmatched:\n"
 
     for (count <- 0 until minSize) {
-      if (!filteredResults(count).contains(expectedOutputList(count)))
-        unmatchedResults += had(filteredResults(count))
-
-      unmatchedResults += expected(expectedOutputList(count))
+      unmatchedResults += had(resultsIter.next)
+      unmatchedResults += expected(expectedIter.next)
     }
 
-    unmatchedResults += "\nUnmatched\n"
-    unmatchedResults += "\nExtra Sleek Entail Output\n\n"
+    if (resultsIter.hasNext)
+      unmatchedResults += "\nExtra Sleek Entail Output\n\n"
+    while (resultsIter.hasNext)
+      unmatchedResults += resultsIter.next + "\n"
 
-    for (i <- count until filteredResults.length)
-      unmatchedResults += filteredResults(i)
-
-    unmatchedResults += "\nExtra Results\n"
-
-    for (i <- count until expectedOutputList.length)
-      unmatchedResults += expectedOutputList(i)
+    if (expectedIter.hasNext)
+      unmatchedResults += "\nExtra Expected Results\n"
+    while (expectedIter.hasNext)
+      unmatchedResults += expectedIter.next + "\n"
 
     return (Some(unmatchedResults), false)
   }
