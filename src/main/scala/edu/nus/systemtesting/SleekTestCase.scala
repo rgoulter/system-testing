@@ -85,7 +85,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
 
   // TODO: Either would make a better return type here.
   def checkResults(expectedOutput: String, output : ExecutionOutput): (Option[String], Boolean) = {
-    val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR)
+    val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR).map(_.trim)
 
     // `parse` is responsible for populating `results` with
     // lines which match `builder.regex`.
