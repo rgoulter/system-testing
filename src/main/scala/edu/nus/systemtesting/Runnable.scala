@@ -2,12 +2,11 @@ package edu.nus.systemtesting
 
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeoutException
-
-import scala.concurrent.Await
+import scala.concurrent.{ Await, Future }
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
-import scala.sys.process.stringToProcess
+import scala.sys.process.{ stringToProcess, ProcessLogger }
+import scala.collection.mutable.ArrayBuffer
 
 import com.typesafe.config.ConfigFactory
 
@@ -25,41 +24,51 @@ trait Runnable {
    * Run the command, without worrying about timing.
    * Blocks until execution is done, or times out.
    */
-  private def executeInner: String = {
+  private def executeInner: (Int, String) = {
     val cmd = formCommand
-    val timeout: Int = ConfigFactory.load().getInt("TIMEOUT")
+    val timeout = ConfigFactory.load().getInt("TIMEOUT")
+
+    // Collected lines from proc's STDOUT, ignore from STDERR.
+    val stdoutLines = ArrayBuffer[String]()
+    val collectAllLogger = ProcessLogger(line => stdoutLines += line,
+                                         line => ())
+
+    // An IOException is thrown if `cmd` doesn't refer to an executable file.
+
+    println(cmd)
+    val proc = cmd.run(collectAllLogger)
 
     // Use Future/Await to handle timeout
 
-    val executeFuture: Future[String] = Future {
-      println(cmd)
-      val result: String = cmd.!!
-      result
+    val executeFuture = Future {
+      // Block until proc done
+      val exitVal = proc.exitValue()
+
+      (exitVal, stdoutLines.mkString("\n"))
     }
 
     try {
       Await.result(executeFuture, timeout seconds)
     } catch {
-      case ex: TimeoutException =>
-        return "The above computation timed out"
-      case ex: FileNotFoundException =>
-        "The file could not be found, please check the executable paths"
-      case ex: RuntimeException =>
-        "Non-zero exit code"
+      case ex: TimeoutException => {
+        proc.destroy()
+
+        (-2, "The computation timed out")
+      }
     }
   }
 
   /**
-   * Run the command given by [[formCommand]], returning the output and the time taken.
+   * Runs the command given by [[formCommand]], returns tuple of `(output, time taken)`.
    */
   def execute: (String, Long) = {
-    var endTime: Long = 0
+    var endTime = 0L
     var startTime = System.currentTimeMillis
 
-    val result = executeInner
+    val (exitVal, output) = executeInner
 
     endTime = System.currentTimeMillis
 
-    (result, endTime - startTime)
+    (output, endTime - startTime)
   }
 }
