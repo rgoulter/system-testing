@@ -4,6 +4,7 @@ import java.io.PrintWriter
 
 import scala.collection.mutable.HashMap
 
+import edu.nus.systemtesting.FileSystemUtilities.getFileList
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 case class SVCompTestSuite(directory : String,
@@ -11,7 +12,7 @@ case class SVCompTestSuite(directory : String,
                            arguments : String = """-infer "@term" --svcomp-compete""",
                            fileType : String = ".c",
                            printer : PrintWriter = new PrintWriter(System.out, true))
-    extends GetFileList with ConsoleOutputGenerator {
+    extends ConsoleOutputGenerator {
   var tests = new HashMap[String, SVCompTestCase]
   var failures = 0
   var successes = 0

@@ -39,6 +39,10 @@ object FileSystemUtilities {
     getRecursiveListOfFilesWithRegex(new File(directoryName), regex)
   }
 
+  def getFileList(directory : String, extension : String) : Array[String] = {
+    getRecursiveListOfFilesWithRegex(directory, extension).map(_.getAbsolutePath())
+  }
+
   /** Check if file or folder exists */
   def fileOrDirectoryExists(path : String) = Files.exists(Paths.get(path))
 
