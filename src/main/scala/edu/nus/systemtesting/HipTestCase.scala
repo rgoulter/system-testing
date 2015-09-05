@@ -6,63 +6,14 @@ import scala.collection.mutable.MutableList
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
-class HipTestCaseBuilder {
-  var commandName : String = ""
-  var fileName : String = ""
-  var arguments : String = ""
-  var outputDirectory : String = ""
-  var outputFileName : String = ""
-  var expectedOutput : String = ""
-  var regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"
-
-  def runCommand(commandName : String) : HipTestCaseBuilder = {
-    this.commandName = commandName
-    this
-  }
-
-  def onFile(fileName : String) : HipTestCaseBuilder = {
-    this.fileName = fileName
-    this
-  }
-
-  def withArguments(arguments : String) : HipTestCaseBuilder = {
-    this.arguments = arguments
-    this
-  }
-
-  def storeOutputInDirectory(outputDirectory : String) : HipTestCaseBuilder = {
-    this.outputDirectory = outputDirectory
-    this
-  }
-
-  def withOutputFileName(outputFileName : String) : HipTestCaseBuilder = {
-    this.outputFileName = outputFileName
-    this
-  }
-
-  def checkAgainst(expectedOutput : String) : HipTestCaseBuilder = {
-    this.expectedOutput = expectedOutput
-    this
-  }
-
-  def usingRegex(regex : String) : HipTestCaseBuilder = {
-    this.regex = regex
-    this
-  }
-
-  def build() : HipTestCase = new HipTestCase(this)
-}
-
-class HipTestCase(builder : HipTestCaseBuilder)
+case class HipTestCase(commandName : String = "",
+                       fileName : String = "",
+                       arguments : String = "",
+                       outputDirectory : String = "",
+                       outputFileName : String = "",
+                       expectedOutput : String = "",
+                       regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
     extends Runnable with ConsoleOutputGenerator {
-  val commandName = builder.commandName
-  val fileName = builder.fileName
-  val arguments = builder.arguments
-  val outputFileName = builder.outputFileName
-  val expectedOutput = builder.expectedOutput
-  val outputDirectory = builder.outputDirectory
-  val regex = builder.regex
-
   override def formCommand() : String = {
     Seq(commandName, arguments, fileName).mkString(" ")
   }
@@ -135,4 +86,29 @@ class HipTestCase(builder : HipTestCaseBuilder)
 
     new TestCaseResult(commandName, fileName, arguments, output, time, result, remarks = err.toList)
   }
+
+  //
+  // Helper functions for DSL-esque construction of testcase.
+  //
+
+  def runCommand(commandName : String) =
+    copy(commandName = commandName)
+
+  def onFile(fileName : String) =
+    copy(fileName = fileName)
+
+  def withArguments(arguments : String) =
+    copy(arguments = arguments)
+
+  def storeOutputInDirectory(outputDirectory : String) =
+    copy(outputDirectory = outputDirectory)
+
+  def withOutputFileName(outputFileName : String) =
+    copy(outputFileName = outputFileName)
+
+  def checkAgainst(expectedOutput : String) =
+    copy(expectedOutput = expectedOutput)
+
+  def usingRegex(regex : String) =
+    copy(regex = regex)
 }

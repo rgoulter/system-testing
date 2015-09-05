@@ -691,8 +691,9 @@ Total verification time: 3.348209 second(s)
 
   @Test
   def sleekTestCaseTest() = {
-    val lemmasLsegTest = new SleekTestCase(
-      new SleekTestCaseBuilder runCommand "sleek"
+    val lemmasLsegTest =
+      (new SleekTestCase
+        runCommand "sleek"
         onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg.slk"
         withArguments "  --elp --dis-lem-gen "
         storeOutputInDirectory "results"
@@ -712,8 +713,9 @@ Total verification time: 3.348209 second(s)
 
   @Test
   def barrierDynamic2Test() = {
-    val barrierDynamic2Test = new SleekTestCase(
-      new SleekTestCaseBuilder runCommand "sleek"
+    val barrierDynamic2Test =
+      (new SleekTestCase
+        runCommand "sleek"
         onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk"
         withArguments "--en-para -perm bperm -tp redlog"
         storeOutputInDirectory "results"
@@ -745,8 +747,9 @@ Total verification time: 3.348209 second(s)
 
   @Test
   def veribsyncBarrierStaticTest() = {
-    val veribsync_barrier_staticTest = new SleekTestCase(
-      new SleekTestCaseBuilder runCommand "sleek"
+    val veribsync_barrier_staticTest =
+      (new SleekTestCase
+        runCommand "sleek"
         onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk"
         withArguments "--en-para -perm bperm -tp redlog"
         storeOutputInDirectory "results"

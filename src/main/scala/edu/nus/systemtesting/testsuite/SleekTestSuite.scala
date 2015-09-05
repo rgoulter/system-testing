@@ -3,16 +3,14 @@ package edu.nus.systemtesting.testsuite
 import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import com.typesafe.config.Config
-import edu.nus.systemtesting.SleekTestCaseBuilder
+import edu.nus.systemtesting.SleekTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
-import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.TestPassed
-import edu.nus.systemtesting.TestFailed
+import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed }
 
 class SleekTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
                      configuration : Config)
     extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
-  val tests = new MutableList[SleekTestCaseBuilder]()
+  val tests = new MutableList[SleekTestCase]()
   val successes = new MutableList[String]()
   val failures = new MutableList[String]()
   val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
@@ -29,7 +27,7 @@ class SleekTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
               outputFileName : String,
               expectedOutput : String) : Unit = {
     tests +=
-      (new SleekTestCaseBuilder
+      (new SleekTestCase
         runCommand commandName
         onFile fileName
         withArguments arguments
@@ -42,7 +40,7 @@ class SleekTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
     val startTime = System.currentTimeMillis
 
     tests.foreach(test => {
-      val testResult = test.build.generateOutput
+      val testResult = test.generateOutput
 
       testResult.result match {
         case TestPassed => successes += test.fileName

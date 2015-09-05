@@ -6,7 +6,7 @@ import scala.collection.mutable.MutableList
 
 import com.typesafe.config.Config
 
-import edu.nus.systemtesting.HipTestCaseBuilder
+import edu.nus.systemtesting.HipTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
@@ -15,7 +15,7 @@ import edu.nus.systemtesting.TestFailed
 case class HipTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
                         configuration : Config)
     extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
-  val tests = new MutableList[HipTestCaseBuilder]()
+  val tests = new MutableList[HipTestCase]()
   val successes = new MutableList[String]()
   val failures = new MutableList[String]()
   val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
@@ -29,7 +29,8 @@ case class HipTestSuite(writer : PrintWriter = new PrintWriter(System.out, true)
               outputFileName : String,
               expectedOutput : String) : Unit = {
     tests +=
-      (new HipTestCaseBuilder runCommand commandName
+      (new HipTestCase
+        runCommand commandName
         onFile fileName
         withArguments arguments
         storeOutputInDirectory outputDirectoryName
@@ -41,7 +42,7 @@ case class HipTestSuite(writer : PrintWriter = new PrintWriter(System.out, true)
     val startTime = System.currentTimeMillis
 
     tests.foreach(test => {
-      val testResult = test.build.generateOutput
+      val testResult = test.generateOutput
 
       testResult.result match {
         case TestPassed => successes += test.fileName
