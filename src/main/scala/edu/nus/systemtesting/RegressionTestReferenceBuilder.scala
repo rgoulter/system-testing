@@ -9,20 +9,20 @@ import com.typesafe.config.Config
  * Constructs [[GenericTestCase]]s from the `BUILD_REFERENCE_TESTS` property of
  * a given [[com.typesafe.config.Config]].
  */
-class RegressionTestReferenceBuilder(configuration: Config) extends GetFileList {
+class RegressionTestReferenceBuilder(configuration : Config) extends GetFileList {
   /**
    * A testcase is made for all files with `SOURCE_EXTENSION` in
    * `SOURCE_DIRECTORY`, writing output to files with `REF_EXTENSION` into
    * `REF_OUTPUT_DIRECTORY`. This saves the output from running
    * `COMMAND_NAME` with the given `ARGUMENTS`.
    */
-  def buildTests(): ArrayBuffer[GenericTestCase] = {
+  def buildTests() : ArrayBuffer[GenericTestCase] = {
     val refTests = configuration.getConfigList("BUILD_REFERENCE_TESTS")
     val referenceRuns = ArrayBuffer[GenericTestCase]()
 
     for (configuration <- refTests) {
       val files = getFileList(configuration.getString("SOURCE_DIRECTORY"),
-        configuration.getString("SOURCE_EXTENSION"))
+                              configuration.getString("SOURCE_EXTENSION"))
       println(files)
 
       val outputDirectory = configuration.getString("REF_OUTPUT_DIRECTORY")
@@ -43,7 +43,7 @@ class RegressionTestReferenceBuilder(configuration: Config) extends GetFileList 
   /**
    * Run all the tests from [[buildTests()]]
    */
-  def run(): Unit = {
+  def run() : Unit = {
     val references = this.buildTests()
 
     references.foreach(_.run)

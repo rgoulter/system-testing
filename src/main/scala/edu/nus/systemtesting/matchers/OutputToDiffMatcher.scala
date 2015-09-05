@@ -10,13 +10,13 @@ import edu.nus.systemtesting.{ MATCHER_NEW, MATCHER_OLD, NEW_LINE, SPACE }
 /**
  * Takes two files as data sources and performs a diff on them
  */
-case class OutputToDiffMatcher(output: String, pathTwo: String) extends Matcher {
-  def matches(): Boolean = diff().length == 0
+case class OutputToDiffMatcher(output : String, pathTwo : String) extends Matcher {
+  def matches() : Boolean = diff().length == 0
 
-  def diff(): String = {
+  def diff() : String = {
     val tempFile = "/home/rohit/High-Performance-DSLs/temp"
 
-    var resultsAfterReplacement: String = ""
+    var resultsAfterReplacement = ""
 
     FileSystemUtilities.printToFile(new File(tempFile))(p => p.print(output))
 

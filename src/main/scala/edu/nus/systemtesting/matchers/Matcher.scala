@@ -5,5 +5,5 @@ package edu.nus.systemtesting.matchers
  * The matcher only deals in text because of the requirements of the system
  */
 trait Matcher {
-  def matches(): Boolean
+  def matches() : Boolean
 }

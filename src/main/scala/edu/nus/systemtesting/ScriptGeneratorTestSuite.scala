@@ -12,13 +12,13 @@ import scala.collection.mutable.MutableList
  * but by way of generating a batch script to do it. Although, doesn't
  * use Config to generate these files.
  */
-class ScriptGeneratorTestSuite(parentDirectoryName: String,
-    outputFileDirectory: String,
-    defaultCommand: String,
-    inputFileExtension: String,
-    outputFileExtension: String,
-    defaultOptions: String,
-    generatedTestScriptName: String = "testScript.sh") {
+class ScriptGeneratorTestSuite(parentDirectoryName : String,
+                               outputFileDirectory : String,
+                               defaultCommand : String,
+                               inputFileExtension : String,
+                               outputFileExtension : String,
+                               defaultOptions : String,
+                               generatedTestScriptName : String = "testScript.sh") {
   var totalTestsToRun = 0;
   var testFailures = new MutableList[String];
 
@@ -33,14 +33,15 @@ class ScriptGeneratorTestSuite(parentDirectoryName: String,
     files
   }
 
-  def run: Unit = {
+  def run() : Unit = {
     // Check if the output files exist before generating new ones. If they do, diff them.
     val files = getFiles()
 
     files.foreach(file =>
       try {
         val builder =
-          (new SleekTestCaseBuilder runCommand defaultCommand
+          (new SleekTestCaseBuilder
+            runCommand defaultCommand
             onFile file.getAbsolutePath
             withArguments defaultOptions
             storeOutputInDirectory outputFileDirectory
@@ -48,7 +49,7 @@ class ScriptGeneratorTestSuite(parentDirectoryName: String,
 
         builder.build run
       } catch {
-        case ex: Exception =>
+        case ex : Exception =>
       })
 
     // Existing versions are automatically diffed whereas new files are added
@@ -63,8 +64,8 @@ class ScriptGeneratorTestSuite(parentDirectoryName: String,
   def generateTestScript() {
     val files = getFiles()
 
-    var execute: String = ""
-    var script: String = SCRIPT_PRELUDE + NEW_LINE
+    var execute = ""
+    var script = SCRIPT_PRELUDE + NEW_LINE
 
     files.foreach(file => {
       execute = Seq(defaultCommand,
@@ -75,6 +76,7 @@ class ScriptGeneratorTestSuite(parentDirectoryName: String,
                 NEW_LINE
       script += execute
     })
+
     FileSystemUtilities.printToFile(new File(generatedTestScriptName))(p => p.print(script))
   }
 

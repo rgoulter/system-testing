@@ -28,13 +28,13 @@ class ExecutionOutput(val stdoutLines : Array[String],
  */
 trait Runnable {
   /** The full command to be executed by the [[Runnable]] object. */
-  def formCommand : String
+  def formCommand() : String
 
   /**
    * Run the command, without worrying about timing.
    * Blocks until execution is done, or times out.
    */
-  private def executeInner : ExecutionOutput = {
+  private def executeInner() : ExecutionOutput = {
     val cmd = formCommand
     val timeout = ConfigFactory.load().getInt("TIMEOUT")
 
@@ -60,7 +60,7 @@ trait Runnable {
     try {
       Await.result(executeFuture, timeout seconds)
     } catch {
-      case ex: TimeoutException => {
+      case ex : TimeoutException => {
         proc.destroy()
 
         new ExecutionOutput(Array(), Array("TIMEOUT"), -2)
@@ -71,7 +71,7 @@ trait Runnable {
   /**
    * Runs the command given by [[formCommand]], returns tuple of `(output, time taken)`.
    */
-  def execute: (ExecutionOutput, Long) = {
+  def execute() : (ExecutionOutput, Long) = {
     val startTime = System.currentTimeMillis
 
     val execOutput = executeInner

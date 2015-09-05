@@ -7,53 +7,53 @@ import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 class HipTestCaseBuilder {
-  var commandName: String = ""
-  var fileName: String = ""
-  var arguments: String = ""
-  var outputDirectory: String = ""
-  var outputFileName: String = ""
-  var expectedOutput: String = ""
-  var regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"
+  var commandName : String = ""
+  var fileName : String = ""
+  var arguments : String = ""
+  var outputDirectory : String = ""
+  var outputFileName : String = ""
+  var expectedOutput : String = ""
+  var regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*"
 
-  def runCommand(commandName: String): HipTestCaseBuilder = {
+  def runCommand(commandName : String) : HipTestCaseBuilder = {
     this.commandName = commandName
     this
   }
 
-  def onFile(fileName: String): HipTestCaseBuilder = {
+  def onFile(fileName : String) : HipTestCaseBuilder = {
     this.fileName = fileName
     this
   }
 
-  def withArguments(arguments: String): HipTestCaseBuilder = {
+  def withArguments(arguments : String) : HipTestCaseBuilder = {
     this.arguments = arguments
     this
   }
 
-  def storeOutputInDirectory(outputDirectory: String): HipTestCaseBuilder = {
+  def storeOutputInDirectory(outputDirectory : String) : HipTestCaseBuilder = {
     this.outputDirectory = outputDirectory
     this
   }
 
-  def withOutputFileName(outputFileName: String): HipTestCaseBuilder = {
+  def withOutputFileName(outputFileName : String) : HipTestCaseBuilder = {
     this.outputFileName = outputFileName
     this
   }
 
-  def checkAgainst(expectedOutput: String): HipTestCaseBuilder = {
+  def checkAgainst(expectedOutput : String) : HipTestCaseBuilder = {
     this.expectedOutput = expectedOutput
     this
   }
 
-  def usingRegex(regex: String): HipTestCaseBuilder = {
+  def usingRegex(regex : String) : HipTestCaseBuilder = {
     this.regex = regex
     this
   }
 
-  def build: HipTestCase = new HipTestCase(this)
+  def build() : HipTestCase = new HipTestCase(this)
 }
 
-class HipTestCase(builder: HipTestCaseBuilder)
+class HipTestCase(builder : HipTestCaseBuilder)
     extends Runnable with ConsoleOutputGenerator {
   val commandName = builder.commandName
   val fileName = builder.fileName
@@ -63,11 +63,11 @@ class HipTestCase(builder: HipTestCaseBuilder)
   val outputDirectory = builder.outputDirectory
   val regex = builder.regex
 
-  override def formCommand(): String = {
+  override def formCommand() : String = {
     Seq(commandName, arguments, fileName).mkString(" ")
   }
 
-  def buildExpectedOutputMap(results: String): HashMap[String, String] = {
+  def buildExpectedOutputMap(results : String) : HashMap[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     val outputMap = new HashMap[String, String]
 
@@ -94,7 +94,7 @@ class HipTestCase(builder: HipTestCaseBuilder)
   }
 
   // TODO: Return type of Either would make more sense here?
-  def checkResults(expectedOutput: String, output : ExecutionOutput): (Option[String], Boolean) = {
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
     // `parse` is responsible for populating `results` with
@@ -111,13 +111,14 @@ class HipTestCase(builder: HipTestCaseBuilder)
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
 
-      val result: String =
+      val result : String =
         if (outputLine.contains("FAIL"))
           "FAIL"
         else
           "SUCCESS"
 
       if (expectedOutputMap.contains(methodName) && !expectedOutputMap(methodName).equals(result)) {
+        // TODO: get rid of `had`/`expected` here.
         resultOutput += had(result)
         resultOutput += expected(expectedOutputMap(methodName))
         return (Some(resultOutput), false)

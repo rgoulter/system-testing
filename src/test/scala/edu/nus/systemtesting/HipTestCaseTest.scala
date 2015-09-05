@@ -6,7 +6,7 @@ import org.junit.Test
 
 class HipTestCaseTest {
   @Test
-  def arr_sumTest(): Unit = {
+  def arr_sumTest() : Unit = {
     val arrSumTest = new HipTestCase(
       new HipTestCaseBuilder runCommand "hip"
         onFile "/home/rohit/hg/sleek_hip/examples/working/hip hip/array/arr_sum.ss"

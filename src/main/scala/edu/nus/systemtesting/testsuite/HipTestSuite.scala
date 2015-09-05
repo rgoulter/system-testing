@@ -12,8 +12,8 @@ import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
 import edu.nus.systemtesting.TestFailed
 
-case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
-  configuration: Config)
+case class HipTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
+                        configuration : Config)
     extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   val tests = new MutableList[HipTestCaseBuilder]()
   val successes = new MutableList[String]()
@@ -22,12 +22,12 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
 
   var performanceOutput = ""
 
-  def addTest(commandName: String,
-    fileName: String,
-    arguments: String,
-    outputDirectoryName: String,
-    outputFileName: String,
-    expectedOutput: String): Unit = {
+  def addTest(commandName : String,
+              fileName : String,
+              arguments : String,
+              outputDirectoryName : String,
+              outputFileName : String,
+              expectedOutput : String) : Unit = {
     tests +=
       (new HipTestCaseBuilder runCommand commandName
         onFile fileName
@@ -37,7 +37,7 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
         checkAgainst expectedOutput)
   }
 
-  def runAllTests(): Unit = {
+  def runAllTests() : Unit = {
     val startTime = System.currentTimeMillis
 
     tests.foreach(test => {
@@ -83,7 +83,7 @@ case class HipTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     }
   }
 
-  def generateTestStatistics: Unit = {
+  def generateTestStatistics() : Unit = {
     writer.println(log("Total number of tests: " + (successes.length + failures.length)))
     writer.println(success("Total number of tests passed: " + successes.length))
     writer.println(error("Total number of tests failed: " + failures.length))

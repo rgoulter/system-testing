@@ -1,24 +1,24 @@
 package edu.nus.systemtesting
 
 object InferenceDefaults {
-  val FAIL: String = "Fail"
+  val FAIL = "Fail"
 
-  val VALID: String = "Valid"
+  val VALID = "Valid"
 
-  val RESIDUE: String = "Residue:"
+  val RESIDUE = "Residue:"
 
-  val STOP: String = "Stop"
+  val STOP = "Stop"
 
-  val ENTAIL: String = "Entail"
+  val ENTAIL = "Entail"
 
-  def removeWhiteSpaceCharacters(text: String): String =
+  def removeWhiteSpaceCharacters(text : String) : String =
     text.replace("\n", "").replace("\t", "").replace(" ", "").trim()
 
-  val NEW_LINE: String = "\n"
+  val NEW_LINE = "\n"
 
-  val DOUBLE_NEW_LINE: String = NEW_LINE * 2
+  val DOUBLE_NEW_LINE = NEW_LINE * 2
 
-  val TRIPLE_NEW_LINE: String = NEW_LINE * 3
+  val TRIPLE_NEW_LINE = NEW_LINE * 3
 
-  val ANGLE_OPEN: String = "<"
+  val ANGLE_OPEN = "<"
 }

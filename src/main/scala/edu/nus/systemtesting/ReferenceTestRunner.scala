@@ -16,16 +16,16 @@ import edu.nus.systemtesting.output.ConsoleOutputGenerator
  * This is presumably less useful than diffs between the results of the test
  * cases.
  */
-class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator {
-  private def getFileList(directory: String, extension: String): Array[String] = {
+class ReferenceTestRunner(configuration : Config) extends ConsoleOutputGenerator {
+  private def getFileList(directory : String, extension : String) : Array[String] = {
     FileSystemUtilities.getRecursiveListOfFilesWithRegex(directory, extension).map(_.getAbsolutePath())
   }
 
-  def run(): String = {
+  def run() : String = {
     val refTests = configuration.getConfigList("RUN_REFERENCE_TESTS")
     val referenceRuns = ArrayBuffer[GenericTestCase]()
 
-    var diffOutput: String = ""
+    var diffOutput = ""
 
     for (configuration <- refTests) {
       val files = getFileList(configuration.getString("SOURCE_DIRECTORY"), configuration.getString("SOURCE_EXTENSION"))
@@ -36,8 +36,12 @@ class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator 
 
       for (file <- files) {
         scala.util.control.Exception.ignoring(classOf[Exception]) {
-          new GenericTestCase(commandName, file, arguments, referenceDirectory,
-            file.substring(file.lastIndexOf("/") + 1), ".out").run
+          new GenericTestCase(commandName,
+                              file,
+                              arguments,
+                              referenceDirectory,
+                              file.substring(file.lastIndexOf("/") + 1),
+                              ".out").run
 
           diffOutput += file + "\n"
           diffOutput += "*************************\n"
@@ -47,7 +51,7 @@ class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator 
           if (FileSystemUtilities.fileOrDirectoryExists(referenceFileName)) {
             val fileBasename = file.substring(file.lastIndexOf("/") + 1)
             diffOutput += DiffMatcher.diff(referenceDirectory + fileBasename + ".out",
-              referenceFileName)
+                                           referenceFileName)
           }
         }
       }

@@ -7,53 +7,53 @@ import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
 
 class SleekTestCaseBuilder() {
-  var commandName: String = ""
-  var fileName: String = ""
-  var arguments: String = ""
-  var outputDirectory: String = ""
-  var outputFileName: String = ""
-  var expectedOutput: String = ""
-  var regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*"
+  var commandName = ""
+  var fileName = ""
+  var arguments = ""
+  var outputDirectory = ""
+  var outputFileName = ""
+  var expectedOutput = ""
+  var regex = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*"
 
-  def runCommand(commandName: String): SleekTestCaseBuilder = {
+  def runCommand(commandName : String) : SleekTestCaseBuilder = {
     this.commandName = commandName
     this
   }
 
-  def onFile(fileName: String): SleekTestCaseBuilder = {
+  def onFile(fileName : String) : SleekTestCaseBuilder = {
     this.fileName = fileName
     this
   }
 
-  def withArguments(arguments: String): SleekTestCaseBuilder = {
+  def withArguments(arguments : String) : SleekTestCaseBuilder = {
     this.arguments = arguments
     this
   }
 
-  def storeOutputInDirectory(outputDirectory: String): SleekTestCaseBuilder = {
+  def storeOutputInDirectory(outputDirectory : String) : SleekTestCaseBuilder = {
     this.outputDirectory = outputDirectory
     this
   }
 
-  def withOutputFileName(outputFileName: String): SleekTestCaseBuilder = {
+  def withOutputFileName(outputFileName : String) : SleekTestCaseBuilder = {
     this.outputFileName = outputFileName
     this
   }
 
-  def checkAgainst(expectedOutput: String): SleekTestCaseBuilder = {
+  def checkAgainst(expectedOutput : String) : SleekTestCaseBuilder = {
     this.expectedOutput = expectedOutput
     this
   }
 
-  def usingRegex(regex: String): SleekTestCaseBuilder = {
+  def usingRegex(regex : String) : SleekTestCaseBuilder = {
     this.regex = regex
     this
   }
 
-  def build: SleekTestCase = new SleekTestCase(this)
+  def build() : SleekTestCase = new SleekTestCase(this)
 }
 
-class SleekTestCase(builder: SleekTestCaseBuilder)
+class SleekTestCase(builder : SleekTestCaseBuilder)
     extends Runnable with ConsoleOutputGenerator {
   val commandName = builder.commandName
   val fileName = builder.fileName
@@ -63,7 +63,7 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
   val outputDirectory = builder.outputDirectory
   val regex = builder.regex
 
-  override def formCommand(): String = {
+  override def formCommand() : String = {
     Seq(commandName, arguments, fileName).mkString(" ")
   }
 
@@ -76,15 +76,15 @@ class SleekTestCase(builder: SleekTestCaseBuilder)
     res
   }
 
-  def generateOutput(): TestCaseResult = {
+  def generateOutput() : TestCaseResult = {
     val (outp, time) = run
 
     generateTestResult(outp, time)
   }
 
   // TODO: Either would make a better return type here.
-  def checkResults(expectedOutput: String, output : ExecutionOutput): (Option[String], Boolean) = {
-    val expectedOutputList: Array[String] = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR).map(_.trim)
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
+    val expectedOutputList = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR).map(_.trim)
 
     // `parse` is responsible for populating `results` with
     // lines which match `builder.regex`.

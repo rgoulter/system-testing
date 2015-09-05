@@ -9,7 +9,7 @@ import org.junit.Test
 
 class InferenceTesterTest {
   @Test
-  def entailCheckTest(): Unit = {
+  def entailCheckTest() : Unit = {
     new {
     } with InferenceTester {
       assertTrue(entailCheck("""Entail 1: Valid.
@@ -33,7 +33,7 @@ class InferenceTesterTest {
   }
 
   @Test
-  def infer2Test(): Unit = {
+  def infer2Test() : Unit = {
     new {
     } with InferenceTester {
       assertFalse(checkCorpus(InferenceTestData.infer2Output, new MutableList[(String, String)]))
@@ -85,7 +85,7 @@ class InferenceTesterTest {
   }
 
   @Test
-  def infer1Test(): Unit = {
+  def infer1Test() : Unit = {
     new {
     } with InferenceTester {
       val expectedResult = new ArrayBuffer[(String, String)]
@@ -140,7 +140,7 @@ class InferenceTesterTest {
   }
 
   @Test
-  def infer4Test(): Unit = {
+   def infer4Test() : Unit = {
     val expectedResult = new ArrayBuffer[(String, String)]
 
     expectedResult += (("Valid", """"""))

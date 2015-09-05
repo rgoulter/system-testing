@@ -1,22 +1,24 @@
 package edu.nus.systemtesting
 
 trait InferenceTester {
-  def isFail(result: String): Boolean = result.equalsIgnoreCase(InferenceDefaults.FAIL)
+  def isFail(result : String) : Boolean =
+    result.equalsIgnoreCase(InferenceDefaults.FAIL)
 
-  def isValid(result: String): Boolean = result.equalsIgnoreCase(InferenceDefaults.VALID)
+  def isValid(result : String) : Boolean =
+    result.equalsIgnoreCase(InferenceDefaults.VALID)
 
-  def entailCheck(entail: String, expected: (String, String)): Boolean = {
+  def entailCheck(entail : String, expected : (String, String)) : Boolean = {
     //        println(entail)
     val (expectedResult, expectedResidue) = expected
 
-    def validFormat: Boolean =
+    def validFormat =
       entail.contains(InferenceDefaults.ENTAIL) && entail.contains(":") && entail.contains(".")
 
-    val actualResult: String =
+    val actualResult =
       InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(":") + 1, entail.indexOf(".")))
-    lazy val matchResult: Boolean =
+    lazy val matchResult =
       actualResult equals InferenceDefaults.removeWhiteSpaceCharacters(expectedResult)
-    lazy val matchResidue: Boolean = {
+    lazy val matchResidue = {
       val v1 = InferenceDefaults.removeWhiteSpaceCharacters(entail.substring(entail.indexOf(InferenceDefaults.ANGLE_OPEN)))
       val v2 = InferenceDefaults.removeWhiteSpaceCharacters(expectedResidue)
       v1 equals v2
@@ -44,17 +46,17 @@ trait InferenceTester {
     }
   }
 
-  def checkCorpus(corpus: String, results: Seq[(String, String)]): Boolean = {
+  def checkCorpus(corpus : String, results : Seq[(String, String)]) : Boolean = {
     if (corpus.length() == 0 || results.length == 0)
       return false
 
     val tillStop = corpus.substring(0, corpus.indexOf(InferenceDefaults.STOP))
     val fromEntail = tillStop.substring(corpus.indexOf(InferenceDefaults.ENTAIL))
     val doubleLined = fromEntail.replace(InferenceDefaults.DOUBLE_NEW_LINE, InferenceDefaults.NEW_LINE)
-    lazy val sanitizeCorpus: String = doubleLined.replace("\t", "").trim
+    lazy val sanitizeCorpus = doubleLined.replace("\t", "").trim
     //    println (sanitizeCorpus)
 
-    val splitCorpus: Array[String] = sanitizeCorpus.split(InferenceDefaults.DOUBLE_NEW_LINE)
+    val splitCorpus = sanitizeCorpus.split(InferenceDefaults.DOUBLE_NEW_LINE)
     //    println("Corpus length: " + splitCorpus.length)
     //    println("result length: " + results.length)
 

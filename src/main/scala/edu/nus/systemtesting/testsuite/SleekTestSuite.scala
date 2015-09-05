@@ -9,8 +9,8 @@ import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
 import edu.nus.systemtesting.TestFailed
 
-class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
-  configuration: Config)
+class SleekTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
+                     configuration : Config)
     extends TestSuite with ConsoleOutputGenerator with PerformanceMetricsGenerator {
   val tests = new MutableList[SleekTestCaseBuilder]()
   val successes = new MutableList[String]()
@@ -22,14 +22,15 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
   val DEFAULT_TEST_REGEX =
     "Entail.*:\\s.*Valid.*|Entail.*:\\s.*Fail.*|Entailing lemma.*:*Valid.*|Entailing lemma.*:.*Fail.*"
 
-  def addTest(commandName: String,
-    fileName: String,
-    arguments: String,
-    outputDirectoryName: String,
-    outputFileName: String,
-    expectedOutput: String): Unit = {
+  def addTest(commandName : String,
+              fileName : String,
+              arguments : String,
+              outputDirectoryName : String,
+              outputFileName : String,
+              expectedOutput : String) : Unit = {
     tests +=
-      (new SleekTestCaseBuilder runCommand commandName
+      (new SleekTestCaseBuilder
+        runCommand commandName
         onFile fileName
         withArguments arguments
         storeOutputInDirectory outputDirectoryName
@@ -37,7 +38,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
         checkAgainst expectedOutput)
   }
 
-  def runAllTests(): Unit = {
+  def runAllTests() : Unit = {
     val startTime = System.currentTimeMillis
 
     tests.foreach(test => {
@@ -83,7 +84,7 @@ class SleekTestSuite(writer: PrintWriter = new PrintWriter(System.out, true),
     }
   }
 
-  def generateTestStatistics: Unit = {
+  def generateTestStatistics() : Unit = {
     writer.println(log("Total number of tests: " + (successes.length + failures.length)))
     writer.println(success("Total number of tests passed: " + successes.length))
     writer.println(error("Total number of tests failed: " + failures.length))

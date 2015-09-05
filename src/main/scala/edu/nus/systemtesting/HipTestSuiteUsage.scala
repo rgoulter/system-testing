@@ -6,12 +6,12 @@ import com.typesafe.config.Config
 
 import edu.nus.systemtesting.testsuite.HipTestSuite
 
-class HipTestSuiteUsage(configuration: Config) {
+class HipTestSuiteUsage(configuration : Config) {
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")
   val BASE_DIR = configuration.getString("HIP_DIR")
   val OUTPUT_DIR = configuration.getString("HIP_OUTPUT_DIRECTORY")
 
-  def run(): Unit = {
+  def run() : Unit = {
     val suite = new HipTestSuite(new PrintWriter(System.out, true), configuration)
 
     addInfinityTests(suite)
@@ -34,7 +34,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite generateTestStatistics
   }
 
-  def addInfinityTests(suite: HipTestSuite): Unit = {
+  def addInfinityTests(suite : HipTestSuite) : Unit = {
     // Infinity
     suite addTest (HIP_COMMAND, BASE_DIR + "infinity/inflist.ss", "--dsd --en-inf", OUTPUT_DIR, "inflist.out", "remove: SUCCESS, append: SUCCESS")
 
@@ -59,7 +59,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "infinity/merge-inf.ss", "--dsd --en-inf --en-disj-compute", OUTPUT_DIR, "merge_inf.out", "merge: SUCCESS")
   }
 
-  def addArrayTests(suite: HipTestSuite): Unit = {
+  def addArrayTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "array/arr_at.java", "", OUTPUT_DIR, "arr_at.out", "main: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "array/arr_binarysearch.java", "", OUTPUT_DIR, "arr_binarysearch.out", "binary_search: SUCCESS")
@@ -103,7 +103,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "array/arr_sum.java", "", OUTPUT_DIR, "arr_sum.out", "sigmaright: SUCCESS, sigmaleft: SUCCESS")
   }
 
-  def addListTests(suite: HipTestSuite): Unit = {
+  def addListTests(suite : HipTestSuite) : Unit = {
     // Lists
     suite addTest (HIP_COMMAND, BASE_DIR + "lists/demo.ss", " ", OUTPUT_DIR, "demo.out", ":  reverse,  create_list:  SUCCESS,  delete_val:  SUCCESS,  delete:  SUCCESS,  insert:  SUCCESS,  get_next_next:  SUCCESS,  set_null:  SUCCESS,  set_next:  SUCCESS,  get_next:  SUCCESS,  ret_first:  SUCCESS,  append:  SUCCESS")
 
@@ -146,7 +146,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "lists/perm.ss", " ", OUTPUT_DIR, "perm.out", " append:  SUCCESS")
   }
 
-  def addTermTests(suite: HipTestSuite): Unit = {
+  def addTermTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "term/e1.ss", " ", OUTPUT_DIR, "e1.out", " loop:  SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "term/ex1.ss", " ", OUTPUT_DIR, "ex1.out", " length:  SUCCESS,  app2:  SUCCESS")
@@ -676,7 +676,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "imm-field/schorr-waite-list.ss", "-tp om --field-ann --etcsu1 ", OUTPUT_DIR, "schorr_waite_list.out", "lscan: SUCCESS")
   }
 
-  def addThreadTests(suite: HipTestSuite): Unit = {
+  def addThreadTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "threads/motiv-example.ss", "  --en-para --en-thrd-resource -tp redlog", OUTPUT_DIR, "threads_motiv_example.out", " main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "threads/motiv-example2.ss", "  --en-para --en-thrd-resource -tp redlog", OUTPUT_DIR, "threads_motiv_example2.out", " main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS")
@@ -724,7 +724,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "trees.ss", "", OUTPUT_DIR, "trees.out", "insert: SUCCESS")
   }
 
-  def addBagsTests(suite: HipTestSuite): Unit = {
+  def addBagsTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "bags/avl-all-1.ss", " ", OUTPUT_DIR, "avl_all_1.out", " remove_min:  SUCCESS,  rotate_double_right:  SUCCESS,  rotate_double_left:  SUCCESS,  get_max:  SUCCESS,  rotate_right:  SUCCESS,  rotate_left:  SUCCESS,  height:  SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "bags/avl-all.ss", " ", OUTPUT_DIR, "avl_all.out", " delete:  SUCCESS,  delete_top:  SUCCESS,  remove_min:  SUCCESS, remove_max_add:  SUCCESS,  : remove_min_add, insert:  SUCCESS,  rotate_double_left:   SUCCESS,  get_max:  SUCCESS,  rotate_right:  SUCCESS,  rotate_left:  SUCCESS,  height:  SUCCESS")
@@ -773,7 +773,8 @@ class HipTestSuiteUsage(configuration: Config) {
 
     suite addTest (HIP_COMMAND, BASE_DIR + "bags/trees.ss", " ", OUTPUT_DIR, "trees.out", " delete1:  SUCCESS,  remove_min1:  SUCCESS,  insert1:  SUCCESS,  flatten1:  SUCCESS,  append1:  SUCCESS")
   }
-  def addHipBagaTests(suite: HipTestSuite): Unit = {
+
+  def addHipBagaTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, "/home/rohit/hg/sleek_hip/examples/working/hip_baga/eps.ss", " --baga-xpure", OUTPUT_DIR, "eps.out", " get_next: SUCCESS, get_next_next: SUCCESS")
 
     suite addTest (HIP_COMMAND, "/home/rohit/hg/sleek_hip/examples/working/hip_baga/append.ss", " --baga-xpure", OUTPUT_DIR, "append.out", " append: SUCCESS")
@@ -827,7 +828,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, "/home/rohit/hg/sleek_hip/examples/working/hip_baga/modular_examples/qsort-modular.ss", " --overeps --lda --baga-xpure", OUTPUT_DIR, "modular_examples_qsort_modular.out", "append_bll:  SUCCESS,  partition:  SUCCESS,  qsort:  SUCCESS")
   }
 
-  def addMemTests(suite: HipTestSuite): Unit = {
+  def addMemTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "mem/dag.ss", "-tp om --mem --ramify", OUTPUT_DIR, "dag.out", "mark: SUCCESS, mark2: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "mem/dag_values.ss", "-tp om --mem --ramify", OUTPUT_DIR, "dag_values.out", "mark: SUCCESS, mark2: SUCCESS")
@@ -899,7 +900,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "mem/graph_spanning_infer.ss", "-tp om --mem --ramify --eps --infer-mem", OUTPUT_DIR, "graph_spanning_infer.out", "spanning: SUCCESS")
   }
 
-  def addVeribsyncTests(suite: HipTestSuite): Unit = {
+  def addVeribsyncTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "veribsync/while-loop.ss", "  --en-para -perm bperm -tp redlog", OUTPUT_DIR, "while_loop.out", "fun: SUCCESS, fun3: SUCCESS, loop_fun: SUCCESS, loop_fun3: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "veribsync/while-loop2.ss", "  --en-para -perm bperm -tp redlog", OUTPUT_DIR, "while_loop2.out", "fun: SUCCESS, fun3: SUCCESS, fun4: SUCCESS, fun5: SUCCESS, fun6: SUCCESS, fun7: SUCCESS, fun8: SUCCESS, fun9: SUCCESS")
@@ -943,7 +944,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "veribsync/benchmark/barnes.ss", "  --en-para -perm bperm -tp redlog", OUTPUT_DIR, "benchmark_barnes.out", "ANLinit: SUCCESS,  ComputeForces: SUCCESS, Housekeep: SUCCESS, find_my_bodies: SUCCESS, hackcofm: SUCCESS, maketree: SUCCESS, stepsystem: SUCCESS, find_my_initial_bodies: SUCCESS, SlaveStart: SUCCESS, diagnostics: SUCCESS, initoutput: SUCCESS, initparam: SUCCESS, startrun: SUCCESS, tab_init: SUCCESS, main: SUCCESS, output: SUCCESS")
   }
 
-  def addParahipTests(suite: HipTestSuite) = {
+  def addParahipTests(suite : HipTestSuite) = {
     suite addTest (HIP_COMMAND, BASE_DIR + "parahip/simple.ss", "  --en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", OUTPUT_DIR, "simple.out", " func: SUCCESS, main: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "parahip/forkjoin.ss", "  --en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", OUTPUT_DIR, "forkjoin.out", " func: SUCCESS, main: SUCCESS")
@@ -997,7 +998,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "parahip/create_and_acquire.ss", "  --en-para -tp parahip --dis-locklevel --en-thrd-and-conj", OUTPUT_DIR, "create_and_acquire.out", " create_and_acquire: SUCCESS")
   }
 
-  def addVpermTests(suite: HipTestSuite): Unit = {
+  def addVpermTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "vperm/vperm/alt_threading.ss", "  --ann-vp", OUTPUT_DIR, "vperm_alt_threading.out", " increment: SUCCESS, main: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "vperm/vperm/fibonacci.ss", "  --ann-vp -tp z3 -perm none --dis-ls dis--locklevel", OUTPUT_DIR, "vperm_fibonacci.out", " seq_fib: SUCCESS, para_fib2: SUCCESS")
@@ -1027,7 +1028,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "vperm/vperm/vperm_simple.ss", "  --ann-vp", OUTPUT_DIR, "vperm_vperm_simple.out", " foo: SUCCESS, f: SUCCESS, foo2: SUCCESS, f2: SUCCESS")
   }
 
-  def addHipTests(suite: HipTestSuite): Unit = {
+  def addHipTests(suite : HipTestSuite) : Unit = {
     suite addTest (HIP_COMMAND, BASE_DIR + "eps.ss", "  ", OUTPUT_DIR, "eps.out", " get_next: SUCCESS, get_next_next: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "append.ss", "  ", OUTPUT_DIR, "append.out", " append: SUCCESS")
@@ -1137,7 +1138,7 @@ class HipTestSuiteUsage(configuration: Config) {
     suite addTest (HIP_COMMAND, BASE_DIR + "conchip/deadpool.ss", "  -tp parahip -perm fperm --classic", OUTPUT_DIR, "conchip_deadpool.out", "destroyDeadPool: SUCCESS, forkHelper: SUCCESS, forkThreads: SUCCESS, joinHelper: SUCCESS, joinThreads: SUCCESS, main: SUCCESS, thread: SUCCESS")
   }
 
-  def addHipBarrTests(suite: HipTestSuite) = {
+  def addHipBarrTests(suite : HipTestSuite) = {
     suite addTest (HIP_COMMAND, BASE_DIR + "../tree_shares/thesis/video_ex1_th3.ss", " --eps --dis-field-ann --dis-precise-xpure -perm dperm", OUTPUT_DIR, ".._tree_shares_thesis_video_ex1_th3.out", " th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS, th3_loop: SUCCESS, th3: SUCCESS")
 
     suite addTest (HIP_COMMAND, BASE_DIR + "../tree_shares/thesis/SIMD_ex1_v2_th3.ss", " --eps --dis-field-ann --dis-precise-xpure -perm dperm", OUTPUT_DIR, ".._tree_shares_thesis_SIMD_ex1_v2_th3.out", " controll: SUCCESS, control: SUCCESS, thl1: SUCCESS, th1: SUCCESS, thl2: SUCCESS, th2: SUCCESS, thl3: SUCCESS, th3: SUCCESS, thl4: SUCCESS, th4: SUCCESS")

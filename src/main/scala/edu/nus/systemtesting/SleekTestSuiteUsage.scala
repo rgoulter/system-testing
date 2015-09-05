@@ -6,12 +6,12 @@ import com.typesafe.config.Config
 
 import edu.nus.systemtesting.testsuite.SleekTestSuite
 
-class SleekTestSuiteUsage(configuration: Config) {
+class SleekTestSuiteUsage(configuration : Config) {
   val SLEEK_COMMAND = configuration.getString("SLEEK_COMMAND")
   val WORKING_DIR = configuration.getString("SLEEK_DIR")
   val OUTPUT_DIR = configuration.getString("SLEEK_OUTPUT_DIRECTORY")
 
-  def run(): Unit = {
+  def run() : Unit = {
     val suite = new SleekTestSuite(new PrintWriter(System.out, true), configuration)
 
     suite addTest (SLEEK_COMMAND, WORKING_DIR + "sleek.slk", " ", OUTPUT_DIR, "sleek", "Valid, Valid, Valid, Fail")
