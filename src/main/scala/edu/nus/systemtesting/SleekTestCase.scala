@@ -1,44 +1,27 @@
 package edu.nus.systemtesting
 
-import scala.collection.mutable.MutableList
-
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
-import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
+import edu.nus.systemtesting.ProgramFlags.flagsOfProgram
+import edu.nus.systemtesting.ProgramFlags.isFlag
 
-class SleekTestCaseBuilder(testcase : SleekTestCase = SleekTestCase()) {
-
-  def build() : SleekTestCase = testcase
+object SleekTestCase {
+  implicit def constructSleekTestCase(tc : TestCaseBuilder) : SleekTestCase =
+    new SleekTestCase(tc.commandName,
+                      tc.fileName,
+                      tc.arguments,
+                      tc.outputDirectory,
+                      tc.outputFileName,
+                      tc.expectedOutput)
 }
 
-case class SleekTestCase(commandName : String = "",
-                         fileName : String = "",
-                         arguments : String = "",
-                         outputDirectory : String = "",
-                         outputFileName : String = "",
-                         expectedOutput : String = "",
-                         regex : String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
-    extends Runnable with ConsoleOutputGenerator {
-  override def formCommand() : String = {
-    Seq(commandName, arguments, fileName).mkString(" ")
-  }
-
-  def run() = {
-    val res@(outp, time) = this.execute
-
-    if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, outp.output)
-
-    res
-  }
-
-  def generateOutput() : TestCaseResult = {
-    val (outp, time) = run
-
-    generateTestResult(outp, time)
-  }
-
-  // TODO: Either would make a better return type here.
+class SleekTestCase(cmd : String = "",
+                    fn : String = "",
+                    args : String = "",
+                    outDir : String = "",
+                    outFN : String = "",
+                    expectedOut : String = "",
+                    regex : String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
+    extends TestCase(cmd, fn, args, outDir, outFN, expectedOut) {
   def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
     val expectedOutputList = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR).map(_.trim)
 
@@ -107,37 +90,4 @@ case class SleekTestCase(commandName : String = "",
 
     return (Some(unmatchedResults), false)
   }
-
-  def generateTestResult(output : ExecutionOutput, time : Long) : TestCaseResult = {
-    val (err, passed) = checkResults(expectedOutput, output)
-
-    val result = if (passed) TestPassed else TestFailed
-
-    new TestCaseResult(commandName, fileName, arguments, output, time, result, remarks = err.toList)
-  }
-
-  //
-  // Helper functions for DSL-esque construction of testcase.
-  //
-
-  def runCommand(commandName : String) =
-    copy(commandName = commandName)
-
-  def onFile(fileName : String) =
-    copy(fileName = fileName)
-
-  def withArguments(arguments : String) =
-    copy(arguments = arguments)
-
-  def storeOutputInDirectory(outputDirectory : String) =
-    copy(outputDirectory = outputDirectory)
-
-  def withOutputFileName(outputFileName : String) =
-    copy(outputFileName = outputFileName)
-
-  def checkAgainst(expectedOutput : String) =
-    copy(expectedOutput = expectedOutput)
-
-  def usingRegex(regex : String) =
-    copy(regex = regex)
 }

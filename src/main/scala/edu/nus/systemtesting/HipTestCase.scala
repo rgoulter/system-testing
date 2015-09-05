@@ -1,23 +1,27 @@
 package edu.nus.systemtesting
 
 import scala.collection.mutable.HashMap
-import scala.collection.mutable.MutableList
 
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
-case class HipTestCase(commandName : String = "",
-                       fileName : String = "",
-                       arguments : String = "",
-                       outputDirectory : String = "",
-                       outputFileName : String = "",
-                       expectedOutput : String = "",
-                       regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
-    extends Runnable with ConsoleOutputGenerator {
-  override def formCommand() : String = {
-    Seq(commandName, arguments, fileName).mkString(" ")
-  }
+object HipTestCase {
+  implicit def constructHipTestCase(tc : TestCaseBuilder) : HipTestCase =
+    new HipTestCase(tc.commandName,
+                    tc.fileName,
+                    tc.arguments,
+                    tc.outputDirectory,
+                    tc.outputFileName,
+                    tc.expectedOutput)
+}
 
+class HipTestCase(cmd : String = "",
+                  fn : String = "",
+                  args : String = "",
+                  outDir : String = "",
+                  outFN : String = "",
+                  expectedOut : String = "",
+                  regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
+    extends TestCase(cmd, fn, args, outDir, outFN, expectedOut) {
   def buildExpectedOutputMap(results : String) : HashMap[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     val outputMap = new HashMap[String, String]
@@ -29,22 +33,6 @@ case class HipTestCase(commandName : String = "",
     outputMap
   }
 
-  def run() = {
-    val res@(execOutp, time) = this.execute
-
-    if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, execOutp.output)
-
-    res
-  }
-
-  def generateOutput() = {
-    val (outp, time) = run
-
-    generateTestResult(outp, time)
-  }
-
-  // TODO: Return type of Either would make more sense here?
   def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
@@ -78,37 +66,4 @@ case class HipTestCase(commandName : String = "",
 
     return (None, true)
   }
-
-  def generateTestResult(output : ExecutionOutput, time : Long) : TestCaseResult = {
-    val (err, passed) = checkResults(expectedOutput, output)
-
-    val result = if (passed) TestPassed else TestFailed
-
-    new TestCaseResult(commandName, fileName, arguments, output, time, result, remarks = err.toList)
-  }
-
-  //
-  // Helper functions for DSL-esque construction of testcase.
-  //
-
-  def runCommand(commandName : String) =
-    copy(commandName = commandName)
-
-  def onFile(fileName : String) =
-    copy(fileName = fileName)
-
-  def withArguments(arguments : String) =
-    copy(arguments = arguments)
-
-  def storeOutputInDirectory(outputDirectory : String) =
-    copy(outputDirectory = outputDirectory)
-
-  def withOutputFileName(outputFileName : String) =
-    copy(outputFileName = outputFileName)
-
-  def checkAgainst(expectedOutput : String) =
-    copy(expectedOutput = expectedOutput)
-
-  def usingRegex(regex : String) =
-    copy(regex = regex)
 }

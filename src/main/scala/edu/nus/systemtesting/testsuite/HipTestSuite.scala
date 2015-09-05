@@ -1,16 +1,15 @@
 package edu.nus.systemtesting.testsuite
 
 import java.io.PrintWriter
-
 import scala.collection.mutable.MutableList
-
 import com.typesafe.config.Config
-
 import edu.nus.systemtesting.HipTestCase
+import edu.nus.systemtesting.HipTestCase.constructHipTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
 import edu.nus.systemtesting.TestFailed
+import edu.nus.systemtesting.TestCaseBuilder
 
 case class HipTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
                         configuration : Config)
@@ -29,7 +28,7 @@ case class HipTestSuite(writer : PrintWriter = new PrintWriter(System.out, true)
               outputFileName : String,
               expectedOutput : String) : Unit = {
     tests +=
-      (new HipTestCase
+      (new TestCaseBuilder
         runCommand commandName
         onFile fileName
         withArguments arguments

@@ -4,8 +4,10 @@ import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import com.typesafe.config.Config
 import edu.nus.systemtesting.SleekTestCase
+import edu.nus.systemtesting.SleekTestCase.constructSleekTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed }
+import edu.nus.systemtesting.TestCaseBuilder
 
 class SleekTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
                      configuration : Config)
@@ -27,7 +29,7 @@ class SleekTestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
               outputFileName : String,
               expectedOutput : String) : Unit = {
     tests +=
-      (new SleekTestCase
+      (new TestCaseBuilder
         runCommand commandName
         onFile fileName
         withArguments arguments

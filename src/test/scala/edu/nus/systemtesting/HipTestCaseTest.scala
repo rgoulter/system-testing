@@ -4,11 +4,13 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+import edu.nus.systemtesting.HipTestCase.constructHipTestCase
+
 class HipTestCaseTest {
   @Test
   def arr_sumTest() : Unit = {
     val arrSumTest = 
-      (new HipTestCase
+      (new TestCaseBuilder
         runCommand "hip"
         onFile "/home/rohit/hg/sleek_hip/examples/working/hip hip/array/arr_sum.ss"
         withArguments ""

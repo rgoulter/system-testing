@@ -2,6 +2,9 @@ package edu.nus.systemtesting
 
 import org.junit.Assert.{ assertEquals, assertFalse, assertTrue }
 import org.junit.Test
+
+import edu.nus.systemtesting.SleekTestCase.constructSleekTestCase
+
 class SleekTestCaseTest {
   val regex = "Entail.*:\\s.*Valid.*|Entail.*:\\s.*Fail.*|Entailing lemma.*:*Valid.*|Entailing lemma.*:.*Fail.*"
 
@@ -692,7 +695,7 @@ Total verification time: 3.348209 second(s)
   @Test
   def sleekTestCaseTest() = {
     val lemmasLsegTest =
-      (new SleekTestCase
+      (new TestCaseBuilder
         runCommand "sleek"
         onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/lemmas/lseg.slk"
         withArguments "  --elp --dis-lem-gen "
@@ -714,7 +717,7 @@ Total verification time: 3.348209 second(s)
   @Test
   def barrierDynamic2Test() = {
     val barrierDynamic2Test =
-      (new SleekTestCase
+      (new TestCaseBuilder
         runCommand "sleek"
         onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-dynamic2.slk"
         withArguments "--en-para -perm bperm -tp redlog"
@@ -748,7 +751,7 @@ Total verification time: 3.348209 second(s)
   @Test
   def veribsyncBarrierStaticTest() = {
     val veribsync_barrier_staticTest =
-      (new SleekTestCase
+      (new TestCaseBuilder
         runCommand "sleek"
         onFile "/home/rohit/hg/sleek_hip/examples/working/sleek/veribsync/barrier-static.slk"
         withArguments "--en-para -perm bperm -tp redlog"
