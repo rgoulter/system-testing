@@ -7,6 +7,10 @@ import scala.collection.mutable.MutableList
 /**
  * Takes in a list of default options, parent directory and executable and runs all
  * nested files
+ *
+ * Does literally the same thing as RegressionTestReferenceBuilder,
+ * but by way of generating a batch script to do it. Although, doesn't
+ * use Config to generate these files.
  */
 class ScriptGeneratorTestSuite(parentDirectoryName: String,
     outputFileDirectory: String,

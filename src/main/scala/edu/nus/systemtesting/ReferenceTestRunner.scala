@@ -8,6 +8,14 @@ import com.typesafe.config.Config
 import edu.nus.systemtesting.matchers.DiffMatcher
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
+/**
+ * Makes use of [[DiffMatcher]], to output differences between
+ * output of the previous and current execution of the `RUN_REFERENCE_TESTS`
+ * from the config.
+ *
+ * This is presumably less useful than diffs between the results of the test
+ * cases.
+ */
 class ReferenceTestRunner(configuration: Config) extends ConsoleOutputGenerator {
   private def getFileList(directory: String, extension: String): Array[String] = {
     FileSystemUtilities.getRecursiveListOfFilesWithRegex(directory, extension).map(_.getAbsolutePath())
