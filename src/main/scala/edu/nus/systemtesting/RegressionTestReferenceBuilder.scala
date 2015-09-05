@@ -5,7 +5,17 @@ import scala.collection.mutable.ArrayBuffer
 
 import com.typesafe.config.Config
 
+/**
+ * Constructs [[GenericTestCase]]s from the `BUILD_REFERENCE_TESTS` property of
+ * a given [[com.typesafe.config.Config]].
+ */
 class RegressionTestReferenceBuilder(configuration: Config) extends GetFileList {
+  /**
+   * A testcase is made for all files with `SOURCE_EXTENSION` in
+   * `SOURCE_DIRECTORY`, writing output to files with `REF_EXTENSION` into
+   * `REF_OUTPUT_DIRECTORY`. This saves the output from running
+   * `COMMAND_NAME` with the given `ARGUMENTS`.
+   */
   def buildTests(): ArrayBuffer[GenericTestCase] = {
     val refTests = configuration.getConfigList("BUILD_REFERENCE_TESTS")
     val referenceRuns = ArrayBuffer[GenericTestCase]()
@@ -30,6 +40,9 @@ class RegressionTestReferenceBuilder(configuration: Config) extends GetFileList 
     referenceRuns
   }
 
+  /**
+   * Run all the tests from [[buildTests()]]
+   */
   def run(): Unit = {
     val references = this.buildTests()
 
