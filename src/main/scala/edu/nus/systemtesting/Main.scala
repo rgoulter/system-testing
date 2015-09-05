@@ -14,8 +14,6 @@ object Main {
       case "sleek" => runSleekTests
       case "hip" => runHipTests
       case "all" => runAllTests
-      case "buildReference" => buildReference
-      case "runReference" => runReference
       case "svcomp" => runSVCompTests
       case _ => showHelpText
     }
@@ -24,16 +22,6 @@ object Main {
   private def runAllTests() : Unit = {
     runSleekTests
     runHipTests
-  }
-
-  private def runReference() : Unit = {
-    printHeader("Running Reference Tests")
-    new ReferenceTestRunner(ConfigFactory.load()).run
-  }
-
-  private def buildReference() : Unit = {
-    printHeader("Building References")
-    new RegressionTestReferenceBuilder(ConfigFactory.load()).run
   }
 
   private def runSleekTests() : Unit = {
