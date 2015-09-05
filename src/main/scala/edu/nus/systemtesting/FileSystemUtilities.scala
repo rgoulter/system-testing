@@ -85,7 +85,7 @@ object FileSystemUtilities {
    * Get Current date as string
    */
   def getCurrentDateString() : String = {
-    val formatter = new SimpleDateFormat("dd_mm_yy")
+    val formatter = new SimpleDateFormat("yyyy-MM-dd")
     formatter.format(new Date())
   }
 }
