@@ -2,8 +2,6 @@ package edu.nus.systemtesting
 
 import java.io.PrintWriter
 
-import scala.collection.mutable.HashMap
-
 import edu.nus.systemtesting.FileSystemUtilities.getFileList
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
@@ -13,24 +11,20 @@ case class SVCompTestSuite(directory : String,
                            fileType : String = ".c",
                            printer : PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
-  var tests = new HashMap[String, SVCompTestCase]
+  private val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
+
+  val tests =
+    files.map(file =>
+      (file, SVCompTestCase(commandName = this.commandName,
+                            arguments = this.arguments,
+                            fileName = file))).toMap
+
   var failures = 0
   var successes = 0
 
-  def buildResultMap() : HashMap[String, String] = {
-    val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
-
-    var resultMap = new HashMap[String, String]()
-
-    files.foreach(file =>
-      resultMap.put(file, getResultFromFileName(extractFileNameFromPath(file))))
-
-    files.foreach(file =>
-      tests.put(file, SVCompTestCase(commandName = this.commandName,
-                                     arguments = this.arguments,
-                                     fileName = file)))
-
-    resultMap
+  def buildResultMap() : Map[String, String] = {
+    files.map(file =>
+      (file, getResultFromFileName(extractFileNameFromPath(file)))).toMap
   }
 
   def getResultFromFileName(fileName : String) : String = {
