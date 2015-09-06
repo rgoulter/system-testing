@@ -16,6 +16,6 @@ class TestCaseResult(val command : String,
                      val executionOutput : ExecutionOutput,
                      val executionTime : Long,
                      val result : TestResult,
-                     val diff : Iterable[(Any, Any)] = Seq(),
+                     val diff : Iterable[(String, String)] = Seq(),
                      val remarks : Iterable[String] = Seq()) {
 }

@@ -68,6 +68,13 @@ class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
       case TestFailed => writer.println(failed)
     }
 
+    result.diff.foreach({case (expected, got) =>
+      writer.println(expect(expected))
+      writer.println(actual(got))
+    })
+
+    writer.println
+
     result.remarks.foreach(writer.println)
 
     val time = result.executionTime
@@ -75,6 +82,8 @@ class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
     if (time > THRESHOLD) {
       writer.println("Runtime: " + time + " milliseconds")
     }
+
+    writer.println
   }
 
   def generateTestStatistics() : Unit = {
