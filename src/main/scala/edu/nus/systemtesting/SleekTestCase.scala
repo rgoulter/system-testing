@@ -22,72 +22,59 @@ class SleekTestCase(cmd : String = "",
                     expectedOut : String = "",
                     regex : String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
     extends TestCase(cmd, fn, args, outDir, outFN, expectedOut) {
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]] = {
+    // Sleek expected output is like
+    //   "Fail, Valid, Valid, Fail"
     val expectedOutputList = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR).map(_.trim)
 
     // `parse` is responsible for populating `results` with
     // lines which match `regex`.
     val results = filterLinesMatchingRegex(output.output, regex)
-    val filteredResults = results.zipWithIndex
 
-    var resultOutput = ""
-
-    if (filteredResults.isEmpty) {
+    if (results.isEmpty) {
       val testFlags = arguments.split(" ").filter(isFlag)
       val SleekFlags = flagsOfProgram(commandName)
       val invalidFlags = testFlags.filterNot(SleekFlags.contains)
 
       if (!invalidFlags.isEmpty) {
-        val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n").mkString
+        val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n")
 
-        return (Some("Binary failed to execute. Please investigate\n" + flagsStr), false)
+        return Left("Binary failed to execute. Please investigate" +: flagsStr.toList)
       } else {
-
-        return (Some("Binary failed to execute. Please investigate\n" +
-                     "Output was:\n" +
-                     output.output),
-                false)
+        // Could try searching the output for errors?
+        return Left("Binary failed to execute. Please investigate" +:
+                    List("Output was:\n" +
+                         output.output))
       }
     }
 
-    if (filteredResults.size != expectedOutputList.size)
-      return matchUnequalFailedTests(results, expectedOutputList)
-
-    for ((result, i) <- filteredResults)
-      if (!result.contains(expectedOutputList(i))) {
-        resultOutput += had(result)
-        resultOutput += expected(expectedOutputList(i))
-
-        return (Some(resultOutput), false)
-      }
-
-    return (None, true)
-  }
-
-  private def matchUnequalFailedTests(filteredResults : Seq[String],
-                                      expectedOutputList : Seq[String]) : (Option[String], Boolean) = {
-    val minSize = Math.min(filteredResults.length, expectedOutputList.size)
-
-    val resultsIter = filteredResults.iterator
-    val expectedIter = expectedOutputList.iterator
-
-    var unmatchedResults = "\nUnmatched:\n"
-
-    for (count <- 0 until minSize) {
-      unmatchedResults += had(resultsIter.next)
-      unmatchedResults += expected(expectedIter.next)
+    if (results.size < expectedOutputList.size) {
+      return Left(List("TestCase Overspecified! (More expected results than actual)."))
+    } else if (results.size > expectedOutputList.size) {
+      return Left(List("TestCase Underspecified! (Fewer expected results than actual)."))
     }
 
-    if (resultsIter.hasNext)
-      unmatchedResults += "\nExtra Sleek Entail Output\n\n"
-    while (resultsIter.hasNext)
-      unmatchedResults += resultsIter.next + "\n"
+    def resultFromOutputLine(resultLine : String) : String = {
+      // resultLine is like:
+      //   Entail 1: Fail.(may) cause: x!=null & r_45!=x & (((1<=n & r_45!=null) | 
+      if (resultLine.contains("Valid"))
+        "Valid"
+      else
+        "Fail"
+    }
 
-    if (expectedIter.hasNext)
-      unmatchedResults += "\nExtra Expected Results\n"
-    while (expectedIter.hasNext)
-      unmatchedResults += expectedIter.next + "\n"
+    val diff = expectedOutputList.zip(results).map({
+      case (expected, resultLine) => {
+        val actual = resultFromOutputLine(resultLine)
 
-    return (Some(unmatchedResults), false)
+        if (resultLine.contains(expected)) {
+          None
+        } else {
+          Some((expected, actual))
+        }
+      }
+    }).flatten
+
+    return Right(diff)
   }
 }

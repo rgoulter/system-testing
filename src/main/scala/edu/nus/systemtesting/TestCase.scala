@@ -8,9 +8,15 @@ abstract class TestCase(val commandName : String = "",
                         val outputDirectory : String = "",
                         val outputFileName : String = "",
                         val expectedOutput : String = "")
-    extends Runnable with ConsoleOutputGenerator {
-  // TODO: Return type of Either would make more sense here?
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean)
+    extends Runnable {
+  /**
+   * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].
+   *
+   * Return Either a list of remarks about a failure to run the test case,
+   * or a list of differences between the expected and actual output.
+   * i.e. A passing test will return `Right` alternative with empty list.
+   */
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]]
 
   override def formCommand() : String = {
     Seq(commandName, arguments, fileName).mkString(" ")
@@ -19,18 +25,23 @@ abstract class TestCase(val commandName : String = "",
   def run() = {
     val res@(execOutp, time) = this.execute
 
-    if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectory, execOutp.output)
-
     res
   }
 
   def generateTestResult(output : ExecutionOutput, time : Long) : TestCaseResult = {
-    val (err, passed) = checkResults(expectedOutput, output)
+    val check = checkResults(expectedOutput, output)
 
-    val result = if (passed) TestPassed else TestFailed
+    val (result, diff, remarks) = check match {
+      case Left(remarks) => {
+        (TestFailed, List(), remarks)
+      }
+      case Right(diff) => {
+        val result = if (diff.isEmpty) TestPassed else TestFailed
+        (result, diff, List())
+      }
+    }
 
-    new TestCaseResult(commandName, fileName, arguments, output, time, result, remarks = err.toList)
+    new TestCaseResult(commandName, fileName, arguments, output, time, result, diff, remarks)
   }
 
   def generateOutput() = {

@@ -27,37 +27,55 @@ class HipTestCase(cmd : String = "",
        result.substring(result.indexOf(":") + 1).trim)).toMap
   }
 
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]] = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
     // `parse` is responsible for populating `results` with
     // lines which match `builder.regex`.
     val results = filterLinesMatchingRegex(output.output, regex)
-    val filteredResults = results.zipWithIndex
 
-    var resultOutput = ""
+    if (results.isEmpty)
+      return Left(List("Binary failed to execute. Please investigate \n"))
 
-    if (filteredResults.isEmpty)
-      return (Some("Binary failed to execute. Please investigate \n"), false)
+    // TODO: check that all the results methods contain the method name.
+    // If not, then the test is 'under specified' relative to the actual file, and we should note that.
 
-    for ((outputLine, idx) <- filteredResults) {
+    // Return (methodname, result)
+    def resultFromOutputLine(outputLine : String) : (String,String) = {
+      // e.g. outputLine should look something like:
+      //   Procedure set_next$node~node SUCCESS.
       var methodName = outputLine.split(" ")(1)
       methodName = methodName.substring(0, methodName.indexOf("$"))
 
-      val result : String =
+      val actual : String =
         if (outputLine.contains("FAIL"))
           "FAIL"
         else
           "SUCCESS"
 
-      if (expectedOutputMap.contains(methodName) && !expectedOutputMap(methodName).equals(result)) {
-        // TODO: get rid of `had`/`expected` here.
-        resultOutput += had(result)
-        resultOutput += expected(expectedOutputMap(methodName))
-        return (Some(resultOutput), false)
-      }
+      (methodName, actual)
     }
 
-    return (None, true)
+    val diff = results.map(outputLine => {
+      val (methodName, actual) = resultFromOutputLine(outputLine)
+
+      expectedOutputMap.get(methodName) match {
+        case Some(expected) => {
+          if (expected.equals(actual)) {
+            None
+          } else {
+            // Outputs were different!
+            Some((expected, actual))
+          }
+        }
+
+        // If the method name from the actual output is not in the expectedOutputMap,
+        // it means the expectedOutputMap was under-specified.
+        // Easier to ignore, for now.
+        case None => None
+      }
+    }).flatten
+
+    return Right(diff)
   }
 }

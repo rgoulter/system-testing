@@ -32,6 +32,11 @@ class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
     tests.foreach(test => {
       val testResult = test.generateOutput
 
+      if (test.outputFileName.length > 0)
+        writeToFile(test.outputFileName,
+                    test.outputDirectory,
+                    testResult.executionOutput.output)
+
       testResult.result match {
         case TestPassed => successes += test.fileName
         case TestFailed => failures += test.fileName
