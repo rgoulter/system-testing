@@ -1,7 +1,5 @@
 package edu.nus.systemtesting
 
-import scala.collection.mutable.HashMap
-
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 
 object HipTestCase {
@@ -22,15 +20,11 @@ class HipTestCase(cmd : String = "",
                   expectedOut : String = "",
                   regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
     extends TestCase(cmd, fn, args, outDir, outFN, expectedOut) {
-  def buildExpectedOutputMap(results : String) : HashMap[String, String] = {
+  def buildExpectedOutputMap(results : String) : Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
-    val outputMap = new HashMap[String, String]
-
-    results.split(",").foreach(result =>
-      outputMap.put(result.substring(0, result.indexOf(":")).trim,
-                    result.substring(result.indexOf(":") + 1).trim))
-
-    outputMap
+    results.split(",").map(result =>
+      (result.substring(0, result.indexOf(":")).trim,
+       result.substring(result.indexOf(":") + 1).trim)).toMap
   }
 
   def checkResults(expectedOutput : String, output : ExecutionOutput) : (Option[String], Boolean) = {
