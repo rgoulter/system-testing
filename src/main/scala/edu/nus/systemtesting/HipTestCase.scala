@@ -1,6 +1,7 @@
 package edu.nus.systemtesting
 
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
+import ProgramFlags.{ isFlag, flagsOfProgram }
 
 object HipTestCase {
   implicit def constructHipTestCase(tc : TestCaseBuilder) : HipTestCase =
@@ -34,8 +35,22 @@ class HipTestCase(cmd : String = "",
     // lines which match `builder.regex`.
     val results = filterLinesMatchingRegex(output.output, regex)
 
-    if (results.isEmpty)
-      return Left(List("Binary failed to execute. Please investigate \n"))
+    if (results.isEmpty) {
+      val testFlags = arguments.split(" ").filter(isFlag)
+      val SleekFlags = flagsOfProgram(commandName)
+      val invalidFlags = testFlags.filterNot(SleekFlags.contains)
+
+      if (!invalidFlags.isEmpty) {
+        val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n")
+
+        return Left("Binary failed to execute. Please investigate" +: flagsStr.toList)
+      } else {
+        // Could try searching the output for errors?
+        return Left("Binary failed to execute. Please investigate" +:
+                    List("Output was:\n" +
+                         output.output))
+      }
+    }
 
     // TODO: check that all the results methods contain the method name.
     // If not, then the test is 'under specified' relative to the actual file, and we should note that.
