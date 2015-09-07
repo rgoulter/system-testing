@@ -17,7 +17,7 @@ class HipTestSuiteUsage(configuration : Config) {
            args : String,
            outputDir : String,
            outputFile : String,
-           expectedOutput : String) : SleekTestCase =
+           expectedOutput : String) : HipTestCase =
     (new TestCaseBuilder
        runCommand cmd
        onFile file
