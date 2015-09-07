@@ -1,6 +1,6 @@
 package edu.nus.systemtesting
 
-import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
+import Parser.filterLinesMatchingRegex
 import ProgramFlags.{ isFlag, flagsOfProgram }
 
 object HipTestCase {

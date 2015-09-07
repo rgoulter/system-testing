@@ -6,13 +6,9 @@ import com.typesafe.config.Config
 import edu.nus.systemtesting.HipTestCase
 import edu.nus.systemtesting.HipTestCase.constructHipTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
-import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.TestPassed
-import edu.nus.systemtesting.TestFailed
-import edu.nus.systemtesting.TestCaseBuilder
-import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed,
+                               TestCaseBuilder, TestCase }
 import edu.nus.systemtesting.FileSystemUtilities.getCurrentDateString
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
                 configuration : Config,

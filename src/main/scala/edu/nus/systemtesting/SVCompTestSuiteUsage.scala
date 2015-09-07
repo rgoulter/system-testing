@@ -9,5 +9,4 @@ object SVCompTestSuiteUsage extends ConsoleOutputGenerator {
     //    SVCompTestSuite(directory = """/home/rohit/hg/sleek_hip/svcomp14/termination-numeric""") runAllTests ()
     //    SVCompTestSuite(directory = """/home/rohit/hg/sleek_hip/svcomp14/termination-memory-alloca""") runAllTests ()
   }
-
 }

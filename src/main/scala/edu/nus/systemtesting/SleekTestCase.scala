@@ -1,8 +1,7 @@
 package edu.nus.systemtesting
 
-import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
-import edu.nus.systemtesting.ProgramFlags.flagsOfProgram
-import edu.nus.systemtesting.ProgramFlags.isFlag
+import Parser.filterLinesMatchingRegex
+import ProgramFlags.{ flagsOfProgram, isFlag }
 
 object SleekTestCase {
   implicit def constructSleekTestCase(tc : TestCaseBuilder) : SleekTestCase =

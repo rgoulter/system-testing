@@ -2,7 +2,7 @@ package edu.nus.systemtesting
 
 import java.io.PrintWriter
 
-import edu.nus.systemtesting.FileSystemUtilities.getFileList
+import FileSystemUtilities.getFileList
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 case class SVCompTestSuite(directory : String,
