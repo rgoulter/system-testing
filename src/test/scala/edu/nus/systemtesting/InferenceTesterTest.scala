@@ -3,40 +3,36 @@ package edu.nus.systemtesting
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.MutableList
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.scalatest.FunSuite
 
-class InferenceTesterTest {
-  @Test
-  def entailCheckTest() : Unit = {
+class InferenceTesterTest extends FunSuite {
+  test("entailment check") {
     new {
     } with InferenceTester {
-      assertTrue(entailCheck("""Entail 1: Valid.
+      assert(entailCheck("""Entail 1: Valid.
           <1>hfalse&false&{FLOW,(4,5)=__norm#E}[] inferred pure: [x!=null]).(Fail,)."],""",
         ("Valid",
           """<1>hfalse&false&{FLOW,(4,5)=__norm#E}[] inferred pure: [x!=null]).(Fail,)."],""")))
 
-      assertTrue(entailCheck("""Entail (1) : Valid.
+      assert(entailCheck("""Entail (1) : Valid.
     		<1>HP_44(b_43)&a=a_42 & b=b_43&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::node<a_42,b_43> * HP_44(b_43)&true(4,5)] [[ COND ==>  InferHeap ==> ]]""", ("Valid", """<1>HP_44(b_43)&a=a_42 & b=b_43&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::node<a_42,b_43> * HP_44(b_43)&true(4,5)] [[ COND ==>  InferHeap ==> ]]""")))
 
-      assertFalse(entailCheck("""Entail (1) : Fail.
+      assert(!entailCheck("""Entail (1) : Fail.
     		<1>HP_44(b_43)&a=a_42 & b=b_43&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::node<a_42,b_43> * HP_44(b_43)&true(4,5)] [[ COND ==>  InferHeap ==> ]]""",
         ("Valid", """<1>HP_44(b_43)&a=a_42 & b=b_43&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::node<a_42,b_43> * HP_44(b_43)&true(4,5)] [[ COND ==>  InferHeap ==> ]]""")))
 
-      assertTrue(entailCheck("""Entail (2) : Valid. <1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)] [[ COND ==>  InferHeap ==> ]]""", ("Valid",
+      assert(entailCheck("""Entail (2) : Valid. <1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)] [[ COND ==>  InferHeap ==> ]]""", ("Valid",
         """<1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)] [[ COND ==>  InferHeap ==> ]]""")))
 
-      assertFalse(entailCheck("""Entail (2) : Fail. """, ("Valid",
+      assert(!entailCheck("""Entail (2) : Fail. """, ("Valid",
         """<1>emp&n=n_49&{FLOW,(4,5)=__norm#E}[] inferred hprel: [H1(y)&true --> y::ll<n_49>&true(4,5)] [[ COND ==>  InferHeap ==> ]]""")))
     }
   }
 
-  @Test
-  def infer2Test() : Unit = {
+  test("infer 2") {
     new {
     } with InferenceTester {
-      assertFalse(checkCorpus(InferenceTestData.infer2Output, new MutableList[(String, String)]))
+      assert(!checkCorpus(InferenceTestData.infer2Output, new MutableList[(String, String)]))
       val expectedResult = new MutableList[(String, String)]
 
       // Entail 1
@@ -80,12 +76,11 @@ class InferenceTesterTest {
       expectedResult += (("Valid", """<1>false&false&{FLOW,(17,18)=__norm}[]
  inferred pure: [n=0]"""))
 
-      assertTrue(checkCorpus(InferenceTestData.infer2Output, expectedResult))
+      assert(checkCorpus(InferenceTestData.infer2Output, expectedResult))
     }
   }
 
-  @Test
-  def infer1Test() : Unit = {
+  test("infer 1") {
     new {
     } with InferenceTester {
       val expectedResult = new ArrayBuffer[(String, String)]
@@ -135,12 +130,11 @@ class InferenceTesterTest {
     <1>false&false&{FLOW,(17,18)=__norm}[]
  inferred pure: [n=0]"""))
 
-      assertFalse(checkCorpus(InferenceTestData.infer1Output, expectedResult))
+      assert(!checkCorpus(InferenceTestData.infer1Output, expectedResult))
     }
   }
 
-  @Test
-   def infer4Test() : Unit = {
+  test("infer 4") {
     val expectedResult = new ArrayBuffer[(String, String)]
 
     expectedResult += (("Valid", """"""))
