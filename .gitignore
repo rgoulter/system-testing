@@ -26,6 +26,7 @@ logs/
 results/
 
 *conf
+.settings
 
 # Used by Hip/Sleek
 oc.out
