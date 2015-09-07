@@ -1,0 +1,44 @@
+
+!!! **tpdispatcher.ml#492:init_tp by default: 
+!!! **tpdispatcher.ml#391:set_tp z3Starting z3... 
+
+Starting Omega.../usr/local/bin/oc
+
+Entail 1: Valid. 
+
+
+Entail 2: Valid. 
+
+
+Entail 3: Valid. 
+
+
+Entail 4: Fail.(must) cause: true |-  1+n+1=n+1. LOCS:[0;12] (RHS: contradiction)
+
+Residue:
+
+ MustErr Context: 
+   fe_kind: MUST
+   fe_name: logical bug
+   fe_locs: {
+     fc_message:  true |-  1+n+1=n+1. LOCS:[0;12] (RHS: contradiction)
+     fc_current_lhs_flow: {FLOW,(20,21)=__norm#E}
+   }
+ [[ Fold ==>  SEARCH ==>  Match(x,x) ==>  Fold ==>  SEARCH ==>  Match(r,r_114) ==>  COND ==>  Match(r2,r_120)]]
+ CEX:false
+
+Stop z3... 51 invocations 
+Stop Omega... 18 invocations 
+SAT Count   : 192
+SAT % Hit   : 81.25%
+IMPLY Count : 30
+IMPLY % Hit : 50.%
+Time(cache overhead) : 0.050145 (seconds)
+
+0 false contexts at: ()
+
+!!! log(small):(0.750589,272)
+Total verification time: 0.302621 second(s)
+	Time spent in main process: 0.254368 second(s)
+	Time spent in child processes: 0.048253 second(s)
+
