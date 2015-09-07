@@ -20,6 +20,17 @@ class ExecutionOutput(val stdoutLines : Array[String],
   def errOutput = stderrLines.mkString("\n")
 }
 
+object ExecutionOutput {
+  /**
+   * Construct output as if given string was the stdout of some execution.
+   * Assumes return code 0, no stderr output.
+   * For convenience/testing.
+   */
+  def outputFromString(out : String) = {
+    new ExecutionOutput(out.split("\n"), Array(), 0)
+  }
+}
+
 /**
  * This trait provides methods to execute some [[formCommand]], with
  * time taken (and a timeout value)
