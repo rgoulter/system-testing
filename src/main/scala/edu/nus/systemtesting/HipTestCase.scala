@@ -28,6 +28,23 @@ class HipTestCase(cmd : String = "",
        result.substring(result.indexOf(":") + 1).trim)).toMap
   }
 
+  // Return (methodname, result)
+  // Could be static, if we had the regex
+  def resultFromOutputLine(outputLine : String) : (String,String) = {
+    // e.g. outputLine should look something like:
+    //   Procedure set_next$node~node SUCCESS.
+    var methodName = outputLine.split(" ")(1)
+    methodName = methodName.substring(0, methodName.indexOf("$"))
+
+    val actual : String =
+      if (outputLine.contains("FAIL"))
+        "FAIL"
+      else
+        "SUCCESS"
+
+    (methodName, actual)
+  }
+
   def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]] = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
@@ -54,22 +71,6 @@ class HipTestCase(cmd : String = "",
 
     // TODO: check that all the results methods contain the method name.
     // If not, then the test is 'under specified' relative to the actual file, and we should note that.
-
-    // Return (methodname, result)
-    def resultFromOutputLine(outputLine : String) : (String,String) = {
-      // e.g. outputLine should look something like:
-      //   Procedure set_next$node~node SUCCESS.
-      var methodName = outputLine.split(" ")(1)
-      methodName = methodName.substring(0, methodName.indexOf("$"))
-
-      val actual : String =
-        if (outputLine.contains("FAIL"))
-          "FAIL"
-        else
-          "SUCCESS"
-
-      (methodName, actual)
-    }
 
     val diff = results.map(outputLine => {
       val (methodName, actual) = resultFromOutputLine(outputLine)
