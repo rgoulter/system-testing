@@ -4,7 +4,7 @@ version           := "0.2.0-SNAPSHOT"
 
 organization      := "edu.nus"
 
-scalaVersion      := "2.10.3"
+scalaVersion      := "2.10.5"
 
 publishMavenStyle := true
 
