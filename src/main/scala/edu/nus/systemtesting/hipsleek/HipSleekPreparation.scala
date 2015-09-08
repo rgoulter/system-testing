@@ -44,6 +44,7 @@ class HipSleekPreparation(repoDir : String) extends SystemPreparation {
 
     // In order to `make native`, need to make the xml dep.
     val xmlDepDir = new File(repoDirFile, "xml")
+    println(s"Calling 'make' in ${xmlDepDir.toPath().toString()}")
     val mkXmlOutp = executeProc(Process("make", xmlDepDir))
 
     if (mkXmlOutp.exitValue != 0) {
@@ -53,6 +54,7 @@ class HipSleekPreparation(repoDir : String) extends SystemPreparation {
 
     // make native
     // (takes about 3 minutes)
+    println(s"Calling 'make native' in ${repoDirFile.toPath().toString()}")
     val mkNativeOutp = executeProc(Process("make native", repoDirFile),
                                    timeout = 300)
 
@@ -60,6 +62,8 @@ class HipSleekPreparation(repoDir : String) extends SystemPreparation {
       return (false,
               "Error building `make native`, err output:" +: mkNativeOutp.stderrLines.toList)
     }
+
+    println("Built successfully!")
 
     // Check for missing provers
     // which may affect whether hip/sleek can run.
