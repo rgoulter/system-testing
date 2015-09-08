@@ -5,9 +5,10 @@ import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
 import edu.nus.systemtesting.ExecutionOutput
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
+import edu.nus.systemtesting.ConstructTests
 
-object SleekTestCase {
-  implicit def constructSleekTestCase(tc : TestCaseBuilder) : SleekTestCase =
+trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
+  implicit def constructTestCase(tc : TestCaseBuilder) : SleekTestCase =
     new SleekTestCase(tc.commandName,
                       tc.fileName,
                       tc.arguments,

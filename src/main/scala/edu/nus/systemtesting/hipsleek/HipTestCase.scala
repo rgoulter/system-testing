@@ -5,11 +5,12 @@ import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
 import edu.nus.systemtesting.ExecutionOutput
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
+import edu.nus.systemtesting.ConstructTests
 import scala.Left
 import scala.Right
 
-object HipTestCase {
-  implicit def constructHipTestCase(tc : TestCaseBuilder) : HipTestCase =
+trait ConstructHipTests extends ConstructTests[HipTestCase] {
+  implicit def constructTestCase(tc : TestCaseBuilder) : HipTestCase =
     new HipTestCase(tc.commandName,
                     tc.fileName,
                     tc.arguments,

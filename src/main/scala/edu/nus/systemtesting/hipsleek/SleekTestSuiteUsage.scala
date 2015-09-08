@@ -2,12 +2,11 @@ package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
 import com.typesafe.config.Config
-import SleekTestCase.constructSleekTestCase
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
-class SleekTestSuiteUsage(configuration : Config) {
+class SleekTestSuiteUsage(configuration : Config) extends ConstructSleekTests {
   val REPO_DIR = configuration.getString("REPO_DIR")
   val SLEEK_COMMAND = configuration.getString("SLEEK_COMMAND")
   val WORKING_DIR = configuration.getString("SLEEK_DIR")

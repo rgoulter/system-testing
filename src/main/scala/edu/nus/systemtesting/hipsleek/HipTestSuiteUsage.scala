@@ -2,12 +2,11 @@ package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
 import com.typesafe.config.Config
-import HipTestCase.constructHipTestCase
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
-class HipTestSuiteUsage(configuration : Config) {
+class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
   val REPO_DIR = configuration.getString("REPO_DIR")
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")
   val BASE_DIR = configuration.getString("HIP_DIR")

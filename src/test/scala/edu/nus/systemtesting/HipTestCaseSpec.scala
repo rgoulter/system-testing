@@ -1,14 +1,14 @@
 package edu.nus.systemtesting
 
 import org.scalatest.FlatSpec
-import edu.nus.systemtesting.hipsleek.HipTestCase.constructHipTestCase
 import com.typesafe.config.ConfigFactory
 import edu.nus.systemtesting.hipsleek.HipTestCase
+import edu.nus.systemtesting.hipsleek.ConstructHipTests
 
 /**
  * @author richardg
  */
-class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
+class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with ConstructHipTests {
   // Assumes presence of a config
   val configuration = ConfigFactory.load()
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")
@@ -23,10 +23,6 @@ class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
        withOutputFileName "inflist.out")
   }
 
-  implicit def constructTestCase(tcb : TestCaseBuilder) : HipTestCase = {
-    HipTestCase.constructHipTestCase(tcb)
-  }
-
   val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)
   val passTestExpected = "remove: SUCCESS, append: SUCCESS"
   val failTestExpected = "remove: SUCCESS, append: FAIL"
@@ -37,8 +33,7 @@ class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
   it should "correctly get (methodname, result) from output line" in {
     val outputLine = "Procedure set_next$node~node SUCCESS."
 
-    val test = constructTestCase(testCase)
-    val (method, res) = test.resultFromOutputLine(outputLine)
+    val (method, res) = testCase.resultFromOutputLine(outputLine)
     assertResult("set_next")(method)
     assertResult("SUCCESS")(res)
   }

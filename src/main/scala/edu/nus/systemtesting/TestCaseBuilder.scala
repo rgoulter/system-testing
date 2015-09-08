@@ -1,5 +1,9 @@
 package edu.nus.systemtesting
 
+trait ConstructTests[T <: TestCase] {
+  implicit def constructTestCase(tcb : TestCaseBuilder) : T
+}
+
 /**
  * Class to facilitate DSL-esque construction of test cases.
  */

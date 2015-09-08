@@ -2,12 +2,13 @@ package edu.nus.systemtesting
 
 import org.scalatest.FlatSpec
 import edu.nus.systemtesting.hipsleek.SleekTestCase
+import edu.nus.systemtesting.hipsleek.ConstructSleekTests
 import com.typesafe.config.ConfigFactory
 
 /**
  * @author richardg
  */
-class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] {
+class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] with ConstructSleekTests {
   // Assumes presence of a config
   val configuration = ConfigFactory.load()
   val SLEEK_COMMAND = configuration.getString("SLEEK_COMMAND")
@@ -20,10 +21,6 @@ class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] {
        withArguments " "
        storeOutputInDirectory "/tmp/"
        withOutputFileName "sleek.out")
-  }
-
-  implicit def constructTestCase(tcb : TestCaseBuilder) : SleekTestCase = {
-    SleekTestCase.constructSleekTestCase(tcb)
   }
 
   val outp = ExecutionOutput.outputFromString(OutputDumps.SleekExResource)
