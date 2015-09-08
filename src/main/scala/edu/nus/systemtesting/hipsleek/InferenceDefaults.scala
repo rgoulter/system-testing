@@ -1,4 +1,4 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 object InferenceDefaults {
   val FAIL = "Fail"

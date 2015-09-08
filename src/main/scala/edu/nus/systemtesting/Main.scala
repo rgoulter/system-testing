@@ -1,6 +1,9 @@
 package edu.nus.systemtesting
 
 import com.typesafe.config.ConfigFactory
+import edu.nus.systemtesting.hipsleek.SVCompTestSuiteUsage
+import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
+import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
 
 object Main {
   def main(args : Array[String]) : Unit = {

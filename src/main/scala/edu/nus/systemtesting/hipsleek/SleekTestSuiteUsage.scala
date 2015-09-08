@@ -1,11 +1,11 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-
 import com.typesafe.config.Config
-
 import SleekTestCase.constructSleekTestCase
 import edu.nus.systemtesting.testsuite.TestSuite
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseBuilder
 
 class SleekTestSuiteUsage(configuration : Config) {
   val SLEEK_COMMAND = configuration.getString("SLEEK_COMMAND")

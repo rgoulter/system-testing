@@ -1,6 +1,7 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
+import edu.nus.systemtesting.Runnable
 
 case class SVCompTestCase(commandName : String,
                           fileName : String,

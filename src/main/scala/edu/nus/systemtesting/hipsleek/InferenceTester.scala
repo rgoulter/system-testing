@@ -1,4 +1,6 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
+
+import edu.nus.systemtesting.hipsleek.InferenceDefaults
 
 trait InferenceTester {
   def isFail(result : String) : Boolean =

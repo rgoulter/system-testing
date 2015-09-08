@@ -1,7 +1,12 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
-import Parser.filterLinesMatchingRegex
-import ProgramFlags.{ isFlag, flagsOfProgram }
+import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
+import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
+import edu.nus.systemtesting.ExecutionOutput
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseBuilder
+import scala.Left
+import scala.Right
 
 object HipTestCase {
   implicit def constructHipTestCase(tc : TestCaseBuilder) : HipTestCase =

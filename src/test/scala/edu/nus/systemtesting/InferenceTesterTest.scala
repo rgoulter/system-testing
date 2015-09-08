@@ -2,8 +2,8 @@ package edu.nus.systemtesting
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.MutableList
-
 import org.scalatest.FunSuite
+import edu.nus.systemtesting.hipsleek.InferenceTester
 
 class InferenceTesterTest extends FunSuite {
   test("entailment check") {

@@ -1,8 +1,7 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-
-import FileSystemUtilities.getFileList
+import edu.nus.systemtesting.FileSystemUtilities.getFileList
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
 case class SVCompTestSuite(directory : String,

@@ -1,7 +1,10 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
-import Parser.filterLinesMatchingRegex
-import ProgramFlags.{ flagsOfProgram, isFlag }
+import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
+import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
+import edu.nus.systemtesting.ExecutionOutput
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseBuilder
 
 object SleekTestCase {
   implicit def constructSleekTestCase(tc : TestCaseBuilder) : SleekTestCase =
@@ -24,7 +27,7 @@ class SleekTestCase(cmd : String = "",
   def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
-    val expectedOutputList = expectedOutput.split(DEFAULT_TEST_OUTPUT_SEPARATOR).map(_.trim)
+    val expectedOutputList = expectedOutput.split(",").map(_.trim)
 
     // `parse` is responsible for populating `results` with
     // lines which match `regex`.

@@ -1,11 +1,11 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-
 import com.typesafe.config.Config
-
 import HipTestCase.constructHipTestCase
 import edu.nus.systemtesting.testsuite.TestSuite
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseBuilder
 
 class HipTestSuiteUsage(configuration : Config) {
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")

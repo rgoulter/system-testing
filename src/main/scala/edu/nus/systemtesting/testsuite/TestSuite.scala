@@ -3,8 +3,8 @@ package edu.nus.systemtesting.testsuite
 import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import com.typesafe.config.Config
-import edu.nus.systemtesting.HipTestCase
-import edu.nus.systemtesting.HipTestCase.constructHipTestCase
+import edu.nus.systemtesting.hipsleek.HipTestCase
+import edu.nus.systemtesting.hipsleek.HipTestCase.constructHipTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed,
                                TestCaseBuilder, TestCase }

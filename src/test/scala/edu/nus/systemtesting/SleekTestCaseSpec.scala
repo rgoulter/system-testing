@@ -1,7 +1,7 @@
 package edu.nus.systemtesting
 
 import org.scalatest.FlatSpec
-import SleekTestCase.constructSleekTestCase
+import edu.nus.systemtesting.hipsleek.SleekTestCase
 import com.typesafe.config.ConfigFactory
 
 /**
