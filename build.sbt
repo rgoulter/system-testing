@@ -1,6 +1,6 @@
 name              := "system-testing"
 
-version           := "0.2.0-SNAPSHOT"
+version           := "0.3.0-SNAPSHOT"
 
 organization      := "edu.nus"
 
