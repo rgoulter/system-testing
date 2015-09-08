@@ -8,67 +8,38 @@ import edu.nus.systemtesting.hipsleek.HipTestCase
 /**
  * @author richardg
  */
-class HipTestCaseSpec extends FlatSpec {
+class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
   // Assumes presence of a config
   val configuration = ConfigFactory.load()
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")
   val WORKING_DIR = configuration.getString("HIP_DIR")
 
-  // TestCase.generateTestResult needs an execution time
-  val ArbitraryExecutionTime = 200L
-
-  def mkTest(cmd : String,
-             file : String,
-             args : String,
-             outputDir : String,
-             outputFile : String,
-             expectedOutput : String) : HipTestCase =
+  def testCase() : TestCaseBuilder = {
     (new TestCaseBuilder
-       runCommand cmd
-       onFile file
-       withArguments args
-       storeOutputInDirectory outputDir
-       withOutputFileName outputFile
-       checkAgainst expectedOutput)
-
-  "Sleek TestCase" should "pass for a simple, valid test case" in {
-    // n.b. the arguments for output dir, etc. somewhat arbitrary, since not used.
-    val testExpected = "remove: SUCCESS, append: SUCCESS"
-    val test = mkTest (HIP_COMMAND, WORKING_DIR + "infinity/inflist.ss", "--dsd --en-inf", "/tmp/", "inflist.out", testExpected)
-
-    val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)
-
-    val actualResult = test.generateTestResult(outp, ArbitraryExecutionTime)
-
-    assertResult(TestPassed)(actualResult.result)
-    assert(actualResult.diff.isEmpty)
-    assert(actualResult.remarks.isEmpty)
+       runCommand HIP_COMMAND
+       onFile WORKING_DIR + "infinity/inflist.ss"
+       withArguments "--dsd --en-inf"
+       storeOutputInDirectory "/tmp/"
+       withOutputFileName "inflist.out")
   }
+
+  implicit def constructTestCase(tcb : TestCaseBuilder) : HipTestCase = {
+    HipTestCase.constructHipTestCase(tcb)
+  }
+
+  val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)
+  val passTestExpected = "remove: SUCCESS, append: SUCCESS"
+  val failTestExpected = "remove: SUCCESS, append: FAIL"
+  val failTestDiff = Array(("FAIL", "SUCCESS"))
+
+  "Hip TestCase" should behave like validTest(outp, passTestExpected, failTestExpected, failTestDiff)
 
   it should "correctly get (methodname, result) from output line" in {
     val outputLine = "Procedure set_next$node~node SUCCESS."
 
-    val test = mkTest (HIP_COMMAND, WORKING_DIR + "infinity/inflist.ss", "--dsd --en-inf", "/tmp/", "inflist.out", "")
-
+    val test = constructTestCase(testCase)
     val (method, res) = test.resultFromOutputLine(outputLine)
     assertResult("set_next")(method)
     assertResult("SUCCESS")(res)
-  }
-
-  it should "fail if actual result different from expected" in {
-    // actual results should be remove:S,append:S
-    val testExpected = "remove: SUCCESS, append: FAIL"
-    val test = mkTest (HIP_COMMAND, WORKING_DIR + "infinity/inflist.ss", "--dsd --en-inf", "/tmp/", "inflist.out", testExpected)
-
-    val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)
-
-    val actualResult = test.generateTestResult(outp, ArbitraryExecutionTime)
-
-    assertResult(TestFailed)(actualResult.result)
-    assertResult(Array(("FAIL", "SUCCESS"))) {
-      // This confused me. But the actual result *SHOULD* be "Fail",
-      // So we expect a diff where it says expected "Valid" but got "Fail"
-      actualResult.diff
-    }
   }
 }
