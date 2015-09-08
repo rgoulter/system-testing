@@ -8,6 +8,7 @@ import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
 class SleekTestSuiteUsage(configuration : Config) {
+  val REPO_DIR = configuration.getString("REPO_DIR")
   val SLEEK_COMMAND = configuration.getString("SLEEK_COMMAND")
   val WORKING_DIR = configuration.getString("SLEEK_DIR")
   val OUTPUT_DIR = configuration.getString("SLEEK_OUTPUT_DIRECTORY")
@@ -156,7 +157,7 @@ class SleekTestSuiteUsage(configuration : Config) {
 
       List[TestCase]())
 
-    val suite = new TestSuite(new PrintWriter(System.out, true), configuration, tests)
+    val suite = new TestSuite(configuration, tests, Some(new HipSleekPreparation(REPO_DIR)))
     suite.runAllTests
     suite generateTestStatistics
   }

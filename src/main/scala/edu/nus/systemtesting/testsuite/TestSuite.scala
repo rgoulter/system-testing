@@ -9,10 +9,12 @@ import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed,
                                TestCaseBuilder, TestCase }
 import edu.nus.systemtesting.FileSystemUtilities.getCurrentDateString
+import edu.nus.systemtesting.SystemPreparation
 
-class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
-                configuration : Config,
-                tests : List[TestCase])
+class TestSuite(configuration : Config,
+                tests : List[TestCase],
+                preparation : Option[SystemPreparation],
+                writer : PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
   def MILLI_CONVERSION_FACTOR = 1000
   val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
@@ -23,6 +25,22 @@ class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
   var performanceOutput = ""
 
   def runAllTests() : Unit = {
+    // Prepare the repo, if necessary
+    writer.println("Preparing repo...")
+
+    val (prepWorked, prepRemarks) = preparation match {
+      case Some(prep) => prep.prepare()
+      case None => (true, Seq())
+    }
+
+    prepRemarks.foreach(writer.println)
+    writer.println
+
+    if (!prepWorked) {
+      // abort
+      return
+    }
+
     val startTime = System.currentTimeMillis
 
     tests.foreach(test => {

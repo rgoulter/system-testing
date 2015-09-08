@@ -8,6 +8,7 @@ import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
 class HipTestSuiteUsage(configuration : Config) {
+  val REPO_DIR = configuration.getString("REPO_DIR")
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")
   val BASE_DIR = configuration.getString("HIP_DIR")
   val OUTPUT_DIR = configuration.getString("HIP_OUTPUT_DIRECTORY")
@@ -44,7 +45,7 @@ class HipTestSuiteUsage(configuration : Config) {
 
 //    test (HIP_COMMAND, BASE_DIR + "imm-field/sll.ss", "-tp oc --field-ann --etcsu1 ", OUTPUT_DIR, "sll.out", "delete: SUCCESS, get_tail: SUCCESS, insert: SUCCESS, insert2: SUCCESS"),
 
-    val suite = new TestSuite(new PrintWriter(System.out, true), configuration, tests)
+    val suite = new TestSuite(configuration, tests, Some(new HipSleekPreparation(REPO_DIR)))
     suite.runAllTests
     suite generateTestStatistics
   }

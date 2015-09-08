@@ -1,14 +1,14 @@
 package edu.nus.systemtesting
 
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
+import Runnable.execute
 
 abstract class TestCase(val commandName : String = "",
                         val fileName : String = "",
                         val arguments : String = "",
                         val outputDirectory : String = "",
                         val outputFileName : String = "",
-                        val expectedOutput : String = "")
-    extends Runnable {
+                        val expectedOutput : String = "") {
   /**
    * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].
    *
@@ -18,12 +18,12 @@ abstract class TestCase(val commandName : String = "",
    */
   def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]]
 
-  override def formCommand() : String = {
+  def formCommand() : String = {
     Seq(commandName, arguments, fileName).mkString(" ")
   }
 
   def run() = {
-    val res@(execOutp, time) = this.execute
+    val res@(execOutp, time) = execute(formCommand())
 
     res
   }
