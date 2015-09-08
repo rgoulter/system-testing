@@ -65,8 +65,7 @@ class TestSuite(writer : PrintWriter = new PrintWriter(System.out, true),
     }
 
     result.diff.foreach({case (expected, got) =>
-      writer.println(expect(expected))
-      writer.println(actual(got))
+      writer.println(s"Expected ${expect(expected)}, but got ${actual(got)}")
     })
 
     writer.println
