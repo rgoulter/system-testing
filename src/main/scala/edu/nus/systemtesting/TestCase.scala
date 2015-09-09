@@ -6,8 +6,6 @@ import Runnable.execute
 abstract class TestCase(val commandName : String = "",
                         val fileName : String = "",
                         val arguments : String = "",
-                        val outputDirectory : String = "",
-                        val outputFileName : String = "",
                         val expectedOutput : String = "") {
   /**
    * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].

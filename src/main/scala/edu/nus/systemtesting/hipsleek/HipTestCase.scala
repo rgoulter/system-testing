@@ -14,19 +14,15 @@ trait ConstructHipTests extends ConstructTests[HipTestCase] {
     new HipTestCase(tc.commandName,
                     tc.fileName,
                     tc.arguments,
-                    tc.outputDirectory,
-                    tc.outputFileName,
                     tc.expectedOutput)
 }
 
 class HipTestCase(cmd : String = "",
                   fn : String = "",
                   args : String = "",
-                  outDir : String = "",
-                  outFN : String = "",
                   expectedOut : String = "",
                   regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
-    extends TestCase(cmd, fn, args, outDir, outFN, expectedOut) {
+    extends TestCase(cmd, fn, args, expectedOut) {
   def buildExpectedOutputMap(results : String) : Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     results.split(",").map(result =>
