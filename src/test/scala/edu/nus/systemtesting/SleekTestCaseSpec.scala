@@ -18,9 +18,7 @@ class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] w
     (new TestCaseBuilder
        runCommand SLEEK_COMMAND
        onFile WORKING_DIR + "sleek.slk"
-       withArguments " "
-       storeOutputInDirectory "/tmp/"
-       withOutputFileName "sleek.out")
+       withArguments " ")
   }
 
   val outp = ExecutionOutput.outputFromString(OutputDumps.SleekExResource)

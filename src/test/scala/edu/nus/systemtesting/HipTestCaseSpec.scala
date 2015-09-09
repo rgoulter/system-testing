@@ -18,9 +18,7 @@ class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with 
     (new TestCaseBuilder
        runCommand HIP_COMMAND
        onFile WORKING_DIR + "infinity/inflist.ss"
-       withArguments "--dsd --en-inf"
-       storeOutputInDirectory "/tmp/"
-       withOutputFileName "inflist.out")
+       withArguments "--dsd --en-inf")
   }
 
   val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)

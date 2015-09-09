@@ -26,12 +26,6 @@ case class TestCaseBuilder(val commandName : String = "",
   def withArguments(arguments : String) =
     copy(arguments = arguments)
 
-  def storeOutputInDirectory(outputDirectory : String) =
-    copy(outputDirectory = outputDirectory)
-
-  def withOutputFileName(outputFileName : String) =
-    copy(outputFileName = outputFileName)
-
   def checkAgainst(expectedOutput : String) =
     copy(expectedOutput = expectedOutput)
 }
