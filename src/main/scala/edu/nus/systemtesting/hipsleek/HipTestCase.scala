@@ -4,6 +4,8 @@ import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
 import edu.nus.systemtesting.ExecutionOutput
 import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.Result
+import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.ConstructTests
 import scala.Left
@@ -47,7 +49,7 @@ class HipTestCase(cmd : String = "",
     (methodName, actual)
   }
 
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]] = {
+  override def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[Result]] = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
     // `parse` is responsible for populating `results` with
@@ -74,17 +76,12 @@ class HipTestCase(cmd : String = "",
     // TODO: check that all the results methods contain the method name.
     // If not, then the test is 'under specified' relative to the actual file, and we should note that.
 
-    val diff = results.map(outputLine => {
+    val resultUnits = results.map(outputLine => {
       val (methodName, actual) = resultFromOutputLine(outputLine)
 
       expectedOutputMap.get(methodName) match {
         case Some(expected) => {
-          if (expected.equals(actual)) {
-            None
-          } else {
-            // Outputs were different!
-            Some((expected, actual))
-          }
+          Some(Result(methodName, expected, actual))
         }
 
         // If the method name from the actual output is not in the expectedOutputMap,
@@ -94,6 +91,6 @@ class HipTestCase(cmd : String = "",
       }
     }).flatten
 
-    return Right(diff)
+    return Right(resultUnits)
   }
 }

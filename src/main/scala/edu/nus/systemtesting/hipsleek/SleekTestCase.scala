@@ -4,6 +4,7 @@ import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
 import edu.nus.systemtesting.ExecutionOutput
 import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.Result
 import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.ConstructTests
 
@@ -21,7 +22,7 @@ class SleekTestCase(cmd : String = "",
                     expectedOut : String = "",
                     regex : String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
     extends TestCase(cmd, fn, args, expectedOut) {
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]] = {
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[Result]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
     val expectedOutputList = expectedOutput.split(",").map(_.trim)
@@ -62,18 +63,14 @@ class SleekTestCase(cmd : String = "",
         "Fail"
     }
 
-    val diff = expectedOutputList.zip(results).map({
-      case (expected, resultLine) => {
+    val resultUnits = expectedOutputList.zip(results).zipWithIndex.map({
+      case ((expected, resultLine), idx) => {
         val actual = resultFromOutputLine(resultLine)
 
-        if (resultLine.contains(expected)) {
-          None
-        } else {
-          Some((expected, actual))
-        }
+        Some(Result(idx.toString, expected, actual))
       }
     }).flatten
 
-    return Right(diff)
+    return Right(resultUnits)
   }
 }

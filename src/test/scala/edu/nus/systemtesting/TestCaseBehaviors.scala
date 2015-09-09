@@ -21,7 +21,7 @@ trait TestCaseBehaviors[T <: TestCase] { this: FlatSpec =>
   def validTest(output : ExecutionOutput,
                 passingExpect : String,
                 failingExpect : String,
-                failingDiff : Array[(String, String)]) {
+                failingDiff : Array[Result]) {
     it should "pass for a simple, valid test case" in {
       val test = testCase checkAgainst passingExpect
 

@@ -26,7 +26,7 @@ class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] w
   val failTestExpected = "Valid, Valid, Valid, Valid"
   // This confused me. But the actual result *SHOULD* be "Fail",
   // So we expect a diff where it says expected "Valid" but got "Fail"
-  val failTestDiff = Array(("Valid", "Fail"))
+  val failTestDiff = Array(Result("3", "Valid", "Fail"))
 
   "Sleek TestCase" should behave like validTest(outp, passTestExpected, failTestExpected, failTestDiff)
 }

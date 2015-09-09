@@ -24,7 +24,7 @@ class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with 
   val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)
   val passTestExpected = "remove: SUCCESS, append: SUCCESS"
   val failTestExpected = "remove: SUCCESS, append: FAIL"
-  val failTestDiff = Array(("FAIL", "SUCCESS"))
+  val failTestDiff = Array(Result("append", "FAIL", "SUCCESS"))
 
   "Hip TestCase" should behave like validTest(outp, passTestExpected, failTestExpected, failTestDiff)
 

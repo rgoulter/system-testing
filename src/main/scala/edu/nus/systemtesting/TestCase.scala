@@ -3,6 +3,13 @@ package edu.nus.systemtesting
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import Runnable.execute
 
+/**
+ * For representing each `(expected, actual)` pair within a test case.
+ */
+case class Result(val key : String, val expected : String, val actual : String) {
+  val passed = expected equals actual
+}
+
 abstract class TestCase(val commandName : String = "",
                         val fileName : String = "",
                         val arguments : String = "",
@@ -14,7 +21,7 @@ abstract class TestCase(val commandName : String = "",
    * or a list of differences between the expected and actual output.
    * i.e. A passing test will return `Right` alternative with empty list.
    */
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[(String, String)]]
+  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[Result]]
 
   def formCommand() : String = {
     Seq(commandName, arguments, fileName).mkString(" ")
@@ -29,17 +36,7 @@ abstract class TestCase(val commandName : String = "",
   def generateTestResult(output : ExecutionOutput, time : Long) : TestCaseResult = {
     val check = checkResults(expectedOutput, output)
 
-    val (result, diff, remarks) = check match {
-      case Left(remarks) => {
-        (TestFailed, List(), remarks)
-      }
-      case Right(diff) => {
-        val result = if (diff.isEmpty) TestPassed else TestFailed
-        (result, diff, List())
-      }
-    }
-
-    new TestCaseResult(commandName, fileName, arguments, output, time, result, diff, remarks)
+    new TestCaseResult(commandName, fileName, arguments, time, check)
   }
 
   def generateOutput() = {

@@ -6,7 +6,7 @@ import com.typesafe.config.Config
 import edu.nus.systemtesting.hipsleek.HipTestCase
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed,
-                               TestCaseBuilder, TestCase }
+                               TestCaseBuilder, TestCase, Result }
 import edu.nus.systemtesting.FileSystemUtilities.getCurrentDateString
 import edu.nus.systemtesting.SystemPreparation
 
@@ -76,13 +76,21 @@ class TestSuite(configuration : Config,
       case TestFailed => writer.println(failed)
     }
 
-    result.diff.foreach({case (expected, got) =>
-      writer.println(s"Expected ${expect(expected)}, but got ${actual(got)}")
-    })
+    result.results match {
+      case Left(remarks) => {
+        remarks.foreach(writer.println)
+      }
+      case Right(results) => {
+        val diff = results.filterNot(_.passed)
+
+        diff.foreach({ case Result(key, expected, got) =>
+          writer.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
+        })
+      }
+    }
 
     writer.println
 
-    result.remarks.foreach(writer.println)
 
     val time = result.executionTime
 
