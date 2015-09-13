@@ -9,15 +9,12 @@ import edu.nus.systemtesting.hipsleek.ConstructHipTests
  * @author richardg
  */
 class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with ConstructHipTests {
-  // Assumes presence of a config
-  val configuration = ConfigFactory.load()
-  val HIP_COMMAND = configuration.getString("HIP_COMMAND")
-  val WORKING_DIR = configuration.getString("HIP_DIR")
-
   def testCase() : TestCaseBuilder = {
+    // Since `outp` below comes from `OutputDumps`,
+    // the constants here are all arbitrary.
     (new TestCaseBuilder
-       runCommand HIP_COMMAND
-       onFile WORKING_DIR + "infinity/inflist.ss"
+       runCommand "hip"
+       onFile "infinity/inflist.ss"
        withArguments "--dsd --en-inf")
   }
 

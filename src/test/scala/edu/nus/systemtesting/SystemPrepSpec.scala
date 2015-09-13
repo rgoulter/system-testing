@@ -10,6 +10,7 @@ import edu.nus.systemtesting.hg.Repository
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfter
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
+import com.typesafe.config.ConfigException
 
 /**
  * @author richardg
@@ -22,7 +23,17 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
   // Assumes presence of a config
   val configuration = ConfigFactory.load()
-  val REPO_DIR = configuration.getString("REPO_DIR")
+
+//  assume(configuration., clue)
+  val REPO_DIR = try {
+    configuration.getString("REPO_DIR")
+  } catch {
+    case e : ConfigException.Missing => {
+      cancel("`REPO_DIR` key not in config, cannot test system.", e)
+      "/"
+    }
+  }
+
   val repo = new Repository(REPO_DIR)
 
   var tmpArchiveDir : Path = _
