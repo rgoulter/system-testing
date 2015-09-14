@@ -11,7 +11,7 @@ object InferenceDefaults {
 
   val ENTAIL = "Entail"
 
-  def removeWhiteSpaceCharacters(text : String) : String =
+  def removeWhiteSpaceCharacters(text: String): String =
     text.replace("\n", "").replace("\t", "").replace(" ", "").trim()
 
   val NEW_LINE = "\n"

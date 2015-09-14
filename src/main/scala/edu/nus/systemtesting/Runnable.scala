@@ -10,9 +10,9 @@ import scala.collection.mutable.ArrayBuffer
 import com.typesafe.config.ConfigFactory
 import scala.sys.process.ProcessBuilder
 
-class ExecutionOutput(val stdoutLines : Array[String],
-                      val stderrLines : Array[String],
-                      val exitValue : Int) {
+class ExecutionOutput(val stdoutLines: Array[String],
+                      val stderrLines: Array[String],
+                      val exitValue: Int) {
   /** `STDOUT` output from the execution. */
   def output = stdoutLines.mkString("\n")
 
@@ -26,7 +26,7 @@ object ExecutionOutput {
    * Assumes return code 0, no stderr output.
    * For convenience/testing.
    */
-  def outputFromString(out : String) = {
+  def outputFromString(out: String) = {
     new ExecutionOutput(out.split("\n"), Array(), 0)
   }
 }
@@ -44,7 +44,7 @@ object Runnable {
    *
    * @param timeout number of seconds before timeout.
    */
-  def executeProc(pb : ProcessBuilder, timeout : Int = 300) : ExecutionOutput = {
+  def executeProc(pb: ProcessBuilder, timeout: Int = 300): ExecutionOutput = {
     // Collected lines from proc's STDOUT, ignore from STDERR.
     val stdoutLines = ArrayBuffer[String]()
     val stderrLines = ArrayBuffer[String]()
@@ -67,7 +67,7 @@ object Runnable {
     try {
       Await.result(executeFuture, timeout seconds)
     } catch {
-      case ex : TimeoutException => {
+      case ex: TimeoutException => {
         proc.destroy()
 
         new ExecutionOutput(Array(), Array("TIMEOUT"), -2)
@@ -80,7 +80,7 @@ object Runnable {
    * 
    * Makes use of Config value `"TIMEOUT"`.
    */
-  def execute(command : String) : (ExecutionOutput, Long) = {
+  def execute(command: String): (ExecutionOutput, Long) = {
     val timeout = ConfigFactory.load().getInt("TIMEOUT")
 
     val startTime = System.currentTimeMillis

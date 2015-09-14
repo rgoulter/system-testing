@@ -10,10 +10,10 @@ import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed,
 import edu.nus.systemtesting.FileSystemUtilities.getCurrentDateString
 import edu.nus.systemtesting.SystemPreparation
 
-class TestSuite(configuration : Config,
-                tests : List[TestCase],
-                preparation : Option[SystemPreparation],
-                writer : PrintWriter = new PrintWriter(System.out, true))
+class TestSuite(configuration: Config,
+                tests: List[TestCase],
+                preparation: Option[SystemPreparation],
+                writer: PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
   def MILLI_CONVERSION_FACTOR = 1000
   val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
@@ -23,7 +23,7 @@ class TestSuite(configuration : Config,
 
   var performanceOutput = ""
 
-  def runAllTests() : Unit = {
+  def runAllTests(): Unit = {
     // Prepare the repo, if necessary
     writer.println("Preparing repo...")
 
@@ -66,7 +66,7 @@ class TestSuite(configuration : Config,
     createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
 
-  def displayResult(result : TestCaseResult) = {
+  def displayResult(result: TestCaseResult) = {
     // Assuming that execCmd is of same form as run in Runnable
     val execCmd = Seq(result.command, result.arguments, result.filename).mkString(" ")
     writer.println(execCmd)
@@ -101,16 +101,16 @@ class TestSuite(configuration : Config,
     writer.println
   }
 
-  def generateTestStatistics() : Unit = {
+  def generateTestStatistics(): Unit = {
     writer.println(log("Total number of tests: " + (successes.length + failures.length)))
     writer.println(success("Total number of tests passed: " + successes.length))
     writer.println(error("Total number of tests failed: " + failures.length))
   }
 
 
-  def createPerformanceReport(performanceOutput : String,
-                              configuration : Config,
-                              writeToFile : (String, String, String, String) => Unit) : Unit = {
+  def createPerformanceReport(performanceOutput: String,
+                              configuration: Config,
+                              writeToFile: (String, String, String, String) => Unit): Unit = {
     val fileName = "sleek_performance_report_" + getCurrentDateString
 
     writeToFile(fileName, configuration.getString("SLEEK_OUTPUT_DIRECTORY"), performanceOutput, ".perf")

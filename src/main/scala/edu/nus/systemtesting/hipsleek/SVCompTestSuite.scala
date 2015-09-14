@@ -4,11 +4,11 @@ import java.io.PrintWriter
 import edu.nus.systemtesting.FileSystemUtilities.getFileList
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 
-case class SVCompTestSuite(directory : String,
-                           commandName : String = "hip",
-                           arguments : String = """-infer "@term" --svcomp-compete""",
-                           fileType : String = ".c",
-                           printer : PrintWriter = new PrintWriter(System.out, true))
+case class SVCompTestSuite(directory: String,
+                           commandName: String = "hip",
+                           arguments: String = """-infer "@term" --svcomp-compete""",
+                           fileType: String = ".c",
+                           printer: PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
   private val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
 
@@ -21,12 +21,12 @@ case class SVCompTestSuite(directory : String,
   var failures = 0
   var successes = 0
 
-  def buildResultMap() : Map[String, String] = {
+  def buildResultMap(): Map[String, String] = {
     files.map(file =>
       (file, getResultFromFileName(extractFileNameFromPath(file)))).toMap
   }
 
-  def getResultFromFileName(fileName : String) : String = {
+  def getResultFromFileName(fileName: String): String = {
     if (fileName.contains("true") || fileName.contains("TRUE"))
       return "TRUE"
     else if (fileName.contains("false") || fileName.contains("FALSE"))
@@ -36,11 +36,11 @@ case class SVCompTestSuite(directory : String,
   }
 
   // TODO: a.k.a. basename
-  def extractFileNameFromPath(path : String) : String = {
+  def extractFileNameFromPath(path: String): String = {
     path.substring(path.lastIndexOf("/") + 1)
   }
 
-  def runAllTests() : Unit = {
+  def runAllTests(): Unit = {
     var result = ""
 
     buildResultMap().foreach(expectedResult => {
@@ -64,7 +64,7 @@ case class SVCompTestSuite(directory : String,
     printTestStatistics
   }
 
-  def printTestStatistics() : Unit = {
+  def printTestStatistics(): Unit = {
     log("Total Number of tests: " + (successes + failures))
     success("Total Number of tests passed: " + successes)
     error("Total number of tests failed: " + failures)

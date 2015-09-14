@@ -13,5 +13,5 @@ trait SystemPreparation {
    * and any remarks which need to be made. (e.g. warning about
    * absence of some program).
    */
-  def prepare() : (Boolean, Iterable[String])
+  def prepare(): (Boolean, Iterable[String])
 }

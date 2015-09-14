@@ -9,20 +9,20 @@ import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.ConstructTests
 
 trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
-  implicit def constructTestCase(tc : TestCaseBuilder) : SleekTestCase =
+  implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
     new SleekTestCase(tc.commandName,
                       tc.fileName,
                       tc.arguments,
                       tc.expectedOutput)
 }
 
-class SleekTestCase(cmd : String = "",
-                    fn : String = "",
-                    args : String = "",
-                    expectedOut : String = "",
-                    regex : String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
+class SleekTestCase(cmd: String = "",
+                    fn: String = "",
+                    args: String = "",
+                    expectedOut: String = "",
+                    regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
     extends TestCase(cmd, fn, args, expectedOut) {
-  def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[Result]] = {
+  def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
     val expectedOutputList = expectedOutput.split(",").map(_.trim)
@@ -54,7 +54,7 @@ class SleekTestCase(cmd : String = "",
       return Left(List("TestCase Underspecified! (Fewer expected results than actual)."))
     }
 
-    def resultFromOutputLine(resultLine : String) : String = {
+    def resultFromOutputLine(resultLine: String): String = {
       // resultLine is like:
       //   Entail 1: Fail.(may) cause: x!=null & r_45!=x & (((1<=n & r_45!=null) | 
       if (resultLine.contains("Valid"))

@@ -9,7 +9,7 @@ import edu.nus.systemtesting.hipsleek.ConstructHipTests
  * @author richardg
  */
 class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with ConstructHipTests {
-  def testCase() : TestCaseBuilder = {
+  def testCase(): TestCaseBuilder = {
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
     (new TestCaseBuilder

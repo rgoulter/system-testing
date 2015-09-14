@@ -18,14 +18,14 @@ object HipSleekPreparation {
     "Fixcalc" -> "fixcalc"
   )
 
-  def existsOnPath(cmd : String) : Boolean = {
+  def existsOnPath(cmd: String): Boolean = {
     // A program `cmd` is on path iff `which $cmd` returns 0
     val (whichOutp, _) = Runnable.execute(s"which $cmd")
     whichOutp.exitValue == 0
   }
 
   /** Returns provers *not* on the system. */
-  def missingProvers() : Iterable[(String, String)] = {
+  def missingProvers(): Iterable[(String, String)] = {
     Provers.filterNot({
       case (name, cmd) => existsOnPath(cmd)
     })
@@ -38,8 +38,8 @@ object HipSleekPreparation {
  * Hip/Sleek in the repo dir.
  * @author richardg
  */
-class HipSleekPreparation(repoDir : String) extends SystemPreparation {
-  def prepare() : (Boolean, Iterable[String]) = {
+class HipSleekPreparation(repoDir: String) extends SystemPreparation {
+  def prepare(): (Boolean, Iterable[String]) = {
     val repoDirFile = new File(repoDir)
 
     // In order to `make native`, need to make the xml dep.

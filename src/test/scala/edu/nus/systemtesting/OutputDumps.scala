@@ -6,7 +6,7 @@ import scala.io.Source
  * @author richardg
  */
 object OutputDumps {
-  def loadResource(url : String) : String = {
+  def loadResource(url: String): String = {
     val resourceIS = OutputDumps.getClass().getClassLoader().getResourceAsStream(url)
 
     val source = Source.fromInputStream(resourceIS)

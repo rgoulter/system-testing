@@ -6,23 +6,23 @@ import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
-class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
+class HipTestSuiteUsage(configuration: Config) extends ConstructHipTests {
   val REPO_DIR = configuration.getString("REPO_DIR")
   val HIP_COMMAND = configuration.getString("HIP_COMMAND")
   val BASE_DIR = configuration.getString("HIP_DIR")
   val OUTPUT_DIR = configuration.getString("HIP_OUTPUT_DIRECTORY")
 
-  def test(cmd : String,
-           file : String,
-           args : String,
-           expectedOutput : String) : HipTestCase =
+  def test(cmd: String,
+           file: String,
+           args: String,
+           expectedOutput: String): HipTestCase =
     (new TestCaseBuilder
        runCommand cmd
        onFile file
        withArguments args
        checkAgainst expectedOutput)
 
-  def run() : Unit = {
+  def run(): Unit = {
     val tests =
     makeInfinityTests() ++
     makeArrayTests() ++
@@ -45,7 +45,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     suite generateTestStatistics
   }
 
-  def makeInfinityTests() : List[TestCase] = {
+  def makeInfinityTests(): List[TestCase] = {
     List(// Infinity
     test (HIP_COMMAND, BASE_DIR + "infinity/inflist.ss", "--dsd --en-inf", "remove: SUCCESS, append: SUCCESS"),
 
@@ -70,7 +70,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "infinity/merge-inf.ss", "--dsd --en-inf --en-disj-compute", "merge: SUCCESS"))
   }
 
-  def makeArrayTests() : List[TestCase] = {
+  def makeArrayTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "array/arr_at.java", "", "main: SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "array/arr_binarysearch.java", "", "binary_search: SUCCESS"),
@@ -114,7 +114,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "array/arr_sum.java", "", "sigmaright: SUCCESS, sigmaleft: SUCCESS"))
   }
 
-  def makeListTests() : List[TestCase] = {
+  def makeListTests(): List[TestCase] = {
     List(// Lists
     test (HIP_COMMAND, BASE_DIR + "lists/demo.ss", " ", ":  reverse,  create_list:  SUCCESS,  delete_val:  SUCCESS,  delete:  SUCCESS,  insert:  SUCCESS,  get_next_next:  SUCCESS,  set_null:  SUCCESS,  set_next:  SUCCESS,  get_next:  SUCCESS,  ret_first:  SUCCESS,  append:  SUCCESS"),
 
@@ -157,7 +157,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "lists/perm.ss", " ", " append:  SUCCESS"))
   }
 
-  def makeTermTests() : List[TestCase] = {
+  def makeTermTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "term/e1.ss", " ", " loop:  SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "term/ex1.ss", " ", " length:  SUCCESS,  app2:  SUCCESS"),
@@ -687,7 +687,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "imm-field/schorr-waite-list.ss", "-tp om --field-ann --etcsu1 ", "lscan: SUCCESS"))
   }
 
-  def makeThreadTests() : List[TestCase] = {
+  def makeThreadTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "threads/motiv-example.ss", "  --en-para --en-thrd-resource -tp redlog", " main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "threads/motiv-example2.ss", "  --en-para --en-thrd-resource -tp redlog", " main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
@@ -735,7 +735,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "trees.ss", "", "insert: SUCCESS"))
   }
 
-  def addBagsTests() : List[TestCase] = {
+  def addBagsTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "bags/avl-all-1.ss", " ", " remove_min:  SUCCESS,  rotate_double_right:  SUCCESS,  rotate_double_left:  SUCCESS,  get_max:  SUCCESS,  rotate_right:  SUCCESS,  rotate_left:  SUCCESS,  height:  SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "bags/avl-all.ss", " ", " delete:  SUCCESS,  delete_top:  SUCCESS,  remove_min:  SUCCESS, remove_max_add:  SUCCESS,  : remove_min_add, insert:  SUCCESS,  rotate_double_left:   SUCCESS,  get_max:  SUCCESS,  rotate_right:  SUCCESS,  rotate_left:  SUCCESS,  height:  SUCCESS"),
@@ -785,7 +785,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "bags/trees.ss", " ", " delete1:  SUCCESS,  remove_min1:  SUCCESS,  insert1:  SUCCESS,  flatten1:  SUCCESS,  append1:  SUCCESS"))
   }
 
-  def makeHipBagaTests() : List[TestCase] = {
+  def makeHipBagaTests(): List[TestCase] = {
     List(test (HIP_COMMAND, "/home/rohit/hg/sleek_hip/examples/working/hip_baga/eps.ss", " --baga-xpure", " get_next: SUCCESS, get_next_next: SUCCESS"),
 
     test (HIP_COMMAND, "/home/rohit/hg/sleek_hip/examples/working/hip_baga/append.ss", " --baga-xpure", " append: SUCCESS"),
@@ -839,7 +839,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, "/home/rohit/hg/sleek_hip/examples/working/hip_baga/modular_examples/qsort-modular.ss", " --overeps --lda --baga-xpure", "append_bll:  SUCCESS,  partition:  SUCCESS,  qsort:  SUCCESS"))
   }
 
-  def makeMemTests() : List[TestCase] = {
+  def makeMemTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "mem/dag.ss", "-tp om --mem --ramify", "mark: SUCCESS, mark2: SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "mem/dag_values.ss", "-tp om --mem --ramify", "mark: SUCCESS, mark2: SUCCESS"),
@@ -911,7 +911,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "mem/graph_spanning_infer.ss", "-tp om --mem --ramify --eps --infer-mem", "spanning: SUCCESS"))
   }
 
-  def makeVeribsyncTests() : List[TestCase] = {
+  def makeVeribsyncTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "veribsync/while-loop.ss", "  --en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, loop_fun: SUCCESS, loop_fun3: SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "veribsync/while-loop2.ss", "  --en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, fun4: SUCCESS, fun5: SUCCESS, fun6: SUCCESS, fun7: SUCCESS, fun8: SUCCESS, fun9: SUCCESS"),
@@ -1009,7 +1009,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "parahip/create_and_acquire.ss", "  --en-para -tp parahip --dis-locklevel --en-thrd-and-conj", " create_and_acquire: SUCCESS"))
   }
 
-  def makeVpermTests() : List[TestCase] = {
+  def makeVpermTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "vperm/vperm/alt_threading.ss", "  --ann-vp", " increment: SUCCESS, main: SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "vperm/vperm/fibonacci.ss", "  --ann-vp -tp z3 -perm none --dis-ls dis--locklevel", " seq_fib: SUCCESS, para_fib2: SUCCESS"),
@@ -1039,7 +1039,7 @@ class HipTestSuiteUsage(configuration : Config) extends ConstructHipTests {
     test (HIP_COMMAND, BASE_DIR + "vperm/vperm/vperm_simple.ss", "  --ann-vp", " foo: SUCCESS, f: SUCCESS, foo2: SUCCESS, f2: SUCCESS"))
   }
 
-  def makeHipTests() : List[TestCase] = {
+  def makeHipTests(): List[TestCase] = {
     List(test (HIP_COMMAND, BASE_DIR + "eps.ss", "  ", " get_next: SUCCESS, get_next_next: SUCCESS"),
 
     test (HIP_COMMAND, BASE_DIR + "append.ss", "  ", " append: SUCCESS"),

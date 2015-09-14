@@ -10,7 +10,7 @@ object Parser {
    *
    * regex is matched using `Pattern.findFirstIn`.
    */
-  def filterLinesMatchingRegex(text : String, regex : String) = {
+  def filterLinesMatchingRegex(text: String, regex: String) = {
     val lines = text.split("\n")
 
     lines.map(line => {

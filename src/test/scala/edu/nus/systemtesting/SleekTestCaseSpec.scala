@@ -9,7 +9,7 @@ import com.typesafe.config.ConfigFactory
  * @author richardg
  */
 class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] with ConstructSleekTests {
-  def testCase() : TestCaseBuilder = {
+  def testCase(): TestCaseBuilder = {
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
     (new TestCaseBuilder

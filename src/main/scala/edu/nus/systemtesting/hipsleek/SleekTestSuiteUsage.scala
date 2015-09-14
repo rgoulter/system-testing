@@ -6,24 +6,24 @@ import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
-class SleekTestSuiteUsage(configuration : Config) extends ConstructSleekTests {
+class SleekTestSuiteUsage(configuration: Config) extends ConstructSleekTests {
   val REPO_DIR = configuration.getString("REPO_DIR")
   val SLEEK_COMMAND = configuration.getString("SLEEK_COMMAND")
   val WORKING_DIR = configuration.getString("SLEEK_DIR")
   val OUTPUT_DIR = configuration.getString("SLEEK_OUTPUT_DIRECTORY")
 
-  def test(cmd : String,
-           file : String,
-           args : String,
-           expectedOutput : String) : SleekTestCase =
+  def test(cmd: String,
+           file: String,
+           args: String,
+           expectedOutput: String): SleekTestCase =
     (new TestCaseBuilder
        runCommand cmd
        onFile file
        withArguments args
        checkAgainst expectedOutput)
 
-  def run() : Unit = {
-    val tests : List[TestCase] =
+  def run(): Unit = {
+    val tests: List[TestCase] =
      (test (SLEEK_COMMAND, WORKING_DIR + "sleek.slk", " ", "Valid, Valid, Valid, Fail") +:
 
       test (SLEEK_COMMAND, WORKING_DIR + "cll-d.slk", " ", "Valid") +:

@@ -28,7 +28,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
   val REPO_DIR = try {
     configuration.getString("REPO_DIR")
   } catch {
-    case e : ConfigException.Missing => {
+    case e: ConfigException.Missing => {
       cancel("`REPO_DIR` key not in config, cannot test system.", e)
       "/"
     }
@@ -36,7 +36,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
   val repo = new Repository(REPO_DIR)
 
-  var tmpArchiveDir : Path = _
+  var tmpArchiveDir: Path = _
 
   before {
     // export an archive, so we can check our system prep works

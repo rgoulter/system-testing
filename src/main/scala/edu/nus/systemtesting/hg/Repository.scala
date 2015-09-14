@@ -8,14 +8,14 @@ import edu.nus.systemtesting.Runnable
  * For modelling non-destructive mercurial commands on a repository.
  * @author richardg
  */
-class Repository(dir : String) {
+class Repository(dir: String) {
   val repoDir = new File(dir)
 
   /**
    * Creates a copy of some revision of the repo at some `dest`.
    * (Latest revision if `rev` is `None`).
    */
-  def archive(dest : String, rev : Option[String]) : Boolean = {
+  def archive(dest: String, rev: Option[String]): Boolean = {
     val cmd = "hg archive" + s"${rev.map(r => s" -r $r").getOrElse("")} $dest"
     val proc = Process(cmd, repoDir)
 
@@ -27,7 +27,7 @@ class Repository(dir : String) {
     execOutp.exitValue != 0
   }
 
-  def identify(rev : Option[String] = None) : String = {
+  def identify(rev: Option[String] = None): String = {
     val cmd = "hg identify -i" + rev.map(r => s" -r $r").getOrElse("")
     val proc = Process(cmd, repoDir)
 
@@ -36,12 +36,12 @@ class Repository(dir : String) {
     execOutp.output.trim()
   }
 
-  def isDirty() : Boolean = {
+  def isDirty(): Boolean = {
     val hash = identify()
     hash.endsWith("+")
   }
 
-  def status() : Iterable[(String, String)] = {
+  def status(): Iterable[(String, String)] = {
     /* Recall, from `hg help status`
      M = modified
      A = added

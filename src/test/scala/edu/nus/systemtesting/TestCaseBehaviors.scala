@@ -10,18 +10,18 @@ trait TestCaseBehaviors[T <: TestCase] { this: FlatSpec =>
   // TestCase.generateTestResult needs an execution time
   val ArbitraryExecutionTime = 200L
 
-  def testCase() : TestCaseBuilder
+  def testCase(): TestCaseBuilder
 
-  implicit def constructTestCase(tcb : TestCaseBuilder) : T
+  implicit def constructTestCase(tcb: TestCaseBuilder): T
 
   /**
    * A "valid" test will pass when expected, actual output are the same,
    * and fail when expeced, actual output are different.
    */
-  def validTest(output : ExecutionOutput,
-                passingExpect : String,
-                failingExpect : String,
-                failingDiff : Array[Result]) {
+  def validTest(output: ExecutionOutput,
+                passingExpect: String,
+                failingExpect: String,
+                failingDiff: Array[Result]) {
     it should "pass for a simple, valid test case" in {
       val test = testCase checkAgainst passingExpect
 

@@ -40,7 +40,7 @@ trait TestCaseResultImplicits extends ResultImplicits {
   private val Remarks = "remarks"
   private val Results = "results"
 
-  implicit def TestCaseResultEncodeJson : EncodeJson[TestCaseResult] =
+  implicit def TestCaseResultEncodeJson: EncodeJson[TestCaseResult] =
     EncodeJson((tcr: TestCaseResult) => {
       val base = Json(Command       := tcr.command,
                       Filename      := tcr.filename,

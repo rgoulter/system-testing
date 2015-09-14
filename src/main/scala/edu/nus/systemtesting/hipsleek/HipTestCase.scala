@@ -12,20 +12,20 @@ import scala.Left
 import scala.Right
 
 trait ConstructHipTests extends ConstructTests[HipTestCase] {
-  implicit def constructTestCase(tc : TestCaseBuilder) : HipTestCase =
+  implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
     new HipTestCase(tc.commandName,
                     tc.fileName,
                     tc.arguments,
                     tc.expectedOutput)
 }
 
-class HipTestCase(cmd : String = "",
-                  fn : String = "",
-                  args : String = "",
-                  expectedOut : String = "",
-                  regex : String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
+class HipTestCase(cmd: String = "",
+                  fn: String = "",
+                  args: String = "",
+                  expectedOut: String = "",
+                  regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
     extends TestCase(cmd, fn, args, expectedOut) {
-  def buildExpectedOutputMap(results : String) : Map[String, String] = {
+  def buildExpectedOutputMap(results: String): Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     results.split(",").map(result =>
       (result.substring(0, result.indexOf(":")).trim,
@@ -34,13 +34,13 @@ class HipTestCase(cmd : String = "",
 
   // Return (methodname, result)
   // Could be static, if we had the regex
-  def resultFromOutputLine(outputLine : String) : (String,String) = {
+  def resultFromOutputLine(outputLine: String): (String,String) = {
     // e.g. outputLine should look something like:
     //   Procedure set_next$node~node SUCCESS.
     var methodName = outputLine.split(" ")(1)
     methodName = methodName.substring(0, methodName.indexOf("$"))
 
-    val actual : String =
+    val actual: String =
       if (outputLine.contains("FAIL"))
         "FAIL"
       else
@@ -49,7 +49,7 @@ class HipTestCase(cmd : String = "",
     (methodName, actual)
   }
 
-  override def checkResults(expectedOutput : String, output : ExecutionOutput) : Either[List[String], Iterable[Result]] = {
+  override def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
     // `parse` is responsible for populating `results` with

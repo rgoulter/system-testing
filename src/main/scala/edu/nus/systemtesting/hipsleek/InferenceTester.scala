@@ -3,13 +3,13 @@ package edu.nus.systemtesting.hipsleek
 import edu.nus.systemtesting.hipsleek.InferenceDefaults
 
 trait InferenceTester {
-  def isFail(result : String) : Boolean =
+  def isFail(result: String): Boolean =
     result.equalsIgnoreCase(InferenceDefaults.FAIL)
 
-  def isValid(result : String) : Boolean =
+  def isValid(result: String): Boolean =
     result.equalsIgnoreCase(InferenceDefaults.VALID)
 
-  def entailCheck(entail : String, expected : (String, String)) : Boolean = {
+  def entailCheck(entail: String, expected: (String, String)): Boolean = {
     //        println(entail)
     val (expectedResult, expectedResidue) = expected
 
@@ -48,7 +48,7 @@ trait InferenceTester {
     }
   }
 
-  def checkCorpus(corpus : String, results : Seq[(String, String)]) : Boolean = {
+  def checkCorpus(corpus: String, results: Seq[(String, String)]): Boolean = {
     if (corpus.length() == 0 || results.length == 0)
       return false
 
