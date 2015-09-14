@@ -1,7 +1,6 @@
 package edu.nus.systemtesting.hipsleek
 
 import sys.process._
-import edu.nus.systemtesting.SystemPreparation
 import edu.nus.systemtesting.Runnable.executeProc
 import java.io.File
 import edu.nus.systemtesting.Runnable
@@ -38,7 +37,7 @@ object HipSleekPreparation {
  * Hip/Sleek in the repo dir.
  * @author richardg
  */
-class HipSleekPreparation(repoDir: String) extends SystemPreparation {
+class HipSleekPreparation(repoDir: String) {
   def prepare(): (Boolean, Iterable[String]) = {
     val repoDirFile = new File(repoDir)
 

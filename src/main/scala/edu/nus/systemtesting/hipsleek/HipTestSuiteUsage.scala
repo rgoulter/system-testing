@@ -40,13 +40,9 @@ class HipTestSuiteUsage(configuration: Config) extends ConstructHipTests {
 
 //    test (HIP_COMMAND, BASE_DIR + "imm-field/sll.ss", "-tp oc --field-ann --etcsu1 ", "delete: SUCCESS, get_tail: SUCCESS, insert: SUCCESS, insert2: SUCCESS"),
 
-    val suite = new TestSuite(configuration, tests, Some(new HipSleekPreparation(REPO_DIR)))
-    val result = suite.runAllTests
-    result match {
-      case None => ()
-      case Some(suiteResult) =>
-        suiteResult generateTestStatistics(new PrintWriter(System.out))
-    }
+    val suite = new TestSuite(configuration, tests)
+    val suiteResult = suite.runAllTests
+    suiteResult generateTestStatistics(new PrintWriter(System.out))
   }
 
   def makeInfinityTests(): List[TestCase] = {

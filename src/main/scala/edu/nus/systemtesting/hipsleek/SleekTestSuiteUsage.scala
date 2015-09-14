@@ -152,12 +152,8 @@ class SleekTestSuiteUsage(configuration: Config) extends ConstructSleekTests {
 
       List[TestCase]())
 
-    val suite = new TestSuite(configuration, tests, Some(new HipSleekPreparation(REPO_DIR)))
-    val result = suite.runAllTests
-    result match {
-      case None => ()
-      case Some(suiteResult) =>
-        suiteResult generateTestStatistics(new PrintWriter(System.out))
-    }
+    val suite = new TestSuite(configuration, tests)
+    val suiteResult = suite.runAllTests
+    suiteResult generateTestStatistics(new PrintWriter(System.out))
   }
 }

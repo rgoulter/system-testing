@@ -12,29 +12,12 @@ import org.joda.time.DateTime
 
 class TestSuite(configuration: Config,
                 tests: List[TestCase],
-                preparation: Option[SystemPreparation],
                 writer: PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
   def MILLI_CONVERSION_FACTOR = 1000
   val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
 
-  def runAllTests(): Option[TestSuiteResult] = {
-    // Prepare the repo, if necessary
-    writer.println("Preparing repo...")
-
-    val (prepWorked, prepRemarks) = preparation match {
-      case Some(prep) => prep.prepare()
-      case None => (true, Seq())
-    }
-
-    prepRemarks.foreach(writer.println)
-    writer.println
-
-    if (!prepWorked) {
-      // abort
-      return None
-    }
-
+  def runAllTests(): TestSuiteResult = {
     val startTime = System.currentTimeMillis
 
     val testResults = tests.map(test => {
@@ -56,7 +39,7 @@ class TestSuite(configuration: Config,
     val now = DateTime.now()
     val suiteResult = TestSuiteResult(hostname, now, "reporevision", testResults)
 
-    Some(suiteResult)
+    suiteResult
   }
 
   def displayResult(result: TestCaseResult) = {

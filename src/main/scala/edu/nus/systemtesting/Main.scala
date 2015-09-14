@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigFactory
 import edu.nus.systemtesting.hipsleek.SVCompTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
+import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -28,11 +29,45 @@ object Main {
   }
 
   private def runSleekTests(): Unit = {
+    val config = ConfigFactory.load()
+
+    // Prepare the repo, if necessary
+    println("Preparing repo...")
+
+    val REPO_DIR = config.getString("REPO_DIR")
+    val prep = new HipSleekPreparation(REPO_DIR)
+    val (prepWorked, prepRemarks) = prep.prepare()
+
+    prepRemarks.foreach(println)
+    println
+
+    if (!prepWorked) {
+      // abort
+      return
+    }
+
     printHeader("Running Sleek Tests")
-    new SleekTestSuiteUsage(ConfigFactory.load()).run()
+    new SleekTestSuiteUsage(config).run()
   }
 
   private def runHipTests(): Unit = {
+    val config = ConfigFactory.load()
+
+    // Prepare the repo, if necessary
+    println("Preparing repo...")
+
+    val REPO_DIR = config.getString("REPO_DIR")
+    val prep = new HipSleekPreparation(REPO_DIR)
+    val (prepWorked, prepRemarks) = prep.prepare()
+
+    prepRemarks.foreach(println)
+    println
+
+    if (!prepWorked) {
+      // abort
+      return
+    }
+
     printHeader("Running Hip Tests")
     new HipTestSuiteUsage(ConfigFactory.load()).run()
   }
