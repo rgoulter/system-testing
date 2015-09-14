@@ -1,4 +1,4 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 import com.typesafe.config.ConfigFactory
 import edu.nus.systemtesting.hipsleek.SVCompTestSuiteUsage
