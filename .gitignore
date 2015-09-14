@@ -32,6 +32,9 @@ results/
 oc.out
 a.omega
 
+# Scala worksheets.
+*.sc
+
 # Created by https://www.gitignore.io/api/scala,sbt,eclipse,python
 
 ### Scala ###
