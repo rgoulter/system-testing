@@ -35,7 +35,8 @@ object Main {
     println("Preparing repo...")
 
     val REPO_DIR = config.getString("REPO_DIR")
-    val prep = new HipSleekPreparation(REPO_DIR)
+    val rev = None
+    val prep = new HipSleekPreparation(REPO_DIR, rev)
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(println)
@@ -61,7 +62,8 @@ object Main {
     println("Preparing repo...")
 
     val REPO_DIR = config.getString("REPO_DIR")
-    val prep = new HipSleekPreparation(REPO_DIR)
+    val rev = None
+    val prep = new HipSleekPreparation(REPO_DIR, rev)
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(println)

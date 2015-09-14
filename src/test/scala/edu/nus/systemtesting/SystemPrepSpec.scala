@@ -54,7 +54,8 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
   }
 
   "Hip/Sleek system prep" should "make a valid repo" in {
-    val prep = new HipSleekPreparation(tmpArchiveDir.toAbsolutePath().toString())
+    val prep = new HipSleekPreparation(tmpArchiveDir.toAbsolutePath().toString(),
+                                       Some(KnownGoodRevision))
 
     val (res, remarks) = prep.prepare()
 
@@ -62,7 +63,8 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
   }
 
   it should "detect when make failed" in {
-    val prep = new HipSleekPreparation(tmpArchiveDir.toAbsolutePath().toString())
+    val prep = new HipSleekPreparation(tmpArchiveDir.toAbsolutePath().toString(),
+                                       Some(KnownGoodRevision))
 
     // Need to break something in the build.
     // remove main.ml would do it.
