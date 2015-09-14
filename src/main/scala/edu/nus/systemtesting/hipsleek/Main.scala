@@ -47,7 +47,11 @@ object Main {
     }
 
     printHeader("Running Sleek Tests")
-    new SleekTestSuiteUsage(config).run()
+    val projectDir = REPO_DIR
+    val command = projectDir + "sleek"
+    val examples = projectDir + "examples/working/sleek/"
+    val revision = "???"
+    new SleekTestSuiteUsage(config, command, examples, revision).run()
   }
 
   private def runHipTests(): Unit = {
@@ -69,7 +73,11 @@ object Main {
     }
 
     printHeader("Running Hip Tests")
-    new HipTestSuiteUsage(ConfigFactory.load()).run()
+    val projectDir = REPO_DIR
+    val command = projectDir + "hip"
+    val examples = projectDir + "examples/working/hip/"
+    val revision = "???"
+    new HipTestSuiteUsage(config, command, examples, revision).run()
   }
 
   private def runSVCompTests(): Unit = {

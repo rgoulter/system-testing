@@ -12,6 +12,7 @@ import org.joda.time.DateTime
 
 class TestSuite(configuration: Config,
                 tests: List[TestCase],
+                revision : String,
                 writer: PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
   def MILLI_CONVERSION_FACTOR = 1000
@@ -37,7 +38,7 @@ class TestSuite(configuration: Config,
     // assuming the `hostname` command can't/won't fail
     val hostname : String = "hostname" !!
     val now = DateTime.now()
-    val suiteResult = TestSuiteResult(hostname, now, "reporevision", testResults)
+    val suiteResult = TestSuiteResult(hostname, now, revision, testResults)
 
     suiteResult
   }
