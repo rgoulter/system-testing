@@ -87,26 +87,24 @@ trait TestCaseResultImplicits extends ResultImplicits {
     })
 }
 
-class Json[T] {
-  def dump(x: T)(implicit f: EncodeJson[T]): String =
+abstract class Json[T] {
+  implicit def encode: EncodeJson[T]
+
+  implicit def decode: DecodeJson[T]
+
+  def dump(x: T)(): String =
     x.asJson.spaces2
 
-  def load(j: String)(implicit f: DecodeJson[T]): Option[T] =
+  def load(j: String): Option[T] =
     j.decodeOption[T]
 }
 
-object ResultJson extends ResultImplicits {
-  def dump(x: Result): String =
-    x.asJson.spaces2
-
-  def load(j: String): Option[Result] =
-    j.decodeOption[Result]
+object ResultJson extends Json[Result] with ResultImplicits {
+  implicit def encode = ResultEncodeJson
+  implicit def decode = ResultDecodeJson
 }
 
-object TestCaseResultJson extends TestCaseResultImplicits {
-  def dump(x: TestCaseResult): String =
-    x.asJson.spaces2
-
-  def load(j: String): Option[TestCaseResult] =
-    j.decodeOption[TestCaseResult]
+object TestCaseResultJson extends Json[TestCaseResult] with TestCaseResultImplicits {
+  implicit def encode = TestCaseResultEncodeJson
+  implicit def decode = TestCaseResultDecodeJson
 }
