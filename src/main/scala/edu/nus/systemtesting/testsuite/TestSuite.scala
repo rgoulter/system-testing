@@ -2,13 +2,13 @@ package edu.nus.systemtesting.testsuite
 
 import java.io.PrintWriter
 import scala.collection.mutable.MutableList
+import scala.sys.process.stringToProcess
+
 import com.typesafe.config.Config
-import edu.nus.systemtesting.hipsleek.HipTestCase
+import edu.nus.systemtesting.{ Result, SystemPreparation, TestCase,
+                               TestCaseResult, TestFailed, TestPassed }
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
-import edu.nus.systemtesting.{ TestCaseResult, TestPassed, TestFailed,
-                               TestCaseBuilder, TestCase, Result }
-import edu.nus.systemtesting.FileSystemUtilities.getCurrentDateString
-import edu.nus.systemtesting.SystemPreparation
+import org.joda.time.DateTime
 
 class TestSuite(configuration: Config,
                 tests: List[TestCase],
@@ -18,10 +18,7 @@ class TestSuite(configuration: Config,
   def MILLI_CONVERSION_FACTOR = 1000
   val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
 
-  val successes = new MutableList[String]()
-  val failures = new MutableList[String]()
-
-  def runAllTests(): Unit = {
+  def runAllTests(): Option[TestSuiteResult] = {
     // Prepare the repo, if necessary
     writer.println("Preparing repo...")
 
@@ -35,20 +32,17 @@ class TestSuite(configuration: Config,
 
     if (!prepWorked) {
       // abort
-      return
+      return None
     }
 
     val startTime = System.currentTimeMillis
 
-    tests.foreach(test => {
+    val testResults = tests.map(test => {
       val testResult = test.generateOutput
 
-      testResult.result match {
-        case TestPassed => successes += test.fileName
-        case TestFailed => failures += test.fileName
-      }
-
       displayResult(testResult)
+
+      testResult
     })
 
     val endTime = System.currentTimeMillis
@@ -56,6 +50,13 @@ class TestSuite(configuration: Config,
     val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
 
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
+
+    // assuming the `hostname` command can't/won't fail
+    val hostname : String = "hostname" !!
+    val now = DateTime.now()
+    val suiteResult = TestSuiteResult(hostname, now, "reporevision", testResults)
+
+    Some(suiteResult)
   }
 
   def displayResult(result: TestCaseResult) = {
@@ -91,11 +92,5 @@ class TestSuite(configuration: Config,
     }
 
     writer.println
-  }
-
-  def generateTestStatistics(): Unit = {
-    writer.println(log("Total number of tests: " + (successes.length + failures.length)))
-    writer.println(success("Total number of tests passed: " + successes.length))
-    writer.println(error("Total number of tests failed: " + failures.length))
   }
 }
