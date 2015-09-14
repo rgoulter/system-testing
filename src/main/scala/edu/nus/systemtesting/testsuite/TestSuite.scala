@@ -21,8 +21,6 @@ class TestSuite(configuration: Config,
   val successes = new MutableList[String]()
   val failures = new MutableList[String]()
 
-  var performanceOutput = ""
-
   def runAllTests(): Unit = {
     // Prepare the repo, if necessary
     writer.println("Preparing repo...")
@@ -50,11 +48,6 @@ class TestSuite(configuration: Config,
         case TestFailed => failures += test.fileName
       }
 
-      if (testResult.executionTime > THRESHOLD) {
-        performanceOutput += testResult.filename + "\n"
-        performanceOutput += "Runtime was " + testResult.executionTime + " milliseconds\n"
-      }
-
       displayResult(testResult)
     })
 
@@ -63,7 +56,6 @@ class TestSuite(configuration: Config,
     val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
 
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
-    createPerformanceReport(performanceOutput, configuration, writeToFile)
   }
 
   def displayResult(result: TestCaseResult) = {
@@ -105,14 +97,5 @@ class TestSuite(configuration: Config,
     writer.println(log("Total number of tests: " + (successes.length + failures.length)))
     writer.println(success("Total number of tests passed: " + successes.length))
     writer.println(error("Total number of tests failed: " + failures.length))
-  }
-
-
-  def createPerformanceReport(performanceOutput: String,
-                              configuration: Config,
-                              writeToFile: (String, String, String, String) => Unit): Unit = {
-    val fileName = "sleek_performance_report_" + getCurrentDateString
-
-    writeToFile(fileName, configuration.getString("SLEEK_OUTPUT_DIRECTORY"), performanceOutput, ".perf")
   }
 }
