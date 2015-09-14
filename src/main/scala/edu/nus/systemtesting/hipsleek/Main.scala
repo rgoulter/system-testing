@@ -13,72 +13,82 @@ object Main {
       return
     }
 
+    val config = ConfigFactory.load()
+
+    val repoDir = config.getString("REPO_DIR")
+    val rev = None
+
     val command = args(0)
     command match {
-      case "sleek" => runSleekTests
-      case "hip" => runHipTests
-      case "all" => runAllTests
+      case "sleek" => runSleekTests(repoDir, rev)
+      case "hip" => runHipTests(repoDir, rev)
+      case "all" => runAllTests(repoDir, rev)
       case "svcomp" => runSVCompTests
       case _ => showHelpText
     }
   }
 
-  private def runAllTests(): Unit = {
-    runSleekTests
-    runHipTests
-  }
-
-  private def runSleekTests(): Unit = {
-    val config = ConfigFactory.load()
+  private def prepareRepo(repoDir : String, rev : Option[String]): (Boolean, HipSleekPreparation) = {
 
     // Prepare the repo, if necessary
     println("Preparing repo...")
 
-    val REPO_DIR = config.getString("REPO_DIR")
-    val rev = None
-    val prep = new HipSleekPreparation(REPO_DIR, rev)
+    val prep = new HipSleekPreparation(repoDir, rev)
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(println)
     println
 
-    if (!prepWorked) {
-      // abort
+    (prepWorked, prep)
+  }
+
+  private def runAllTests(repoDir : String, rev : Option[String]): Unit = {
+    val (prepWorked, prep) = prepareRepo(repoDir, rev)
+
+    if (!prepWorked)
       return
-    }
+
+    runPreparedSleekTests(prep)
+    runPreparedHipTests(prep)
+  }
+
+  private def runSleekTests(repoDir : String, rev : Option[String]): Unit = {
+    val (prepWorked, prep) = prepareRepo(repoDir, rev)
+
+    if (!prepWorked)
+      return
+
+    runPreparedSleekTests(prep)
+  }
+
+  private def runPreparedSleekTests(prep: HipSleekPreparation): Unit = {
+    val config = ConfigFactory.load()
 
     printHeader("Running Sleek Tests")
-    val projectDir = REPO_DIR
+    val projectDir = prep.projectDir
     val command = projectDir + "sleek"
     val examples = projectDir + "examples/working/sleek/"
-    val revision = "???"
+    val revision = prep.revision
     new SleekTestSuiteUsage(config, command, examples, revision).run()
   }
 
-  private def runHipTests(): Unit = {
+  private def runHipTests(repoDir : String, rev : Option[String]): Unit = {
+    val (prepWorked, prep) = prepareRepo(repoDir, rev)
+
+    if (!prepWorked)
+      return
+
+    runPreparedSleekTests(prep)
+  }
+
+  private def runPreparedHipTests(prep: HipSleekPreparation): Unit = {
     val config = ConfigFactory.load()
 
-    // Prepare the repo, if necessary
-    println("Preparing repo...")
-
-    val REPO_DIR = config.getString("REPO_DIR")
-    val rev = None
-    val prep = new HipSleekPreparation(REPO_DIR, rev)
-    val (prepWorked, prepRemarks) = prep.prepare()
-
-    prepRemarks.foreach(println)
-    println
-
-    if (!prepWorked) {
-      // abort
-      return
-    }
-
     printHeader("Running Hip Tests")
-    val projectDir = REPO_DIR
+    val projectDir = prep.projectDir
     val command = projectDir + "hip"
     val examples = projectDir + "examples/working/hip/"
-    val revision = "???"
+    val revision = prep.revision
     new HipTestSuiteUsage(config, command, examples, revision).run()
   }
 
