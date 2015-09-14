@@ -10,11 +10,11 @@ case object TestFailed extends TestResult
 /**
  * @author richardg
  */
-class TestCaseResult(val command : String,
-                     val filename : String,
-                     val arguments : String,
-                     val executionTime : Long,
-                     val results : Either[Iterable[String], Iterable[Result]]) {
+case class TestCaseResult(val command : String,
+                          val filename : String,
+                          val arguments : String,
+                          val executionTime : Long,
+                          val results : Either[Iterable[String], Iterable[Result]]) {
   val result : TestResult = results match {
     case Left(_) => TestFailed
     case Right(res) => if (res.forall(_.passed)) TestPassed else TestFailed
