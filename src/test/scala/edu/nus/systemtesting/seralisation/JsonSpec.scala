@@ -7,6 +7,9 @@ import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.serialisation.TestCaseResultJson
 import edu.nus.systemtesting.serialisation.TestCaseResultImplicits
 import edu.nus.systemtesting.serialisation.Json
+import edu.nus.systemtesting.testsuite.TestSuiteResult
+import org.joda.time.DateTime
+import edu.nus.systemtesting.serialisation.TestSuiteResultJson
 
 /**
  * @author richardg
@@ -24,22 +27,25 @@ class JsonSpec extends FlatSpec {
     }
   }
 
+  val SampleResult = Result("key1", "expected1", "output1")
+  val SampleTestCaseResult1 = new TestCaseResult("cmd1", "filename1", "--args", 10L, Left(List("remark1", "remark2")))
+  val SampleTestCaseResult2 = new TestCaseResult("cmd1", "filename1", "--args", 10L, Right(List(SampleResult)))
+  val SampleTestSuiteResult = new TestSuiteResult("soccf-plser2-05", DateTime.now(), "abcd", List(SampleTestCaseResult1, SampleTestCaseResult2))
+
   // test Result to/from,
   "JSON Serialistion" should "be able to encode/decode Result objects" in {
-    val res1 = Result("key1", "expected1", "output1")
-
-    checkIdempotent(res1, ResultJson)
+    checkIdempotent(SampleResult, ResultJson)
   }
 
   // test TestCaseResult to/from
   it should "be able to encode/decode TestCaseResult objects" in {
-    val res1 = Result("key1", "expected1", "output1")
-    val testCaseResult1 = new TestCaseResult("cmd1", "filename1", "--args", 10L, Left(List("remark1", "remark2")))
+    checkIdempotent(SampleTestCaseResult1, TestCaseResultJson)
 
-    checkIdempotent(testCaseResult1, TestCaseResultJson)
+    checkIdempotent(SampleTestCaseResult2, TestCaseResultJson)
+  }
 
-    val testCaseResult2 = new TestCaseResult("cmd1", "filename1", "--args", 10L, Right(List(res1)))
-
-    checkIdempotent(testCaseResult2, TestCaseResultJson)
+  // test TestCaseResult to/from
+  it should "be able to encode/decode TestSuiteResult objects" in {
+    checkIdempotent(SampleTestSuiteResult, TestSuiteResultJson)
   }
 }

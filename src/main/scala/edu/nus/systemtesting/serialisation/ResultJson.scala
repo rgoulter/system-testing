@@ -3,6 +3,8 @@ package edu.nus.systemtesting.serialisation
 import argonaut._, Argonaut._
 import edu.nus.systemtesting.Result
 import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.testsuite.TestSuiteResult
+import org.joda.time.format.ISODateTimeFormat
 
 /**
  * Argonaut EncodeJson, DecodeJson implicits for [[Result]]
@@ -87,6 +89,32 @@ trait TestCaseResultImplicits extends ResultImplicits {
     })
 }
 
+trait TestSuiteResultImplicits extends TestCaseResultImplicits {
+  private val Host = "hostname"
+  private val Datetime = "datetime"
+  private val Revision = "revision"
+  private val Results = "results"
+
+  private val datetimeFormatter = ISODateTimeFormat.dateTime()
+
+  implicit def TestSuiteResultEncodeJson: EncodeJson[TestSuiteResult] =
+    EncodeJson((r: TestSuiteResult) =>
+      (Host     := r.hostname) ->:
+      (Datetime := r.datetime.toString(datetimeFormatter)) ->:
+      (Revision := r.repoRevision) ->:
+      (Results  := r.results.toList) ->:
+      jEmptyObject)
+
+  implicit def TestSuiteResultDecodeJson: DecodeJson[TestSuiteResult] =
+    DecodeJson(c => for {
+      host        <- (c --\ Host).as[String]
+      datetimeStr <- (c --\ Datetime).as[String]
+      val datetime = datetimeFormatter.parseDateTime(datetimeStr)
+      revision    <- (c --\ Revision).as[String]
+      results     <- (c --\ Results).as[List[TestCaseResult]]
+    } yield TestSuiteResult(host, datetime, revision, results))
+}
+
 abstract class Json[T] {
   implicit def encode: EncodeJson[T]
 
@@ -107,4 +135,9 @@ object ResultJson extends Json[Result] with ResultImplicits {
 object TestCaseResultJson extends Json[TestCaseResult] with TestCaseResultImplicits {
   implicit def encode = TestCaseResultEncodeJson
   implicit def decode = TestCaseResultDecodeJson
+}
+
+object TestSuiteResultJson extends Json[TestSuiteResult] with TestSuiteResultImplicits {
+  implicit def encode = TestSuiteResultEncodeJson
+  implicit def decode = TestSuiteResultDecodeJson
 }
