@@ -5,7 +5,7 @@ import scala.collection.mutable.MutableList
 import scala.sys.process.stringToProcess
 
 import com.typesafe.config.Config
-import edu.nus.systemtesting.{ Result, SystemPreparation, TestCase,
+import edu.nus.systemtesting.{ Result, TestCase,
                                TestCaseResult, TestFailed, TestPassed }
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import org.joda.time.DateTime
