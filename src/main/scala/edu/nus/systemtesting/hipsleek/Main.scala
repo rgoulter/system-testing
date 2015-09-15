@@ -1,10 +1,6 @@
 package edu.nus.systemtesting.hipsleek
 
 import com.typesafe.config.ConfigFactory
-import edu.nus.systemtesting.hipsleek.SVCompTestSuiteUsage
-import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
-import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
-import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import java.nio.file.Paths
 import edu.nus.systemtesting.hg.Repository
 import java.nio.file.Files
