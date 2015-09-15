@@ -42,41 +42,9 @@ object HipSleekPreparation {
  * [[HipSleekPreparation]] will make the executables in place.
  * @author richardg
  */
-class HipSleekPreparation(repoDir: String, rev : Option[String]) {
-  val repo = new Repository(repoDir)
-
-  val revision = rev match {
-    case Some(r) => r
-    case None => repo.identify()
-  }
-
-  private val useTmp = rev match {
-    case Some(r) => true
-    // If repo is dirty, we can't use `hg archive` command,
-    // must use Working Directory to make the executable(s).
-    case None => !repo.isDirty()
-  }
-
-  // More complicated than that;
-  // * given no revision = use working directory of repo.
-  // * given revision, = make archive from that revision (assume non-dirty)
-
-  private val tmpDir = Files.createTempDirectory("edunussystest")
-
-  val projectDir = if (repo.isDirty()) {
-    repoDir
-  } else {
-    tmpDir.toString()
-  }
-
+class HipSleekPreparation(val projectDir: String) {
   def prepare(): (Boolean, Iterable[String]) = {
     val projectDirFile = new File(projectDir)
-
-    // Copy archive (if necessary)
-    if (useTmp) {
-      // Repo isn't dirty, so can use archive command to ensure a clean build.
-      repo.archive(tmpDir.toString(), rev)
-    }
 
     // In order to `make native`, need to make the xml dep.
     val xmlDepDir = new File(projectDirFile, "xml")
@@ -112,9 +80,5 @@ class HipSleekPreparation(repoDir: String, rev : Option[String]) {
     })
 
     (true, warnings)
-  }
-
-  def clean(): Unit = {
-    tmpDir.toFile().delete()
   }
 }
