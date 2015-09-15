@@ -2,15 +2,11 @@
 
 REPO_DIR="/path/to/sleek/repo/"
 
-HIP_COMMAND=${REPO_DIR}"/hip"
-SLEEK_COMMAND=${REPO_DIR}"/sleek"
-
 ################################################
 # HIP TESTS: TO CONFIGURE HipTestSuiteUsage
 ################################################
 
 # Hip Specific Test Settings
-HIP_DIR=${REPO_DIR}"/examples/working/hip/"
 HIP_OUTPUT_DIRECTORY="results/"
 
 ################################################
@@ -18,79 +14,9 @@ HIP_OUTPUT_DIRECTORY="results/"
 ################################################
 
 # Sleek Specific Test Settings
-SLEEK_DIR=${REPO_DIR}"/examples/working/sleek/"
 SLEEK_OUTPUT_DIRECTORY="results/"
 
 # Timeout in seconds. Every Hip/Sleek test will Timeout after these number of seconds
 TIMEOUT="300"
 SIGNIFICANT_TIME_THRESHOLD = "1"
 DEFAULT_OUTPUT_DIRECTORY="results/"
-PERFORMANCE_FILE_NAME = "performance"
-
-#####################################################
-# REGRESSION/REFERENCE TESTS: like test.sh, diff.sh etc.
-#####################################################
-
-# Place the settings to build tests for different directories and test types.
-# For eg: this one shows baga and hip
-BUILD_REFERENCE_TESTS = [
-           {
-             SOURCE_DIRECTORY = ${REPO_DIR}"/baga/",
-             REF_OUTPUT_DIRECTORY = ${REPO_DIR}"/reference/",
-             SOURCE_EXTENSION = ".ss",
-             REF_EXTENSION = ".ref",
-             ARGUMENTS = "--print-min",
-             COMMAND_NAME = "hip"
-           },
-           {
-             SOURCE_DIRECTORY = ${REPO_DIR}"/tinf/",
-             REF_OUTPUT_DIRECTORY = ${REPO_DIR}"/reference/",
-             SOURCE_EXTENSION = ".ss",
-             REF_EXTENSION = ".ref",
-             ARGUMENTS = "--print-min",
-             COMMAND_NAME = "hip"
-           },
-           {
-             SOURCE_DIRECTORY = ${REPO_DIR}"/imm/",
-             REF_OUTPUT_DIRECTORY = ${REPO_DIR}"/reference/",
-             SOURCE_EXTENSION = ".ss",
-             REF_EXTENSION = ".ref",
-             ARGUMENTS = "--print-min",
-             COMMAND_NAME = "hip"
-           },
-           {
-             SOURCE_DIRECTORY = ${REPO_DIR}"/post/",
-             REF_OUTPUT_DIRECTORY = ${REPO_DIR}"/reference/",
-             SOURCE_EXTENSION = ".ss",
-             REF_EXTENSION = ".ref",
-             ARGUMENTS = "--print-min",
-             COMMAND_NAME = "hip"
-           },
-           ]
-
-RUN_REFERENCE_TESTS = [
-          {
-            SOURCE_DIRECTORY = ${REPO_DIR}"/baga/",
-            REF_DIRECTORY = ${REPO_DIR}"/reference/",
-            SOURCE_EXTENSION = ".ss",
-            REF_EXTENSION = ".ref",
-            ARGUMENTS = "--print-min",
-            COMMAND_NAME = "hip"
-          },
-          {
-            SOURCE_DIRECTORY = ${REPO_DIR}"/imm/",
-            REF_DIRECTORY = ${REPO_DIR}"/reference/",
-            SOURCE_EXTENSION = ".ss",
-            REF_EXTENSION = ".ref",
-            ARGUMENTS = "--print-min",
-            COMMAND_NAME = "hip"
-          },
-          {
-            SOURCE_DIRECTORY = ${REPO_DIR}"/tinf/",
-            REF_DIRECTORY = ${REPO_DIR}"/reference/",
-            SOURCE_EXTENSION = ".ss",
-            REF_EXTENSION = ".ref",
-            ARGUMENTS = "--print-min",
-            COMMAND_NAME = "hip"
-          },
-          ]
