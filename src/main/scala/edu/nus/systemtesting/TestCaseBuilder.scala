@@ -12,7 +12,8 @@ case class TestCaseBuilder(val commandName: String = "",
                            val arguments: String = "",
                            val outputDirectory: String = "",
                            val outputFileName: String = "",
-                           val expectedOutput: String = "") {
+                           val expectedOutput: String = "",
+                           val timeout: Int = 300) {
   //
   // Helper functions for DSL-esque construction of testcase.
   //
@@ -28,4 +29,7 @@ case class TestCaseBuilder(val commandName: String = "",
 
   def checkAgainst(expectedOutput: String) =
     copy(expectedOutput = expectedOutput)
+
+  def timeoutAfter(timeout: Int) =
+    copy(timeout = timeout)
 }

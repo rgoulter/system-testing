@@ -1,14 +1,14 @@
 package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-import com.typesafe.config.Config
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
-class HipTestSuiteUsage(configuration : Config,
-                        hipCommand: String,
+class HipTestSuiteUsage(hipCommand: String,
                         examplesDir: String,
+                        significantTime: Long,
+                        timeout: Int,
                         revision : String) extends ConstructHipTests {
   def test(cmd: String,
            file: String,
@@ -18,7 +18,8 @@ class HipTestSuiteUsage(configuration : Config,
        runCommand cmd
        onFile file
        withArguments args
-       checkAgainst expectedOutput)
+       checkAgainst expectedOutput
+       timeoutAfter timeout)
 
   def run(): Unit = {
     val tests =
@@ -38,7 +39,7 @@ class HipTestSuiteUsage(configuration : Config,
 
 //    test (hipCommand, examplesDir + "imm-field/sll.ss", "-tp oc --field-ann --etcsu1 ", "delete: SUCCESS, get_tail: SUCCESS, insert: SUCCESS, insert2: SUCCESS"),
 
-    val suite = new TestSuite(configuration, tests, revision)
+    val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
     suiteResult generateTestStatistics(new PrintWriter(System.out))
   }

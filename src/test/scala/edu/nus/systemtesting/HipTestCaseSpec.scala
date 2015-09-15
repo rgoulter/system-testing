@@ -1,7 +1,6 @@
 package edu.nus.systemtesting
 
 import org.scalatest.FlatSpec
-import com.typesafe.config.ConfigFactory
 import edu.nus.systemtesting.hipsleek.HipTestCase
 import edu.nus.systemtesting.hipsleek.ConstructHipTests
 

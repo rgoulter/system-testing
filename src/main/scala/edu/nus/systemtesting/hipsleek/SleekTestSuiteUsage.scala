@@ -1,14 +1,14 @@
 package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-import com.typesafe.config.Config
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 
-class SleekTestSuiteUsage(configuration: Config,
-                          sleekCommand: String,
+class SleekTestSuiteUsage(sleekCommand: String,
                           examplesDir: String,
+                          significantTime: Long,
+                          timeout: Int,
                           revision: String) extends ConstructSleekTests {
   def test(cmd: String,
            file: String,
@@ -18,7 +18,8 @@ class SleekTestSuiteUsage(configuration: Config,
        runCommand cmd
        onFile file
        withArguments args
-       checkAgainst expectedOutput)
+       checkAgainst expectedOutput
+       timeoutAfter timeout)
 
   def run(): Unit = {
     val tests: List[TestCase] =
@@ -150,7 +151,7 @@ class SleekTestSuiteUsage(configuration: Config,
 
       List[TestCase]())
 
-    val suite = new TestSuite(configuration, tests, revision)
+    val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
     suiteResult generateTestStatistics(new PrintWriter(System.out))
   }

@@ -3,7 +3,6 @@ package edu.nus.systemtesting
 import org.scalatest.FlatSpec
 import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.ConstructSleekTests
-import com.typesafe.config.ConfigFactory
 
 /**
  * @author richardg

@@ -4,19 +4,18 @@ import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import scala.sys.process.stringToProcess
 
-import com.typesafe.config.Config
 import edu.nus.systemtesting.{ Result, TestCase,
                                TestCaseResult, TestFailed, TestPassed }
 import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import org.joda.time.DateTime
 
-class TestSuite(configuration: Config,
-                tests: List[TestCase],
-                revision : String,
+class TestSuite(tests: List[TestCase],
+                revision: String,
+                significantTime: Long,
                 writer: PrintWriter = new PrintWriter(System.out, true))
     extends ConsoleOutputGenerator {
-  def MILLI_CONVERSION_FACTOR = 1000
-  val THRESHOLD = (configuration.getLong("SIGNIFICANT_TIME_THRESHOLD") * MILLI_CONVERSION_FACTOR)
+  // significantTime in seconds
+  val THRESHOLD = (significantTime * 1000)
 
   def runAllTests(): TestSuiteResult = {
     val startTime = System.currentTimeMillis
@@ -31,7 +30,7 @@ class TestSuite(configuration: Config,
 
     val endTime = System.currentTimeMillis
 
-    val timeTaken = (endTime - startTime) / MILLI_CONVERSION_FACTOR
+    val timeTaken = (endTime - startTime) / 1000
 
     writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
 

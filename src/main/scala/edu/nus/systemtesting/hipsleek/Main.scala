@@ -154,7 +154,9 @@ object Main {
     printHeader("Running Sleek Tests")
     val command = projectDir + "sleek"
     val examples = projectDir + "examples/working/sleek/"
-    new SleekTestSuiteUsage(config, command, examples, revision).run()
+    val significantTime = 1
+    val testCaseTimeout = 300
+    new SleekTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
   }
 
   /** Assumes that the project dir has been prepared successfully */
@@ -164,7 +166,9 @@ object Main {
     printHeader("Running Hip Tests")
     val command = projectDir + "hip"
     val examples = projectDir + "examples/working/hip/"
-    new HipTestSuiteUsage(config, command, examples, revision).run()
+    val significantTime = 1
+    val testCaseTimeout = 300
+    new HipTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
   }
 
   private def runSVCompTests(): Unit = {

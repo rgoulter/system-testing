@@ -13,7 +13,8 @@ case class Result(val key: String, val expected: String, val actual: String) {
 abstract class TestCase(val commandName: String = "",
                         val fileName: String = "",
                         val arguments: String = "",
-                        val expectedOutput: String = "") {
+                        val expectedOutput: String = "",
+                        timeout: Int) {
   /**
    * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].
    *
@@ -28,7 +29,7 @@ abstract class TestCase(val commandName: String = "",
   }
 
   def run() = {
-    val res@(execOutp, time) = execute(formCommand())
+    val res@(execOutp, time) = execute(formCommand(), timeout)
 
     res
   }

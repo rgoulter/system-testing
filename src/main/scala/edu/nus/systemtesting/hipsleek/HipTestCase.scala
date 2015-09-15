@@ -16,15 +16,17 @@ trait ConstructHipTests extends ConstructTests[HipTestCase] {
     new HipTestCase(tc.commandName,
                     tc.fileName,
                     tc.arguments,
-                    tc.expectedOutput)
+                    tc.expectedOutput,
+                    tc.timeout)
 }
 
 class HipTestCase(cmd: String = "",
                   fn: String = "",
                   args: String = "",
                   expectedOut: String = "",
+                  timeout: Int = 300,
                   regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
-    extends TestCase(cmd, fn, args, expectedOut) {
+    extends TestCase(cmd, fn, args, expectedOut, timeout) {
   def buildExpectedOutputMap(results: String): Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     results.split(",").map(result =>

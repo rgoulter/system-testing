@@ -7,7 +7,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.sys.process.{ stringToProcess, ProcessLogger }
 import scala.collection.mutable.ArrayBuffer
-import com.typesafe.config.ConfigFactory
 import scala.sys.process.ProcessBuilder
 
 class ExecutionOutput(val stdoutLines: Array[String],
@@ -34,8 +33,6 @@ object ExecutionOutput {
 /**
  * This object provides methods to execute some command, with
  * time taken (and a timeout value)
- *
- * Uses the `TIMEOUT` value from the application's `Config`.
  */
 object Runnable {
   /**
@@ -77,12 +74,8 @@ object Runnable {
 
   /**
    * Runs the command given by `command`, returns tuple of `(output, time taken)`.
-   * 
-   * Makes use of Config value `"TIMEOUT"`.
    */
-  def execute(command: String): (ExecutionOutput, Long) = {
-    val timeout = ConfigFactory.load().getInt("TIMEOUT")
-
+  def execute(command: String, timeout: Int = 300): (ExecutionOutput, Long) = {
     val startTime = System.currentTimeMillis
 
     val execOutput = executeProc(command, timeout)

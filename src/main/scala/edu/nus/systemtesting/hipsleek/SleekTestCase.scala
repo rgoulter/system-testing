@@ -13,15 +13,17 @@ trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
     new SleekTestCase(tc.commandName,
                       tc.fileName,
                       tc.arguments,
-                      tc.expectedOutput)
+                      tc.expectedOutput,
+                      tc.timeout)
 }
 
 class SleekTestCase(cmd: String = "",
                     fn: String = "",
                     args: String = "",
                     expectedOut: String = "",
+                    timeout: Int = 300,
                     regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
-    extends TestCase(cmd, fn, args, expectedOut) {
+    extends TestCase(cmd, fn, args, expectedOut, timeout) {
   def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
