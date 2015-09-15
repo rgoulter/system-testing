@@ -5,25 +5,43 @@ import java.nio.file.Paths
 import edu.nus.systemtesting.hg.Repository
 import java.nio.file.Files
 
-object Main {
-  def main(args: Array[String]): Unit = {
-    if (args.isEmpty) {
-      showHelpText
-      return
-    }
+case class CommandLineOptions(command: String = "none")
 
+object Main {
+  // Use scopt to parse command-line arguments
+  val optParser = new scopt.OptionParser[CommandLineOptions]("system-tests") {
+    head("run-system-tests", "0.3.0-SNAPSHOT")
+    help("help") text("prints this usage text")
+    version("version")
+    cmd("sleek") action { (_, c) =>
+        c.copy(command = "sleek") } text("  run sleek test cases")
+    cmd("hip") action { (_, c) =>
+        c.copy(command = "hip") } text("  run hip test cases")
+    cmd("all") action { (_, c) =>
+        c.copy(command = "all") } text("  run sleek and hip test cases")
+    cmd("svcomp") action { (_, c) =>
+        c.copy(command = "svcomp") } text("  run svcomp test cases")
+  }
+
+  def main(args: Array[String]): Unit = {
     val config = ConfigFactory.load()
 
-    val repoDir = config.getString("REPO_DIR")
+    val repoDir = null; // config.getString("REPO_DIR")
     val rev = None
 
-    val command = args(0)
-    command match {
-      case "sleek" => runSleekTests(repoDir, rev)
-      case "hip" => runHipTests(repoDir, rev)
-      case "all" => runAllTests(repoDir, rev)
-      case "svcomp" => runSVCompTests
-      case _ => showHelpText
+    optParser.parse(args, CommandLineOptions()) match {
+      case Some(config) => {
+        // do stuff
+        config.command match {
+          case "sleek" => runSleekTests(repoDir, rev)
+          case "hip" => runHipTests(repoDir, rev)
+          case "all" => runAllTests(repoDir, rev)
+          case "svcomp" => runSVCompTests
+          case _ => showHelpText
+        }
+      }
+
+      case None => ()
     }
   }
 
@@ -155,7 +173,7 @@ object Main {
   }
 
   private def showHelpText(): Unit = {
-    println(error("Supported Options: sbt run [sleek/hip/all]"))
+    println(optParser.usage)
   }
 
   private def printHeader(header: String) = {
