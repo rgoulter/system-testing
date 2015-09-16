@@ -135,21 +135,19 @@ object Main {
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedSleekTests(projectDir: Path, revision: String): Unit = {
     reporter.header("Running Sleek Tests")
-    val command = Paths.get("sleek")
-    val examples = Paths.get("examples/working/sleek/")
+
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
-    new SleekTestSuiteUsage(projectDir, command, examples, significantTime, testCaseTimeout, revision).run()
+    new SleekTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
   }
 
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedHipTests(projectDir: Path, revision: String): Unit = {
     reporter.header("Running Hip Tests")
-    val command = Paths.get("hip")
-    val examples = Paths.get("examples/working/hip/")
+
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
-    new HipTestSuiteUsage(projectDir, command, examples, significantTime, testCaseTimeout, revision).run()
+    new HipTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
   }
 
   private def runSVCompTests(): Unit = {

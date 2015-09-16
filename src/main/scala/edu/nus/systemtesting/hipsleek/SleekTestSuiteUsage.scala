@@ -8,11 +8,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 class SleekTestSuiteUsage(projectDir: Path,
-                          sleekCommand: Path,
-                          examplesDir: Path,
                           significantTime: Long,
                           timeout: Int,
-                          revision: String) extends ConstructSleekTests {
+                          revision: String,
+                          examplesDir: Path = Paths.get("examples/working/hip"),
+                          sleekCommand: Path = Paths.get("sleek"))
+    extends ConstructSleekTests {
   def test(cmd: Path,
            file: String,
            args: String,

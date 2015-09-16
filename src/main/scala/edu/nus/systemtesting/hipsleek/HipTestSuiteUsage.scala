@@ -8,11 +8,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 class HipTestSuiteUsage(projDir: Path,
-                        hipCommand: Path,
-                        examplesDir: Path,
                         significantTime: Long,
                         timeout: Int,
-                        revision : String) extends ConstructHipTests {
+                        revision : String,
+                        examplesDir: Path = Paths.get("examples/working/hip"),
+                        hipCommand: Path = Paths.get("hip"))
+    extends ConstructHipTests {
   def test(cmd: Path,
            file: String,
            args: String,
