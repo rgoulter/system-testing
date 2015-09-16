@@ -3,14 +3,15 @@ package edu.nus.systemtesting.hipsleek
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigException
 
+import ConfigDefaults._
+import java.nio.file.{ Path, Paths }
+
 object ConfigDefaults {
   val DefaultTimeout = 300
   val DefaultSignificantTimeThreshold = 1
 }
 
-import ConfigDefaults._
-
-case class AppConfig(repoDir: String,
+case class AppConfig(repoDir: Path,
                      rev: Option[String] = None,
                      command: String = "none",
                      timeout: Int = DefaultTimeout,
@@ -27,7 +28,7 @@ object AppConfig {
     val configuration = ConfigFactory.load()
 
     // Compulsory configuration settings
-    val repoDir = configuration.getString("REPO_DIR")
+    val repoDir = Paths.get(configuration.getString("REPO_DIR"))
 
     // Optional configuration settings
     // Use defaults if missing from `configuration`

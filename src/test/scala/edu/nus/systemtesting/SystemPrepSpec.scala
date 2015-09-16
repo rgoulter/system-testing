@@ -11,6 +11,7 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfter
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import com.typesafe.config.ConfigException
+import java.nio.file.Paths
 
 /**
  * @author richardg
@@ -26,11 +27,11 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
 //  assume(configuration., clue)
   val REPO_DIR = try {
-    configuration.getString("REPO_DIR")
+    Paths.get(configuration.getString("REPO_DIR"))
   } catch {
     case e: ConfigException.Missing => {
       cancel("`REPO_DIR` key not in config, cannot test system.", e)
-      "/"
+      Paths.get("/path/to/repo")
     }
   }
 
@@ -44,7 +45,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
     // constructing an archive takes ~10s
     // though, building the ML code takes much more time, so.
-    repo.archive(tmpArchiveDir.toAbsolutePath().toString(), Some(KnownGoodRevision))
+    repo.archive(tmpArchiveDir, Some(KnownGoodRevision))
   }
 
   after {
@@ -54,7 +55,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
   }
 
   "Hip/Sleek system prep" should "make a valid repo" in {
-    val prep = new HipSleekPreparation(tmpArchiveDir.toAbsolutePath().toString())
+    val prep = new HipSleekPreparation(tmpArchiveDir)
 
     val (res, remarks) = prep.prepare()
 
@@ -62,7 +63,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
   }
 
   it should "detect when make failed" in {
-    val prep = new HipSleekPreparation(tmpArchiveDir.toAbsolutePath().toString())
+    val prep = new HipSleekPreparation(tmpArchiveDir)
 
     // Need to break something in the build.
     // remove main.ml would do it.

@@ -3,20 +3,21 @@ package edu.nus.systemtesting.hg
 import scala.sys.process.Process
 import java.io.File
 import edu.nus.systemtesting.Runnable
+import java.nio.file.Path
 
 /**
  * For modelling non-destructive mercurial commands on a repository.
  * @author richardg
  */
-class Repository(dir: String) {
-  val repoDir = new File(dir)
+class Repository(dir: Path) {
+  val repoDir = dir toFile
 
   /**
    * Creates a copy of some revision of the repo at some `dest`.
    * (Latest revision if `rev` is `None`).
    */
-  def archive(dest: String, rev: Option[String]): Boolean = {
-    val cmd = "hg archive" + s"${rev.map(r => s" -r $r").getOrElse("")} $dest"
+  def archive(dest: Path, rev: Option[String]): Boolean = {
+    val cmd = "hg archive" + s"${rev.map(r => s" -r $r").getOrElse("")} ${dest.toString()}"
     val proc = Process(cmd, repoDir)
 
     println(s"Exporting archive of $dir to $dest " +

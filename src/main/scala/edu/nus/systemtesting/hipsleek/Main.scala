@@ -29,14 +29,13 @@ object Main {
     }
   }
 
-  private def runTestsWith(repoDir: String, rev: Option[String])(f: (Path, String) => Unit): Unit = {
-    val isRepo = Paths.get(repoDir, ".hg").toFile().exists()
+  private def runTestsWith(repoDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
+    val isRepo = (repoDir resolve ".hg").toFile().exists()
 
     if (isRepo) {
       runTestsWithRepo(repoDir, rev)(f)
     } else {
-      val projDir = Paths.get(repoDir)
-      runTestsWithFolder(projDir, rev)(f)
+      runTestsWithFolder(repoDir, rev)(f)
     }
   }
 
@@ -49,7 +48,7 @@ object Main {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo(repoDir: String, rev: Option[String])(f: (Path, String) => Unit): Unit = {
+  private def runTestsWithRepo(repoDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
     // Prepare the repo, if necessary
     reporter.log("Preparing repo...")
 
@@ -68,17 +67,17 @@ object Main {
 
     val projectDir = if (isDirty) {
       // i.e. LIVE, "in place"
-      Paths.get(repoDir)
+      repoDir
     } else {
-        val tmp = tmpDir.toAbsolutePath()
+      val tmp = tmpDir.toAbsolutePath()
 
-        // create archive of repo in tmp
-        repo.archive(tmp.toString(), rev)
+      // create archive of repo in tmp
+      repo.archive(tmp, rev)
 
-        tmp
+      tmp
     }
 
-    val prep = new HipSleekPreparation(projectDir.toString())
+    val prep = new HipSleekPreparation(projectDir)
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(reporter.log)
@@ -104,7 +103,7 @@ object Main {
     // Prepare the repo, if necessary
     reporter.log("Preparing folder...")
 
-    val prep = new HipSleekPreparation(projectDir.toString())
+    val prep = new HipSleekPreparation(projectDir)
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(reporter.log)
@@ -117,18 +116,18 @@ object Main {
     (prepWorked, projectDir, revision)
   }
 
-  private def runAllTests(repoDir: String, rev: Option[String]): Unit = {
+  private def runAllTests(repoDir: Path, rev: Option[String]): Unit = {
     runTestsWith(repoDir, rev) { (projectDir, revision) =>
       runPreparedSleekTests(projectDir, revision)
       runPreparedHipTests(projectDir, revision)
     }
   }
 
-  private def runSleekTests(repoDir: String, rev: Option[String]): Unit = {
+  private def runSleekTests(repoDir: Path, rev: Option[String]): Unit = {
     runTestsWith(repoDir, rev)(runPreparedSleekTests)
   }
 
-  private def runHipTests(repoDir: String, rev: Option[String]): Unit = {
+  private def runHipTests(repoDir: Path, rev: Option[String]): Unit = {
     runTestsWith(repoDir, rev)(runPreparedHipTests)
   }
 

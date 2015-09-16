@@ -5,11 +5,10 @@ import java.io.File
 import edu.nus.systemtesting.Runnable
 import edu.nus.systemtesting.hg.Repository
 import java.nio.file.Files
-
 import edu.nus.systemtesting.Runnable.executeProc
 import edu.nus.systemtesting.output.GlobalReporter
-
 import GlobalReporter.reporter
+import java.nio.file.Path
 
 object HipSleekPreparation {
   /**
@@ -46,15 +45,13 @@ object HipSleekPreparation {
  * [[HipSleekPreparation]] will make the executables in place.
  * @author richardg
  */
-class HipSleekPreparation(val projectDir: String) {
+class HipSleekPreparation(val projectDir: Path) {
   def prepare(): (Boolean, Iterable[String]) = {
-    val projectDirFile = new File(projectDir)
-
     // In order to `make native`, need to make the xml dep.
-    val xmlDepDir = new File(projectDirFile, "xml")
+    val xmlDepDir = projectDir resolve "xml"
 
-    reporter.log(s"Calling 'make' in ${xmlDepDir.toPath().toString()}")
-    val mkXmlOutp = executeProc(Process("make", xmlDepDir))
+    reporter.log(s"Calling 'make' in ${xmlDepDir.toString()}")
+    val mkXmlOutp = executeProc(Process("make", xmlDepDir toFile))
 
     if (mkXmlOutp.exitValue != 0) {
       return (false,
@@ -63,8 +60,8 @@ class HipSleekPreparation(val projectDir: String) {
 
     // make native
     // (takes about 3 minutes)
-    reporter.log(s"Calling 'make native' in ${projectDirFile.toPath().toString()}")
-    val mkNativeOutp = executeProc(Process("make native", projectDirFile),
+    reporter.log(s"Calling 'make native' in ${projectDir.toString()}")
+    val mkNativeOutp = executeProc(Process("make native", projectDir toFile),
                                    timeout = 300)
 
     if (mkNativeOutp.exitValue != 0) {
