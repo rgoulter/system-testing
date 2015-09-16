@@ -6,7 +6,6 @@ import edu.nus.systemtesting.hg.Repository
 
 object Main {
   def main(args: Array[String]): Unit = {
-    println(s"args: ${args.toList}")
     val appCfg = AppConfig.load()
 
     // Override options from loaded config with CLAs
@@ -156,7 +155,6 @@ object Main {
   }
 
   private def showHelpText(): Unit = {
-    println("PRINT USAGE TEXT!!!!")
     println(AppConfig.CommandLineOptionsParser.usage)
   }
 

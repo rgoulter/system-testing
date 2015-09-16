@@ -54,12 +54,24 @@ object AppConfig {
     help("help") text("prints this usage text")
     version("version")
     cmd("sleek") action { (_, c) =>
-        c.copy(command = "sleek") } text("  run sleek test cases")
+        c.copy(command = "sleek") } text("run sleek test cases") children(
+          arg[String]("<revision>") optional() action { (x, c) =>
+          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          )
     cmd("hip") action { (_, c) =>
-        c.copy(command = "hip") } text("  run hip test cases")
+        c.copy(command = "hip") } text("run hip test cases") children(
+          arg[String]("<revision>") optional() action { (x, c) =>
+          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          )
     cmd("all") action { (_, c) =>
-        c.copy(command = "all") } text("  run sleek and hip test cases")
+        c.copy(command = "all") } text("run sleek and hip test cases") children(
+          arg[String]("<revision>") optional() action { (x, c) =>
+          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          )
     cmd("svcomp") action { (_, c) =>
-        c.copy(command = "svcomp") } text("  run svcomp test cases")
+        c.copy(command = "svcomp") } text("run svcomp test cases") children(
+          arg[String]("<revision>") optional() action { (x, c) =>
+          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          )
   }
 }
