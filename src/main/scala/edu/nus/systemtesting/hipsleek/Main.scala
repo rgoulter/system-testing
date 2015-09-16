@@ -133,8 +133,8 @@ object Main {
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedSleekTests(projectDir: String, revision: String): Unit = {
     printHeader("Running Sleek Tests")
-    val command = projectDir + "sleek"
-    val examples = projectDir + "examples/working/sleek/"
+    val command = Paths.get(projectDir, "sleek").toString()
+    val examples = Paths.get(projectDir, "examples/working/sleek/").toString() + "/"
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
     new SleekTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
@@ -143,8 +143,8 @@ object Main {
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedHipTests(projectDir: String, revision: String): Unit = {
     printHeader("Running Hip Tests")
-    val command = projectDir + "hip"
-    val examples = projectDir + "examples/working/hip/"
+    val command = Paths.get(projectDir, "hip").toString()
+    val examples = Paths.get(projectDir, "examples/working/hip/").toString() + "/"
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
     new HipTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
