@@ -3,6 +3,7 @@ package edu.nus.systemtesting
 import org.scalatest.FlatSpec
 import edu.nus.systemtesting.hipsleek.HipTestCase
 import edu.nus.systemtesting.hipsleek.ConstructHipTests
+import java.nio.file.Paths
 
 /**
  * @author richardg
@@ -12,8 +13,8 @@ class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with 
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
     (new TestCaseBuilder
-       runCommand "hip"
-       onFile "infinity/inflist.ss"
+       runCommand Paths.get("hip")
+       onFile Paths.get("infinity/inflist.ss")
        withArguments "--dsd --en-inf")
   }
 

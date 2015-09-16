@@ -7,6 +7,8 @@ import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.Result
 import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.ConstructTests
+import java.nio.file.Path
+import java.nio.file.Paths
 
 trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
   implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
@@ -17,8 +19,8 @@ trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
                       tc.timeout)
 }
 
-class SleekTestCase(cmd: String = "",
-                    fn: String = "",
+class SleekTestCase(cmd: Path = Paths.get(""),
+                    fn: Path = Paths.get(""),
                     args: String = "",
                     expectedOut: String = "",
                     timeout: Int = 300,

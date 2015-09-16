@@ -1,6 +1,7 @@
 package edu.nus.systemtesting
 
 import Runnable.execute
+import java.nio.file.Path
 
 /**
  * For representing each `(expected, actual)` pair within a test case.
@@ -9,8 +10,12 @@ case class Result(val key: String, val expected: String, val actual: String) {
   val passed = expected equals actual
 }
 
-abstract class TestCase(val commandName: String = "",
-                        val fileName: String = "",
+/**
+ * @param commandName relative to project directory
+ * @param fileName relative to project directory
+ */
+abstract class TestCase(val commandName: Path,
+                        val fileName: Path,
                         val arguments: String = "",
                         val expectedOutput: String = "",
                         timeout: Int) {

@@ -2,6 +2,7 @@ package edu.nus.systemtesting
 
 import scala.collection.mutable.ListBuffer
 import scala.sys.process.{ stringToProcess, ProcessLogger }
+import java.nio.file.Path
 
 /**
  * @author richardg
@@ -15,7 +16,7 @@ object ProgramFlags {
    * Assumes flags are printed, one on each line, beginning with a `-`,
    * and can be printed to standard out using `helpFlag = --help`.
    */
-  def flagsOfProgram(command: String, helpFlag: String = "--help") = {
+  def flagsOfProgram(command: Path, helpFlag: String = "--help") = {
     val flags = ListBuffer[String]()
 
     val collectFlags = ProcessLogger(line => {

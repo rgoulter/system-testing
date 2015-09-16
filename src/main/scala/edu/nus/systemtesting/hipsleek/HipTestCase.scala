@@ -10,6 +10,8 @@ import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.ConstructTests
 import scala.Left
 import scala.Right
+import java.nio.file.Path
+import java.nio.file.Paths
 
 trait ConstructHipTests extends ConstructTests[HipTestCase] {
   implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
@@ -20,8 +22,8 @@ trait ConstructHipTests extends ConstructTests[HipTestCase] {
                     tc.timeout)
 }
 
-class HipTestCase(cmd: String = "",
-                  fn: String = "",
+class HipTestCase(cmd: Path = Paths.get(""),
+                  fn: Path = Paths.get(""),
                   args: String = "",
                   expectedOut: String = "",
                   timeout: Int = 300,

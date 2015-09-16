@@ -3,6 +3,7 @@ package edu.nus.systemtesting
 import org.scalatest.FlatSpec
 import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.ConstructSleekTests
+import java.nio.file.Paths
 
 /**
  * @author richardg
@@ -12,8 +13,8 @@ class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] w
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
     (new TestCaseBuilder
-       runCommand "sleek"
-       onFile "sleek.slk"
+       runCommand Paths.get("sleek")
+       onFile Paths.get("sleek.slk")
        withArguments " ")
   }
 

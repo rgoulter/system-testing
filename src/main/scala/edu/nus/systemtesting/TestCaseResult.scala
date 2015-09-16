@@ -1,5 +1,9 @@
 package edu.nus.systemtesting
 
+import java.nio.file.Path
+
+import java.nio.file.Path
+
 /**
  * A system level test will either Pass or Fail.
  */
@@ -10,8 +14,8 @@ case object TestFailed extends TestResult
 /**
  * @author richardg
  */
-case class TestCaseResult(val command: String,
-                          val filename: String,
+case class TestCaseResult(val command: Path,
+                          val filename: Path,
                           val arguments: String,
                           val executionTime: Long,
                           val results: Either[Iterable[String], Iterable[Result]]) {

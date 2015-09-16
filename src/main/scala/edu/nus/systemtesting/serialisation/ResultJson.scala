@@ -5,6 +5,7 @@ import edu.nus.systemtesting.Result
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import org.joda.time.format.ISODateTimeFormat
+import java.nio.file.Paths
 
 /**
  * Argonaut EncodeJson, DecodeJson implicits for [[Result]]
@@ -44,8 +45,8 @@ trait TestCaseResultImplicits extends ResultImplicits {
 
   implicit def TestCaseResultEncodeJson: EncodeJson[TestCaseResult] =
     EncodeJson((tcr: TestCaseResult) => {
-      val base = Json(Command       := tcr.command,
-                      Filename      := tcr.filename,
+      val base = Json(Command       := tcr.command.toString(),
+                      Filename      := tcr.filename.toString(),
                       Arguments     := tcr.arguments,
                       ExecutionTime := tcr.executionTime)
       tcr.results match {
@@ -75,10 +76,10 @@ trait TestCaseResultImplicits extends ResultImplicits {
 
           (remarksDecode, resultsDecode) match {
             case (Some(remarks), None) => {
-              DecodeResult.ok(new TestCaseResult(cmd, filename, args, time, Left(remarks)))
+              DecodeResult.ok(new TestCaseResult(Paths.get(cmd), Paths.get(filename), args, time, Left(remarks)))
             }
             case (_, Some(results)) => {
-              DecodeResult.ok(new TestCaseResult(cmd, filename, args, time, Right(results)))
+              DecodeResult.ok(new TestCaseResult(Paths.get(cmd), Paths.get(filename), args, time, Right(results)))
             }
             case (_, _) => {
               DecodeResult.fail("Didn't have remarks, results as expected", c.history)

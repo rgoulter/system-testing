@@ -10,6 +10,7 @@ import edu.nus.systemtesting.serialisation.Json
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import org.joda.time.DateTime
 import edu.nus.systemtesting.serialisation.TestSuiteResultJson
+import java.nio.file.Paths
 
 /**
  * @author richardg
@@ -27,9 +28,12 @@ class JsonSpec extends FlatSpec {
     }
   }
 
+  val cmd1 = Paths.get("cmd1")
+  val filename1 = Paths.get("filename1")
+
   val SampleResult = Result("key1", "expected1", "output1")
-  val SampleTestCaseResult1 = new TestCaseResult("cmd1", "filename1", "--args", 10L, Left(List("remark1", "remark2")))
-  val SampleTestCaseResult2 = new TestCaseResult("cmd1", "filename1", "--args", 10L, Right(List(SampleResult)))
+  val SampleTestCaseResult1 = new TestCaseResult(cmd1, filename1, "--args", 10L, Left(List("remark1", "remark2")))
+  val SampleTestCaseResult2 = new TestCaseResult(cmd1, filename1, "--args", 10L, Right(List(SampleResult)))
   val SampleTestSuiteResult = new TestSuiteResult("soccf-plser2-05", DateTime.now(), "abcd", List(SampleTestCaseResult1, SampleTestCaseResult2))
 
   // test Result to/from,
