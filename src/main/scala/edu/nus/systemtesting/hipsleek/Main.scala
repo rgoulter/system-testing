@@ -1,11 +1,10 @@
 package edu.nus.systemtesting.hipsleek
 
 import java.nio.file.{ Files, Paths }
-
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
-
 import GlobalReporter.reporter
+import java.nio.file.Path
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -30,13 +29,14 @@ object Main {
     }
   }
 
-  private def runTestsWith(repoDir: String, rev: Option[String])(f: (String, String) => Unit): Unit = {
+  private def runTestsWith(repoDir: String, rev: Option[String])(f: (Path, String) => Unit): Unit = {
     val isRepo = Paths.get(repoDir, ".hg").toFile().exists()
 
     if (isRepo) {
       runTestsWithRepo(repoDir, rev)(f)
     } else {
-      runTestsWithFolder(repoDir, rev)(f)
+      val projDir = Paths.get(repoDir)
+      runTestsWithFolder(projDir, rev)(f)
     }
   }
 
@@ -49,7 +49,7 @@ object Main {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo(repoDir: String, rev: Option[String])(f: (String, String) => Unit): Unit = {
+  private def runTestsWithRepo(repoDir: String, rev: Option[String])(f: (Path, String) => Unit): Unit = {
     // Prepare the repo, if necessary
     reporter.log("Preparing repo...")
 
@@ -68,17 +68,17 @@ object Main {
 
     val projectDir = if (isDirty) {
       // i.e. LIVE, "in place"
-      repoDir
+      Paths.get(repoDir)
     } else {
-        val tmp = tmpDir.toAbsolutePath().toString()
+        val tmp = tmpDir.toAbsolutePath()
 
         // create archive of repo in tmp
-        repo.archive(tmp, rev)
+        repo.archive(tmp.toString(), rev)
 
         tmp
     }
 
-    val prep = new HipSleekPreparation(projectDir)
+    val prep = new HipSleekPreparation(projectDir.toString())
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(reporter.log)
@@ -97,14 +97,14 @@ object Main {
    * It *is* assumed that `projectDir` will be used for making, running the
    * executables/tests.
    */
-  private def runTestsWithFolder(projectDir: String, rev: Option[String])(f: (String, String) => Unit): Unit = {
+  private def runTestsWithFolder(projectDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
     // i.e. LIVE, "in place"
     val revision = rev.getOrElse("unknown")
 
     // Prepare the repo, if necessary
     reporter.log("Preparing folder...")
 
-    val prep = new HipSleekPreparation(projectDir)
+    val prep = new HipSleekPreparation(projectDir.toString())
     val (prepWorked, prepRemarks) = prep.prepare()
 
     prepRemarks.foreach(reporter.log)
@@ -133,23 +133,23 @@ object Main {
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedSleekTests(projectDir: String, revision: String): Unit = {
+  private def runPreparedSleekTests(projectDir: Path, revision: String): Unit = {
     reporter.header("Running Sleek Tests")
-    val command = Paths.get(projectDir, "sleek")
-    val examples = Paths.get(projectDir, "examples/working/sleek/")
+    val command = Paths.get("sleek")
+    val examples = Paths.get("examples/working/sleek/")
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
-    new SleekTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
+    new SleekTestSuiteUsage(projectDir, command, examples, significantTime, testCaseTimeout, revision).run()
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedHipTests(projectDir: String, revision: String): Unit = {
+  private def runPreparedHipTests(projectDir: Path, revision: String): Unit = {
     reporter.header("Running Hip Tests")
-    val command = Paths.get(projectDir, "hip")
-    val examples = Paths.get(projectDir, "examples/working/hip/")
+    val command = Paths.get("hip")
+    val examples = Paths.get("examples/working/hip/")
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
-    new HipTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
+    new HipTestSuiteUsage(projectDir, command, examples, significantTime, testCaseTimeout, revision).run()
   }
 
   private def runSVCompTests(): Unit = {

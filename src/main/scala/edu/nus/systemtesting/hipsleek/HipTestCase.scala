@@ -15,20 +15,24 @@ import java.nio.file.Paths
 
 trait ConstructHipTests extends ConstructTests[HipTestCase] {
   implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
-    new HipTestCase(tc.commandName,
+    new HipTestCase(tc.projectDir,
+                    tc.commandName,
+                    tc.corpusDir,
                     tc.fileName,
                     tc.arguments,
                     tc.expectedOutput,
                     tc.timeout)
 }
 
-class HipTestCase(cmd: Path = Paths.get(""),
+class HipTestCase(projDir: Path = Paths.get(""),
+                  cmd: Path = Paths.get(""),
+                  corpDir: Path = Paths.get(""),
                   fn: Path = Paths.get(""),
                   args: String = "",
                   expectedOut: String = "",
                   timeout: Int = 300,
                   regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
-    extends TestCase(cmd, fn, args, expectedOut, timeout) {
+    extends TestCase(projDir, cmd, corpDir, fn, args, expectedOut, timeout) {
   def buildExpectedOutputMap(results: String): Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     results.split(",").map(result =>

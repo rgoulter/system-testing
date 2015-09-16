@@ -12,13 +12,16 @@ case class Result(val key: String, val expected: String, val actual: String) {
 
 /**
  * @param commandName relative to project directory
- * @param fileName relative to project directory
+ * @param corpusDir relative to project directory
+ * @param fileName relative to corpusDir directory
  */
-abstract class TestCase(val commandName: Path,
+abstract class TestCase(val projectDir: Path,
+                        val commandName: Path,
+                        val corpusDir: Path,
                         val fileName: Path,
                         val arguments: String = "",
                         val expectedOutput: String = "",
-                        timeout: Int) {
+                        val timeout: Int) {
   /**
    * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].
    *
@@ -29,7 +32,9 @@ abstract class TestCase(val commandName: Path,
   def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]]
 
   def formCommand(): String = {
-    Seq(commandName, arguments, fileName).mkString(" ")
+    Seq(projectDir resolve commandName,
+        arguments,
+        (projectDir resolve corpusDir) resolve fileName).mkString(" ")
   }
 
   def run() = {

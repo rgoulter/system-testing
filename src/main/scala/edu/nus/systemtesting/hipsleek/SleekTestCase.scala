@@ -12,20 +12,24 @@ import java.nio.file.Paths
 
 trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
   implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
-    new SleekTestCase(tc.commandName,
+    new SleekTestCase(tc.projectDir,
+                      tc.commandName,
+                      tc.corpusDir,
                       tc.fileName,
                       tc.arguments,
                       tc.expectedOutput,
                       tc.timeout)
 }
 
-class SleekTestCase(cmd: Path = Paths.get(""),
+class SleekTestCase(projDir: Path = Paths.get(""),
+                    cmd: Path = Paths.get(""),
+                    corpDir: Path = Paths.get(""),
                     fn: Path = Paths.get(""),
                     args: String = "",
                     expectedOut: String = "",
                     timeout: Int = 300,
                     regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
-    extends TestCase(cmd, fn, args, expectedOut, timeout) {
+    extends TestCase(projDir, cmd, corpDir, fn, args, expectedOut, timeout) {
   def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
