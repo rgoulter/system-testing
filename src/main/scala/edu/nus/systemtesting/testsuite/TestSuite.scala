@@ -32,7 +32,9 @@ class TestSuite(tests: List[TestCase],
 
     val timeTaken = (endTime - startTime) / 1000
 
+    reporter.println()
     reporter.log(s"Total time taken to run all tests: $timeTaken seconds")
+    reporter.println()
 
     // assuming the `hostname` command can't/won't fail
     val hostname : String = "hostname" !!
@@ -46,7 +48,9 @@ class TestSuite(tests: List[TestCase],
     // Assuming that execCmd is of same form as run in Runnable
     val execCmd = Seq(result.command, result.arguments, result.filename).mkString(" ")
 
-    reporter.log(execCmd)
+    // Pad this print statement to some width
+    val pad = 170 - execCmd.length()
+    reporter.print(execCmd + " " * pad)
 
     val resStr = result.result match {
       case TestPassed => reporter.inColor(ColorGreen)("Passed")
@@ -55,24 +59,6 @@ class TestSuite(tests: List[TestCase],
 
     reporter.println(resStr)
 
-    def expect(m: String) = reporter.inColor(ColorCyan)(m)
-    def actual(m: String) = reporter.inColor(ColorMagenta)(m)
-
-    result.results match {
-      case Left(remarks) => {
-        remarks.foreach(reporter.log)
-      }
-      case Right(results) => {
-        val diff = results.filterNot(_.passed)
-
-        diff.foreach({ case Result(key, expected, got) =>
-          reporter.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
-        })
-      }
-    }
-
-    reporter.println()
-
 
     val time = result.executionTime
 
@@ -80,6 +66,26 @@ class TestSuite(tests: List[TestCase],
       reporter.log("Runtime: " + time + " milliseconds")
     }
 
-    reporter.println()
+
+    def expect(m: String) = reporter.inColor(ColorCyan)(m)
+    def actual(m: String) = reporter.inColor(ColorMagenta)(m)
+
+    result.results match {
+      case Left(remarks) => {
+        remarks.foreach(reporter.log)
+
+        reporter.println()
+      }
+      case Right(results) => {
+        val diff = results.filterNot(_.passed)
+
+        diff.foreach({ case Result(key, expected, got) =>
+          reporter.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
+        })
+
+        if (!diff.isEmpty)
+          reporter.println()
+      }
+    }
   }
 }

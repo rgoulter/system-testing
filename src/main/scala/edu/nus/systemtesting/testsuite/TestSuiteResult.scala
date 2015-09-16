@@ -20,8 +20,12 @@ case class TestSuiteResult(val hostname: String,
   lazy val (successes, failures) = results.toList.partition(_.result equals TestPassed)
 
   def generateTestStatistics(writer: PrintWriter): Unit = {
-    reporter.log("Total number of tests: " + (successes.length + failures.length))
-    reporter.println(reporter.inColor(ColorGreen)("Total number of tests passed: " + successes.length))
-    reporter.println(reporter.inColor(ColorRed)("Total number of tests failed: " + failures.length))
+    // There's probably a tidier way to do this with some printf function, but..
+    val TotalMsg = "Total number of tests:        "
+    val PassMsg  = "Total number of tests passed: "
+    val FailMsg  = "Total number of tests failed: "
+    reporter.log(TotalMsg + (successes.length + failures.length))
+    reporter.println(reporter.inColor(ColorGreen)(PassMsg + successes.length))
+    reporter.println(reporter.inColor(ColorRed)(FailMsg + failures.length))
   }
 }

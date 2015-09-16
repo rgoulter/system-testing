@@ -39,14 +39,14 @@ class SleekTestCase(cmd: String = "",
       val invalidFlags = testFlags.filterNot(SleekFlags.contains)
 
       if (!invalidFlags.isEmpty) {
-        val flagsStr = invalidFlags.map(f => s"Invalid flag $f\n")
+        val flagsStr = invalidFlags.map(f => s"Invalid flag $f").mkString("\n")
 
-        return Left("Binary failed to execute. Please investigate" +: flagsStr.toList)
+        return Left(List("Binary failed to execute. Please investigate", flagsStr))
       } else {
         // Could try searching the output for errors?
         return Left("Binary failed to execute. Please investigate" +:
                     List("Output was:\n" +
-                         output.output))
+                         output.output.trim))
       }
     }
 
