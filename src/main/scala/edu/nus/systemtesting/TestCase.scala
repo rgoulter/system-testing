@@ -1,6 +1,5 @@
 package edu.nus.systemtesting
 
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import Runnable.execute
 
 /**

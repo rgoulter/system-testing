@@ -49,7 +49,7 @@ class TestSuite(tests: List[TestCase],
 
     val resStr = result.result match {
       case TestPassed => reporter.inColor(reporter.ColorGreen)("Passed")
-      case TestFailed => reporter.inColor(reporter.ColorGreen)("Failed")
+      case TestFailed => reporter.inColor(reporter.ColorRed  )("Failed")
     }
 
     reporter.println(resStr)
