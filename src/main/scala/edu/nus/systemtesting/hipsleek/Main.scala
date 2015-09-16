@@ -1,38 +1,21 @@
 package edu.nus.systemtesting.hipsleek
 
-import com.typesafe.config.ConfigFactory
-import java.nio.file.Paths
-import edu.nus.systemtesting.hg.Repository
-import java.nio.file.Files
+import java.nio.file.{ Files, Paths }
 
-case class CommandLineOptions(command: String = "none")
+import edu.nus.systemtesting.hg.Repository
 
 object Main {
-  // Use scopt to parse command-line arguments
-  val optParser = new scopt.OptionParser[CommandLineOptions]("system-tests") {
-    head("run-system-tests", "0.3.0-SNAPSHOT")
-    help("help") text("prints this usage text")
-    version("version")
-    cmd("sleek") action { (_, c) =>
-        c.copy(command = "sleek") } text("  run sleek test cases")
-    cmd("hip") action { (_, c) =>
-        c.copy(command = "hip") } text("  run hip test cases")
-    cmd("all") action { (_, c) =>
-        c.copy(command = "all") } text("  run sleek and hip test cases")
-    cmd("svcomp") action { (_, c) =>
-        c.copy(command = "svcomp") } text("  run svcomp test cases")
-  }
-
   def main(args: Array[String]): Unit = {
-    val config = ConfigFactory.load()
+    println(s"args: ${args.toList}")
+    val appCfg = AppConfig.load()
 
-    val repoDir = null; // config.getString("REPO_DIR")
-    val rev = None
-
-    optParser.parse(args, CommandLineOptions()) match {
+    // Override options from loaded config with CLAs
+    AppConfig.CommandLineOptionsParser.parse(args, appCfg) match {
       case Some(config) => {
+        import config.{ command, repoDir, rev }
+
         // do stuff
-        config.command match {
+        command match {
           case "sleek" => runSleekTests(repoDir, rev)
           case "hip" => runHipTests(repoDir, rev)
           case "all" => runAllTests(repoDir, rev)
@@ -149,24 +132,20 @@ object Main {
 
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedSleekTests(projectDir: String, revision: String): Unit = {
-    val config = ConfigFactory.load()
-
     printHeader("Running Sleek Tests")
     val command = projectDir + "sleek"
     val examples = projectDir + "examples/working/sleek/"
-    val significantTime = 1
+    val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
     new SleekTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
   }
 
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedHipTests(projectDir: String, revision: String): Unit = {
-    val config = ConfigFactory.load()
-
     printHeader("Running Hip Tests")
     val command = projectDir + "hip"
     val examples = projectDir + "examples/working/hip/"
-    val significantTime = 1
+    val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
     new HipTestSuiteUsage(command, examples, significantTime, testCaseTimeout, revision).run()
   }
@@ -177,7 +156,8 @@ object Main {
   }
 
   private def showHelpText(): Unit = {
-    println(optParser.usage)
+    println("PRINT USAGE TEXT!!!!")
+    println(AppConfig.CommandLineOptionsParser.usage)
   }
 
   private def printHeader(header: String) = {
