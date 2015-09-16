@@ -7,6 +7,8 @@ import java.io.PrintStream
  * @author richardg
  */
 class ANSIReporter(outp: PrintStream = System.out) extends Reporter {
+  import ReporterColors._
+
   def print(message: String): Unit =
     outp.print(message)
 

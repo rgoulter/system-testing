@@ -8,6 +8,7 @@ import org.joda.time.DateTime
 import edu.nus.systemtesting.{ Result, TestCase,
                                TestCaseResult, TestFailed, TestPassed }
 import edu.nus.systemtesting.output.GlobalReporter
+import edu.nus.systemtesting.output.ReporterColors._
 import GlobalReporter.reporter
 
 class TestSuite(tests: List[TestCase],
@@ -48,14 +49,14 @@ class TestSuite(tests: List[TestCase],
     reporter.log(execCmd)
 
     val resStr = result.result match {
-      case TestPassed => reporter.inColor(reporter.ColorGreen)("Passed")
-      case TestFailed => reporter.inColor(reporter.ColorRed  )("Failed")
+      case TestPassed => reporter.inColor(ColorGreen)("Passed")
+      case TestFailed => reporter.inColor(ColorRed  )("Failed")
     }
 
     reporter.println(resStr)
 
-    def expect(m: String) = reporter.inColor(reporter.ColorCyan)(m)
-    def actual(m: String) = reporter.inColor(reporter.ColorMagenta)(m)
+    def expect(m: String) = reporter.inColor(ColorCyan)(m)
+    def actual(m: String) = reporter.inColor(ColorMagenta)(m)
 
     result.results match {
       case Left(remarks) => {

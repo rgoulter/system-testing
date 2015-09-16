@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
 import edu.nus.systemtesting.output.GlobalReporter
+import edu.nus.systemtesting.output.ReporterColors._
 import java.io.PrintWriter
 
 import GlobalReporter.reporter
@@ -20,7 +21,7 @@ case class TestSuiteResult(val hostname: String,
 
   def generateTestStatistics(writer: PrintWriter): Unit = {
     reporter.log("Total number of tests: " + (successes.length + failures.length))
-    reporter.println(reporter.inColor(reporter.ColorGreen)("Total number of tests passed: " + successes.length))
-    reporter.println(reporter.inColor(reporter.ColorRed)("Total number of tests failed: " + failures.length))
+    reporter.println(reporter.inColor(ColorGreen)("Total number of tests passed: " + successes.length))
+    reporter.println(reporter.inColor(ColorRed)("Total number of tests failed: " + failures.length))
   }
 }

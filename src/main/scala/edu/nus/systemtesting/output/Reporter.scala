@@ -1,15 +1,19 @@
 package edu.nus.systemtesting.output
 
-/**
- * @author richardg
- */
-trait Reporter {
+object ReporterColors {
   // Colors should be able to be printed on ANSI console
   val ColorWhite   = "white"
   val ColorRed     = "red"
   val ColorGreen   = "green"
   val ColorCyan    = "cyan"
   val ColorMagenta = "purple"
+}
+
+/**
+ * @author richardg
+ */
+trait Reporter {
+  import ReporterColors._
 
   def print(message: String): Unit
 
