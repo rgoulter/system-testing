@@ -1,6 +1,5 @@
 package edu.nus.systemtesting.hipsleek
 
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
 import edu.nus.systemtesting.Runnable
 
 case class SVCompTestCase(commandName: String,
@@ -8,8 +7,7 @@ case class SVCompTestCase(commandName: String,
                           arguments: String,
                           outputDirectoryName: String = "",
                           outputFileName: String = "",
-                          outputFileExtension: String = ".out")
-    extends ConsoleOutputGenerator {
+                          outputFileExtension: String = ".out") {
   /**
    * Overriding traits implementation because the order of the arguments and file name is different
    */
@@ -28,7 +26,7 @@ case class SVCompTestCase(commandName: String,
   def run(): Unit = {
     val (outp, time) = Runnable execute formCommand
 
-    if (outputFileName.length > 0)
-      writeToFile(this.outputFileName, this.outputDirectoryName, outp.output, outputFileExtension)
+//    if (outputFileName.length > 0)
+//      writeToFile(this.outputFileName, this.outputDirectoryName, outp.output, outputFileExtension)
   }
 }

@@ -3,6 +3,9 @@ package edu.nus.systemtesting.hipsleek
 import java.nio.file.{ Files, Paths }
 
 import edu.nus.systemtesting.hg.Repository
+import edu.nus.systemtesting.output.GlobalReporter
+
+import GlobalReporter.reporter
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -48,7 +51,7 @@ object Main {
    */
   private def runTestsWithRepo(repoDir: String, rev: Option[String])(f: (String, String) => Unit): Unit = {
     // Prepare the repo, if necessary
-    println("Preparing repo...")
+    reporter.log("Preparing repo...")
 
     val repo = new Repository(repoDir)
     val revision = rev.getOrElse(repo.identify())
@@ -78,8 +81,8 @@ object Main {
     val prep = new HipSleekPreparation(projectDir)
     val (prepWorked, prepRemarks) = prep.prepare()
 
-    prepRemarks.foreach(println)
-    println
+    prepRemarks.foreach(reporter.log)
+    reporter.println()
 
     // Run the tests
     if (prepWorked)
@@ -99,13 +102,13 @@ object Main {
     val revision = rev.getOrElse("unknown")
 
     // Prepare the repo, if necessary
-    println("Preparing folder...")
+    reporter.log("Preparing folder...")
 
     val prep = new HipSleekPreparation(projectDir)
     val (prepWorked, prepRemarks) = prep.prepare()
 
-    prepRemarks.foreach(println)
-    println
+    prepRemarks.foreach(reporter.log)
+    reporter.println()
 
     // Run the tests
     if (prepWorked)
@@ -131,7 +134,7 @@ object Main {
 
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedSleekTests(projectDir: String, revision: String): Unit = {
-    printHeader("Running Sleek Tests")
+    reporter.header("Running Sleek Tests")
     val command = Paths.get(projectDir, "sleek").toString()
     val examples = Paths.get(projectDir, "examples/working/sleek/").toString() + "/"
     val significantTime = 1 // CONFIG ME
@@ -141,7 +144,7 @@ object Main {
 
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedHipTests(projectDir: String, revision: String): Unit = {
-    printHeader("Running Hip Tests")
+    reporter.header("Running Hip Tests")
     val command = Paths.get(projectDir, "hip").toString()
     val examples = Paths.get(projectDir, "examples/working/hip/").toString() + "/"
     val significantTime = 1 // CONFIG ME
@@ -150,23 +153,11 @@ object Main {
   }
 
   private def runSVCompTests(): Unit = {
-    printHeader("Running SVComp Tests")
+    reporter.header("Running SVComp Tests")
     SVCompTestSuiteUsage.run()
   }
 
   private def showHelpText(): Unit = {
     println(AppConfig.CommandLineOptionsParser.usage)
   }
-
-  private def printHeader(header: String) = {
-    println(success("******************"))
-    println(success(header))
-    println(success("******************"))
-  }
-
-  private def error(errorText: String): String =
-    Console.CYAN + errorText + Console.RESET + '\n'
-
-  private def success(successText: String): String =
-    Console.GREEN + successText + Console.RESET + '\n'
 }

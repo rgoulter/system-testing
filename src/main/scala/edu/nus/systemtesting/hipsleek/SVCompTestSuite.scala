@@ -2,14 +2,15 @@ package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
 import edu.nus.systemtesting.FileSystemUtilities.getFileList
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
+import edu.nus.systemtesting.output.GlobalReporter
+
+import GlobalReporter.reporter
 
 case class SVCompTestSuite(directory: String,
                            commandName: String = "hip",
                            arguments: String = """-infer "@term" --svcomp-compete""",
                            fileType: String = ".c",
-                           printer: PrintWriter = new PrintWriter(System.out, true))
-    extends ConsoleOutputGenerator {
+                           printer: PrintWriter = new PrintWriter(System.out, true)) {
   private val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
 
   val tests =
@@ -69,4 +70,22 @@ case class SVCompTestSuite(directory: String,
     success("Total Number of tests passed: " + successes)
     error("Total number of tests failed: " + failures)
   }
+
+  // We don't even use SVComp stuff for the moment,
+  // but, feels better to keep it unmaintained here, than to hide it in VCS
+
+  def log(message: String): Unit =
+    throw new UnsupportedOperationException()
+
+  def success(message: String): Unit =
+    throw new UnsupportedOperationException()
+
+  def error(s: String): String =
+    throw new UnsupportedOperationException()
+
+  def expected(s: String): String =
+    throw new UnsupportedOperationException()
+
+  def had(s: String): String =
+    throw new UnsupportedOperationException()
 }

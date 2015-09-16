@@ -3,17 +3,16 @@ package edu.nus.systemtesting.testsuite
 import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import scala.sys.process.stringToProcess
+import org.joda.time.DateTime
 
 import edu.nus.systemtesting.{ Result, TestCase,
                                TestCaseResult, TestFailed, TestPassed }
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
-import org.joda.time.DateTime
+import edu.nus.systemtesting.output.GlobalReporter
+import GlobalReporter.reporter
 
 class TestSuite(tests: List[TestCase],
                 revision: String,
-                significantTime: Long,
-                writer: PrintWriter = new PrintWriter(System.out, true))
-    extends ConsoleOutputGenerator {
+                significantTime: Long) {
   // significantTime in seconds
   val THRESHOLD = (significantTime * 1000)
 
@@ -32,7 +31,7 @@ class TestSuite(tests: List[TestCase],
 
     val timeTaken = (endTime - startTime) / 1000
 
-    writer.println(log(s"Total time taken to run all tests: $timeTaken seconds"))
+    reporter.log(s"Total time taken to run all tests: $timeTaken seconds")
 
     // assuming the `hostname` command can't/won't fail
     val hostname : String = "hostname" !!
@@ -45,35 +44,41 @@ class TestSuite(tests: List[TestCase],
   def displayResult(result: TestCaseResult) = {
     // Assuming that execCmd is of same form as run in Runnable
     val execCmd = Seq(result.command, result.arguments, result.filename).mkString(" ")
-    writer.println(execCmd)
 
-    result.result match {
-      case TestPassed => writer.println(passed)
-      case TestFailed => writer.println(failed)
+    reporter.log(execCmd)
+
+    val resStr = result.result match {
+      case TestPassed => reporter.inColor(reporter.ColorGreen)("Passed")
+      case TestFailed => reporter.inColor(reporter.ColorGreen)("Failed")
     }
+
+    reporter.println(resStr)
+
+    def expect(m: String) = reporter.inColor(reporter.ColorCyan)(m)
+    def actual(m: String) = reporter.inColor(reporter.ColorMagenta)(m)
 
     result.results match {
       case Left(remarks) => {
-        remarks.foreach(writer.println)
+        remarks.foreach(reporter.log)
       }
       case Right(results) => {
         val diff = results.filterNot(_.passed)
 
         diff.foreach({ case Result(key, expected, got) =>
-          writer.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
+          reporter.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
         })
       }
     }
 
-    writer.println
+    reporter.println()
 
 
     val time = result.executionTime
 
     if (time > THRESHOLD) {
-      writer.println("Runtime: " + time + " milliseconds")
+      reporter.log("Runtime: " + time + " milliseconds")
     }
 
-    writer.println
+    reporter.println()
   }
 }

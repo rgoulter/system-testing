@@ -1,11 +1,15 @@
 package edu.nus.systemtesting.hipsleek
 
 import sys.process._
-import edu.nus.systemtesting.Runnable.executeProc
 import java.io.File
 import edu.nus.systemtesting.Runnable
 import edu.nus.systemtesting.hg.Repository
 import java.nio.file.Files
+
+import edu.nus.systemtesting.Runnable.executeProc
+import edu.nus.systemtesting.output.GlobalReporter
+
+import GlobalReporter.reporter
 
 object HipSleekPreparation {
   /**
@@ -48,7 +52,8 @@ class HipSleekPreparation(val projectDir: String) {
 
     // In order to `make native`, need to make the xml dep.
     val xmlDepDir = new File(projectDirFile, "xml")
-    println(s"Calling 'make' in ${xmlDepDir.toPath().toString()}")
+
+    reporter.log(s"Calling 'make' in ${xmlDepDir.toPath().toString()}")
     val mkXmlOutp = executeProc(Process("make", xmlDepDir))
 
     if (mkXmlOutp.exitValue != 0) {
@@ -58,7 +63,7 @@ class HipSleekPreparation(val projectDir: String) {
 
     // make native
     // (takes about 3 minutes)
-    println(s"Calling 'make native' in ${projectDirFile.toPath().toString()}")
+    reporter.log(s"Calling 'make native' in ${projectDirFile.toPath().toString()}")
     val mkNativeOutp = executeProc(Process("make native", projectDirFile),
                                    timeout = 300)
 
@@ -67,7 +72,7 @@ class HipSleekPreparation(val projectDir: String) {
               "Error building `make native`, err output:" +: mkNativeOutp.stderrLines.toList)
     }
 
-    println("Built successfully!")
+    reporter.log("Built successfully!")
 
     // TODO: copy the built binaries to a tmp dir; use those binaries elsewhere.
     // At the moment, if running system test on dirty repo, will make use of

@@ -1,8 +1,6 @@
 package edu.nus.systemtesting.hipsleek
 
-import edu.nus.systemtesting.output.ConsoleOutputGenerator
-
-object SVCompTestSuiteUsage extends ConsoleOutputGenerator {
+object SVCompTestSuiteUsage {
   def run(): Unit = {
     SVCompTestSuite(directory = """/home/rohit/hg/sleek_hip/svcomp14/termination-crafted""") runAllTests ()
     //    SVCompTestSuite(directory = """/home/rohit/hg/sleek_hip/svcomp14/termination-crafted-lit""") runAllTests ()
