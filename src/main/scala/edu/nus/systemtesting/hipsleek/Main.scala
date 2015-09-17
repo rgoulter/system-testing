@@ -170,7 +170,7 @@ object Main {
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
     val res = new HipTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
-    saveTestSuiteResult(res, "sleek")
+    saveTestSuiteResult(res, "hip")
   }
 
   private def runSVCompTests(): Unit = {
