@@ -46,7 +46,13 @@ class TestSuite(tests: List[TestCase],
 
   def displayResult(result: TestCaseResult) = {
     // Assuming that execCmd is of same form as run in Runnable
-    val execCmd = Seq(result.command, result.arguments, result.filename).mkString(" ")
+    // Output (cmd, args?, filename) relative to projectDir, corpusDir
+    val trimmedArgs = result.arguments.trim()
+    val execCmd =
+      if (trimmedArgs.isEmpty())
+        Seq(result.command, result.filename).mkString(" ")
+      else
+        Seq(result.command, trimmedArgs, result.filename).mkString(" ")
 
     // Pad this print statement to some width
     // n.b. lines like:
