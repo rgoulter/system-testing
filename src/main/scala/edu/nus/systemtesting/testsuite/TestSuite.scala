@@ -49,7 +49,12 @@ class TestSuite(tests: List[TestCase],
     val execCmd = Seq(result.command, result.arguments, result.filename).mkString(" ")
 
     // Pad this print statement to some width
-    val pad = 170 - execCmd.length()
+    // n.b. lines like:
+    //   Last Proving Location: $PROJDIR/examples/working/sleek/ll-under1f.slk_10:16_10:37
+    // can be ~100 chars long b/c the projdir is
+    //   /tmp/edunussystest3521667651181831864/
+
+    val pad = 70 - execCmd.length()
     reporter.print(execCmd + " " * pad)
 
     val resStr = result.result match {
