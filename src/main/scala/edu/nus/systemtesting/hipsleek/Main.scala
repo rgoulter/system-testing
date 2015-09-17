@@ -5,6 +5,10 @@ import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
 import GlobalReporter.reporter
 import java.nio.file.Path
+import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.serialisation.TestSuiteResultJson
+import edu.nus.systemtesting.FileSystemUtilities
+import org.joda.time.format.ISODateTimeFormat
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -131,13 +135,32 @@ object Main {
     runTestsWith(repoDir, rev)(runPreparedHipTests)
   }
 
+  private def saveTestSuiteResult(suiteResult: TestSuiteResult, name: String): Unit = {
+    import suiteResult.{ repoRevision, datetime }
+
+    val datetimeStr = datetime.toString("yyyyMMdd-HHmmss")
+
+    // Dump to file.
+    // For now, dump to $CWD/results/
+    // (And config this later)
+    val resultsDir = "results"
+    FileSystemUtilities.checkOutputDirectory(resultsDir)
+    val filename = s"$name-${repoRevision}-${datetimeStr}.json"
+    val dump = TestSuiteResultJson.dump(suiteResult)
+
+    val path = Paths.get(resultsDir, filename)
+    reporter.log(s"\nSaving results to $path\n")
+    FileSystemUtilities.printToFile(path.toFile())(_.print(dump))
+  }
+
   /** Assumes that the project dir has been prepared successfully */
   private def runPreparedSleekTests(projectDir: Path, revision: String): Unit = {
     reporter.header("Running Sleek Tests")
 
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
-    new SleekTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
+    val res = new SleekTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
+    saveTestSuiteResult(res, "sleek")
   }
 
   /** Assumes that the project dir has been prepared successfully */
@@ -146,7 +169,8 @@ object Main {
 
     val significantTime = 1 // CONFIG ME
     val testCaseTimeout = 300
-    new HipTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
+    val res = new HipTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision).run()
+    saveTestSuiteResult(res, "sleek")
   }
 
   private def runSVCompTests(): Unit = {

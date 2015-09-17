@@ -6,6 +6,7 @@ import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 import java.nio.file.Path
 import java.nio.file.Paths
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 
 class SleekTestSuiteUsage(projectDir: Path,
                           significantTime: Long,
@@ -27,7 +28,7 @@ class SleekTestSuiteUsage(projectDir: Path,
        checkAgainst expectedOutput
        timeoutAfter timeout)
 
-  def run(): Unit = {
+  def run(): TestSuiteResult = {
     val tests: List[TestCase] =
      (test (sleekCommand, "sleek.slk", " ", "Valid, Valid, Valid, Fail") +:
 
@@ -160,5 +161,7 @@ class SleekTestSuiteUsage(projectDir: Path,
     val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
     suiteResult generateTestStatistics(new PrintWriter(System.out))
+
+    suiteResult
   }
 }

@@ -6,6 +6,7 @@ import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseBuilder
 import java.nio.file.Path
 import java.nio.file.Paths
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 
 class HipTestSuiteUsage(projDir: Path,
                         significantTime: Long,
@@ -27,7 +28,7 @@ class HipTestSuiteUsage(projDir: Path,
        checkAgainst expectedOutput
        timeoutAfter timeout)
 
-  def run(): Unit = {
+  def run(): TestSuiteResult = {
     val tests =
     makeInfinityTests() ++
     makeArrayTests() ++
@@ -48,6 +49,8 @@ class HipTestSuiteUsage(projDir: Path,
     val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
     suiteResult generateTestStatistics(new PrintWriter(System.out))
+
+    suiteResult
   }
 
   def makeInfinityTests(): List[TestCase] = {

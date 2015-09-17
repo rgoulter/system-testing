@@ -96,12 +96,10 @@ trait TestSuiteResultImplicits extends TestCaseResultImplicits {
   private val Revision = "revision"
   private val Results = "results"
 
-  private val datetimeFormatter = ISODateTimeFormat.dateTime()
-
   implicit def TestSuiteResultEncodeJson: EncodeJson[TestSuiteResult] =
     EncodeJson((r: TestSuiteResult) =>
       (Host     := r.hostname) ->:
-      (Datetime := r.datetime.toString(datetimeFormatter)) ->:
+      (Datetime := r.datetime.toString(DateTimeFormatter)) ->:
       (Revision := r.repoRevision) ->:
       (Results  := r.results.toList) ->:
       jEmptyObject)
@@ -110,7 +108,7 @@ trait TestSuiteResultImplicits extends TestCaseResultImplicits {
     DecodeJson(c => for {
       host        <- (c --\ Host).as[String]
       datetimeStr <- (c --\ Datetime).as[String]
-      val datetime = datetimeFormatter.parseDateTime(datetimeStr)
+      val datetime = DateTimeFormatter.parseDateTime(datetimeStr)
       revision    <- (c --\ Revision).as[String]
       results     <- (c --\ Results).as[List[TestCaseResult]]
     } yield TestSuiteResult(host, datetime, revision, results))
