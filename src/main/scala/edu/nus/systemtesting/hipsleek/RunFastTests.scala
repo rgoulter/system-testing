@@ -1,13 +1,15 @@
 package edu.nus.systemtesting.hipsleek
 
 import scala.io.Source
+import scala.util.matching.Regex
 
 /**
  * For parsing legacy `run-fast-tests.pl` (and similar) files.
  * It may be necessary to parse such files.
  */
 object RunFastTests {
-  type HipTestCase = (String, String, List[(String, String)])
+  type HipTest = (String, String, List[(String, String)])
+  type SleekTest = (String, String, List[String])
 
   // General structure of the info we want in run-fast-test:
   //
@@ -33,26 +35,31 @@ object RunFastTests {
   //     (and in older versions, even 'bot')
   //   * cf. w/ run-fast-tests functionality, but EXC is possible, too?
 
-  private def getHipFilesLines(rftLines: List[String]): List[String] = {
+  private def getFileLines(start: Regex, end: Regex)(rftLines: List[String]): List[String] = {
     // 1. accumulate lines between %hip_files=( ... );
-    val StartRegex = "^%hip_files".r
     val fromLines = rftLines.dropWhile { line =>
       // drop while there's no regex match for the start
-      (StartRegex findFirstIn line).isEmpty
+      (start findFirstIn line).isEmpty
     }
 
     // ends with );
-    val EndRegex = "\\);$".r
     var hasMore = true
-    val hipFilesLines = fromLines.takeWhile { line =>
+    fromLines.takeWhile { line =>
       // Need to also take the line which has the );
       val next = hasMore
-      hasMore = (EndRegex findFirstIn line).isEmpty
+      hasMore = (end findFirstIn line).isEmpty
       next
     }
-
-    hipFilesLines
   }
+
+  private def getHipFilesLines: List[String] => List[String] =
+    getFileLines("^%hip_files".r,
+                 "\\);$".r)(_)
+
+  private def getSleekFilesLines: List[String] => List[String] =
+    getFileLines("^%sleek_files".r,
+                 "\\);$".r)(_)
+
 
   /**
    * Trim lines,
@@ -87,7 +94,7 @@ object RunFastTests {
   private def stripQuotes: String => String =
     stripOutermost("\"", "\"")(_)
 
-  private def processTestCaseStr(s: String): HipTestCase = {
+  private def processHipTestCaseStr(s: String): HipTest = {
     // s ~~ ["append.ss",1, "--use-baga", "append","SUCCESS"]
     val inner = stripBrackets(s)
     val parts = inner.split(",")
@@ -116,24 +123,72 @@ object RunFastTests {
     (file, args, expected)
   }
 
-  private def processFolderStr(s: String): (String, List[HipTestCase]) = {
+  // n.b. From run-fast-tests.pl:
+  //   $lem = '--elp';
+  //   $inv = '--inv-test';
+  //   $dis = '--dis-inv-baga';
+
+  // regex didn't like
+  // ["../tree_shares/barrier.slk", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "Barrrier b1n Success.Barrrier b3n Fail:  frames do not match (1->2).Barrrier b2n Fail:  contradiction in post for transition (1->2).Barrrier b4n Fail:  no contradiction found in preconditions of transitions from 1  for preconditions: .", ""]
+  // ["../tree_shares/barrier.slk",
+  //  "--eps --dis-field-imm --dis-precise-xpure -perm dperm",
+  //  "Barrrier b1n Success.Barrrier b3n Fail:  frames do not match (1->2).Barrrier b2n Fail:  contradiction in post for transition (1->2).Barrrier b4n Fail:  no contradiction found in preconditions of transitions from 1  for preconditions: .",
+  //  ""]
+
+  val SleekTestRegex = "\"([^\"]*)\",\\s*\"([^\"]*)\",\\s*\\(([^\\)]*)\\),\\s*\"([^\"]*)\"\\s*"
+  val SleekTestAltRegex = "\"([^\"]*)\",\\s*\"([^\"]*)\",\\s*\"[^\"]*\",\\s*\"([^\"]*)\"\\s*"
+  
+  private def processSleekTestCaseStr(s: String): SleekTest = {
+    // s ~~ ["lst-under2.slk", "--inv-test", ([$dis,"Fail.Valid"]), "Valid.Fail."],
+//    val inner = stripBrackets(s)
+
+    // ... and some don't follow this,
+    // e.g. threads/thrd1.slk & search for `Barrrier`
+
+    s match {
+      case SleekTestRegex.r(filename, args, para, rawExpected) => {
+        // what's happing with the `para` bit?
+        val expected = rawExpected.split("\\.").filterNot(_.isEmpty()).toList
+        (filename, args, expected)
+      }
+
+      case SleekTestAltRegex.r(filename, args, rawExpected) => {
+        // what's happing with the `para` bit?
+        val expected = rawExpected.split("\\.").filterNot(_.isEmpty()).toList
+        (filename, args, expected)
+      }
+
+      case _ => throw new RuntimeException(s"Bad line: $s")
+    }
+  }
+
+  private def processFolderStr[T](s: String, testCaseRegex: Regex, procTestCaseStr: String => T): (String, List[T]) = {
     // s ~~ "folder" => [...]
     val parts = (s split "=>")
     assert(parts.length == 2)
 
     val folder = stripQuotes(parts(0))
 
-    val TestCaseRegex = "\\[[^\\]]*\\]".r
-    val rawTestCases = (TestCaseRegex findAllIn stripBrackets(parts(1))).toList
+//    val TestCaseRegex = "\\[[^\\]]*\\]".r
+    val rawTestCases = (testCaseRegex findAllIn stripBrackets(parts(1))).toList
 
     // rawTestCases now contains list of e.g.
     //   ["append.ss",1, "--use-baga", "append","SUCCESS"]
-    val testCases = rawTestCases map processTestCaseStr
+    val testCases = rawTestCases map procTestCaseStr
 
     (folder, testCases)
   }
 
-  def deriveHipTests(rftLines: List[String]): List[(String, List[HipTestCase])] = {
+  private def processHipFolderStr(s: String): (String, List[HipTest]) = {
+    val TestCaseRegex = "\\[[^\\]]*\\]".r
+    processFolderStr[HipTest](s, TestCaseRegex, processHipTestCaseStr)
+  }
+
+  private def processSleekFolderStr(s: String): (String, List[SleekTest]) = {
+    processFolderStr[SleekTest](s, s"$SleekTestRegex|$SleekTestAltRegex".r, processSleekTestCaseStr)
+  }
+
+  def deriveHipTests(rftLines: List[String]): List[(String, List[HipTest])] = {
     val hipFilesLines = tidyPerlLines(getHipFilesLines(rftLines))
 
     // Now make one huge string of it
@@ -147,10 +202,10 @@ object RunFastTests {
     //   \"([^\"]*)\"\\s*=>\\s*\\[(               )*\\]
     // Match the testcases inside
     //                            (\\[[^\\]]*\\],?)*
-    val FolderRegex = "\"([^\"]*)\"\\s*=>\\s*\\[(\\[[^\\]]*\\],?)*\\]".r
+    val FolderRegex = "\"([^\"]*)\"\\s*=>\\s*\\[\\s*(\\[[^\\]]*\\],?\\s*)*\\]".r
     val rawFolders = (FolderRegex findAllIn inner).toList
 
-    val folders = rawFolders map processFolderStr
+    val folders = rawFolders map processHipFolderStr
 
     folders foreach { folder =>
       val (name, testcases) = folder
@@ -165,12 +220,53 @@ object RunFastTests {
       println
     }
 
+    folders foreach { folder =>
+      val (name, testcases) = folder
+      println(s"Folder $name")
+    }
+
     folders
   }
 
+  def deriveSleekTests(rftLines: List[String]): List[(String, List[SleekTest])] = {
+    val sleekFilesLines = tidyPerlLines(getSleekFilesLines(rftLines))
 
-  def deriveSleekTests(rftLines: List[String]): Unit = {
-    
+    // Now make one huge string of it
+    val sleekFilesStr = sleekFilesLines.mkString
+    val inner = stripParentheses(sleekFilesStr)
+
+    // find each folder line
+    // A "write once" regex:
+    //   \"([^\"]*)\"\\s*=>\\s*\\[(\\[[^\\]]*\\],?)*\\]
+    // Match "folder" => [...]
+    //   \"([^\"]*)\"\\s*=>\\s*\\[(               )*\\]
+    // Match the testcases inside
+    //                            (\\[[^\\]]*\\],?)*
+    val InnerRegex = s"(?:$SleekTestRegex|$SleekTestAltRegex)"
+    val FolderRegex = ("\"([^\"]*)\"\\s*=>\\s*\\[\\s*(\\[" + InnerRegex + "\\],?\\s*)*\\]").r
+    val rawFolders = (FolderRegex findAllIn inner).toList
+
+    val folders = rawFolders map processSleekFolderStr
+
+    folders foreach { folder =>
+      val (name, testcases) = folder
+      println(s"Folder $name")
+
+      testcases foreach { testcase =>
+        val (name, args, expects) =  testcase
+        println(s"$name $args $expects")
+      }
+
+      println
+    }
+
+    folders foreach { folder =>
+      val (name, testcases) = folder
+
+      println(s"Folder $name")
+    }
+
+    folders
   }
 
 
