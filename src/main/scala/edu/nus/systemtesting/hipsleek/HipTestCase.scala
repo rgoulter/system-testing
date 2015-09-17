@@ -66,7 +66,7 @@ class HipTestCase(projDir: Path = Paths.get(""),
 
     if (results.isEmpty) {
       val testFlags = arguments.split(" ").filter(isFlag)
-      val SleekFlags = flagsOfProgram(commandName)
+      val SleekFlags = flagsOfProgram(projectDir resolve commandName)
       val invalidFlags = testFlags.filterNot(SleekFlags.contains)
 
       if (!invalidFlags.isEmpty) {
