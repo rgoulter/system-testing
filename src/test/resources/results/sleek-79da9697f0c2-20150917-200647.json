@@ -1,0 +1,2463 @@
+{
+  "results" : [
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        }
+      ],
+      "executionTime" : "401",
+      "filename" : "sleek.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        }
+      ],
+      "executionTime" : "90",
+      "filename" : "cll-d.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        }
+      ],
+      "executionTime" : "21",
+      "filename" : "label-basic.slk",
+      "arguments" : " --dis-eps"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        }
+      ],
+      "executionTime" : "34",
+      "filename" : "label-dll.slk",
+      "arguments" : " --dis-eps"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        }
+      ],
+      "executionTime" : "62",
+      "filename" : "sleek1.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "37",
+      "filename" : "sleek10.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        }
+      ],
+      "executionTime" : "117",
+      "filename" : "sleek2.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "82",
+      "filename" : "sleek3.slk",
+      "remarks" : [
+        "TestCase Underspecified! (Fewer expected results than actual)."
+      ],
+      "arguments" : " --elp"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "45",
+      "filename" : "sleek4.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "52",
+      "filename" : "sleek6.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "238",
+      "filename" : "sleek7.slk",
+      "remarks" : [
+        "TestCase Underspecified! (Fewer expected results than actual)."
+      ],
+      "arguments" : "  --dis-lem-gen "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "940",
+      "filename" : "sleek8.slk",
+      "remarks" : [
+        "TestCase Underspecified! (Fewer expected results than actual)."
+      ],
+      "arguments" : "  --dis-lem-gen "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "927",
+      "filename" : "sleek8.slk",
+      "remarks" : [
+        "TestCase Underspecified! (Fewer expected results than actual)."
+      ],
+      "arguments" : "  --elp "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "378",
+      "filename" : "sleek9.slk",
+      "remarks" : [
+        "TestCase Underspecified! (Fewer expected results than actual)."
+      ],
+      "arguments" : "  --elp "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        }
+      ],
+      "executionTime" : "59",
+      "filename" : "sleek12-lend.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        }
+      ],
+      "executionTime" : "34",
+      "filename" : "sleek13-lend.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "33",
+      "filename" : "lst-under1.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\nLast Proving Location: /tmp/edunussystest821871980485062109/examples/working/sleek/lst-under1.slk_5:14_5:29\n\nERROR: at /tmp/edunussystest821871980485062109/examples/working/sleek/lst-under1.slk_5:5_5:10\nMessage: \nInv Check: Fail.(View ll:Under)\n\nException processed: Failure(\"\\nInv Check: Fail.(View ll:Under)\")\nerror at: \nSLEEK FAILURE (END)\n\nStop z3... 26 invocations \nStop Omega... 20 invocations \nSAT Count   : 60\nSAT % Hit   : 71.66%\nIMPLY Count : 12\nIMPLY % Hit : 25.%\nTime(cache overhead) : 0.002011 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.012095,94)\nTotal verification time: 0.034001 second(s)\n\tTime spent in main process: 0.017649 second(s)\n\tTime spent in child processes: 0.016352 second(s)"
+      ],
+      "arguments" : " --inv-test"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Valid",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "34",
+      "filename" : "lst-under2.slk",
+      "arguments" : " --inv-test"
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "66",
+      "filename" : "ll-under1a.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\nStop z3... 56 invocations \nStop Omega... 24 invocations \nSAT Count   : 174\nSAT % Hit   : 74.13%\nIMPLY Count : 22\nIMPLY % Hit : 50.%\nTime(cache overhead) : 0.004175 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.038368,224)\nTotal verification time: 0.057565 second(s)\n\tTime spent in main process: 0.029925 second(s)\n\tTime spent in child processes: 0.02764 second(s)"
+      ],
+      "arguments" : "  --inv-test --baga-xpure "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "49",
+      "filename" : "ll-under1b.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\nLast Proving Location: /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1b.slk_10:16_10:37\n\nERROR: at /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1b.slk_10:5_10:12\nMessage: \nInv Check: Fail.(View ll:Over)\n\nException processed: Failure(\"\\nInv Check: Fail.(View ll:Over)\")\nerror at: \nSLEEK FAILURE (END)\n\nStop z3... 42 invocations \nStop Omega... 16 invocations \nSAT Count   : 159\nSAT % Hit   : 78.61%\nIMPLY Count : 28\nIMPLY % Hit : 71.42%\nTime(cache overhead) : 0.009587 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.031577,207)\nTotal verification time: 0.051137 second(s)\n\tTime spent in main process: 0.031409 second(s)\n\tTime spent in child processes: 0.019728 second(s)"
+      ],
+      "arguments" : "  --inv-test --baga-xpure "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "105",
+      "filename" : "ll-under1c.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\nLast Proving Location: /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1c.slk_10:16_10:37\n\nERROR: at /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1c.slk_10:5_10:12\nMessage: \nInv Check: Fail.(View ll:Under)\n\nException processed: Failure(\"\\nInv Check: Fail.(View ll:Under)\")\nerror at: \nSLEEK FAILURE (END)\n\nStop z3... 100 invocations \nStop Omega... 80 invocations \nSAT Count   : 312\nSAT % Hit   : 75.96%\nIMPLY Count : 41\nIMPLY % Hit : 39.02%\nTime(cache overhead) : 0.018892 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.067837,437)\nTotal verification time: 0.110141 second(s)\n\tTime spent in main process: 0.054257 second(s)\n\tTime spent in child processes: 0.055884 second(s)"
+      ],
+      "arguments" : "  --inv-test --baga-xpure "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "64",
+      "filename" : "ll-under1d.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\n!!! **WARNING****astsimp.ml#2196:View defn for ll has precise invariant\n\nStop z3... 66 invocations \nStop Omega... 47 invocations \nSAT Count   : 195\nSAT % Hit   : 70.76%\nIMPLY Count : 15\nIMPLY % Hit : 40.%\nTime(cache overhead) : 0.006354 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.032968,260)\nTotal verification time: 0.066541 second(s)\n\tTime spent in main process: 0.032338 second(s)\n\tTime spent in child processes: 0.034203 second(s)"
+      ],
+      "arguments" : "  --inv-test --baga-xpure "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "116",
+      "filename" : "ll-under1e.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\nLast Proving Location: /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1e.slk_10:16_10:37\n\nERROR: at /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1e.slk_10:5_10:12\nMessage: \nInv Check: Fail.(View ll:Over)\n\nException processed: Failure(\"\\nInv Check: Fail.(View ll:Over)\")\nerror at: \nSLEEK FAILURE (END)\n\nStop z3... 109 invocations \nStop Omega... 80 invocations \nSAT Count   : 316\nSAT % Hit   : 72.46%\nIMPLY Count : 38\nIMPLY % Hit : 42.1%\nTime(cache overhead) : 0.008951 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.072675,436)\nTotal verification time: 0.120577 second(s)\n\tTime spent in main process: 0.055077 second(s)\n\tTime spent in child processes: 0.0655 second(s)"
+      ],
+      "arguments" : "  --inv-test --baga-xpure "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "114",
+      "filename" : "ll-under1f.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Output was:\n!!! **tpdispatcher.ml#492:init_tp by default: \n!!! **tpdispatcher.ml#391:set_tp z3Starting z3... \n\nStarting Omega.../usr/local/bin/oc\n\nLast Proving Location: /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1f.slk_10:16_10:37\n\nERROR: at /tmp/edunussystest821871980485062109/examples/working/sleek/ll-under1f.slk_10:5_10:12\nMessage: \nInv Check: Fail.(View ll:Under)\n\nException processed: Failure(\"\\nInv Check: Fail.(View ll:Under)\")\nerror at: \nSLEEK FAILURE (END)\n\nStop z3... 108 invocations \nStop Omega... 80 invocations \nSAT Count   : 296\nSAT % Hit   : 71.28%\nIMPLY Count : 32\nIMPLY % Hit : 28.12%\nTime(cache overhead) : 0.010799 (seconds)\n\n0 false contexts at: ()\n\n!!! log(small):(0.06949,410)\nTotal verification time: 0.118213 second(s)\n\tTime spent in main process: 0.048149 second(s)\n\tTime spent in child processes: 0.070064 second(s)"
+      ],
+      "arguments" : "  --inv-test --baga-xpure "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "14"
+        }
+      ],
+      "executionTime" : "67",
+      "filename" : "baga-test-eps.slk",
+      "arguments" : " --eps"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "14"
+        }
+      ],
+      "executionTime" : "58",
+      "filename" : "baga-test.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "14"
+        }
+      ],
+      "executionTime" : "65",
+      "filename" : "baga-test-2.slk",
+      "arguments" : " --dis-baga-xpure --dis-eps"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "14"
+        }
+      ],
+      "executionTime" : "88",
+      "filename" : "baga-test-2.slk",
+      "arguments" : " --baga-xpure"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        }
+      ],
+      "executionTime" : "38",
+      "filename" : "symb-diff.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "190",
+      "filename" : "xpure3nodes.slk",
+      "arguments" : ""
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        }
+      ],
+      "executionTime" : "574",
+      "filename" : "infer/app-inv.slk",
+      "arguments" : " --inv --dis-eps"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        }
+      ],
+      "executionTime" : "64",
+      "filename" : "infer/app-inv2.slk",
+      "arguments" : " --inv --dis-eps"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        }
+      ],
+      "executionTime" : "77",
+      "filename" : "infer/infer1.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        }
+      ],
+      "executionTime" : "96",
+      "filename" : "infer/infer2.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Val",
+          "key" : "2"
+        }
+      ],
+      "executionTime" : "43",
+      "filename" : "infer/infer4.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        }
+      ],
+      "executionTime" : "702",
+      "filename" : "infer/infer5.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "499",
+      "filename" : "infer/infer5a.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        }
+      ],
+      "executionTime" : "46",
+      "filename" : "infer/infer6.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        }
+      ],
+      "executionTime" : "78",
+      "filename" : "infer/infer7.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "16"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "17"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "18"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "19"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "20"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "21"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "22"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "23"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "24"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "25"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "26"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "27"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "28"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "29"
+        }
+      ],
+      "executionTime" : "150",
+      "filename" : "infer/infer8.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        }
+      ],
+      "executionTime" : "139",
+      "filename" : "infer/infer9.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "12"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "13"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        }
+      ],
+      "executionTime" : "115",
+      "filename" : "infer/infer10.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        }
+      ],
+      "executionTime" : "39",
+      "filename" : "infer/infer11.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Fail",
+          "key" : "8"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "12"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "13"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "16"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "17"
+        }
+      ],
+      "executionTime" : "143",
+      "filename" : "infer/infer12.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "9"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "12"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "13"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "16"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "17"
+        }
+      ],
+      "executionTime" : "139",
+      "filename" : "infer/infer12.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        }
+      ],
+      "executionTime" : "167",
+      "filename" : "infer/infer13.slk",
+      "arguments" : " --sa-en-cont"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "16"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "17"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "18"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "19"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "20"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "21"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "22"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "23"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "24"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "25"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "26"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "27"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "28"
+        }
+      ],
+      "executionTime" : "292",
+      "filename" : "infer/infer14.slk",
+      "arguments" : " --sa-en-pure-field"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        }
+      ],
+      "executionTime" : "188",
+      "filename" : "infer/infer15.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        }
+      ],
+      "executionTime" : "211",
+      "filename" : "infer/infer16.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "13"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "16"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "17"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "18"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "19"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "20"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "21"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "22"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "23"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "24"
+        }
+      ],
+      "executionTime" : "51",
+      "filename" : "ann2.slk",
+      "arguments" : "  --imm --en-imm-inv --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        }
+      ],
+      "executionTime" : "117",
+      "filename" : "imm/imm1.slk",
+      "arguments" : "  --imm --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        }
+      ],
+      "executionTime" : "105",
+      "filename" : "imm/imm2.slk",
+      "arguments" : "  --imm --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        }
+      ],
+      "executionTime" : "62",
+      "filename" : "imm/imm3.slk",
+      "arguments" : "  --imm --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "1"
+        }
+      ],
+      "executionTime" : "48",
+      "filename" : "imm/imm4.slk",
+      "arguments" : "  --imm --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "6"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "10"
+        }
+      ],
+      "executionTime" : "88",
+      "filename" : "imm/imm-hard.slk",
+      "arguments" : "  --imm --eps"
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "9",
+      "filename" : "imm-field/sleek01.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Invalid flag --field-ann"
+      ],
+      "arguments" : "  --field-ann --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "11",
+      "filename" : "imm-field/sleek02.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Invalid flag --field-ann"
+      ],
+      "arguments" : "  --field-ann --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "12",
+      "filename" : "imm-field/sleek03.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Invalid flag --field-ann"
+      ],
+      "arguments" : "  --field-ann --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        }
+      ],
+      "executionTime" : "35",
+      "filename" : "eps.slk",
+      "arguments" : "  --dis-imm "
+    },
+    {
+      "command" : "sleek",
+      "executionTime" : "11",
+      "filename" : "imm-field/sleek05.slk",
+      "remarks" : [
+        "Binary failed to execute. Please investigate",
+        "Invalid flag --field-ann"
+      ],
+      "arguments" : "  --field-ann --etcsu1 "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        }
+      ],
+      "executionTime" : "21",
+      "filename" : "classic/classic1.slk",
+      "arguments" : " "
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        }
+      ],
+      "executionTime" : "20",
+      "filename" : "classic/classic1.slk",
+      "arguments" : "  --classic"
+    },
+    {
+      "command" : "sleek",
+      "results" : [
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "0"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "1"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "2"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "3"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "4"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "5"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "6"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "7"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "8"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "9"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "10"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "11"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "12"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "13"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "14"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "15"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "16"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "17"
+        },
+        {
+          "actual" : "Valid",
+          "expected" : "Valid",
+          "key" : "18"
+        },
+        {
+          "actual" : "Fail",
+          "expected" : "Fail",
+          "key" : "19"
+        }
+      ],
+      "executionTime" : "29",
+      "filename" : "classic/classic1a.slk",
+      "arguments" : " "
+    }
+  ],
+  "revision" : "79da9697f0c2",
+  "datetime" : "2015-09-17T20:06:47.278+08:00",
+  "hostname" : "soccf-plser2-05\n"
+}
