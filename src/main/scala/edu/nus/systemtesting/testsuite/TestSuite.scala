@@ -54,14 +54,12 @@ class TestSuite(tests: List[TestCase],
       else
         Seq(result.command, trimmedArgs, result.filename).mkString(" ")
 
-    // Pad this print statement to some width
-    // n.b. lines like:
-    //   Last Proving Location: $PROJDIR/examples/working/sleek/ll-under1f.slk_10:16_10:37
-    // can be ~100 chars long b/c the projdir is
-    //   /tmp/edunussystest3521667651181831864/
+    reporter.print(execCmd)
 
-    val pad = 70 - execCmd.length()
-    reporter.print(execCmd + " " * pad)
+    // Ensure the "Passed"/"Failed" result is printed on ResultCol
+    val ResultCol = 70
+    val pad = ResultCol - execCmd.length()
+    reporter.print(if (pad >= 0) {" " * pad} else {"\n" + " " * ResultCol})
 
     val resStr = result.result match {
       case TestPassed => reporter.inColor(ColorGreen)("Passed")
