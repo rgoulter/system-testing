@@ -25,6 +25,7 @@ object Main {
           case "hip" => runHipTests(repoDir, rev)
           case "all" => runAllTests(repoDir, rev)
           case "svcomp" => runSVCompTests
+          case "diff" => runSuiteDiff(repoDir, config.rev1, config.rev2)
           case _ => showHelpText
         }
       }
@@ -176,6 +177,20 @@ object Main {
   private def runSVCompTests(): Unit = {
     reporter.header("Running SVComp Tests")
     SVCompTestSuiteUsage.run()
+  }
+
+  private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
+    (rev1, rev2) match {
+      case (Some(r1), Some(r2)) => {
+        println(s"Diff on $r1 -> $r2")
+      }
+      case (Some(r1), None) => {
+        println(s"Diff on $r1 -> 'head'")
+      }
+      case (None, _) => {
+        println(s"Diff on 'head^' -> 'head'")
+      }
+    }
   }
 
   private def showHelpText(): Unit = {

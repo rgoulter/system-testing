@@ -12,10 +12,17 @@ object ConfigDefaults {
 }
 
 case class AppConfig(repoDir: Path,
-                     rev: Option[String] = None,
+                     revs: List[String] = List(),
                      command: String = "none",
                      timeout: Int = DefaultTimeout,
-                     significantTimeThreshold: Int = DefaultSignificantTimeThreshold)
+                     significantTimeThreshold: Int = DefaultSignificantTimeThreshold) {
+  def rev(): Option[String] = revs.headOption
+
+  def rev1(): Option[String] = rev
+
+  def rev2(): Option[String] =
+    if (revs.length == 2) Some(revs(1)) else None
+}
 
 object AppConfig {
   /**
@@ -57,22 +64,27 @@ object AppConfig {
     cmd("sleek") action { (_, c) =>
         c.copy(command = "sleek") } text("run sleek test cases") children(
           arg[String]("<revision>") optional() action { (x, c) =>
-          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          c.copy(revs = List(x)) } text("optional revision of project to test against")
           )
     cmd("hip") action { (_, c) =>
         c.copy(command = "hip") } text("run hip test cases") children(
           arg[String]("<revision>") optional() action { (x, c) =>
-          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          c.copy(revs = List(x)) } text("optional revision of project to test against")
           )
     cmd("all") action { (_, c) =>
         c.copy(command = "all") } text("run sleek and hip test cases") children(
           arg[String]("<revision>") optional() action { (x, c) =>
-          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          c.copy(revs = List(x)) } text("optional revision of project to test against")
           )
     cmd("svcomp") action { (_, c) =>
         c.copy(command = "svcomp") } text("run svcomp test cases") children(
           arg[String]("<revision>") optional() action { (x, c) =>
-          c.copy(rev = Some(x)) } text("optional revision of project to test against")
+          c.copy(revs = List(x)) } text("optional revision of project to test against")
+          )
+    cmd("diff") action { (_, c) =>
+        c.copy(command = "diff") } text("diff the sleek/hip test results") children(
+          arg[String]("<rev1 [rev2]>") optional() maxOccurs(2) action { (x, c) =>
+          c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current).")
           )
   }
 }
