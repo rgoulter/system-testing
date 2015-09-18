@@ -1,5 +1,7 @@
 package edu.nus.systemtesting.testsuite
 
+import edu.nus.systemtesting.TestCaseResult
+
 /**
  * For comparing two [[TestSuiteResult]]s. Does not assume that the two
  * results were computed from the same list of [[TestCase]]s, since
@@ -8,9 +10,32 @@ package edu.nus.systemtesting.testsuite
  * Result of the comparison indicates the differences in results of the
  * [[TestSuite]] executions, and notes incompatibilities.
  *
+ * Use [[TestSuiteComparison.apply]] to compute the 'diff' of two
+ * [[TestSuiteResult]]s.
+ *
  * @author richardg
  */
-class TestSuiteComparison() {
+class TestSuiteComparison(val oldRevision: String,
+                          val curRevision: String,
+                          val argsChangedTests: List[(TestCaseResult, TestCaseResult)],
+                          val removedTests: List[TestCaseResult],
+                          val newTests: List[TestCaseResult],
+                          val nowSuccessfullyRuns: List[(TestCaseResult, TestCaseResult)],
+                          val usedToSuccessfullyRun: List[(TestCaseResult, TestCaseResult)],
+                          val nowPasses: List[(TestCaseResult, TestCaseResult)],
+                          val usedToPass: List[(TestCaseResult, TestCaseResult)],
+                          val diffDiffs: List[(TestCaseResult, TestCaseResult)]) {
+  val unchanged = {
+    List(argsChangedTests,
+         removedTests,
+         newTests,
+         nowSuccessfullyRuns,
+         usedToSuccessfullyRun,
+         nowPasses,
+         usedToPass,
+         diffDiffs)
+      .forall(_.isEmpty)
+  }
 }
 
 object TestSuiteComparison {
@@ -104,5 +129,17 @@ object TestSuiteComparison {
     })
 
     // Now construct TestSuiteComparison from the above
+    new TestSuiteComparison(
+      oldRevision = oldRevision,
+      curRevision = curRevision,
+      argsChangedTests = argsChangedTests,
+      removedTests = removedTests,
+      newTests = newTests,
+      nowSuccessfullyRuns = nowSuccessfullyRuns,
+      usedToSuccessfullyRun = usedToSuccessfullyRun,
+      nowPasses = nowPasses,
+      usedToPass = usedToPass,
+      diffDiffs = diffDiffs
+    )
   }
 }
