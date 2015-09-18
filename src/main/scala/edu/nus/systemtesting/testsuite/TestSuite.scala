@@ -37,7 +37,7 @@ class TestSuite(tests: List[TestCase],
     reporter.println()
 
     // assuming the `hostname` command can't/won't fail
-    val hostname : String = "hostname" !!
+    val hostname : String = ("hostname" !!).trim()
     val now = DateTime.now()
     val suiteResult = TestSuiteResult(hostname, now, revision, testResults)
 
