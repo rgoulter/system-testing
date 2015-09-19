@@ -1,6 +1,9 @@
 package edu.nus.systemtesting.testsuite
 
 import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.output.GlobalReporter
+
+import GlobalReporter.reporter
 
 /**
  * For comparing two [[TestSuiteResult]]s. Does not assume that the two
@@ -36,10 +39,64 @@ class TestSuiteComparison(val oldRevision: String,
          diffDiffs)
       .forall(_.isEmpty)
   }
+
+  def displayResult(): Unit = {
+    reporter.header(s"Diff between results $oldRevision -> $curRevision")
+
+    if (unchanged) {
+      reporter.log("No differences.")
+      return
+    }
+
+    // Convenient way to display TestCaseResult
+    def tcrToString(tcr: TestCaseResult): String = {
+      import tcr.{ command, arguments, filename }
+      s"TC[$command, $arguments, $filename]"
+    }
+
+    if (!argsChangedTests.isEmpty) {
+      // TODO: at the moment, test cases haven't changed, so we don't need this.
+      println("argsChanged, but this shouldn't be the case")
+    }
+
+    if (!removedTests.isEmpty) {
+      // TODO: at the moment, test cases haven't changed, so we don't need this.
+      println("removedTests, but this shouldn't be the case")
+    }
+
+    if (!newTests.isEmpty) {
+      // TODO: at the moment, test cases haven't changed, so we don't need this.
+      println("newTests, but this shouldn't be the case")
+      newTests.foreach({ tc =>
+        reporter.log(s"* ${tcrToString(tc)}")
+      })
+    }
+
+    def reportListOfPairs(ls: List[(TestCaseResult, TestCaseResult)], title: String, sym: String = "*"): Unit = {
+      if (!ls.isEmpty) {
+        reporter.log(s"$title:")
+        ls.foreach({ case (_, tc) =>
+          // Just show the new TC, not the old one.
+          reporter.log(s"$sym ${tcrToString(tc)}")
+        })
+        reporter.println()
+      }
+    }
+
+    reportListOfPairs(nowSuccessfullyRuns, "Now runs successfully", "+")
+    reportListOfPairs(usedToSuccessfullyRun, "Used to run successfully", "-")
+
+    reportListOfPairs(nowPasses, "Now passes", "+")
+    reportListOfPairs(usedToPass, "Used to pass", "-")
+
+    // Might be useful to show the diffs.
+    // Might not be best to show this one last, also.
+    reportListOfPairs(diffDiffs, "Both fail, but different diffs", "*")
+  }
 }
 
 object TestSuiteComparison {
-  def apply(oldTS: TestSuiteResult, curTS: TestSuiteResult) {
+  def apply(oldTS: TestSuiteResult, curTS: TestSuiteResult): TestSuiteComparison = {
     // It can't be assumed that oldTS, currTS ran the same set of TestCases
     // (in terms of *SuiteUsage), since these can change over time as TestCases
     // are added, program flags change, etc.

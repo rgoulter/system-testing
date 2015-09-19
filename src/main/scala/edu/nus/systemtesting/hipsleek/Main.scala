@@ -12,6 +12,9 @@ import org.joda.time.format.ISODateTimeFormat
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import scala.io.Source
+import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.hg.Repository
+import edu.nus.systemtesting.testsuite.TestSuiteComparison
 
 class Results(val resultsDir: String = "results") {
   /**
@@ -120,7 +123,7 @@ object Main {
     runHipTests(repoDir, rev)
   }
 
-  private def runSleekTests(repoDir: Path, rev: Option[String]): Unit = {
+  private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
     // XXX: Assume repoDir is repo
     val repo = new Repository(repoDir)
     val revision = rev.getOrElse(repo.identify())
@@ -130,6 +133,8 @@ object Main {
         reporter.log(s"sleek testsuite results found for $revision.")
 
         testSuiteResult.displayResult() // CONFIG ME
+
+        Some(testSuiteResult)
       }
 
       // No results found, so, must run the prog. to get results
@@ -140,7 +145,7 @@ object Main {
     }
   }
 
-  private def runHipTests(repoDir: Path, rev: Option[String]): Unit = {
+  private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
     // XXX: Assume repoDir is repo
     val repo = new Repository(repoDir)
     val revision = rev.getOrElse(repo.identify())
@@ -150,6 +155,8 @@ object Main {
         reporter.log(s"Found hip testsuite results for $revision.")
 
         testSuiteResult.displayResult() // CONFIG ME
+
+        Some(testSuiteResult)
       }
 
       // No results found, so, must run the prog. to get results
@@ -160,7 +167,9 @@ object Main {
     }
   }
 
-  private def runTestsWith(repoDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
+  private def runTestsWith(repoDir: Path, rev: Option[String])
+                          (f: (Path, String) => Option[TestSuiteResult]):
+      Option[TestSuiteResult] = {
     val isRepo = (repoDir resolve ".hg").toFile().exists()
 
     if (isRepo) {
@@ -179,7 +188,9 @@ object Main {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo(repoDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
+  private def runTestsWithRepo(repoDir: Path, rev: Option[String])
+                              (f: (Path, String) => Option[TestSuiteResult]):
+      Option[TestSuiteResult] = {
     // Prepare the repo, if necessary
     reporter.log("Preparing repo...")
 
@@ -215,11 +226,12 @@ object Main {
     reporter.println()
 
     // Run the tests
-    if (prepWorked)
-      f(projectDir, revision)
+    val rtn = if (prepWorked) f(projectDir, revision) else None
 
     // Finished running the tests, clean up.
     tmpDir.toFile().delete()
+
+    rtn
   }
 
   /**
@@ -227,7 +239,9 @@ object Main {
    * It *is* assumed that `projectDir` will be used for making, running the
    * executables/tests.
    */
-  private def runTestsWithFolder(projectDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
+  private def runTestsWithFolder(projectDir: Path, rev: Option[String])
+                                (f: (Path, String) => Option[TestSuiteResult]):
+      Option[TestSuiteResult] = {
     // i.e. LIVE, "in place"
     val revision = rev.getOrElse("unknown")
 
@@ -243,12 +257,12 @@ object Main {
     // Run the tests
     if (prepWorked)
       f(projectDir, revision)
-
-    (prepWorked, projectDir, revision)
+    else
+      None
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedSleekTests(projectDir: Path, revision: String): TestSuiteResult = {
+  private def runPreparedSleekTests(projectDir: Path, revision: String): Option[TestSuiteResult] = {
     reporter.header("Running Sleek Tests")
 
     val significantTime = 1 // CONFIG ME
@@ -259,11 +273,11 @@ object Main {
 
     (new Results).saveTestSuiteResult(res, "sleek")
 
-    res
+    Some(res)
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedHipTests(projectDir: Path, revision: String): TestSuiteResult = {
+  private def runPreparedHipTests(projectDir: Path, revision: String): Option[TestSuiteResult] = {
     reporter.header("Running Hip Tests")
 
     val significantTime = 1 // CONFIG ME
@@ -274,7 +288,7 @@ object Main {
 
     (new Results).saveTestSuiteResult(res, "hip")
 
-    res
+    Some(res)
   }
 
   private def runSVCompTests(): Unit = {
@@ -283,15 +297,49 @@ object Main {
   }
 
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
+    /*
+     * The hip/sleek disjunction in saving/loading results is a bit annoying for now,
+     * makes "load [or-else-run] to get results" hard, makes "diff" tedious.
+     * Surely there's some elegant way to achieve this?
+     *
+     * XXX: For now, diff only on Sleek tests (since Hip takes ~ 2 + 9 minutes to run).
+     */
+
+    val repo = new Repository(repoDir)
+
     (rev1, rev2) match {
       case (Some(r1), Some(r2)) => {
         println(s"Diff on $r1 -> $r2")
+
+        diffSuiteResults(repoDir, r1, r2)
       }
       case (Some(r1), None) => {
         println(s"Diff on $r1 -> 'head'")
+        val r2 = repo.identify()
+
+        diffSuiteResults(repoDir, r1, r2)
       }
       case (None, _) => {
         println(s"Diff on 'head^' -> 'head'")
+        // TODO
+      }
+    }
+  }
+
+  private def diffSuiteResults(repoDir: Path, rev1: String, rev2: String): Unit = {
+    // n.b. `run` is misnomer here; will load if results available
+    val maybeOldRes = runSleekTests(repoDir, Some(rev1))
+    val maybeCurRes = runSleekTests(repoDir, Some(rev2))
+
+    (maybeOldRes, maybeCurRes) match {
+      case (Some(oldTSRes), Some(curTSRes)) => {
+        val diff = TestSuiteComparison(oldTSRes, curTSRes)
+
+        diff.displayResult()
+      }
+
+      case _ => {
+        reporter.log(s"Results unavailable for one of $rev1 or $rev2")
       }
     }
   }
