@@ -64,7 +64,7 @@ case class TestCaseResult(val command: Path,
    * Useful for finding tests which differ only in `arguments`.
    */
   lazy val cmdFnKey =
-    (command, filename, sortedArgs)
+    (command, filename)
 
   /**
    * @param threshold the min value `executionTime` needs to be to be shown.
