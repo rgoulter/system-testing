@@ -16,10 +16,11 @@ import GlobalReporter.reporter
 case class TestSuiteResult(val hostname: String,
                            val datetime: DateTime,
                            val repoRevision : String,
-                           val results : Iterable[TestCaseResult]) {
-  lazy val (successes, failures) = results.toList.partition(_.result equals TestPassed)
+                           resultsIter : Iterable[TestCaseResult]) {
+  val results = resultsIter.toList
+  lazy val (successes, failures) = results.partition(_.result equals TestPassed)
 
-  def generateTestStatistics(writer: PrintWriter): Unit = {
+  def generateTestStatistics(): Unit = {
     // There's probably a tidier way to do this with some printf function, but..
     val TotalMsg = "Total number of tests:        "
     val PassMsg  = "Total number of tests passed: "
@@ -27,5 +28,11 @@ case class TestSuiteResult(val hostname: String,
     reporter.log(TotalMsg + (successes.length + failures.length))
     reporter.println(reporter.inColor(ColorGreen)(PassMsg + successes.length))
     reporter.println(reporter.inColor(ColorRed)(FailMsg + failures.length))
+  }
+
+  def displayResult(threshold: Long = 1000L): Unit = {
+    results.foreach(_.displayResult(threshold))
+
+    generateTestStatistics()
   }
 }

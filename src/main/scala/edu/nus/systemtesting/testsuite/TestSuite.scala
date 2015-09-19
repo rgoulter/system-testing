@@ -1,6 +1,5 @@
 package edu.nus.systemtesting.testsuite
 
-import java.io.PrintWriter
 import scala.collection.mutable.MutableList
 import scala.sys.process.stringToProcess
 import org.joda.time.DateTime
@@ -39,6 +38,8 @@ class TestSuite(tests: List[TestCase],
     val hostname : String = ("hostname" !!).trim()
     val now = DateTime.now()
     val suiteResult = TestSuiteResult(hostname, now, revision, testResults)
+
+    suiteResult generateTestStatistics()
 
     suiteResult
   }

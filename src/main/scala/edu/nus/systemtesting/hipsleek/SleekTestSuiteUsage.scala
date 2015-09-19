@@ -160,7 +160,6 @@ class SleekTestSuiteUsage(projectDir: Path,
 
     val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
-    suiteResult generateTestStatistics(new PrintWriter(System.out))
 
     suiteResult
   }

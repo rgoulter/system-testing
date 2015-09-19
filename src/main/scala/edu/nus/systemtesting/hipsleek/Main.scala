@@ -113,6 +113,53 @@ object Main {
     }
   }
 
+  private def runAllTests(repoDir: Path, rev: Option[String]): Unit = {
+    // XXX: The logic is somewhat involved at the moment to check both results
+    //      present, so, better to just delegate
+    runSleekTests(repoDir, rev)
+    runHipTests(repoDir, rev)
+  }
+
+  private def runSleekTests(repoDir: Path, rev: Option[String]): Unit = {
+    // XXX: Assume repoDir is repo
+    val repo = new Repository(repoDir)
+    val revision = rev.getOrElse(repo.identify())
+
+    (new Results).resultsFor("sleek", revision) match {
+      case Some(testSuiteResult) if !repo.isDirty() => {
+        reporter.log(s"sleek testsuite results found for $revision.")
+
+        testSuiteResult.displayResult() // CONFIG ME
+      }
+
+      // No results found, so, must run the prog. to get results
+      case None => {
+        reporter.log("sleek testsuite results not found, running test suite...")
+        runTestsWith(repoDir, rev)(runPreparedSleekTests)
+      }
+    }
+  }
+
+  private def runHipTests(repoDir: Path, rev: Option[String]): Unit = {
+    // XXX: Assume repoDir is repo
+    val repo = new Repository(repoDir)
+    val revision = rev.getOrElse(repo.identify())
+
+    (new Results).resultsFor("hip", revision) match {
+      case Some(testSuiteResult) if !repo.isDirty() => {
+        reporter.log(s"Found hip testsuite results for $revision.")
+
+        testSuiteResult.displayResult() // CONFIG ME
+      }
+
+      // No results found, so, must run the prog. to get results
+      case None => {
+        reporter.log("hip testsuite results not found, running test suite...")
+        runTestsWith(repoDir, rev)(runPreparedHipTests)
+      }
+    }
+  }
+
   private def runTestsWith(repoDir: Path, rev: Option[String])(f: (Path, String) => Unit): Unit = {
     val isRepo = (repoDir resolve ".hg").toFile().exists()
 
@@ -198,21 +245,6 @@ object Main {
       f(projectDir, revision)
 
     (prepWorked, projectDir, revision)
-  }
-
-  private def runAllTests(repoDir: Path, rev: Option[String]): Unit = {
-    runTestsWith(repoDir, rev) { (projectDir, revision) =>
-      runPreparedSleekTests(projectDir, revision)
-      runPreparedHipTests(projectDir, revision)
-    }
-  }
-
-  private def runSleekTests(repoDir: Path, rev: Option[String]): Unit = {
-    runTestsWith(repoDir, rev)(runPreparedSleekTests)
-  }
-
-  private def runHipTests(repoDir: Path, rev: Option[String]): Unit = {
-    runTestsWith(repoDir, rev)(runPreparedHipTests)
   }
 
   /** Assumes that the project dir has been prepared successfully */
