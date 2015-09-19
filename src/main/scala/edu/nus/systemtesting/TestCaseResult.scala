@@ -45,7 +45,7 @@ case class TestCaseResult(val command: Path,
 
   /** Equivalence val, so that `" --a --b"` is the same as `"--b --a"`. */
   lazy val sortedArgs =
-    (arguments trim() split "\\s*" sorted) mkString " "
+    (arguments trim() split "\\s+" sorted) mkString " "
 
   def expected() = results match {
     case Left(_) => List[String]()
