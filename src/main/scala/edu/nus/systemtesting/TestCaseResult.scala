@@ -26,11 +26,11 @@ case class TestCaseResult(val command: Path,
     case Right(res) => if (res.forall(_.passed)) TestPassed else TestFailed
   }
 
-  val diff: Array[Result] = results match {
+  val diff: List[Result] = results match {
     // Doesn't make sense to ask for diff in case of Left
-    case Left(_) => Array[Result]()
+    case Left(_) => List[Result]()
     case Right(resultUnits) =>
-      resultUnits.filterNot(_.passed).toArray
+      resultUnits.filterNot(_.passed).toList
   }
 
   val remarks: Array[String] = results match {
