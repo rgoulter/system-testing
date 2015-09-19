@@ -100,7 +100,7 @@ class TestSuiteComparisonSpec extends FlatSpec {
 
   // test2 still fails, but now differently
   val ResultWithDiffDiffs = results("R1", List(
-    tcRes("test1", "", List("a" -> "a", "b" -> "a")),
+    tcRes("test1", "", List("a" -> "a", "b" -> "b")),
     tcRes("test2", "", List("a" -> "b", "b" -> "b"))
   ))
 
