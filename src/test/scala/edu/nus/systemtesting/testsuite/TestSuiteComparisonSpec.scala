@@ -109,7 +109,13 @@ class TestSuiteComparisonSpec extends FlatSpec {
   //   argsChangedTests
   "TestSuiteResult Diff" should "compute diff for args changed" in {
     val diff = TestSuiteComparison(ControlResult, ResultWithArgsChanged)
-    assert(diff.argsChangedTests.length == 1)
+
+    // dupl. from above
+    val oldTC = tcRes("test1", "", List("a" -> "a", "b" -> "b"))
+    val curTC = tcRes("test1", "--arg1", List("a" -> "a", "b" -> "b"))
+    val expected = List(oldTC -> curTC)
+
+    assertResult(expected)(diff.argsChangedTests)
   }
 
   it should "compute no diff for args changed (when absent)" in {
