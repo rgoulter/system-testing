@@ -21,3 +21,8 @@ libraryDependencies += "com.github.scopt" %% "scopt" % "3.3.0"
 resolvers += Resolver.sonatypeRepo("public")
 
 mainClass in Compile := Some("edu.nus.systemtesting.hipsleek.Main")
+
+
+import com.github.retronym.SbtOneJar._
+
+oneJarSettings
