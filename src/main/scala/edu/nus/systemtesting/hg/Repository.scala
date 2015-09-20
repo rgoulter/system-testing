@@ -5,11 +5,16 @@ import java.io.File
 import edu.nus.systemtesting.Runnable
 import java.nio.file.Path
 
+class UnknownRevisionException(badRev: String, repoDir: Path)
+    extends IllegalArgumentException(s"Bad revision: $badRev in HG repo $repoDir")
+
 /**
  * For modelling non-destructive mercurial commands on a repository.
  * @author richardg
  */
 class Repository(dir: Path) {
+  require((dir resolve ".hg") toFile() exists, "dir must be an HG repository")
+
   val repoDir = dir toFile
 
   /**
@@ -34,7 +39,10 @@ class Repository(dir: Path) {
 
     val execOutp = Runnable.executeProc(proc)
 
-    execOutp.output.trim()
+    if (execOutp.exitValue == 0)
+      execOutp.output.trim()
+    else
+      throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
 
   def isDirty(): Boolean = {

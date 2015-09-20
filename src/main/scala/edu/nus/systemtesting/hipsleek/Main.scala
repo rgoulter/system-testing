@@ -126,7 +126,7 @@ object Main {
   private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
     // XXX: Assume repoDir is repo
     val repo = new Repository(repoDir)
-    val revision = rev.getOrElse(repo.identify())
+    val revision = repo.identify(rev)
 
     (new Results).resultsFor("sleek", revision) match {
       case Some(testSuiteResult) if !repo.isDirty() => {
@@ -148,7 +148,7 @@ object Main {
   private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
     // XXX: Assume repoDir is repo
     val repo = new Repository(repoDir)
-    val revision = rev.getOrElse(repo.identify())
+    val revision = repo.identify(rev)
 
     (new Results).resultsFor("hip", revision) match {
       case Some(testSuiteResult) if !repo.isDirty() => {
@@ -195,7 +195,7 @@ object Main {
     reporter.log("Preparing repo...")
 
     val repo = new Repository(repoDir)
-    val revision = rev.getOrElse(repo.identify())
+    val revision = repo.identify(rev)
 
     val isDirty = rev match {
       // Assumes that given rev isn't a "dirty" one;
