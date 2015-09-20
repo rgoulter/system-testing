@@ -116,22 +116,42 @@ object Main {
     }
   }
 
-  private def runAllTests(repoDir: Path, rev: Option[String]): Unit = {
-    // XXX: The logic is somewhat involved at the moment to check both results
-    //      present, so, better to just delegate
-    runSleekTests(repoDir, rev)
-    runHipTests(repoDir, rev)
+  private def runAllTests(repoDir: Path, rev: Option[String]):
+      Option[(TestSuiteResult, TestSuiteResult)] = {
+    (for {
+      sleekRes <- results(repoDir, rev, "sleek")
+      hipRes <- results(repoDir, rev, "hip")
+    } yield (sleekRes, hipRes)) match {
+      case rtn@Some((sleekTSRes, hipTSRes)) => {
+
+        val revision = sleekTSRes.repoRevision
+
+        reporter.log(s"Found sleek testsuite results for $revision.")
+        sleekTSRes.displayResult() // CONFIG ME
+        hipTSRes.displayResult() // CONFIG ME
+
+        rtn
+      }
+
+      // No results found, so, must run the prog. to get results
+      case None => {
+        reporter.log("sleek,hip testsuite results not found, running test suites...")
+        runTestsWith(repoDir, rev) { case (projDir, revision) =>
+          for {
+            sleek <- runPreparedSleekTests(projDir, revision)
+            hip   <- runPreparedHipTests(projDir, revision)
+          } yield (sleek, hip)
+        }
+      }
+    }
   }
 
   private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    // XXX: Assume repoDir is repo
-    val repo = new Repository(repoDir)
-    val revision = repo.identify(rev)
+    results(repoDir, rev, "sleek") match {
+      case Some(testSuiteResult) => {
+        val revision = testSuiteResult.repoRevision
 
-    (new Results).resultsFor("sleek", revision) match {
-      case Some(testSuiteResult) if !repo.isDirty() => {
-        reporter.log(s"sleek testsuite results found for $revision.")
-
+        reporter.log(s"Found sleek testsuite results for $revision.")
         testSuiteResult.displayResult() // CONFIG ME
 
         Some(testSuiteResult)
@@ -146,14 +166,11 @@ object Main {
   }
 
   private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    // XXX: Assume repoDir is repo
-    val repo = new Repository(repoDir)
-    val revision = repo.identify(rev)
+    results(repoDir, rev, "hip") match {
+      case Some(testSuiteResult) => {
+        val revision = testSuiteResult.repoRevision
 
-    (new Results).resultsFor("hip", revision) match {
-      case Some(testSuiteResult) if !repo.isDirty() => {
         reporter.log(s"Found hip testsuite results for $revision.")
-
         testSuiteResult.displayResult() // CONFIG ME
 
         Some(testSuiteResult)
@@ -167,9 +184,28 @@ object Main {
     }
   }
 
-  private def runTestsWith(repoDir: Path, rev: Option[String])
-                          (f: (Path, String) => Option[TestSuiteResult]):
-      Option[TestSuiteResult] = {
+  private def results(repoDir: Path, rev: Option[String], name: String): Option[TestSuiteResult] = {
+    val isRepo = (repoDir resolve ".hg").toFile().exists()
+
+    if (isRepo) {
+      val repo = new Repository(repoDir)
+      val revision = repo.identify(rev)
+
+      if (!repo.isDirty()) {
+        // TODO: Also should check if the results we get is 'the same' as
+        //       the tests we want to run.
+        (new Results).resultsFor("hip", revision)
+      } else {
+        None
+      }
+    } else {
+      None
+    }
+  }
+
+  private def runTestsWith[T](repoDir: Path, rev: Option[String])
+                             (f: (Path, String) => Option[T]):
+      Option[T] = {
     val isRepo = (repoDir resolve ".hg").toFile().exists()
 
     if (isRepo) {
@@ -188,9 +224,9 @@ object Main {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo(repoDir: Path, rev: Option[String])
-                              (f: (Path, String) => Option[TestSuiteResult]):
-      Option[TestSuiteResult] = {
+  private def runTestsWithRepo[T](repoDir: Path, rev: Option[String])
+                                (f: (Path, String) => Option[T]):
+      Option[T] = {
     // Prepare the repo, if necessary
     reporter.log("Preparing repo...")
 
@@ -239,9 +275,9 @@ object Main {
    * It *is* assumed that `projectDir` will be used for making, running the
    * executables/tests.
    */
-  private def runTestsWithFolder(projectDir: Path, rev: Option[String])
-                                (f: (Path, String) => Option[TestSuiteResult]):
-      Option[TestSuiteResult] = {
+  private def runTestsWithFolder[T](projectDir: Path, rev: Option[String])
+                                   (f: (Path, String) => Option[T]):
+      Option[T] = {
     // i.e. LIVE, "in place"
     val revision = rev.getOrElse("unknown")
 
