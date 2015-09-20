@@ -55,21 +55,27 @@ class TestSuiteComparison(val oldRevision: String,
     }
 
     if (!argsChangedTests.isEmpty) {
-      // TODO: at the moment, test cases haven't changed, so we don't need this.
-      println("argsChanged, but this shouldn't be the case")
+      reporter.log("Args changed:")
+      argsChangedTests foreach { case (oldTCR, curTCR) =>
+        reporter.log(s"${tcrToString(curTCR)}: args were `${oldTCR.arguments}`")
+      }
+      reporter.println()
     }
 
     if (!removedTests.isEmpty) {
-      // TODO: at the moment, test cases haven't changed, so we don't need this.
-      println("removedTests, but this shouldn't be the case")
+      reporter.log("Tests Removed:")
+      removedTests foreach { rmTCR =>
+        reporter.log(s"- ${tcrToString(rmTCR)}")
+      }
+      reporter.println()
     }
 
     if (!newTests.isEmpty) {
-      // TODO: at the moment, test cases haven't changed, so we don't need this.
-      println("newTests, but this shouldn't be the case")
+      reporter.log("Tests Added:")
       newTests.foreach({ tc =>
-        reporter.log(s"* ${tcrToString(tc)}")
+        reporter.log(s"+ ${tcrToString(tc)}")
       })
+      reporter.println()
     }
 
     def reportListOfPairs(ls: List[(TestCaseResult, TestCaseResult)], title: String, sym: String = "*"): Unit = {
@@ -87,11 +93,26 @@ class TestSuiteComparison(val oldRevision: String,
     reportListOfPairs(usedToSuccessfullyRun, "Used to run successfully", "-")
 
     reportListOfPairs(nowPasses, "Now passes", "+")
+
     reportListOfPairs(usedToPass, "Used to pass", "-")
 
     // Might be useful to show the diffs.
     // Might not be best to show this one last, also.
     reportListOfPairs(diffDiffs, "Both fail, but different diffs", "*")
+    if (!diffDiffs.isEmpty) {
+      reporter.log(s"Fails, but different diffs:")
+      diffDiffs.foreach({ case (oldTCR, curTCR) =>
+        val oldDiff = oldTCR diff
+        val curDiff = curTCR diff
+
+        reporter log s"* ${tcrToString(curTCR)}:"
+        reporter log s"Was:"
+        oldDiff foreach { res => reporter println res.toString() }
+        reporter log s"Now:"
+        curDiff foreach { res => reporter println res.toString() }
+      })
+      reporter.println()
+    }
   }
 }
 
