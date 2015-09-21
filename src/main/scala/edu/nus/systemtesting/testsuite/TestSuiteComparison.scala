@@ -40,8 +40,8 @@ class TestSuiteComparison(val oldRevision: String,
       .forall(_.isEmpty)
   }
 
-  def displayResult(): Unit = {
-    reporter.header(s"Diff between results $oldRevision -> $curRevision")
+  def display(name: String): Unit = {
+    reporter.header(s"Diff between $name results $oldRevision -> $curRevision")
 
     if (unchanged) {
       reporter.log("No differences.")

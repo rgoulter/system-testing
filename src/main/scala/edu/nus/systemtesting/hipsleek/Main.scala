@@ -330,27 +330,20 @@ object Main {
   }
 
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
-    /*
-     * The hip/sleek disjunction in saving/loading results is a bit annoying for now,
-     * makes "load [or-else-run] to get results" hard, makes "diff" tedious.
-     * Surely there's some elegant way to achieve this?
-     *
-     * XXX: For now, diff only on Sleek tests (since Hip takes ~ 2 + 9 minutes to run).
-     */
-
     val repo = new Repository(repoDir)
+
 
     (rev1, rev2) match {
       case (Some(r1), Some(r2)) => {
         println(s"Diff on $r1 -> $r2")
 
-        diffSuiteResults(repoDir, r1, r2)
+        diffSuiteResults(repoDir, r1, r2, sleekResultPairs)
       }
       case (Some(r1), None) => {
         println(s"Diff on $r1 -> 'head'")
         val r2 = repo.identify()
 
-        diffSuiteResults(repoDir, r1, r2)
+        diffSuiteResults(repoDir, r1, r2, sleekResultPairs)
       }
       case (None, _) => {
         println(s"Diff on 'head^' -> 'head'")
@@ -359,21 +352,56 @@ object Main {
     }
   }
 
-  private def diffSuiteResults(repoDir: Path, rev1: String, rev2: String): Unit = {
-    // n.b. `run` is misnomer here; will load if results available
-    val maybeOldRes = runSleekTests(repoDir, Some(rev1))
-    val maybeCurRes = runSleekTests(repoDir, Some(rev2))
+  /** Used for `diffSuiteResults`, to save typing / screen space. */
+  type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
-    (maybeOldRes, maybeCurRes) match {
-      case (Some(oldTSRes), Some(curTSRes)) => {
+  /** For use with `diffSuiteResults`, for running just sleek results. */
+  private def sleekResultPairs(repoDir: Path, rev1: String, rev2: String):
+      DiffableResults = {
+    (for {
+      oldRes <- runSleekTests(repoDir, Some(rev1))
+      curRes <- runSleekTests(repoDir, Some(rev2))
+    } yield ("sleek", oldRes, curRes)).toList
+  }
+
+  /** For use with `diffSuiteResults`, for running just hip results. */
+  private def hipResultPairs(repoDir: Path, rev1: String, rev2: String):
+      DiffableResults = {
+    (for {
+      oldRes <- runHipTests(repoDir, Some(rev1))
+      curRes <- runHipTests(repoDir, Some(rev2))
+    } yield ("hip", oldRes, curRes)).toList
+  }
+
+  /**
+   * For use with `diffSuiteResults`, for running both sleek, hip results.
+   *
+   * The way it is implemented, the output of `diffSuiteResults` won't combine
+   * the diff results together, so sleek diff will be followed by hip diff.
+   */
+  private def allResultPairs(repoDir: Path, rev1: String, rev2: String):
+      DiffableResults = {
+    (for {
+      (oldSleekRes, oldHipRes) <- runAllTests(repoDir, Some(rev1))
+      (curSleekRes, curHipRes) <- runAllTests(repoDir, Some(rev2))
+    } yield List(("sleek", oldSleekRes, curSleekRes),
+                 ("hip", oldHipRes, curHipRes))).toList.flatten
+  }
+
+  private def diffSuiteResults(repoDir: Path,
+                               rev1: String,
+                               rev2: String,
+                               resultsFor: (Path, String, String) => DiffableResults): Unit = {
+    val diffable = resultsFor(repoDir, rev1, rev2)
+
+    if (!diffable.isEmpty) {
+      diffable foreach { case (name, oldTSRes, curTSRes) =>
         val diff = TestSuiteComparison(oldTSRes, curTSRes)
 
-        diff.displayResult()
+        diff.display(name)
       }
-
-      case _ => {
-        reporter.log(s"Results unavailable for one of $rev1 or $rev2")
-      }
+    } else {
+      reporter.log(s"Results unavailable for one of $rev1 or $rev2")
     }
   }
 
