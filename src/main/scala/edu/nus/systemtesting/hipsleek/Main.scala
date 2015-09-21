@@ -16,23 +16,30 @@ object Main {
   def main(args: Array[String]): Unit = {
     val appCfg = AppConfig.load()
 
-    // Override options from loaded config with CLAs
-    AppConfig.CommandLineOptionsParser.parse(args, appCfg) match {
-      case Some(config) => {
-        import config.{ command, repoDir, rev }
+    // Override options from loaded config with CLAs,
+    // run with configuration.
+    AppConfig.CommandLineOptionsParser.parse(args, appCfg) foreach { config =>
+      val configuredMain = new ConfiguredMain(config)
+      configuredMain.run()
+    }
+  }
+}
 
-        // do stuff
-        command match {
-          case "sleek" => runSleekTests(repoDir, rev)
-          case "hip" => runHipTests(repoDir, rev)
-          case "all" => runAllTests(repoDir, rev)
-          case "svcomp" => runSVCompTests
-          case "diff" => runSuiteDiff(repoDir, config.rev1, config.rev2)
-          case _ => showHelpText
-        }
-      }
+/**
+ * Convenience class so that the logic for running this program can access an
+ * immutable configuration.
+ */
+class ConfiguredMain(config: AppConfig) {
+  private[hipsleek] def run(): Unit = {
+    import config.{ command, repoDir, rev }
 
-      case None => ()
+    command match {
+      case "sleek"  => runSleekTests(repoDir, rev)
+      case "hip"    => runHipTests(repoDir, rev)
+      case "all"    => runAllTests(repoDir, rev)
+      case "svcomp" => runSVCompTests
+      case "diff"   => runSuiteDiff(repoDir, config.rev1, config.rev2)
+      case _        => showHelpText
     }
   }
 
