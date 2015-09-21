@@ -74,6 +74,10 @@ object AppConfig {
     head("run-system-tests", "0.3.0-SNAPSHOT")
     help("help") text("prints this usage text")
     version("version")
+    opt[Int]('t', "timeout") action { (x, c) =>
+      c.copy(timeout = x) } text("timeout time for each individual test case")
+    opt[Int]('T', "significant-time") action { (x, c) =>
+      c.copy(significantTimeThreshold = x) } text("minimum time (in seconds) for timing results to be shown")
     cmd("sleek") action { (_, c) =>
         c.copy(command = "sleek") } text("run sleek test cases") children(
           arg[String]("<revision>") optional() action { (x, c) =>

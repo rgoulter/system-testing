@@ -54,8 +54,8 @@ class ConfiguredMain(config: AppConfig) {
         val revision = sleekTSRes.repoRevision
 
         reporter.log(s"Found sleek testsuite results for $revision.")
-        sleekTSRes.displayResult() // CONFIG ME
-        hipTSRes.displayResult() // CONFIG ME
+        sleekTSRes.displayResult(config.significantTimeThreshold)
+        hipTSRes.displayResult(config.significantTimeThreshold)
 
         rtn
       }
@@ -79,7 +79,7 @@ class ConfiguredMain(config: AppConfig) {
         val revision = testSuiteResult.repoRevision
 
         reporter.log(s"Found sleek testsuite results for $revision.")
-        testSuiteResult.displayResult() // CONFIG ME
+        testSuiteResult.displayResult(config.significantTimeThreshold)
 
         Some(testSuiteResult)
       }
@@ -98,7 +98,7 @@ class ConfiguredMain(config: AppConfig) {
         val revision = testSuiteResult.repoRevision
 
         reporter.log(s"Found hip testsuite results for $revision.")
-        testSuiteResult.displayResult() // CONFIG ME
+        testSuiteResult.displayResult(config.significantTimeThreshold)
 
         Some(testSuiteResult)
       }
@@ -228,8 +228,8 @@ class ConfiguredMain(config: AppConfig) {
   private def runPreparedSleekTests(projectDir: Path, revision: String): Option[TestSuiteResult] = {
     reporter.header("Running Sleek Tests")
 
-    val significantTime = 1 // CONFIG ME
-    val testCaseTimeout = 300
+    val significantTime = config.significantTimeThreshold
+    val testCaseTimeout = config.timeout
     val suite = new SleekTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision)
 
     val res = suite.run()
@@ -243,8 +243,8 @@ class ConfiguredMain(config: AppConfig) {
   private def runPreparedHipTests(projectDir: Path, revision: String): Option[TestSuiteResult] = {
     reporter.header("Running Hip Tests")
 
-    val significantTime = 1 // CONFIG ME
-    val testCaseTimeout = 300
+    val significantTime = config.significantTimeThreshold
+    val testCaseTimeout = config.timeout
     val suite = new HipTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision)
 
     val res = suite.run()
