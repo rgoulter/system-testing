@@ -1,20 +1,17 @@
 package edu.nus.systemtesting.hipsleek
 
-import java.nio.file.{ Files, Paths }
+import java.nio.file.{ Files, Path, Paths }
+import scala.io.Source
+import org.joda.time.format.ISODateTimeFormat
+
+import edu.nus.systemtesting.FileSystemUtilities
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
-import GlobalReporter.reporter
-import java.nio.file.Path
-import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.serialisation.TestSuiteResultJson
-import edu.nus.systemtesting.FileSystemUtilities
-import org.joda.time.format.ISODateTimeFormat
 import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import scala.io.Source
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
+
+import GlobalReporter.reporter
 
 class Results(val resultsDir: String = "results") {
   /**
