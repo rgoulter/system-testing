@@ -45,6 +45,24 @@ class Repository(dir: Path) {
       throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
 
+  /**
+   * Returns list of (short) revision hashes of the parent(s) of the given
+   * revision.
+   *
+   * Will mostly return list length one, except for merge commits.
+   */
+  def parents(rev: Option[String] = None): List[String] = {
+    val cmd = "hg parents --template {node|short}" + rev.map(r => s" -r $r").getOrElse("")
+    val proc = Process(cmd, repoDir)
+
+    val execOutp = Runnable.executeProc(proc)
+
+    if (execOutp.exitValue == 0)
+      execOutp.output.trim().lines.toList
+    else
+      throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
+  }
+
   def isDirty(): Boolean = {
     val hash = identify()
     hash.endsWith("+")
