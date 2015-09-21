@@ -263,7 +263,7 @@ class ConfiguredMain(config: AppConfig) {
     val repo = new Repository(repoDir)
 
     // Select whether to run sleek, hip or both
-    val resultPairs: (Path, String, String) => DiffableResults = if (config.isRunAll) {
+    val resultPairs: (Path, String, Option[String]) => DiffableResults = if (config.isRunAll) {
       allResultPairs
     } else if (config.isRunSleek) {
       sleekResultPairs
@@ -278,13 +278,13 @@ class ConfiguredMain(config: AppConfig) {
       case (Some(r1), Some(r2)) => {
         println(s"Diff on $r1 -> $r2")
 
-        diffSuiteResults(repoDir, r1, r2, resultPairs)
+        diffSuiteResults(repoDir, r1, rev2, resultPairs)
       }
       case (Some(r1), None) => {
         println(s"Diff on $r1 -> 'head'")
         val r2 = repo.identify()
 
-        diffSuiteResults(repoDir, r1, r2, resultPairs)
+        diffSuiteResults(repoDir, r1, rev2, resultPairs)
       }
       case (None, _) => {
         // Since no rev was given, run on ...
@@ -301,7 +301,7 @@ class ConfiguredMain(config: AppConfig) {
           val parentRevs = repo.parents(Some(curRev))
 
           parentRevs foreach { rev =>
-            diffSuiteResults(repoDir, rev, curRev, resultPairs)
+            diffSuiteResults(repoDir, rev, Some(curRev), resultPairs)
           }
         }
       }
@@ -312,20 +312,20 @@ class ConfiguredMain(config: AppConfig) {
   type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
   /** For use with `diffSuiteResults`, for running just sleek results. */
-  private def sleekResultPairs(repoDir: Path, rev1: String, rev2: String):
+  private def sleekResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
     (for {
       oldRes <- runSleekTests(repoDir, Some(rev1))
-      curRes <- runSleekTests(repoDir, Some(rev2))
+      curRes <- runSleekTests(repoDir, rev2)
     } yield ("sleek", oldRes, curRes)).toList
   }
 
   /** For use with `diffSuiteResults`, for running just hip results. */
-  private def hipResultPairs(repoDir: Path, rev1: String, rev2: String):
+  private def hipResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
     (for {
       oldRes <- runHipTests(repoDir, Some(rev1))
-      curRes <- runHipTests(repoDir, Some(rev2))
+      curRes <- runHipTests(repoDir, rev2)
     } yield ("hip", oldRes, curRes)).toList
   }
 
@@ -335,19 +335,19 @@ class ConfiguredMain(config: AppConfig) {
    * The way it is implemented, the output of `diffSuiteResults` won't combine
    * the diff results together, so sleek diff will be followed by hip diff.
    */
-  private def allResultPairs(repoDir: Path, rev1: String, rev2: String):
+  private def allResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
     (for {
       (oldSleekRes, oldHipRes) <- runAllTests(repoDir, Some(rev1))
-      (curSleekRes, curHipRes) <- runAllTests(repoDir, Some(rev2))
+      (curSleekRes, curHipRes) <- runAllTests(repoDir, rev2)
     } yield List(("sleek", oldSleekRes, curSleekRes),
                  ("hip", oldHipRes, curHipRes))).toList.flatten
   }
 
   private def diffSuiteResults(repoDir: Path,
                                rev1: String,
-                               rev2: String,
-                               resultsFor: (Path, String, String) => DiffableResults): Unit = {
+                               rev2: Option[String],
+                               resultsFor: (Path, String, Option[String]) => DiffableResults): Unit = {
     val diffable = resultsFor(repoDir, rev1, rev2)
 
     if (!diffable.isEmpty) {
