@@ -18,6 +18,8 @@ libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
 
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.3.0"
 
+libraryDependencies += "org.antlr" % "stringtemplate" % "4.0.2"
+
 resolvers += Resolver.sonatypeRepo("public")
 
 mainClass in Compile := Some("edu.nus.systemtesting.hipsleek.Main")
