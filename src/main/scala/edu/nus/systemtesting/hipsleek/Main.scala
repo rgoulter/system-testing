@@ -121,7 +121,7 @@ class ConfiguredMain(config: AppConfig) {
       if (!repo.isDirty()) {
         // TODO: Also should check if the results we get is 'the same' as
         //       the tests we want to run.
-        (new ResultsArchive).resultsFor("hip", revision)
+        (new ResultsArchive).resultsFor(name, revision)
       } else {
         None
       }
