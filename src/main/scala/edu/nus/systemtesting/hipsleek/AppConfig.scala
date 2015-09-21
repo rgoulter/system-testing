@@ -11,10 +11,14 @@ object ConfigDefaults {
   val DefaultSignificantTimeThreshold = 1
 }
 
+/**
+ * @param commands which of `hip`, `sleek` should be run.
+ */
 case class AppConfig(repoDir: Path,
                      revs: List[String] = List(),
                      command: String = "none",
                      timeout: Int = DefaultTimeout,
+                     commands: Set[String] = Set(),
                      significantTimeThreshold: Int = DefaultSignificantTimeThreshold) {
   def rev(): Option[String] = revs.headOption
 
@@ -22,6 +26,15 @@ case class AppConfig(repoDir: Path,
 
   def rev2(): Option[String] =
     if (revs.length == 2) Some(revs(1)) else None
+
+  def isRunSleek: Boolean =
+    commands.contains("sleek")
+
+  def isRunHip: Boolean =
+    commands.contains("hip")
+
+  def isRunAll: Boolean =
+    Seq("sleek", "hip").forall(commands contains _)
 }
 
 object AppConfig {
@@ -83,8 +96,21 @@ object AppConfig {
           )
     cmd("diff") action { (_, c) =>
         c.copy(command = "diff") } text("diff the sleek/hip test results") children(
+          opt[Unit]('s', "sleek") action { (_, c) =>
+            c.copy(commands = c.commands + "sleek") } text("diff sleek results"),
+          opt[Unit]('h', "hip") action { (_, c) =>
+            c.copy(commands = c.commands + "hip") } text("diff hip results"),
+          opt[Unit]('a', "all") action { (_, c) =>
+            c.copy(commands = c.commands + "sleek" + "hip") } text("diff sleek, hip results"),
+          opt[Unit]("sleek") action { (_, c) =>
+            c.copy(commands = c.commands + "sleek") },
           arg[String]("<rev1 [rev2]>") optional() maxOccurs(2) action { (x, c) =>
-          c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current).")
+          c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current)")
           )
+    checkConfig { c =>
+        if (c.command == "diff" && c.commands.isEmpty)
+          failure("Must specify --hip, --sleek, or --all to diff command")
+        else
+          success }
   }
 }
