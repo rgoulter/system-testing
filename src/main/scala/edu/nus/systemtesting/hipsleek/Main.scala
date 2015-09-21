@@ -287,8 +287,23 @@ class ConfiguredMain(config: AppConfig) {
         diffSuiteResults(repoDir, r1, r2, resultPairs)
       }
       case (None, _) => {
-        println(s"Diff on 'head^' -> 'head'")
-        // TODO
+        // Since no rev was given, run on ...
+        if (repo.isDirty()) {
+          println(s"Diff on 'head^' -> 'head+' (dirty)")
+
+          // TODO: build+run current results,
+          // then compare against latest commit.
+          // "Did working dir break anything?"
+        } else {
+          println(s"Diff on 'head^' -> 'head'")
+
+          val curRev = repo.identify()
+          val parentRevs = repo.parents(Some(curRev))
+
+          parentRevs foreach { rev =>
+            diffSuiteResults(repoDir, rev, curRev, resultPairs)
+          }
+        }
       }
     }
   }
