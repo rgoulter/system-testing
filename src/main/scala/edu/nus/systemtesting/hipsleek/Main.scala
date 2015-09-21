@@ -262,18 +262,29 @@ class ConfiguredMain(config: AppConfig) {
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
     val repo = new Repository(repoDir)
 
+    // Select whether to run sleek, hip or both
+    val resultPairs: (Path, String, String) => DiffableResults = if (config.isRunAll) {
+      allResultPairs
+    } else if (config.isRunSleek) {
+      sleekResultPairs
+    } else if (config.isRunHip) {
+      hipResultPairs
+    } else {
+      throw new IllegalStateException
+    }
 
+    // Dispatch, depending on which revisions received as args
     (rev1, rev2) match {
       case (Some(r1), Some(r2)) => {
         println(s"Diff on $r1 -> $r2")
 
-        diffSuiteResults(repoDir, r1, r2, sleekResultPairs)
+        diffSuiteResults(repoDir, r1, r2, resultPairs)
       }
       case (Some(r1), None) => {
         println(s"Diff on $r1 -> 'head'")
         val r2 = repo.identify()
 
-        diffSuiteResults(repoDir, r1, r2, sleekResultPairs)
+        diffSuiteResults(repoDir, r1, r2, resultPairs)
       }
       case (None, _) => {
         println(s"Diff on 'head^' -> 'head'")
