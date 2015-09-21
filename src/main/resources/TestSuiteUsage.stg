@@ -1,0 +1,10 @@
+suite(name, pkg, files) ::= <<
+package <pkg>
+
+// Auto generated.
+class <name>TestSuiteUsage {
+  // Begin
+  <files:{f|test(<f>)}; separator="\n" >
+  // End
+}
+>>
