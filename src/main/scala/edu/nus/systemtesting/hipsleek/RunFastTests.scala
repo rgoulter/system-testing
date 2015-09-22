@@ -147,8 +147,15 @@ object RunFastTests {
 
     s match {
       case SleekTestRegex.r(filename, args, para, rawExpected) => {
-        // what's happing with the `para` bit?
-        val expected = rawExpected.split("\\.").filterNot(_.isEmpty()).toList
+        // What's happing with the `para` bit?
+        // Just prepend expected with the 'lemma expected' or so.
+
+        // e.g. ([$lem,"Fail.Valid."]), => para = [$lem,"Fail.Valid."]
+        val lemmaRawExpected =
+          (("\".*\"".r findFirstIn para) map stripQuotes).getOrElse("")
+
+        val expected =
+          (lemmaRawExpected + rawExpected).split("\\.").filterNot(_.isEmpty()).toList
         (filename, args, expected)
       }
 
