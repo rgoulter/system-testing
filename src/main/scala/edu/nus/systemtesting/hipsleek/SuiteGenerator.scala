@@ -110,19 +110,21 @@ object SuiteGenerator {
     template.render()
   }
 
-  def renderSleekTemplate(rft: List[(String, List[RunFastTests.SleekTest])]): String =
+  def renderSleekTemplate(rft: List[(String, List[RunFastTests.SleekTest])], rev: String): String =
     renderSuiteTemplate { template =>
       template.add("name", "Sleek")
       template.add("pkg", "edu.nus.systemtesting.hipsleek")
+      template.add("revision", rev)
       template.add("examplesDir", "examples/sample/sleek")
       template.add("command", "sleek")
       template.add("testSets", testSetsFromRFT(rft, sleekTestFromRFT))
     }
 
-  def renderHipTemplate(rft: List[(String, List[RunFastTests.HipTest])]): String =
+  def renderHipTemplate(rft: List[(String, List[RunFastTests.HipTest])], rev: String): String =
     renderSuiteTemplate { template =>
       template.add("name", "Hip")
       template.add("pkg", "edu.nus.systemtesting.hipsleek")
+      template.add("revision", rev)
       template.add("examplesDir", "examples/sample/hip")
       template.add("command", "hip")
       template.add("testSets", testSetsFromRFT(rft, hipTestFromRFT))
@@ -131,6 +133,7 @@ object SuiteGenerator {
   def main(args: Array[String]): Unit = {
     // Hardcoded here, but not something we need to set often, so.
     val runFastTestsFilename = "/home/richardg/hg/sleekex/examples/working/run-fast-tests.pl"
+    val revision = "79da9697f0c2"
 
     val rftSrc = Source.fromFile(runFastTestsFilename)
     val rftLines = rftSrc.getLines().toList
@@ -139,8 +142,8 @@ object SuiteGenerator {
     val sleekRFT = RunFastTests.deriveSleekTests(rftLines)
     val hipRFT = RunFastTests.deriveHipTests(rftLines)
 
-    val sleekOutput = renderSleekTemplate(sleekRFT)
-    val hipOutput = renderHipTemplate(hipRFT)
+    val sleekOutput = renderSleekTemplate(sleekRFT, revision)
+    val hipOutput = renderHipTemplate(hipRFT, revision)
 
     println(sleekOutput)
 //    println(hipOutput)
