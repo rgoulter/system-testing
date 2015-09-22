@@ -16,7 +16,7 @@ class SleekTestSuiteUsage(
     significantTime: Long,
     timeout: Int,
     revision : String,
-    examplesDir: Path = Paths.get("examples/sample/sleek"),
+    examplesDir: Path = Paths.get("examples/working/sleek"),
     command: Path = Paths.get("sleek"))
     extends ConstructSleekTests {
   def test(cmd: Path,

@@ -16,7 +16,7 @@ class HipTestSuiteUsage(
     significantTime: Long,
     timeout: Int,
     revision : String,
-    examplesDir: Path = Paths.get("examples/sample/hip"),
+    examplesDir: Path = Paths.get("examples/working/hip"),
     command: Path = Paths.get("hip"))
     extends ConstructHipTests {
   def test(cmd: Path,
