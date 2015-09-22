@@ -1,12 +1,12 @@
 package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-import edu.nus.systemtesting.testsuite.TestSuite
-import edu.nus.systemtesting.TestCase
-import edu.nus.systemtesting.TestCaseBuilder
 import java.nio.file.Path
 import java.nio.file.Paths
+import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseBuilder
 
 class HipTestSuiteUsage(projDir: Path,
                         significantTime: Long,

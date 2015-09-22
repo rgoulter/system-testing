@@ -44,7 +44,7 @@ class <name>TestSuiteUsage(
 
 <! Now generate the set of tests for each test set. !>
   <testSets:{tset|val <tset.name>Tests = List(
-  <tset.tests:{t|test(command, "<t.args>", "<t.filename>")}; separator=",\n" >
+  <tset.tests:{t|test(command, "<t.args>", "<t.filename>", "<t.expectStr>")}; separator=",\n" >
 )}; separator="\n\n" >
 }
 >>
