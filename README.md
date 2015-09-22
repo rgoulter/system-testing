@@ -1,123 +1,90 @@
-System Testing for Hip/Sleek
-============================
+# System Testing for Hip/Sleek
+
+This project aims to provide a DSL for system level testing.
+It's tailored to the Hip/Sleek tool in particular.
 
 Forked from a Final Year Project at the National University of Singapore.
-This project aims to provide a DSL for system level testing and report parsing.
 
-Installation
-============
+# Building
 
-1. Please install the following dependencies on your system:
+This project uses the Scala Built Tool (SBT) to build the project.
+Use `sbt one-jar` to construct an uber-jar which contains all the dependencies.
 
-    * scala
-    * sbt
-    * pip
-    * pyyaml module: `pip install pyyaml`
-    * git
-    * hg version > 3.0.1
+`sbt test` will run all the ScalaTest specs, under `src/test/scala`.
 
-(The Python dependencies are required only for some helper scripts,
-not for the main/core project).
+With global plugins for SBT, IDE-specific project files can be generated, e.g.
+by `sbt eclipse`.
 
-2. Clone the repository:
+# Running
 
-`git clone https://github.com/rohitmukherjee/High-Performance-DSLs.git`
+The program can be run directly from SBT using `sbt "run <args>"`.
+(*Note*: The quotation marks around `"run <args>"` are important).  
+With a JAR, (e.g. a pre-built one from
+[releases](https://github.com/rgoulter/system-testing/releases)), the program
+can be run using `java -jar /path/to/jar <args>`.
 
-3. Currently the system already has the existing `run-fast-tests.pl` *hip* and
-   *sleek* tests added to them. However, you will need to point the system to
-   your local hg checkout to the `hg/sleek/hip/working/example/hip/` and
-   `hg/sleek/hip/working/example/sleek/` directories respectively.
+## Running Tests on a Single Commit
 
-4. The above step can be performed by opening up
-   `src/main/resources/application.conf` in a text - editor of you choice and
-   configuring the directories.
+This project can be used to run some set of tests on some commit of a
+repository.
 
-5. Now, just to test whether the system is working - go to the root directory
-   of the repository and run the following
-    * `sbt "run hip"` - *to run hip tests*
-    * `sbt "run sleek"` - *to run sleek tests*
-    * `sbt "run all"` - *to first run sleek and then hip tests*
-    * `sbt "test"` - *to run unit tests*
+e.g. where <args> is: `sleek [<rev>]`, `hip [<rev>]`, or `all [<rev>]` to
+run the sleek tests, the hip tests, or both the sleek and hip tests
+(respectively).
 
-(*Note*: The quotation marks around `"run all"` are important).
+Results of the execution are stored under the `results/` folder. If the results
+required are already stored, the tests are not run again, and the results from
+these are displayed.
 
-6. This setup describes how to run the set of tests on the existing branch and
-   revision in the repository specified.
+### Specifying a Revision
 
-Modifying Existing Tests
-========================
+Passing some `<rev>` revision of the repository to test against
+is optional. If given, the system tests runs on that commit, otherwise
+the program uses the version of the working directory of the repository.
 
-Modifying/Adding Hip Tests
-----------------------------
+## Showing Difference in Test Results Across Commits
 
-1. All the test invocations for hip are in the file:
-`src/main/scala/systemTestingDSL/HipTestSuiteUsage.scala`
+This project allows showing the differences between test results. This helps
+show whether anything was broken relative to some previous commit, etc.  
+This can be run using `diff --hip [<rev1> [<rev2>]]`, `diff --sleek [<rev1>
+[<rev2>]]`, `diff --all [<rev1> [<rev2>]]`.  
+Revisions (as above) are optional, and specified in older-to-newer order.
 
-2. Just modify the parameters in the test to tweak it. You will notice that the
-   tests are split up into different methods which addTest to the suite, to add
-   more tests you can do this or you can directly write in an addTest in the
-   `run()` method.
-    *  The format for the addTest(params...) is addTest("hip",
-       source_file_location, arguments,
-       output_directory_name,output_file_name,test_results)
+Specifying both revisions makes this explicit; specifying one revision shows
+the diff of the given revision against the working directory of the repo.
+Running the diff command without specifying a revision will run the tests
+against the parent(s) of the working directory.
 
-    *  test_results are of the format: `method_1: SUCCESS/FAIL, method_2:
-       SUCCESS/FAIL, ..., method_n: SUCCESS/FAIL`
+If the results have not been computed for any of `(command, revision)` pairs
+required, these are run in order to compute the diff.
 
-    *  e.g.: `suite addTest ("hip", BASE_DIR + "infinity/inflist.ss", "--dsd
-       --en-inf", "results", "inflist.out", "remove: SUCCESS, append:
-       SUCCESS")`
+## Configuration
 
-Modifying/Adding Sleek Tests
-----------------------------
+If the JAR is run in a mercurial repository (or some descendant of a mercurial
+repository), the program assumes this is the hip/sleek repo.
 
-1. All the test invocations for sleek are in the file:
-   `src/main/scala/systemTestingDSL/SleekTestSuiteUsage.scala`
+Aside from this, it will look for a `.hipsleektest.conf` file in the current
+directory (or ancestors), for a config with a `REPO_DIR=/path/to/repo` setting.
+If it fails to find this, it will attempt to load the `application.conf` from
+the JAR resources (i.e. the `src/main/resources/application.conf` it was
+compiled with).
 
-2. Just modify the parameters in the test to tweak it. You will notice that the
-   tests are split up into different methods which addTest to the suite, to add
-   more tests you can do this or you can directly write in an addTest in the
-   `run()` method.
-    *  The format for the addTest(params...) is addTest("sleek",
-       source_file_location, arguments, output_directory_name,output_file_name,
-       test_results)
+# Modifying Existing Tests
 
-    *  test_results are of the format: `Fail/Valid, Fail/Valid, Fail/Valid
-       .......`
+## Modifying/Adding Sleek/Hip Tests
 
-    *  e.g.: `suite addTest ("sleek", WORKING_DIR + "/sleek/label-basic.slk", "
-       --dis-eps", "results", "label_basic", "Fail, Valid, Valid, Fail")`
+See `SleekTestSuiteUsage` and `HipTestSuiteUsage` in package
+`edu.nus.systemtesting.hipsleek`.
 
-Translating code from run-fast-tests.pl
----------------------------------------
+## Translating code from run-fast-tests.pl
 
-The tests in run-fast-tests.pl have been already translated and coded into the
-existing system. However, if further translation is required, please follow the
-following instructions.
+If there's a need for this, see `RunFastTests` in package
+`edu.nus.systemtesting.hipsleek`. The `SuiteGenerator` object makes use of
+a template to generate the `TestSuiteUsage`-like classes from the structure
+`RunFastTests` parses.
 
-Due to the complexity of the `run-fast-tests.pl`, there are 2 parser scripts
-that do parsing from components of run-fast-tests.pl > DSL.
+# Repository Maintenance
 
-These scripts can be found in `/old_system/parsers/`. There are 2 parsers -
-sleek_parser.py and hip_parser.py. The inputs taken by them are there in the
-script files themselves as comments.
-
-Examples of these inputs can be found in /old_system/source_translations/. Make
-sure to change the **INPUT_FILE** field in the scripts based on the name of
-your input.
-
-Then just run, `python hip_parser.py` or python `sleek_parser.py`. It should
-print the generated DSL to the console. Just copy this over to the
-`src/main/scala/systemTestingDSL/SleekTestSuiteUsage.scala` or
-`src/main/scala/systemTestingDSL/HipTestSuiteUsage.scala` based on whether you
-are parsing hip/sleek.
-
-References
--------------------------
-
-* DSL's in action: Debasish Ghosh [http://www.manning.com/ghosh/]
-
-Repository Maintenance
-======================
-
-From rohitmuhkerjee/High-Performance-DSLs, the `docs/` folder had been committed with several large (~MBs) files. These have been filtered from this repository.
+From rohitmuhkerjee/High-Performance-DSLs, the `docs/` folder had been
+committed with several large (~MBs) files. These have been filtered from this
+repository.
