@@ -35,7 +35,7 @@ class HipTestSuiteUsage(
   def run(): TestSuiteResult = {
     val tests =
       ArrayTests ++
-      HipTrTests ++
+//      HipTrTests ++
       InfinityTests ++
       CoqinfTests ++
       ImmTests ++
@@ -84,9 +84,9 @@ class HipTestSuiteUsage(
     test(command, "arr_sum.java", "", "sigmaright: SUCCESS, sigmaleft: SUCCESS")
   )
 
-  val HipTrTests = List(
-    test(command, "trees.ss", "insert", "")
-  )
+//  val HipTrTests = List(
+//    test(command, "trees.ss", "insert", "")
+//  )
 
   val InfinityTests = List(
     test(command, "inflist.ss", "--en-inf", "remove: SUCCESS, append: SUCCESS"),
