@@ -1,5 +1,5 @@
 // Translated / adapted from the older HipTestSuiteUsage.
-suite(name, pkg, revision, examplesDir, command, testSets) ::= <<
+suite(name, pkg, revision, examplesDir, command, testSets, warnings) ::= <<
 package <pkg>
 
 import java.io.PrintWriter
@@ -48,5 +48,9 @@ class <name>TestSuiteUsage(
   <testSets:{tset|val <tset.name>Tests = List(
   <tset.tests:{t|test(command, "<t.args>", "<t.filename>", "<t.expectStr>")}; separator=",\n" >
 )}; separator="\n\n" >
+
+
+<! Warnings / remarks about the rendered output !>
+  <warnings:{warning|// <warning>}; separator="\n" >
 }
 >>

@@ -52,12 +52,14 @@ object SuiteGenerator {
   }
 
   private def testSetsFromRFT[T](rft: List[(String, List[T])], toTest: T => Test):
-      Array[TestSet] = {
+      (Array[TestSet], Array[String]) = {
     // Ensure here that the (cmd, arg, fn) i.e. Test is unique.
     // It makes no sense that it wouldn't be.
 
     // need to check if (cmd, args, filename) is unique
     def key(t: Test) = (t.filename, t.args)
+
+    var duplicateWarnings = Seq[String]()
 
     val res = rft map { case (name, tests) =>
       // name, as given, is 'python style', e.g. sleek_vperm
@@ -69,6 +71,7 @@ object SuiteGenerator {
         if (seq.exists { t => key(t) == key(test) }) {
           // Duplicate (cmd, args, filename) *in the same set*.
           System.err.println(s"Warning! Duplicate test in $name: $test. Ignoring.")
+          duplicateWarnings = duplicateWarnings :+ s"Duplicate in $name: (${test.filename}, ${test.args}) w/ ${test.expectStr}"
           seq
         } else {
           seq :+ test
@@ -86,13 +89,14 @@ object SuiteGenerator {
       val k = key(test)
       if (set contains k) {
         System.err.println(s"Warning! Duplicate test: $test. Ignoring.")
+        duplicateWarnings = duplicateWarnings :+ s"Duplicate: (${test.filename}, ${test.args}) w/ ${test.expectStr}"
         set
       } else {
         set + k
       }
     }
 
-    res.toArray
+    (res.toArray, duplicateWarnings.toArray)
   }
 
   def renderSuiteTemplate(addAttributes: ST => Unit): String = {
@@ -112,12 +116,15 @@ object SuiteGenerator {
 
   def renderSleekTemplate(rft: List[(String, List[RunFastTests.SleekTest])], rev: String): String =
     renderSuiteTemplate { template =>
+      val (testSets, warnings) = testSetsFromRFT(rft, sleekTestFromRFT)
+
       template.add("name", "Sleek")
       template.add("pkg", "edu.nus.systemtesting.hipsleek")
       template.add("revision", rev)
       template.add("examplesDir", "examples/sample/sleek")
       template.add("command", "sleek")
-      template.add("testSets", testSetsFromRFT(rft, sleekTestFromRFT))
+      template.add("testSets", testSets)
+      template.add("warnings", warnings)
     }
 
   def renderHipTemplate(rft: List[(String, List[RunFastTests.HipTest])], rev: String): String =
