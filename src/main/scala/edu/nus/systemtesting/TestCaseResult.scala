@@ -53,14 +53,16 @@ case class TestCaseResult(val command: Path,
   }
 
   /**
-   * Key which almost certain to be unique to a [[TestCaseResult]] in a
-   * [[TestSuite]]
+   * Key which almost certain to be unique to a
+   * [[TestCaseResult]] in a
+   * [[edu.nus.systemtesting.testsuite.TestSuite]]
    */
   lazy val cmdFnArgsKey =
     (command, filename, sortedArgs)
 
   /**
-   * Key which might be unique to a [[TestCaseResult]] in a [[TestSuite]].
+   * Key which might be unique to a [[TestCaseResult]] in a
+   * [[edu.nus.systemtesting.testsuite.TestSuite]].
    * Useful for finding tests which differ only in `arguments`.
    */
   lazy val cmdFnKey =

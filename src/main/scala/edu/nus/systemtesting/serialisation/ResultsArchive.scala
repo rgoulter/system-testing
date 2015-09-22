@@ -70,7 +70,7 @@ class ResultsArchive(val resultsDir: String = "results") {
   }
 
   /**
-   * Note for `name` that [[TestSuiteResult]] isn't necessarily from one command
+   * Note for `name` that [[edu.nus.systemtesting.testsuite.TestSuiteResult]] isn't necessarily from one command
    * (`hip` or `sleek`). With the current design, convenient to consider results
    * as 'hip results' or 'sleek results', though.
    *
