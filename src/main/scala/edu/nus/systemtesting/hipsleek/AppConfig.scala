@@ -72,7 +72,7 @@ object AppConfig {
 
   // Use scopt to parse command-line arguments
   val CommandLineOptionsParser = new scopt.OptionParser[AppConfig]("system-tests") {
-    head("run-system-tests", "0.3.0-SNAPSHOT")
+    head("run-system-tests", "0.3.0")
     help("help") text("prints this usage text")
     version("version")
     opt[Int]('t', "timeout") action { (x, c) =>
