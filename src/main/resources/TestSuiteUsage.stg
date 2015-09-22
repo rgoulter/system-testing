@@ -24,7 +24,7 @@ class <name>TestSuiteUsage(
   def test(cmd: Path,
            file: String,
            args: String,
-           expectedOutput: String): HipTestCase =
+           expectedOutput: String): <name>TestCase =
     (new TestCaseBuilder
        inProjectDir projDir
        runCommand cmd
@@ -46,7 +46,7 @@ class <name>TestSuiteUsage(
 
 <! Now generate the set of tests for each test set. !>
   <testSets:{tset|val <tset.name>Tests = List(
-  <tset.tests:{t|test(command, "<t.args>", "<t.filename>", "<t.expectStr>")}; separator=",\n" >
+  <tset.tests:{t|test(command, "<t.filename>", "<t.args>", "<t.expectStr>")}; separator=",\n" >
 )}; separator="\n\n" >
 
 

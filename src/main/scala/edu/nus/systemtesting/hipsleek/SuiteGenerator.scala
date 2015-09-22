@@ -129,12 +129,14 @@ object SuiteGenerator {
 
   def renderHipTemplate(rft: List[(String, List[RunFastTests.HipTest])], rev: String): String =
     renderSuiteTemplate { template =>
+      val (testSets, warnings) = testSetsFromRFT(rft, hipTestFromRFT)
       template.add("name", "Hip")
       template.add("pkg", "edu.nus.systemtesting.hipsleek")
       template.add("revision", rev)
       template.add("examplesDir", "examples/sample/hip")
       template.add("command", "hip")
-      template.add("testSets", testSetsFromRFT(rft, hipTestFromRFT))
+      template.add("testSets", testSets)
+      template.add("warnings", warnings)
     }
 
   def main(args: Array[String]): Unit = {
