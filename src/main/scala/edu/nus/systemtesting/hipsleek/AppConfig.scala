@@ -1,5 +1,6 @@
 package edu.nus.systemtesting.hipsleek
 
+import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigException
 
@@ -46,9 +47,7 @@ object AppConfig {
    * Throws a [[com.typesafe.config.ConfigException]] if required keys in the
    * config (e.g. `REPO_DIR`) are missing.
    */
-  def load(): AppConfig = {
-    val configuration = ConfigFactory.load()
-
+  def load(configuration: Config = ConfigFactory.load()): AppConfig = {
     // Compulsory configuration settings
     val repoDir = Paths.get(configuration.getString("REPO_DIR"))
 

@@ -3,18 +3,64 @@ package edu.nus.systemtesting.hipsleek
 import java.nio.file.{ Files, Path, Paths }
 import scala.io.Source
 import org.joda.time.format.ISODateTimeFormat
-
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
-
 import GlobalReporter.reporter
+import com.typesafe.config.ConfigFactory
 
 object Main {
+  /** Expected filename for the application conf. */
+  val ConfigFilename = ".hipsleektest.conf"
+
+  /*
+   * Load config, maybe from Current Working Directory, or some ancestor of this,
+   * or from `$HOME`.
+   *
+   * If there is no config in these paths, then check for a `.hg` folder in CWD,
+   * or an ancestor of this. Assume that this is the hip/sleek repository.
+   *
+   * Failing that, try to load the `application.conf` from the JAR's resources.
+   */
+  def loadConfig(): AppConfig = {
+    def pathAncestors(p: Path): List[Path] = {
+      val par = p.getParent()
+
+      if (par == null)
+        List()
+      else
+        par +: pathAncestors(par)
+    }
+
+    val cwdPath = Paths.get(".").toAbsolutePath()
+    val ancestors = cwdPath +: pathAncestors(cwdPath)
+
+    // Look for config in cwd + ancestors.
+    val maybeConfig = ancestors map { _ resolve ConfigFilename } find { _ toFile() exists }
+
+    maybeConfig.map({ path =>
+      reporter.log(s"Found $path. Loading Config.")
+      AppConfig.load(ConfigFactory.parseFile(path.toFile()))
+    }).getOrElse {
+      // Look for .hg in cwd + ancestors.
+      val maybeRepo = ancestors find { path => (path resolve ".hg") toFile() exists() }
+
+      maybeRepo.map({ path =>
+        reporter.log(s"Found .hg repo in $path. Using this as Hip/Sleek repository.")
+        AppConfig(repoDir = path)
+      }).getOrElse {
+        reporter.log(s"Loading application.conf from resources.")
+
+        // Otherwise, load from resources.
+        AppConfig.load()
+      }
+    }
+  }
+
   def main(args: Array[String]): Unit = {
-    val appCfg = AppConfig.load()
+    val appCfg = loadConfig()
 
     // Override options from loaded config with CLAs,
     // run with configuration.
