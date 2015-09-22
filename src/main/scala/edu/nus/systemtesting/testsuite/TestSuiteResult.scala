@@ -18,16 +18,19 @@ case class TestSuiteResult(val hostname: String,
                            val repoRevision : String,
                            resultsIter : Iterable[TestCaseResult]) {
   val results = resultsIter.toList
-  lazy val (successes, failures) = results.partition(_.result equals TestPassed)
+  lazy val (valid, invalid) = results.partition(_.executionSucceeded)
+  lazy val (successes, failures) = valid.partition(_.result equals TestPassed)
 
   def generateTestStatistics(): Unit = {
     // There's probably a tidier way to do this with some printf function, but..
-    val TotalMsg = "Total number of tests:        "
-    val PassMsg  = "Total number of tests passed: "
-    val FailMsg  = "Total number of tests failed: "
-    reporter.log(TotalMsg + (successes.length + failures.length))
+    val TotalMsg = "Total number of tests:         "
+    val PassMsg  = "Total number of tests passed:  "
+    val FailMsg  = "Total number of tests failed:  "
+    val InvlMsg  = "Total number of tests invalid: "
+    reporter.log(TotalMsg + results.length)
     reporter.println(reporter.inColor(ColorGreen)(PassMsg + successes.length))
     reporter.println(reporter.inColor(ColorRed)(FailMsg + failures.length))
+    reporter.println(reporter.inColor(ColorYellow)(InvlMsg + invalid.length))
   }
 
   def displayResult(threshold: Long = 1000L): Unit = {

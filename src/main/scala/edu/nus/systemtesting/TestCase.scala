@@ -31,10 +31,14 @@ abstract class TestCase(val projectDir: Path,
    */
   def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]]
 
+  val absCmdPath = projectDir resolve commandName
+
+  val absFilePath = (projectDir resolve corpusDir) resolve fileName
+
   def formCommand(): String = {
-    Seq(projectDir resolve commandName,
+    Seq(absCmdPath,
         arguments,
-        (projectDir resolve corpusDir) resolve fileName).mkString(" ")
+        absFilePath).mkString(" ")
   }
 
   def run() = {
@@ -44,7 +48,17 @@ abstract class TestCase(val projectDir: Path,
   }
 
   def generateTestResult(output: ExecutionOutput, time: Long): TestCaseResult = {
-    val check = checkResults(expectedOutput, output)
+    // Although cmd, fn is already run, can check..
+    // n.b. hip/sleek return 0 even if the file given isn't present.
+    val cmdExists = absCmdPath.toFile().exists()
+    val fileExists = absFilePath.toFile().exists()
+    val check = if (cmdExists && fileExists) {
+      // Only check results if both cmd, file exist.
+      checkResults(expectedOutput, output)
+    } else {
+      Left(List(if (!cmdExists) Some("$absCmdPath doesn't exist!") else None,
+                if (!fileExists) Some("$absFilePath doesn't exist!") else None).flatten)
+    }
 
     new TestCaseResult(commandName, fileName, arguments, time, check)
   }

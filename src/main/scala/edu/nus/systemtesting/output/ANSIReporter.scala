@@ -19,6 +19,7 @@ class ANSIReporter(outp: PrintStream = System.out) extends Reporter {
       case ColorCyan    => Console.CYAN
       case ColorMagenta => Console.MAGENTA
       case ColorWhite   => Console.WHITE
+      case ColorYellow  => Console.YELLOW
 
       // for whatever, unknown color, use BOLD.
       case _ => Console.BOLD

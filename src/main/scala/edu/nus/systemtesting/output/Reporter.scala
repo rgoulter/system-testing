@@ -7,6 +7,7 @@ object ReporterColors {
   val ColorGreen   = "green"
   val ColorCyan    = "cyan"
   val ColorMagenta = "purple"
+  val ColorYellow  = "yellow"
 }
 
 /**
