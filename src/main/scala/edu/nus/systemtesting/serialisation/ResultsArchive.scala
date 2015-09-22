@@ -18,6 +18,7 @@ class ResultsArchive(val resultsDir: String = "results") {
    * `rev` expected to be 'short'. (12 chars).
    */
   private lazy val resultFiles = {
+    FileSystemUtilities.checkOutputDirectory(resultsDir)
     val filesInDir = Paths.get(resultsDir).toFile().listFiles()
 
     // cf. filenameForSuiteResult
