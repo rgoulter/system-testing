@@ -56,8 +56,8 @@ abstract class TestCase(val projectDir: Path,
       // Only check results if both cmd, file exist.
       checkResults(expectedOutput, output)
     } else {
-      Left(List(if (!cmdExists) Some(s"$absCmdPath doesn't exist!") else None,
-                if (!fileExists) Some(s"$absFilePath doesn't exist!") else None).flatten)
+      Left(List(if (!cmdExists) Some(s"$commandName doesn't exist in $projectDir!") else None,
+                if (!fileExists) Some(s"${corpusDir resolve fileName} doesn't exist in $projectDir!") else None).flatten)
     }
 
     new TestCaseResult(commandName, fileName, arguments, time, check)

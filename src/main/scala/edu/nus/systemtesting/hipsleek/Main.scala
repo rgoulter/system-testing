@@ -41,7 +41,7 @@ object Main {
     val maybeConfig = ancestors map { _ resolve ConfigFilename } find { _ toFile() exists }
 
     maybeConfig.map({ path =>
-      reporter.log(s"Found $path. Loading Config.")
+      reporter.log(s"Found ${path.normalize()}. Loading Config.")
       AppConfig.load(ConfigFactory.parseFile(path.toFile()))
     }).getOrElse {
       // Look for .hg in cwd + ancestors.
