@@ -1,24 +1,31 @@
 # System Testing for Hip/Sleek
 
 This project aims to provide a DSL for system level testing.
-It's tailored to the Hip/Sleek tool in particular.
+It's tailored to the [Hip/Sleek verification
+tool](http://loris-7.ddns.comp.nus.edu.sg/~project/hip/index.html) in
+particular.
 
 Forked from a Final Year Project at the National University of Singapore.
 
 # Building
 
-This project uses the Scala Built Tool (SBT) to build the project.
-Use `sbt one-jar` to construct an uber-jar which contains all the dependencies.
+This project uses the [Scala Built Tool (SBT)](http://www.scala-sbt.org/) to
+build the project.  Use `sbt one-jar` to construct an uber-jar which contains
+all the dependencies.
 
-`sbt test` will run all the ScalaTest specs, under `src/test/scala`.
+`sbt test` will run all the [ScalaTest](http://www.scalatest.org/) specs, under
+`src/test/scala`.
 
-With global plugins for SBT, IDE-specific project files can be generated, e.g.
-by `sbt eclipse`.
+With [global
+plugins](http://www.scala-sbt.org/0.12.2/docs/Getting-Started/Using-Plugins.html#global-plugins)
+for SBT, IDE-specific project files can be generated, e.g.  by `sbt eclipse` to
+generate project files for [Scala IDE](http://scala-ide.org/download/sdk.html).
 
 # Running
 
-The program can be run directly from SBT using `sbt "run <args>"`.
-(*Note*: The quotation marks around `"run <args>"` are important).  
+The program can be run directly from [SBT](http://www.scala-sbt.org/) using
+`sbt "run <args>"`.  (*Note*: The quotation marks around `"run <args>"` are
+important).  
 With a JAR, (e.g. a pre-built one from
 [releases](https://github.com/rgoulter/system-testing/releases)), the program
 can be run using `java -jar /path/to/jar <args>`.
@@ -67,7 +74,10 @@ Aside from this, it will look for a `.hipsleektest.conf` file in the current
 directory (or ancestors), for a config with a `REPO_DIR=/path/to/repo` setting.
 If it fails to find this, it will attempt to load the `application.conf` from
 the JAR resources (i.e. the `src/main/resources/application.conf` it was
-compiled with).
+compiled with).  
+These `.conf` files are read by typesafehub/config, so can be written using
+[HOCON](https://github.com/typesafehub/config#using-hocon-the-json-superset)
+format.
 
 # Modifying Existing Tests
 
