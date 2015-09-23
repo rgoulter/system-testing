@@ -40,8 +40,8 @@ class SleekTestSuiteUsage(
       SleekThreadsTests ++
       SleekVpermTests ++
       SleekFracpermTests ++
-      SleekVeribsyncTests ++
-      MusterrTests
+      SleekVeribsyncTests /* ++
+      MusterrTests */
 
     val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
