@@ -178,11 +178,9 @@ class SleekTestSuiteUsage(
   )
 
   val SleekThreadsTests = List(
-    test(command, "threads/thrd1.slk", "--en-para --en-thrd-resource -tp redlog", "Valid, Valid, Valid, Valid, Valid, Valid, Fail, Valid, Fail, Valid, Fail, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid, Valid")
   )
 
   val SleekVpermTests = List(
-    test(command, "vperm/vperm.slk", "--ann-vp", "Valid, Valid, Fail, Valid, Valid, Fail, Fail, Fail, Valid, Valid, Valid, Valid, Valid, Fail, Valid"),
     test(command, "vperm/vperm2.slk", "--ann-vp", "Valid, Valid, Fail")
   )
 

@@ -103,15 +103,9 @@ class HipTestSuiteUsage(
   )
 
   val CoqinfTests = List(
-    test(command, "inflist.ss", "--en-inf", "remove: SUCCESS, append: SUCCESS, fail_remove: FAIL"),
-    test(command, "infll_take.ss", "--en-inf", "take: SUCCESS"),
-    test(command, "inftree.ss", "--en-inf", "count: SUCCESS"),
-    test(command, "stream.ss", "--en-inf", "zip: SUCCESS"),
     test(command, "bst-inf.ss", "--en-inf --eps --etcsu2 --etcsu3", "delete: SUCCESS, remove_min: SUCCESS"),
     test(command, "inf-selsort.ss", "--en-inf --etcsu2 --etcsu3", "find_min: SUCCESS, delete_min: SUCCESS, selection_sort: SUCCESS"),
-    test(command, "inf-ins.ss", "--dsd --en-inf", "insert: SUCCESS"),
     test(command, "inf-sel.ss", "--dsd --en-inf --etcsu2 --etcsu3", "find_min: SUCCESS, delete_min: SUCCESS, selection_sort: SUCCESS"),
-    test(command, "bubble-inf.ss", "--en-inf", "id2: SUCCESS, id3: SUCCESS, bubble: SUCCESS, bsort: SUCCESS"),
     test(command, "merge-inf.ss", "--en-inf --en-disj-compute --etcsu2 --etcsu3", "merge: SUCCESS")
   )
 
@@ -315,7 +309,6 @@ class HipTestSuiteUsage(
     test(command, "vperm/passive_stack_race.ss", "--ann-vp", "assign: SUCCESS, stack_race: FAIL"),
     test(command, "vperm/stack_race.ss", "--ann-vp", "assign: SUCCESS, stack_race: FAIL"),
     test(command, "vperm/quicksort.ss", "--ann-vp", "partition: SUCCESS, append_bll: SUCCESS, para_qsort2: SUCCESS"),
-    test(command, "vperm/task_decompose.ss", "--ann-vp", "inc: SUCCESS, creator: SUCCESS, joiner: SUCCESS, main: SUCCESS"),
     test(command, "vperm/threads.ss", "--ann-vp", "make_tree: SUCCESS, tree_compute_sum_facs: SUCCESS, summator: SUCCESS, start_sum_thread: SUCCESS, join_sum_thread: SUCCESS, main: SUCCESS"),
     test(command, "vperm/tree_count.ss", "--ann-vp", "parallelCount2: SUCCESS"),
     test(command, "vperm/tree_search.ss", "--ann-vp -tp mona -perm none", "para_search2: SUCCESS"),
@@ -326,10 +319,8 @@ class HipTestSuiteUsage(
   val ParahipTests = List(
     test(command, "parahip/simple.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: SUCCESS"),
     test(command, "parahip/forkjoin.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: SUCCESS"),
-    test(command, "parahip/cell.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "test: SUCCESS, test1: FAIL"),
     test(command, "parahip/cell4.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "inc: SUCCESS, main: SUCCESS"),
     test(command, "parahip/cell-lock-vperm.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "testCell: SUCCESS, testVar: FAIL"),
-    test(command, "parahip/cell-extreme-cases.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "test: FAIL, test2: FAIL, test3: FAIL, test4: FAIL"),
     test(command, "parahip/ls-bind.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: SUCCESS"),
     test(command, "parahip/ls-waitlevel2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func2: SUCCESS, func3: SUCCESS, func4: SUCCESS"),
     test(command, "parahip/double-acquire.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: FAIL"),
@@ -343,8 +334,6 @@ class HipTestSuiteUsage(
     test(command, "parahip/disj-no-deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: SUCCESS"),
     test(command, "parahip/disj-no-deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: SUCCESS"),
     test(command, "parahip/disj-deadlock.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: FAIL"),
-    test(command, "parahip/ordered-locking.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: SUCCESS, main: SUCCESS"),
-    test(command, "parahip/unordered-locking.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "func: FAIL, main: SUCCESS"),
     test(command, "parahip/multicast.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "initialize: SUCCESS, thread: SUCCESS"),
     test(command, "parahip/oracle.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "thread: SUCCESS, main: SUCCESS"),
     test(command, "parahip/owicki-gries.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-and-conj", "incrementor2: SUCCESS, incrementor1: SUCCESS, main: SUCCESS"),
@@ -380,7 +369,6 @@ class HipTestSuiteUsage(
   val HipVeribsyncTests = List(
     test(command, "veribsync/while-loop.ss", "--en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, loop_fun: SUCCESS, loop_fun3: SUCCESS"),
     test(command, "veribsync/while-loop2.ss", "--en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, fun4: SUCCESS, fun5: SUCCESS, fun6: SUCCESS, fun7: SUCCESS, fun8: SUCCESS, fun9: SUCCESS"),
-    test(command, "veribsync/hip-bperm1.ss", "--en-para -perm bperm -tp redlog", "destroyCellFail: FAIL, readCell: SUCCESS, testNewCell: SUCCESS, testNewCell2: SUCCESS, updateCell: SUCCESS, updateCellFail: FAIL"),
     test(command, "veribsync/bperm-exp.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
     test(command, "veribsync/barrier-static-primitives.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS"),
     test(command, "veribsync/barrier-static-exp1.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
@@ -390,11 +378,8 @@ class HipTestSuiteUsage(
     test(command, "veribsync/barrier-static-complex2.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
     test(command, "veribsync/barrier-static-complex3.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread: SUCCESS"),
     test(command, "veribsync/barrier-static-multiple.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, main_fail: SUCCESS, participant: SUCCESS, participant_fail: FAIL"),
-    test(command, "veribsync/barrier-static-consistency.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, main_fail: FAIL, participant: SUCCESS, participant1: SUCCESS, participant_fail: FAIL"),
     test(command, "veribsync/barrier-dynamic-exp1.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
     test(command, "veribsync/barrier-dynamic-exp2.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
-    test(command, "veribsync/barrier-dynamic-exp3.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
-    test(command, "veribsync/barrier-dynamic-exp4.ss", "--en-para -perm bperm -tp redlog", "childthread1: SUCCESS, childthread2: SUCCESS, main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
     test(command, "veribsync/barrier-dynamic-exp5.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread: SUCCESS"),
     test(command, "veribsync/barrier-dynamic-exp6.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
     test(command, "veribsync/barrier-dynamic-exp7.ss", "--en-para -perm bperm -tp redlog", "CalculationInTask: SUCCESS, main: SUCCESS"),
@@ -423,19 +408,9 @@ class HipTestSuiteUsage(
     test(command, "avl-modular-siz.ss", "", "delete: SUCCESS, delete_top: SUCCESS, remove_min: SUCCESS"),
     test(command, "avl-modular.ss", "", "delete: SUCCESS, delete_top: SUCCESS, remove_min: SUCCESS, remove_max_add: SUCCESS, remove_min_add: SUCCESS, insert: SUCCESS, rotate_double_right: SUCCESS, rotate_double_left: SUCCESS, get_max: SUCCESS, rotate_right: SUCCESS, rotate_left: SUCCESS, height: SUCCESS"),
     test(command, "avl.scp.ss", "", "delete: SUCCESS, remove_min: SUCCESS, insert_inline1: SUCCESS, insert_inline: SUCCESS, insert1: SUCCESS, insert: SUCCESS, build_avl2: SUCCESS, build_avl1: SUCCESS, rotate_double_right1: SUCCESS, rotate_double_right: SUCCESS, rotate_double_left1: SUCCESS, rotate_double_left: SUCCESS, get_max: SUCCESS, rotate_right1: SUCCESS, rotate_right: SUCCESS, rotate_left1: SUCCESS, rotate_left: SUCCESS, height1: SUCCESS, height: SUCCESS"),
-    test(command, "avl.ss", "", "insert_inline: SUCCESS, insert: SUCCESS, rotate_double_right: SUCCESS, rotate_double_left: SUCCESS, get_max: SUCCESS, rotate_right: SUCCESS, rotate_left: SUCCESS, height: SUCCESS"),
-    test(command, "bubble.ss", "", "bsort1: SUCCESS, bubble1: SUCCESS, id1: SUCCESS"),
-    test(command, "cll.ss", "", "delete2: SUCCESS, delete: SUCCESS, count: SUCCESS, count_rest: SUCCESS"),
-    test(command, "dll.ss", "", "append: SUCCESS, insert: SUCCESS"),
-    test(command, "insertion.ss", "", "insertion_sort: SUCCESS, delete: SUCCESS, insert: SUCCESS"),
-    test(command, "ll.ss", "", "reverse1: SUCCESS, delete1: SUCCESS, insert: SUCCESS, append: SUCCESS"),
     test(command, "merge-modular.ss", "", "insert1: SUCCESS, merge1: SUCCESS, merge_sort1: SUCCESS, split1: SUCCESS, count1: SUCCESS"),
-    test(command, "merge.ss", "", "insert1: SUCCESS, merge1: SUCCESS, merge_sort1: SUCCESS, split1: SUCCESS, count1: SUCCESS"),
-    test(command, "qsort.ss", "", "qsort1: SUCCESS, append_bll1: SUCCESS, partition1: SUCCESS"),
     test(command, "rb_bags.ss", "", "insert_1: SUCCESS, del_1: SUCCESS, remove_min_1: SUCCESS, del_2r_1: SUCCESS, del_2_1: SUCCESS, del_3r_1: SUCCESS, del_3_1: SUCCESS, del_4r_1: SUCCESS, del_4_1: SUCCESS, del_5r_1: SUCCESS, del_5_1: SUCCESS, del_6r_1: SUCCESS, del_6_1: SUCCESS, is_black_1: SUCCESS, is_red_1: SUCCESS, case_2r_1: SUCCESS, rotate_case_3r_1: SUCCESS, case_2_1: SUCCESS, rotate_case_3_1: SUCCESS"),
-    test(command, "rb.scp.ss", "", "insert_1: SUCCESS, insert: SUCCESS, del_1: SUCCESS, del: SUCCESS, remove_min_1: SUCCESS, remove_min: SUCCESS, del_2r_1: SUCCESS, del_2r: SUCCESS, del_2_1: SUCCESS, del_2: SUCCESS, del_3r_1: SUCCESS, del_3r: SUCCESS, del_3_1: SUCCESS, del_3: SUCCESS, del_4r_1: SUCCESS, del_4r: SUCCESS, del_4_1: SUCCESS, del_4: SUCCESS, del_5r_1: SUCCESS, del_5r: SUCCESS, del_5_1: SUCCESS, del_5: SUCCESS, del_6r_1: SUCCESS, del_6r: SUCCESS, del_6_1: SUCCESS, del_6: SUCCESS, is_black_1: SUCCESS, is_black: SUCCESS, is_red_1: SUCCESS, is_red: SUCCESS, case_2r_1: SUCCESS, case_2r: SUCCESS, rotate_case_3r_1: SUCCESS, rotate_case_3r: SUCCESS, case_2_1: SUCCESS, case_2: SUCCESS, rotate_case_3_1: SUCCESS, rotate_case_3: SUCCESS"),
-    test(command, "selection.ss", "", "selection_sort: SUCCESS, delete_min: SUCCESS, find_min: SUCCESS"),
-    test(command, "trees.ss", "", "delete1: SUCCESS, remove_min1: SUCCESS, insert1: SUCCESS, flatten1: SUCCESS, append1: SUCCESS")
+    test(command, "rb.scp.ss", "", "insert_1: SUCCESS, insert: SUCCESS, del_1: SUCCESS, del: SUCCESS, remove_min_1: SUCCESS, remove_min: SUCCESS, del_2r_1: SUCCESS, del_2r: SUCCESS, del_2_1: SUCCESS, del_2: SUCCESS, del_3r_1: SUCCESS, del_3r: SUCCESS, del_3_1: SUCCESS, del_3: SUCCESS, del_4r_1: SUCCESS, del_4r: SUCCESS, del_4_1: SUCCESS, del_4: SUCCESS, del_5r_1: SUCCESS, del_5r: SUCCESS, del_5_1: SUCCESS, del_5: SUCCESS, del_6r_1: SUCCESS, del_6r: SUCCESS, del_6_1: SUCCESS, del_6: SUCCESS, is_black_1: SUCCESS, is_black: SUCCESS, is_red_1: SUCCESS, is_red: SUCCESS, case_2r_1: SUCCESS, case_2r: SUCCESS, rotate_case_3r_1: SUCCESS, rotate_case_3r: SUCCESS, case_2_1: SUCCESS, case_2: SUCCESS, rotate_case_3_1: SUCCESS, rotate_case_3: SUCCESS")
   )
 
   val TermTests = List(
@@ -692,7 +667,6 @@ class HipTestSuiteUsage(
     test(command, "demo.ss", "", "reverse: SUCCESS, create_list: SUCCESS, delete_val: SUCCESS, delete: SUCCESS, insert: SUCCESS, get_next_next: SUCCESS, set_null: SUCCESS, set_next: SUCCESS, get_next: SUCCESS, ret_first: SUCCESS, append: SUCCESS"),
     test(command, "demo2.ss", "", "app_rev: SUCCESS, reverse: SUCCESS, append: SUCCESS"),
     test(command, "err-coq.ss", "", "ret_first2: SUCCESS, ret_first: SUCCESS"),
-    test(command, "ll.ss", "", "reverse: SUCCESS, create_list: SUCCESS, delete_val: SUCCESS, delete: SUCCESS, insert: SUCCESS, get_next_next: SUCCESS, set_null: SUCCESS, set_next: SUCCESS, get_next: SUCCESS, ret_first: SUCCESS, append: SUCCESS"),
     test(command, "ll_bak.ss", "", "reverse: SUCCESS, create_list: SUCCESS, delete_val: SUCCESS, delete: SUCCESS, insert: SUCCESS, get_next_next: SUCCESS, set_null: SUCCESS, set_next: SUCCESS, get_next: SUCCESS, ret_first: SUCCESS, append: SUCCESS"),
     test(command, "ll_bak2.ss", "", "reverse: SUCCESS, create_list: SUCCESS, delete_val: SUCCESS, delete: SUCCESS, insert: SUCCESS, get_next_next: SUCCESS, set_null: SUCCESS, set_next: SUCCESS, get_next: SUCCESS, ret_first: SUCCESS, append: SUCCESS"),
     test(command, "ll_bak3.ss", "", "reverse: SUCCESS, create_list: SUCCESS, delete_val: SUCCESS, delete: SUCCESS, insert: SUCCESS, get_next_next: SUCCESS, set_null: SUCCESS, set_next: SUCCESS, get_next: SUCCESS, ret_first: SUCCESS, append: SUCCESS"),
@@ -703,7 +677,6 @@ class HipTestSuiteUsage(
     test(command, "ll_test5.ss", "", "delete_val: SUCCESS"),
     test(command, "lrev-bug.ss", "", "lrev: SUCCESS"),
     test(command, "lrev.ss", "", "lrev: SUCCESS"),
-    test(command, "merge.ss", "", "merge: SUCCESS"),
     test(command, "merge1.ss", "", "merge: SUCCESS"),
     test(command, "merge2.ss", "", "merge: SUCCESS"),
     test(command, "merge3.ss", "", "merge: SUCCESS"),

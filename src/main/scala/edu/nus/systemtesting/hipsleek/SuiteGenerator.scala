@@ -61,7 +61,7 @@ object SuiteGenerator {
 
     var duplicateWarnings = Seq[String]()
 
-    val res = rft map { case (name, tests) =>
+    val testSets = rft map { case (name, tests) =>
       // name, as given, is 'python style', e.g. sleek_vperm
       val scName = name split "_" map { _.capitalize } mkString
 
@@ -83,7 +83,7 @@ object SuiteGenerator {
 
     // Just to be sure, check for uniqueness of (cmd, args, filename) across
     // each TestSet.
-    val allTests = res map { _.tests } flatten
+    val allTests = testSets map { _.tests } flatten
 
     allTests.foldLeft(Set[(String, String)]()) { (set, test) =>
       val k = key(test)
@@ -96,7 +96,16 @@ object SuiteGenerator {
       }
     }
 
-    (res.toArray, duplicateWarnings.toArray)
+    // Construct set of unique test sets.
+    val (_, uniqTestSets) = testSets.foldLeft((Set[(String,String)](), List[TestSet]()))({ (res, testSet) =>
+      val (set, uniqTestSets) = res
+
+      val uniqTestSet = new TestSet(testSet.name,
+                                    testSet.tests.filterNot { tc => set.contains(key(tc)) })
+      (set ++ uniqTestSet.tests.map(key).toSet, uniqTestSets :+ uniqTestSet)
+    })
+
+    (uniqTestSets.toArray, duplicateWarnings.toArray)
   }
 
   def renderSuiteTemplate(addAttributes: ST => Unit): String = {
