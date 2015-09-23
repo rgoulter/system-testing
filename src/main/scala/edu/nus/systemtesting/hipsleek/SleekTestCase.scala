@@ -50,9 +50,10 @@ class SleekTestCase(projDir: Path = Paths.get(""),
         return Left(List("Binary failed to execute. Please investigate", flagsStr))
       } else {
         // Could try searching the output for errors?
-        return Left("Binary failed to execute. Please investigate" +:
-                    List("Output was:\n" +
-                         output.output.trim))
+        return Left(List("Binary failed to execute. Please investigate",
+                         "Output was:") ++
+                    output.stdoutLines ++
+                    output.stderrLines)
       }
     }
 
