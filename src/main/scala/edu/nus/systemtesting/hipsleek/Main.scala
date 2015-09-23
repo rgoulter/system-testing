@@ -10,6 +10,8 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import GlobalReporter.reporter
 import com.typesafe.config.ConfigFactory
+import edu.nus.systemtesting.FileSystemUtilities
+import java.io.IOException
 
 object Main {
   /** Expected filename for the application conf. */
@@ -238,7 +240,15 @@ class ConfiguredMain(config: AppConfig) {
     val rtn = if (prepWorked) f(projectDir, revision) else None
 
     // Finished running the tests, clean up.
-    tmpDir.toFile().delete()
+    try {
+      reporter.log("Deleting " + tmpDir)
+      FileSystemUtilities.rmdir(tmpDir)
+    } catch {
+      case ioEx: IOException => {
+        System.err.println(s"Unable to delete dir $tmpDir")
+        ioEx.printStackTrace()
+      }
+    }
 
     rtn
   }
