@@ -1,0 +1,22 @@
+# Please don't forget to add a trailing '/' to directories listed
+
+REPO_DIR="/path/to/sleek/repo/"
+
+################################################
+# HIP TESTS: TO CONFIGURE HipTestSuiteUsage
+################################################
+
+# Hip Specific Test Settings
+HIP_OUTPUT_DIRECTORY="results/"
+
+################################################
+# SLEEK TESTS: TO CONFIGURE SleekTestSuiteUsage
+################################################
+
+# Sleek Specific Test Settings
+SLEEK_OUTPUT_DIRECTORY="results/"
+
+# Timeout in seconds. Every Hip/Sleek test will Timeout after these number of seconds
+TIMEOUT="300"
+SIGNIFICANT_TIME_THRESHOLD = "1"
+DEFAULT_OUTPUT_DIRECTORY="results/"

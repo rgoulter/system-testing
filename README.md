@@ -77,7 +77,8 @@ the JAR resources (i.e. the `src/main/resources/application.conf` it was
 compiled with).  
 These `.conf` files are read by typesafehub/config, so can be written using
 [HOCON](https://github.com/typesafehub/config#using-hocon-the-json-superset)
-format.
+format. See `hipsleekconf.template` for an example of what this config file
+should look like.
 
 # Modifying Existing Tests
 
