@@ -22,6 +22,7 @@ object SuiteGenerator {
                   @BeanProperty expectStr: String)
 
   private class TestSet(@BeanProperty val name: String,
+                        val param: String,
                         @BeanProperty val tests: Array[Test])
 
   private val sampleTestSets = {
@@ -29,8 +30,8 @@ object SuiteGenerator {
     val stTests = Array(new Test("", "file1", "true"),
                         new Test("args", "file2", "true"),
                         new Test("", "file3", "true"))
-    val stTestSets = Array(new TestSet("example", stTests),
-                           new TestSet("example", stTests))
+    val stTestSets = Array(new TestSet("example", "example", stTests),
+                           new TestSet("example", "example", stTests))
 
     stTestSets
   }
@@ -78,7 +79,7 @@ object SuiteGenerator {
         }
       })
 
-      new TestSet(scName, uniq.toArray)
+      new TestSet(scName, name, uniq.toArray)
     }
 
     // Just to be sure, check for uniqueness of (cmd, args, filename) across
@@ -101,6 +102,7 @@ object SuiteGenerator {
       val (set, uniqTestSets) = res
 
       val uniqTestSet = new TestSet(testSet.name,
+                                    testSet.param,
                                     testSet.tests.filterNot { tc => set.contains(key(tc)) })
       (set ++ uniqTestSet.tests.map(key).toSet, uniqTestSets :+ uniqTestSet)
     })
@@ -136,6 +138,27 @@ object SuiteGenerator {
       template.add("warnings", warnings)
     }
 
+  /** Hip test sets from `run-fast-tests.pl` need adjustment, due to lines 2175-2188. */
+  private def adjustHipTestSets(tsets: Array[TestSet]): Array[TestSet] = {
+    def fixDir(param: String)(filename: String): String = {
+      param match {
+        case "hip_baga" => "../hip_baga/" + filename
+        case "hip"      => filename
+        case "sa"       => "../infer/sa/" + filename
+        case p          => p + "/" + filename
+      }
+    }
+
+    tsets.map(tset => {
+      val fix = fixDir(tset.param)(_)
+      new TestSet(tset.name,
+                  tset.param,
+                  tset.tests.map { test =>
+                    test.copy(filename = fix(test.filename))
+                  })
+    })
+  }
+
   def renderHipTemplate(rft: List[(String, List[RunFastTests.HipTest])], rev: String): String =
     renderSuiteTemplate { template =>
       val (testSets, warnings) = testSetsFromRFT(rft, hipTestFromRFT)
@@ -144,7 +167,7 @@ object SuiteGenerator {
       template.add("revision", rev)
       template.add("examplesDir", "examples/working/hip")
       template.add("command", "hip")
-      template.add("testSets", testSets)
+      template.add("testSets", adjustHipTestSets(testSets))
       template.add("warnings", warnings)
     }
 
