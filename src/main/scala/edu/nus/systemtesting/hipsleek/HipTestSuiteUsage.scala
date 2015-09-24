@@ -85,7 +85,7 @@ class HipTestSuiteUsage(
   )
 
 //  val HipTrTests = List(
-//    test(command, "hip_tr/trees.ss", "insert", "")
+//    test(command, "trees.ss", "insert", "")
 //  )
 
   val InfinityTests = List(
@@ -257,21 +257,21 @@ class HipTestSuiteUsage(
   )
 
   val HipLongModTests = List(
-    test(command, "hip_long_mod/../../modular_examples/sorted_list_modular.ss", "--overeps -tp om", "insert_first: SUCCESS, copy: SUCCESS, delete: SUCCESS, double_reverse: SUCCESS, insert: SUCCESS, insert_last: SUCCESS, merge: SUCCESS, reverse: SUCCESS"),
-    test(command, "hip_long_mod/../../modular_examples/complete-modular.ss", "--overeps", "maxim: SUCCESS, height: SUCCESS, minim: SUCCESS, min_height: SUCCESS, insert: SUCCESS")
+    test(command, "../../modular_examples/sorted_list_modular.ss", "--overeps -tp om", "insert_first: SUCCESS, copy: SUCCESS, delete: SUCCESS, double_reverse: SUCCESS, insert: SUCCESS, insert_last: SUCCESS, merge: SUCCESS, reverse: SUCCESS"),
+    test(command, "../../modular_examples/complete-modular.ss", "--overeps", "maxim: SUCCESS, height: SUCCESS, minim: SUCCESS, min_height: SUCCESS, insert: SUCCESS")
   )
 
   val HipBarrTests = List(
-    test(command, "hip_barr/../tree_shares/thesis/video_ex1_th3.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS, th3_loop: SUCCESS, th3: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/SIMD_ex1_v2_th3.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl1: SUCCESS, th1: SUCCESS, thl2: SUCCESS, th2: SUCCESS, thl3: SUCCESS, th3: SUCCESS, thl4: SUCCESS, th4: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/SIMD_ex1_th1.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl1: SUCCESS, th1: SUCCESS, thl2: SUCCESS, th2: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/PIPE_ex1_th5.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, thl5: SUCCESS, thl1: SUCCESS, thl2: SUCCESS, thl3: SUCCESS, thl4: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/MIXED_ex1_th4.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "ctl12: SUCCESS, ctl11: SUCCESS, starterc: SUCCESS, thl12: SUCCESS, thl22: SUCCESS, thl21: SUCCESS, thl11: SUCCESS, startert1: SUCCESS, startert2: SUCCESS, thl32: SUCCESS, thl31: SUCCESS, startert3: SUCCESS, thl42: SUCCESS, thl41: SUCCESS, startert4: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/MISD_ex2_th5.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl: SUCCESS, th: SUCCESS, thl2: SUCCESS, th2: SUCCESS, thl3: SUCCESS, th3: SUCCESS, thl4: SUCCESS, th4: SUCCESS, thl5: SUCCESS, th5: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/MISD_ex1_th5.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl: SUCCESS, th: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/barrier-weak.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/barrier-strong.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS"),
-    test(command, "hip_barr/../tree_shares/thesis/barrier-paper.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS")
+    test(command, "../tree_shares/thesis/video_ex1_th3.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS, th3_loop: SUCCESS, th3: SUCCESS"),
+    test(command, "../tree_shares/thesis/SIMD_ex1_v2_th3.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl1: SUCCESS, th1: SUCCESS, thl2: SUCCESS, th2: SUCCESS, thl3: SUCCESS, th3: SUCCESS, thl4: SUCCESS, th4: SUCCESS"),
+    test(command, "../tree_shares/thesis/SIMD_ex1_th1.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl1: SUCCESS, th1: SUCCESS, thl2: SUCCESS, th2: SUCCESS"),
+    test(command, "../tree_shares/thesis/PIPE_ex1_th5.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, thl5: SUCCESS, thl1: SUCCESS, thl2: SUCCESS, thl3: SUCCESS, thl4: SUCCESS"),
+    test(command, "../tree_shares/thesis/MIXED_ex1_th4.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "ctl12: SUCCESS, ctl11: SUCCESS, starterc: SUCCESS, thl12: SUCCESS, thl22: SUCCESS, thl21: SUCCESS, thl11: SUCCESS, startert1: SUCCESS, startert2: SUCCESS, thl32: SUCCESS, thl31: SUCCESS, startert3: SUCCESS, thl42: SUCCESS, thl41: SUCCESS, startert4: SUCCESS"),
+    test(command, "../tree_shares/thesis/MISD_ex2_th5.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl: SUCCESS, th: SUCCESS, thl2: SUCCESS, th2: SUCCESS, thl3: SUCCESS, th3: SUCCESS, thl4: SUCCESS, th4: SUCCESS, thl5: SUCCESS, th5: SUCCESS"),
+    test(command, "../tree_shares/thesis/MISD_ex1_th5.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "controll: SUCCESS, control: SUCCESS, thl: SUCCESS, th: SUCCESS"),
+    test(command, "../tree_shares/thesis/barrier-weak.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS"),
+    test(command, "../tree_shares/thesis/barrier-strong.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS"),
+    test(command, "../tree_shares/thesis/barrier-paper.ss", "--eps --dis-field-imm --dis-precise-xpure -perm dperm", "th1_loop: SUCCESS, th1: SUCCESS, th2_loop: SUCCESS, th2: SUCCESS")
   )
 
   val SaTests = List(
@@ -301,19 +301,19 @@ class HipTestSuiteUsage(
   )
 
   val HipVpermTests = List(
-    test(command, "hip_vperm/vperm/alt_threading.ss", "--ann-vp", "increment: SUCCESS, main: SUCCESS"),
-    test(command, "hip_vperm/vperm/fibonacci.ss", "--ann-vp -tp z3 -perm none --dis-ls dis--locklevel", "seq_fib: SUCCESS, para_fib2: SUCCESS"),
-    test(command, "hip_vperm/vperm/global-var-norace.ss", "--ann-vp --dis-pgbv", "inc: SUCCESS, func: SUCCESS"),
-    test(command, "hip_vperm/vperm/global-var-race.ss", "--ann-vp --dis-pgbv", "inc: SUCCESS, func: FAIL"),
-    test(command, "hip_vperm/vperm/mergesort.ss", "--ann-vp", "count: SUCCESS, split_func: SUCCESS, merge: SUCCESS, insert: SUCCESS, parallel_merge_sort2: SUCCESS"),
-    test(command, "hip_vperm/vperm/passive_stack_race.ss", "--ann-vp", "assign: SUCCESS, stack_race: FAIL"),
-    test(command, "hip_vperm/vperm/stack_race.ss", "--ann-vp", "assign: SUCCESS, stack_race: FAIL"),
-    test(command, "hip_vperm/vperm/quicksort.ss", "--ann-vp", "partition: SUCCESS, append_bll: SUCCESS, para_qsort2: SUCCESS"),
-    test(command, "hip_vperm/vperm/threads.ss", "--ann-vp", "make_tree: SUCCESS, tree_compute_sum_facs: SUCCESS, summator: SUCCESS, start_sum_thread: SUCCESS, join_sum_thread: SUCCESS, main: SUCCESS"),
-    test(command, "hip_vperm/vperm/tree_count.ss", "--ann-vp", "parallelCount2: SUCCESS"),
-    test(command, "hip_vperm/vperm/tree_search.ss", "--ann-vp -tp mona -perm none", "para_search2: SUCCESS"),
-    test(command, "hip_vperm/vperm/vperm_check.ss", "--ann-vp", "inc: SUCCESS, incCell: SUCCESS, test1: FAIL, test2: FAIL, test3: FAIL, test4: FAIL"),
-    test(command, "hip_vperm/vperm/vperm_simple.ss", "--ann-vp", "foo: SUCCESS, f: SUCCESS, foo2: SUCCESS, f2: SUCCESS")
+    test(command, "vperm/alt_threading.ss", "--ann-vp", "increment: SUCCESS, main: SUCCESS"),
+    test(command, "vperm/fibonacci.ss", "--ann-vp -tp z3 -perm none --dis-ls dis--locklevel", "seq_fib: SUCCESS, para_fib2: SUCCESS"),
+    test(command, "vperm/global-var-norace.ss", "--ann-vp --dis-pgbv", "inc: SUCCESS, func: SUCCESS"),
+    test(command, "vperm/global-var-race.ss", "--ann-vp --dis-pgbv", "inc: SUCCESS, func: FAIL"),
+    test(command, "vperm/mergesort.ss", "--ann-vp", "count: SUCCESS, split_func: SUCCESS, merge: SUCCESS, insert: SUCCESS, parallel_merge_sort2: SUCCESS"),
+    test(command, "vperm/passive_stack_race.ss", "--ann-vp", "assign: SUCCESS, stack_race: FAIL"),
+    test(command, "vperm/stack_race.ss", "--ann-vp", "assign: SUCCESS, stack_race: FAIL"),
+    test(command, "vperm/quicksort.ss", "--ann-vp", "partition: SUCCESS, append_bll: SUCCESS, para_qsort2: SUCCESS"),
+    test(command, "vperm/threads.ss", "--ann-vp", "make_tree: SUCCESS, tree_compute_sum_facs: SUCCESS, summator: SUCCESS, start_sum_thread: SUCCESS, join_sum_thread: SUCCESS, main: SUCCESS"),
+    test(command, "vperm/tree_count.ss", "--ann-vp", "parallelCount2: SUCCESS"),
+    test(command, "vperm/tree_search.ss", "--ann-vp -tp mona -perm none", "para_search2: SUCCESS"),
+    test(command, "vperm/vperm_check.ss", "--ann-vp", "inc: SUCCESS, incCell: SUCCESS, test1: FAIL, test2: FAIL, test3: FAIL, test4: FAIL"),
+    test(command, "vperm/vperm_simple.ss", "--ann-vp", "foo: SUCCESS, f: SUCCESS, foo2: SUCCESS, f2: SUCCESS")
   )
 
   val ParahipTests = List(
@@ -342,59 +342,59 @@ class HipTestSuiteUsage(
   )
 
   val HipThreadsTests = List(
-    test(command, "hip_threads/threads/motiv-example.ss", "--en-para --en-thrd-resource -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_threads/threads/motiv-example2.ss", "--en-para --en-thrd-resource -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_threads/threads/no-deadlock-nonlexical2.ss", "--en-para --en-thrd-resource -tp parahip --en-lsmu-infer", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_threads/threads/no-deadlock-nonlexical.ss", "--en-para --en-thrd-resource -tp parahip --en-lsmu-infer", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_threads/threads/forkjoin.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/cell4.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "inc: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/ls-bind.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/no-deadlock1.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/no-deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/no-deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/deadlock1.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
-    test(command, "hip_threads/threads/deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
-    test(command, "hip_threads/threads/deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
-    test(command, "hip_threads/threads/disj-no-deadlock1.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/disj-no-deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/disj-no-deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/disj-deadlock.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
-    test(command, "hip_threads/threads/ordered-locking.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/unordered-locking.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: FAIL, main: SUCCESS"),
-    test(command, "hip_threads/threads/oracle.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "thread: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/owicki-gries.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "incrementor2: SUCCESS, incrementor1: SUCCESS, main: SUCCESS"),
-    test(command, "hip_threads/threads/fibonacci.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "seq_fib: SUCCESS, para_fib: SUCCESS")
+    test(command, "threads/motiv-example.ss", "--en-para --en-thrd-resource -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "threads/motiv-example2.ss", "--en-para --en-thrd-resource -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "threads/no-deadlock-nonlexical2.ss", "--en-para --en-thrd-resource -tp parahip --en-lsmu-infer", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "threads/no-deadlock-nonlexical.ss", "--en-para --en-thrd-resource -tp parahip --en-lsmu-infer", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "threads/forkjoin.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/cell4.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "inc: SUCCESS, main: SUCCESS"),
+    test(command, "threads/ls-bind.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/no-deadlock1.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/no-deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/no-deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/deadlock1.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
+    test(command, "threads/deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
+    test(command, "threads/deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
+    test(command, "threads/disj-no-deadlock1.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/disj-no-deadlock2.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/disj-no-deadlock3.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/disj-deadlock.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: FAIL"),
+    test(command, "threads/ordered-locking.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: SUCCESS, main: SUCCESS"),
+    test(command, "threads/unordered-locking.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "func: FAIL, main: SUCCESS"),
+    test(command, "threads/oracle.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "thread: SUCCESS, main: SUCCESS"),
+    test(command, "threads/owicki-gries.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "incrementor2: SUCCESS, incrementor1: SUCCESS, main: SUCCESS"),
+    test(command, "threads/fibonacci.ss", "--en-para -tp parahip --en-lsmu-infer --en-thrd-resource", "seq_fib: SUCCESS, para_fib: SUCCESS")
   )
 
   val HipVeribsyncTests = List(
-    test(command, "hip_veribsync/veribsync/while-loop.ss", "--en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, loop_fun: SUCCESS, loop_fun3: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/while-loop2.ss", "--en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, fun4: SUCCESS, fun5: SUCCESS, fun6: SUCCESS, fun7: SUCCESS, fun8: SUCCESS, fun9: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/bperm-exp.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-primitives.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-exp1.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-exp2.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-exp3.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-complex.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-complex2.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-complex3.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-static-multiple.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, main_fail: SUCCESS, participant: SUCCESS, participant_fail: FAIL"),
-    test(command, "hip_veribsync/veribsync/barrier-dynamic-exp1.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-dynamic-exp2.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-dynamic-exp5.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-dynamic-exp6.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/barrier-dynamic-exp7.ss", "--en-para -perm bperm -tp redlog", "CalculationInTask: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/barnes.ss", "--en-para -perm bperm -tp redlog", "ANLinit: SUCCESS, ComputeForces: SUCCESS, Housekeep: SUCCESS, find_my_bodies: SUCCESS, hackcofm: SUCCESS, maketree: SUCCESS, stepsystem: SUCCESS, find_my_initial_bodies: SUCCESS, SlaveStart: SUCCESS, diagnostics: SUCCESS, initoutput: SUCCESS, initparam: SUCCESS, startrun: SUCCESS, tab_init: SUCCESS, main: SUCCESS, output: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/fmm.ss", "--en-para -perm bperm -tp redlog", "MergeLocalGridSize: SUCCESS, DetermineGridSize: SUCCESS, MergeLocalGrid: SUCCESS, ConstructGrid: SUCCESS, ConstructLists: SUCCESS, CostZonesHelper: SUCCESS, CostZones: SUCCESS, ZeroBox: SUCCESS, CreateBoxes: SUCCESS, CreateDistribution: SUCCESS, CreateParticleList: SUCCESS, gets: SUCCESS, GetArguments: SUCCESS, InitExpTables: SUCCESS, InitGlobalMemory: SUCCESS, InitParticleList: SUCCESS, PartitionGrid: SUCCESS, StepSimulation: SUCCESS, generateNumBoxes: SUCCESS, ParallelExecute: SUCCESS, PrintGrid: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/ocean.ss", "--en-para -perm bperm -tp redlog", "gets: SUCCESS, main: SUCCESS, multig: SUCCESS, slave2: SUCCESS, slave: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/raytrace.ss", "--en-para -perm bperm -tp redlog", "BuildHierarchy_Uniform: SUCCESS, PrintStatistics: SUCCESS, ReadEnvFile: SUCCESS, ReadGeoFile: SUCCESS, StartRayTrace: SUCCESS, gets: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/volrend.ss", "--en-para -perm bperm -tp redlog", "Compute_Base: SUCCESS, Compute_Normal: SUCCESS, Compute_Octree: SUCCESS, Compute_Opacity: SUCCESS, Init_Decomposition: SUCCESS, Init_Options: SUCCESS, Load_Map: SUCCESS, Load_Normal: SUCCESS, Load_Opacity: SUCCESS, Frame: SUCCESS, Normal_Compute: SUCCESS, Opacity_Compute: SUCCESS, Or_Neighbors_In_Base: SUCCESS, Ray_Trace: SUCCESS, Render: SUCCESS, Render_Loop: SUCCESS, getAdaptive: SUCCESS, getNumNodes: SUCCESS, getRotateSteps: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/water-nsquared.ss", "--en-para -perm bperm -tp redlog", "INTERF: SUCCESS, INTRAF: SUCCESS, POTENG: SUCCESS, PREDIC: SUCCESS, MDMAIN: SUCCESS, WorkStart: SUCCESS, getNPRINT: SUCCESS, getNSAVE: SUCCESS, getNSTEP: SUCCESS, gets: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/water-spatial.ss", "--en-para -perm bperm -tp redlog", "INTERF: SUCCESS, INTRAF: SUCCESS, POTENG: SUCCESS, PREDIC: SUCCESS, MDMAIN: SUCCESS, WorkStart: SUCCESS, getNPRINT: SUCCESS, getNSAVE: SUCCESS, getNSTEP: SUCCESS, gets: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/cholesky.ss", "--en-para -perm bperm -tp redlog", "AssignBlocksNow: SUCCESS, ComputeTargetBlockSize: SUCCESS, PreProcessFO: SUCCESS, Go: SUCCESS, InitOneFreeList: SUCCESS, MallocInit: SUCCESS, ReadSparse: SUCCESS, gets: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/fft.ss", "--en-para -perm bperm -tp redlog", "FFT1DOnce: SUCCESS, FFT1D: SUCCESS, SlaveStart: SUCCESS, gets: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/lu.ss", "--en-para -perm bperm -tp redlog", "lu: SUCCESS, OneSolve: SUCCESS, SlaveStart: SUCCESS, gets: SUCCESS, main: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/radix.ss", "--en-para -perm bperm -tp redlog", "getNumProcs: SUCCESS, main: SUCCESS, slave_sort: SUCCESS"),
-    test(command, "hip_veribsync/veribsync/benchmark/radiosity.ss", "--en-para -perm bperm -tp redlog", "init_ray_tasks: SUCCESS, process_tasks: SUCCESS, init_global: SUCCESS, init_visibility_module: SUCCESS, input: SUCCESS, parse_args: SUCCESS, main: SUCCESS, radiosity: FAIL")
+    test(command, "veribsync/while-loop.ss", "--en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, loop_fun: SUCCESS, loop_fun3: SUCCESS"),
+    test(command, "veribsync/while-loop2.ss", "--en-para -perm bperm -tp redlog", "fun: SUCCESS, fun3: SUCCESS, fun4: SUCCESS, fun5: SUCCESS, fun6: SUCCESS, fun7: SUCCESS, fun8: SUCCESS, fun9: SUCCESS"),
+    test(command, "veribsync/bperm-exp.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
+    test(command, "veribsync/barrier-static-primitives.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS"),
+    test(command, "veribsync/barrier-static-exp1.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "veribsync/barrier-static-exp2.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "veribsync/barrier-static-exp3.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "veribsync/barrier-static-complex.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "veribsync/barrier-static-complex2.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "veribsync/barrier-static-complex3.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread: SUCCESS"),
+    test(command, "veribsync/barrier-static-multiple.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, main_fail: SUCCESS, participant: SUCCESS, participant_fail: FAIL"),
+    test(command, "veribsync/barrier-dynamic-exp1.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
+    test(command, "veribsync/barrier-dynamic-exp2.ss", "--en-para -perm bperm -tp redlog", "main: FAIL, thread1: SUCCESS, thread2: SUCCESS, thread3: SUCCESS"),
+    test(command, "veribsync/barrier-dynamic-exp5.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread: SUCCESS"),
+    test(command, "veribsync/barrier-dynamic-exp6.ss", "--en-para -perm bperm -tp redlog", "main: SUCCESS, thread1: SUCCESS, thread2: SUCCESS"),
+    test(command, "veribsync/barrier-dynamic-exp7.ss", "--en-para -perm bperm -tp redlog", "CalculationInTask: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/barnes.ss", "--en-para -perm bperm -tp redlog", "ANLinit: SUCCESS, ComputeForces: SUCCESS, Housekeep: SUCCESS, find_my_bodies: SUCCESS, hackcofm: SUCCESS, maketree: SUCCESS, stepsystem: SUCCESS, find_my_initial_bodies: SUCCESS, SlaveStart: SUCCESS, diagnostics: SUCCESS, initoutput: SUCCESS, initparam: SUCCESS, startrun: SUCCESS, tab_init: SUCCESS, main: SUCCESS, output: SUCCESS"),
+    test(command, "veribsync/benchmark/fmm.ss", "--en-para -perm bperm -tp redlog", "MergeLocalGridSize: SUCCESS, DetermineGridSize: SUCCESS, MergeLocalGrid: SUCCESS, ConstructGrid: SUCCESS, ConstructLists: SUCCESS, CostZonesHelper: SUCCESS, CostZones: SUCCESS, ZeroBox: SUCCESS, CreateBoxes: SUCCESS, CreateDistribution: SUCCESS, CreateParticleList: SUCCESS, gets: SUCCESS, GetArguments: SUCCESS, InitExpTables: SUCCESS, InitGlobalMemory: SUCCESS, InitParticleList: SUCCESS, PartitionGrid: SUCCESS, StepSimulation: SUCCESS, generateNumBoxes: SUCCESS, ParallelExecute: SUCCESS, PrintGrid: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/ocean.ss", "--en-para -perm bperm -tp redlog", "gets: SUCCESS, main: SUCCESS, multig: SUCCESS, slave2: SUCCESS, slave: SUCCESS"),
+    test(command, "veribsync/benchmark/raytrace.ss", "--en-para -perm bperm -tp redlog", "BuildHierarchy_Uniform: SUCCESS, PrintStatistics: SUCCESS, ReadEnvFile: SUCCESS, ReadGeoFile: SUCCESS, StartRayTrace: SUCCESS, gets: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/volrend.ss", "--en-para -perm bperm -tp redlog", "Compute_Base: SUCCESS, Compute_Normal: SUCCESS, Compute_Octree: SUCCESS, Compute_Opacity: SUCCESS, Init_Decomposition: SUCCESS, Init_Options: SUCCESS, Load_Map: SUCCESS, Load_Normal: SUCCESS, Load_Opacity: SUCCESS, Frame: SUCCESS, Normal_Compute: SUCCESS, Opacity_Compute: SUCCESS, Or_Neighbors_In_Base: SUCCESS, Ray_Trace: SUCCESS, Render: SUCCESS, Render_Loop: SUCCESS, getAdaptive: SUCCESS, getNumNodes: SUCCESS, getRotateSteps: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/water-nsquared.ss", "--en-para -perm bperm -tp redlog", "INTERF: SUCCESS, INTRAF: SUCCESS, POTENG: SUCCESS, PREDIC: SUCCESS, MDMAIN: SUCCESS, WorkStart: SUCCESS, getNPRINT: SUCCESS, getNSAVE: SUCCESS, getNSTEP: SUCCESS, gets: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/water-spatial.ss", "--en-para -perm bperm -tp redlog", "INTERF: SUCCESS, INTRAF: SUCCESS, POTENG: SUCCESS, PREDIC: SUCCESS, MDMAIN: SUCCESS, WorkStart: SUCCESS, getNPRINT: SUCCESS, getNSAVE: SUCCESS, getNSTEP: SUCCESS, gets: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/cholesky.ss", "--en-para -perm bperm -tp redlog", "AssignBlocksNow: SUCCESS, ComputeTargetBlockSize: SUCCESS, PreProcessFO: SUCCESS, Go: SUCCESS, InitOneFreeList: SUCCESS, MallocInit: SUCCESS, ReadSparse: SUCCESS, gets: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/fft.ss", "--en-para -perm bperm -tp redlog", "FFT1DOnce: SUCCESS, FFT1D: SUCCESS, SlaveStart: SUCCESS, gets: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/lu.ss", "--en-para -perm bperm -tp redlog", "lu: SUCCESS, OneSolve: SUCCESS, SlaveStart: SUCCESS, gets: SUCCESS, main: SUCCESS"),
+    test(command, "veribsync/benchmark/radix.ss", "--en-para -perm bperm -tp redlog", "getNumProcs: SUCCESS, main: SUCCESS, slave_sort: SUCCESS"),
+    test(command, "veribsync/benchmark/radiosity.ss", "--en-para -perm bperm -tp redlog", "init_ray_tasks: SUCCESS, process_tasks: SUCCESS, init_global: SUCCESS, init_visibility_module: SUCCESS, input: SUCCESS, parse_args: SUCCESS, main: SUCCESS, radiosity: FAIL")
   )
 
   val BagsTests = List(

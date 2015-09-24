@@ -143,8 +143,9 @@ object SuiteGenerator {
     def fixDir(param: String)(filename: String): String = {
       param match {
         case "hip_baga" => "../hip_baga/" + filename
-        case "hip"      => filename
         case "sa"       => "../infer/sa/" + filename
+        case p if p.startsWith("hip")
+                        => filename
         case p          => p + "/" + filename
       }
     }
