@@ -31,6 +31,7 @@ results/
 # Used by Hip/Sleek
 oc.out
 a.omega
+mona.failure
 
 # Scala worksheets.
 *.sc
