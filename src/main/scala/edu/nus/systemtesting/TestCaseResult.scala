@@ -106,7 +106,14 @@ case class TestCaseResult(val command: Path,
 
     results match {
       case Left(remarks) => {
-        remarks.foreach(reporter.log)
+        val TruncateOutputTo = 16
+        val rmIter = remarks.iterator
+        val truncatedRemarks = rmIter.take(TruncateOutputTo).toList
+        val remaining = rmIter.size
+
+        truncatedRemarks.foreach(reporter.log)
+        if (remaining > 0)
+          reporter.log(s"$remaining lines remaining (truncated)...")
 
         reporter.println()
       }
