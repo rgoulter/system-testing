@@ -57,6 +57,8 @@ class HipTestSuiteUsage(
     val suite = new TestSuite(tests, revision, significantTime)
     val suiteResult = suite.runAllTests
 
+    TestSuiteResultAnalysis printTallyOfInvalidTests suiteResult
+
     suiteResult
   }
 

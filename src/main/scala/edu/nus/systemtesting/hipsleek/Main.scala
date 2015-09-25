@@ -103,7 +103,9 @@ class ConfiguredMain(config: AppConfig) {
 
         reporter.log(s"Found sleek testsuite results for $revision.")
         sleekTSRes.displayResult(config.significantTimeThreshold)
+        TestSuiteResultAnalysis printTallyOfInvalidTests sleekTSRes
         hipTSRes.displayResult(config.significantTimeThreshold)
+        TestSuiteResultAnalysis printTallyOfInvalidTests hipTSRes
 
         rtn
       }
@@ -128,6 +130,7 @@ class ConfiguredMain(config: AppConfig) {
 
         reporter.log(s"Found sleek testsuite results for $revision.")
         testSuiteResult.displayResult(config.significantTimeThreshold)
+        TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
         Some(testSuiteResult)
       }
@@ -147,6 +150,7 @@ class ConfiguredMain(config: AppConfig) {
 
         reporter.log(s"Found hip testsuite results for $revision.")
         testSuiteResult.displayResult(config.significantTimeThreshold)
+        TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
         Some(testSuiteResult)
       }
