@@ -119,8 +119,20 @@ object TestSuiteResultAnalysis {
       }
     }
 
-    // TODO: Tally
-    println(nameReasonPairs)
+    // Tally
+    val excTally = (nameReasonPairs map { case (n, r) =>
+      n + (r map { r => s"($r)"} getOrElse "")
+    }).foldLeft(Map[String, Int]())({ (table, e) =>
+      val nextCt = 1 + table.getOrElse(e, 0)
+      table + (e -> nextCt)
+    })
+
+    // Turns out, there are many exceptions, but most occur only once
+    val MinExcCount = 2
+    println(s"Common Exception Reasons: (at least $MinExcCount occurrences)")
+    excTally.filter({ case (e, ct) => ct >= MinExcCount }).foreach({ case (e, ct) =>
+      println(f"${e + ":"}%-50s $ct%4d")
+    })
 
     // otherwise, unknown/unaccounted for...?
     val unaccounted = invalid diff
