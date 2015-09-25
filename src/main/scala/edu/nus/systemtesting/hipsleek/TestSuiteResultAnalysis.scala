@@ -24,7 +24,27 @@ object TestSuiteResultAnalysis {
     val IsOutputInvalidReasonTCs = true
 
     def printTC(tcr: TestCaseResult): Unit = {
-      println(tcr.cmdFnArgsKey)
+      import tcr.{ command, arguments, filename }
+      println(s"$command $arguments $filename")
+    }
+
+    def outputReason(name: String, tcs: List[TestCaseResult]): Unit = {
+      val TruncateTo = 5
+
+      if (!tcs.isEmpty) {
+        println(f"${name + ":"}%-30s ${s"(${tcs.size}/$invalidCt)"}%10s")
+
+        val iter = tcs.iterator
+        val truncated = iter.take(TruncateTo).toList
+        val remainingCt = iter.size
+
+        if (IsOutputInvalidReasonTCs) {
+          truncated.foreach(printTC)
+
+          if (remainingCt > 0)
+            println(remainingCt + " more...")
+        }
+      }
     }
 
     // return list of matched strings
@@ -46,23 +66,25 @@ object TestSuiteResultAnalysis {
     // Overspecified, Underspecified
     val badSpecTCs = testCasesWithOutputMatching("Underspecified!|Overspecified!".r)
 
-    println(s"Bad Spec: (${badSpecTCs.size}/$invalidCt)")
-    if (IsOutputInvalidReasonTCs) badSpecTCs.foreach(printTC)
+    outputReason("Bad Spec", badSpecTCs)
+
+    // Timeout
+    val timeoutTCs = testCasesWithOutputMatching("TIMEOUT".r)
+
+    outputReason("Timeout", timeoutTCs)
 
 
     // Barrrier b4n Fail
     val barrrierFailTCs = testCasesWithOutputMatching("Barrrier b4n Fail: .*".r)
 
-    println(s"Barrrier Fail TCs: (${barrrierFailTCs.size}/$invalidCt)")
-    if (IsOutputInvalidReasonTCs) barrrierFailTCs.foreach(printTC)
+    outputReason("Barrrier Fail TCs", barrrierFailTCs)
 
 
     // redcsl (or other) not found
     val PNFRegex = "WARNING : Command for starting the prover \\((.*)\\) not found".r
     val proverNotFoundTCs = testCasesWithOutputMatching(PNFRegex)
 
-    println(s"Prover Not Found TCs: (${proverNotFoundTCs.size}/$invalidCt)")
-    if (IsOutputInvalidReasonTCs) proverNotFoundTCs.foreach(printTC)
+    outputReason("Prover Not Found TCs", proverNotFoundTCs)
 
 
     // exceptions
@@ -83,8 +105,7 @@ object TestSuiteResultAnalysis {
 
     val (exceptionTCs, allExcOutp) = mappedInvalid.unzip
 
-    println(s"Exception Occurred TCs: (${exceptionTCs.size}/$invalidCt)")
-    if (IsOutputInvalidReasonTCs) exceptionTCs.foreach(printTC)
+    outputReason("Exception Occurred TCs", exceptionTCs)
 
     // Extract the kind of exception, and its (optional) reason
     val nameReasonPairs = (allExcOutp flatten) map { line =>
@@ -100,11 +121,11 @@ object TestSuiteResultAnalysis {
     // otherwise, unknown/unaccounted for...?
     val unaccounted = invalid diff
                       (badSpecTCs union
+                       timeoutTCs union
                        barrrierFailTCs union
                        proverNotFoundTCs union
                        exceptionTCs)
 
-    println(s"Unaccounted For TCs: (${unaccounted.size}/$invalidCt)")
-    if (IsOutputInvalidReasonTCs) unaccounted.foreach(printTC)
+    outputReason("Unaccounted For TCs", unaccounted)
   }
 }
