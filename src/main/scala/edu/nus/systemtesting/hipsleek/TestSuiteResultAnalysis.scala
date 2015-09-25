@@ -2,6 +2,7 @@ package edu.nus.systemtesting.hipsleek
 
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.output.GlobalReporter
+import edu.nus.systemtesting.output.ReporterColors._
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import GlobalReporter.reporter
 import scala.util.matching.Regex
@@ -25,14 +26,14 @@ object TestSuiteResultAnalysis {
 
     def printTC(tcr: TestCaseResult): Unit = {
       import tcr.{ command, arguments, filename }
-      println(s"$command $arguments $filename")
+      reporter.println(s"$command $arguments $filename")
     }
 
     def outputReason(name: String, tcs: List[TestCaseResult]): Unit = {
       val TruncateTo = 5
 
       if (!tcs.isEmpty) {
-        println(f"${name + ":"}%-30s ${s"(${tcs.size}/$invalidCt)"}%10s")
+        reporter.println(reporter.inColor(ColorWhite)(f"${name + ":"}%-30s ${s"(${tcs.size}/$invalidCt)"}%10s"))
 
         val iter = tcs.iterator
         val truncated = iter.take(TruncateTo).toList
@@ -42,7 +43,7 @@ object TestSuiteResultAnalysis {
           truncated.foreach(printTC)
 
           if (remainingCt > 0)
-            println(remainingCt + " more...")
+            reporter.println(remainingCt + " more...")
         }
       }
     }
@@ -62,6 +63,9 @@ object TestSuiteResultAnalysis {
       }
     }
 
+
+    reporter.println()
+    reporter.println("Reasons for Invalid Test Cases:")
 
     // Overspecified, Underspecified
     val badSpecTCs = testCasesWithOutputMatching("Underspecified!|Overspecified!".r)
@@ -127,5 +131,7 @@ object TestSuiteResultAnalysis {
                        exceptionTCs)
 
     outputReason("Unaccounted For TCs", unaccounted)
+
+    reporter.println()
   }
 }
