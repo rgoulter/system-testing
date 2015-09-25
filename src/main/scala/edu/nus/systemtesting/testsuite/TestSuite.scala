@@ -12,16 +12,13 @@ import GlobalReporter.reporter
 class TestSuite(tests: List[TestCase],
                 revision: String,
                 significantTime: Long) {
-  // significantTime in seconds
-  val THRESHOLD = (significantTime * 1000)
-
   def runAllTests(): TestSuiteResult = {
     val startTime = System.currentTimeMillis
 
     val testResults = tests.map(test => {
       val testResult = test.generateOutput
 
-      testResult.displayResult(THRESHOLD)
+      testResult.displayResult(significantTime)
 
       testResult
     })

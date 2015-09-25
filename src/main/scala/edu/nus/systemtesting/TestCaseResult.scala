@@ -69,9 +69,9 @@ case class TestCaseResult(val command: Path,
     (command, filename)
 
   /**
-   * @param threshold the min value `executionTime` needs to be to be shown.
+   * @param threshold the min value `executionTime` (in seconds) needs to be to be shown.
    */
-  def displayResult(threshold: Long = 1000L) = {
+  def displayResult(threshold: Long = 1L) = {
     // Assuming that execCmd is of same form as run in Runnable
     // Output (cmd, args?, filename) relative to projectDir, corpusDir
     val trimmedArgs = arguments.trim()
@@ -96,7 +96,7 @@ case class TestCaseResult(val command: Path,
     reporter.println(resStr)
 
 
-    if (executionTime > threshold) {
+    if (executionTime > threshold * 1000) {
       reporter.log(s"Runtime: $executionTime milliseconds")
     }
 

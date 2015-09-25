@@ -33,7 +33,10 @@ case class TestSuiteResult(val hostname: String,
     reporter.println(reporter.inColor(ColorYellow)(InvlMsg + invalid.length))
   }
 
-  def displayResult(threshold: Long = 1000L): Unit = {
+  /**
+   * @param threshold for [[TestCaseResult.displayResult]], in seconds.
+   */
+  def displayResult(threshold: Long = 1L): Unit = {
     results.foreach(_.displayResult(threshold))
 
     generateTestStatistics()

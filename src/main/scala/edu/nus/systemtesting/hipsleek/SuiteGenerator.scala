@@ -144,7 +144,7 @@ object SuiteGenerator {
       param match {
         case "hip_baga" => "../hip_baga/" + filename
         case "sa"       => "../infer/sa/" + filename
-        case p if p.startsWith("hip")
+        case p if p.contains("hip")
                         => filename
         case p          => p + "/" + filename
       }
