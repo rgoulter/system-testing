@@ -20,15 +20,18 @@ import GlobalReporter.reporter
  */
 class TestSuiteComparison(val oldRevision: String,
                           val curRevision: String,
-                          val argsChangedTests: List[(TestCaseResult, TestCaseResult)],
+                          val argsChangedTests: List[TestCaseDiffPair],
                           val removedTests: List[TestCaseResult],
-                          val newTests: List[TestCaseResult],
-                          val nowSuccessfullyRuns: List[(TestCaseResult, TestCaseResult)],
-                          val usedToSuccessfullyRun: List[(TestCaseResult, TestCaseResult)],
-                          val nowPasses: List[(TestCaseResult, TestCaseResult)],
-                          val usedToPass: List[(TestCaseResult, TestCaseResult)],
-                          val diffDiffs: List[(TestCaseResult, TestCaseResult)]) {
+                          val newTests:     List[TestCaseResult],
+                          val nowSuccessfullyRuns:   List[TestCaseDiffPair],
+                          val usedToSuccessfullyRun: List[TestCaseDiffPair],
+                          val nowPasses:  List[TestCaseDiffPair],
+                          val usedToPass: List[TestCaseDiffPair],
+                          val diffDiffs:  List[TestCaseDiffPair],
+                          val curSlower:  List[TestCaseDiffPair],
+                          val curQuicker: List[TestCaseDiffPair]) {
   val unchanged = {
+    // unsure about whether curSlower, curQuicker should 'count'
     List(argsChangedTests,
          removedTests,
          newTests,
@@ -36,7 +39,9 @@ class TestSuiteComparison(val oldRevision: String,
          usedToSuccessfullyRun,
          nowPasses,
          usedToPass,
-         diffDiffs)
+         diffDiffs,
+         curSlower,
+         curQuicker)
       .forall(_.isEmpty)
   }
 
@@ -113,10 +118,43 @@ class TestSuiteComparison(val oldRevision: String,
       })
       reporter.println()
     }
+
+    // Output speed differences
+    if (!curSlower.isEmpty) {
+      reporter.log(s"Current Tests Slower:")
+      curSlower.foreach({ case (oldTCR, curTCR) =>
+        val oldT = oldTCR executionTime
+        val curT = curTCR executionTime
+
+        reporter log f"* ${tcrToString(curTCR)} was: $oldT%5d ms now: $curT%5d ms"
+      })
+      reporter.println()
+    }
+
+    if (!curQuicker.isEmpty) {
+      reporter.log(s"Current Tests Quicker:")
+      curQuicker.foreach({ case (oldTCR, curTCR) =>
+        val oldT = oldTCR executionTime
+        val curT = curTCR executionTime
+
+        reporter log f"* ${tcrToString(curTCR)} was: $oldT%5d ms now: $curT%5d ms"
+      })
+      reporter.println()
+    }
   }
 }
 
 object TestSuiteComparison {
+  /**
+   * Proportion difference between execution times as a threshold for whether a
+   * testcase became 'slower' (and, roughly, 'quicker').
+   */
+  val PerfDiffProportion = 0.5;
+
+  /**
+   * Construct a [[TestSuiteComparison]], conveniently computes values for
+   * each of the parameters.
+   */
   def apply(oldTS: TestSuiteResult, curTS: TestSuiteResult): TestSuiteComparison = {
     // It can't be assumed that oldTS, currTS ran the same set of TestCases
     // (in terms of *SuiteUsage), since these can change over time as TestCases
@@ -202,9 +240,35 @@ object TestSuiteComparison {
     })
     // Remaining (from comparableTests): results both 'pass' or both 'fail',
     // May be that they fail for different reasons:
-    val diffDiffs = comparableTests.filter({case (oldTCR, curTCR) =>
+    val diffDiffs = comparableTests.filter({ case (oldTCR, curTCR) =>
       (!oldTCR.passed && !curTCR.passed) && (oldTCR.diff != curTCR.diff)
     })
+
+    //
+    // Performance differences
+    //
+
+    // Use proportion to check whether a test slowed down
+    //   e.g. oldT = 1000, curT = 1600,
+    //   then (1600 - 1000) / 1000 = 0.6 > 0.5 => "Slower".
+    def isTimeSlower(oldT: Long, curT: Long) =
+      (curT - oldT).toDouble / oldT > PerfDiffProportion
+
+    val bothPassed = comparableTests filter { case (oldTCR, curTCR) =>
+      // Performance diff only matters for passing tests.
+      oldTCR.passed && curTCR.passed
+    }
+    val curSlower = bothPassed filter { case (oldTCR, curTCR) =>
+      isTimeSlower(oldTCR.executionTime, curTCR.executionTime)
+    }
+    val curQuicker = bothPassed filter { case (oldTCR, curTCR) =>
+      // This confuses me. Can just swap cur/old into timeSlower
+      // e.g. old = 1600, cur = 1000,
+      // so, isSlower?(old = cur=1000, cur = old=1600) =
+      //       (1600 - 1000) / 1000 = 0.6 > 0.5
+      // n.b. Technically, 1600->1000 is ~0.37 decrease, not 50%.
+      isTimeSlower(curTCR.executionTime, oldTCR.executionTime)
+    }
 
     // Now construct TestSuiteComparison from the above
     new TestSuiteComparison(
@@ -217,7 +281,9 @@ object TestSuiteComparison {
       usedToSuccessfullyRun = usedToSuccessfullyRun,
       nowPasses = nowPasses,
       usedToPass = usedToPass,
-      diffDiffs = diffDiffs
+      diffDiffs = diffDiffs,
+      curSlower = curSlower,
+      curQuicker = curQuicker
     )
   }
 }

@@ -30,13 +30,17 @@ class TestSuiteComparisonSpec extends FlatSpec {
 
   val arbitraryCommand = Paths.get("cmd")
 
+  val TimeQuick = 1000L
+  val TimeSuperQuick = 100L
+  val TimeSlower = 2000L
+
   /**
    * TestCaseResult with successful execution.
    */
   def tcRes(filename: String,
             args: String,
             results: Iterable[(String, String)],
-            time: Long = 100L): TestCaseResult = {
+            time: Long = TimeQuick): TestCaseResult = {
     TestCaseResult(arbitraryCommand,
                    Paths.get(filename),
                    args,
@@ -49,7 +53,7 @@ class TestSuiteComparisonSpec extends FlatSpec {
   // TestCaseResult with unsuccessful execution
   def tcResErr(filename: String,
                args: String,
-               time: Long = 100L): TestCaseResult = {
+               time: Long = TimeQuick): TestCaseResult = {
     TestCaseResult(arbitraryCommand,
                    Paths.get(filename),
                    args,
@@ -102,6 +106,17 @@ class TestSuiteComparisonSpec extends FlatSpec {
   val ResultWithDiffDiffs = results("R1", List(
     tcRes("test1", "", List("a" -> "a", "b" -> "b")),
     tcRes("test2", "", List("a" -> "b", "b" -> "b"))
+  ))
+
+  // TODO: MUCH SLOWER.. / QUICKER..
+  val ResultWithSlower = results("R1", List(
+    tcRes("test1", "", List("a" -> "a", "b" -> "b"), TimeSlower),
+    tcRes("test2", "", List("a" -> "a", "b" -> "a"))
+  ))
+
+  val ResultWithQuicker = results("R1", List(
+    tcRes("test1", "", List("a" -> "a", "b" -> "b"), TimeSuperQuick),
+    tcRes("test2", "", List("a" -> "a", "b" -> "a"))
   ))
 
 
@@ -216,5 +231,38 @@ class TestSuiteComparisonSpec extends FlatSpec {
     assert(TestSuiteComparison(ControlResult, ResultWithTestRemoved).diffDiffs.isEmpty)
     assert(TestSuiteComparison(ControlResult, ResultWithDiffResults).diffDiffs.isEmpty)
 //    assert(TestSuiteComparison(ControlResult, ResultWithDiffDiffs).diffDiffs.isEmpty)
+  }
+
+
+  //   performance Diffs
+  it should "compute diff for slower tests" in {
+    val diff = TestSuiteComparison(ControlResult, ResultWithSlower)
+
+    assert(diff.curSlower.length == 1)
+  }
+
+  it should "compute diff for quicker tests" in {
+    val diff = TestSuiteComparison(ControlResult, ResultWithQuicker)
+
+    assert(diff.curQuicker.length == 1)
+  }
+
+  it should "compute no diff for perfomance diffs (if no change)" in {
+    // I feel that this isn't strong enough; should also test that tests which
+    // only slightly quicker should be no-change..
+    assert(TestSuiteComparison(ControlResult, ResultWithSlower).curQuicker.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithQuicker).curSlower.isEmpty)
+
+    assert(TestSuiteComparison(ControlResult, ResultWithArgsChanged).curSlower.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithTestAdded).curSlower.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithTestRemoved).curSlower.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithDiffResults).curSlower.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithDiffDiffs).curSlower.isEmpty)
+
+    assert(TestSuiteComparison(ControlResult, ResultWithArgsChanged).curQuicker.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithTestAdded).curQuicker.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithTestRemoved).curQuicker.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithDiffResults).curQuicker.isEmpty)
+    assert(TestSuiteComparison(ControlResult, ResultWithDiffDiffs).curQuicker.isEmpty)
   }
 }
