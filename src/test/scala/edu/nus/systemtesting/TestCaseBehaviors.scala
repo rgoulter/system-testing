@@ -25,7 +25,9 @@ trait TestCaseBehaviors[T <: TestCase] { this: FlatSpec =>
     it should "pass for a simple, valid test case" in {
       val test = testCase checkAgainst passingExpect
 
-      val actualResult = test.generateTestResult(output, ArbitraryExecutionTime)
+      val actualResult = test.generateTestResult(output,
+                                                 ArbitraryExecutionTime,
+                                                 checkCmdFileExists = false)
 
       assertResult(TestPassed)(actualResult.result)
       assert(actualResult.diff.isEmpty)
@@ -35,7 +37,9 @@ trait TestCaseBehaviors[T <: TestCase] { this: FlatSpec =>
     it should "fail if actual result different from expected" in {
       val test = testCase checkAgainst failingExpect
 
-      val actualResult = test.generateTestResult(output, ArbitraryExecutionTime)
+      val actualResult = test.generateTestResult(output,
+                                                 ArbitraryExecutionTime,
+                                                 checkCmdFileExists = false)
 
       assertResult(TestFailed)(actualResult.result)
       assertResult(failingDiff)(actualResult.diff)

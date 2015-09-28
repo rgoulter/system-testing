@@ -47,12 +47,14 @@ abstract class TestCase(val projectDir: Path,
     res
   }
 
-  def generateTestResult(output: ExecutionOutput, time: Long): TestCaseResult = {
+  def generateTestResult(output: ExecutionOutput,
+                         time: Long,
+                         checkCmdFileExists: Boolean = true): TestCaseResult = {
     // Although cmd, fn is already run, can check..
     // n.b. hip/sleek return 0 even if the file given isn't present.
     val cmdExists = absCmdPath.toFile().exists()
     val fileExists = absFilePath.toFile().exists()
-    val check = if (cmdExists && fileExists) {
+    val check = if (!checkCmdFileExists || (cmdExists && fileExists)) {
       // Only check results if both cmd, file exist.
       checkResults(expectedOutput, output)
     } else {
