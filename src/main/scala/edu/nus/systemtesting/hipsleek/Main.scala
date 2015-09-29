@@ -12,22 +12,13 @@ import GlobalReporter.reporter
 import com.typesafe.config.ConfigFactory
 import edu.nus.systemtesting.FileSystemUtilities
 import java.io.IOException
+import com.typesafe.config.ConfigException
 
 object Main {
   /** Expected filename for the application conf. */
   val ConfigFilename = ".hipsleektest.conf"
 
-  /*
-   * Load config, maybe from Current Working Directory, or some ancestor of this,
-   * or from `$HOME`.
-   *
-   * If there is no config in these paths, then check for a `.hg` folder in CWD,
-   * or an ancestor of this. Assume that this is the hip/sleek repository.
-   *
-   * Failing that, try to load the `application.conf` from the JAR's resources.
-   */
-  def loadConfig(): AppConfig = {
-    def pathAncestors(p: Path): List[Path] = {
+  private def pathAncestors(p: Path): List[Path] = {
       val par = p.getParent()
 
       if (par == null)
@@ -36,28 +27,66 @@ object Main {
         par +: pathAncestors(par)
     }
 
-    val cwdPath = Paths.get(".").toAbsolutePath()
-    val ancestors = cwdPath +: pathAncestors(cwdPath)
+  private val cwdPath = Paths.get(".").toAbsolutePath()
+  private val ancestors = cwdPath +: pathAncestors(cwdPath)
 
-    // Look for config in cwd + ancestors.
+  /*
+   * Try to find some Repository path.
+   *
+   * check for a `.hg` folder in CWD,
+   * or an ancestor of this. Assume that this is the hip/sleek repository.
+   *
+   * Load config, maybe from Current Working Directory, or some ancestor of this,
+   * or from `$HOME`.
+   *
+   * Failing that, load the `application.conf` from the JAR's resources.
+   */
+  def findRepository(): Option[Path] = {
+    // Look for .hg in cwd + ancestors.
+    val maybeRepo = ancestors find { path => (path resolve ".hg") toFile() exists() }
+
+    if (!maybeRepo.isEmpty) {
+      reporter.log(s"Found HG repository at ${maybeRepo.getOrElse("")}.")
+
+      maybeRepo
+    } else {
+      // Look for configs in cwd + ancestors.
+      val maybeConfig = ancestors map { _ resolve ConfigFilename } filter { _ toFile() exists }
+
+      maybeConfig.map({ path =>
+        // Loads *every* config in the ancestors, rather than until we find one
+        // with a REPO_DIR key.
+        reporter.log(s"Found ${path.normalize()}. Loading Config.")
+
+        try {
+          val cfg = ConfigFactory.parseFile(path.toFile())
+          val repoDir = cfg.getString("REPO_DIR")
+
+          Some(Paths.get(repoDir))
+        } catch {
+          case missing: ConfigException.Missing => None
+          case _: Throwable => None
+        }
+      }) find { maybeRepo => !maybeRepo.isEmpty } flatten
+    }
+  }
+
+  /**
+   * Loads the config,
+   */
+  def loadConfig(): AppConfig = {
+    // Look for first config in cwd + ancestors.
     val maybeConfig = ancestors map { _ resolve ConfigFilename } find { _ toFile() exists }
 
-    maybeConfig.map({ path =>
-      reporter.log(s"Found ${path.normalize()}. Loading Config.")
-      AppConfig.load(ConfigFactory.parseFile(path.toFile()))
-    }).getOrElse {
-      // Look for .hg in cwd + ancestors.
-      val maybeRepo = ancestors find { path => (path resolve ".hg") toFile() exists() }
-
-      maybeRepo.map({ path =>
-        reporter.log(s"Found .hg repo in $path. Using this as Hip/Sleek repository.")
-        AppConfig(repoDir = path)
-      }).getOrElse {
-        reporter.log(s"Loading application.conf from resources.")
-
-        // Otherwise, load from resources.
-        AppConfig.load()
-      }
+    maybeConfig match {
+      case Some(path) =>
+        // assumes that the file will load okay,
+        // otherwise will throw nasty exception.
+        // TODO: A bit tedious to deal with this; but shouldn't be a common problem
+        AppConfig.load(ConfigFactory.parseFile(path.toFile()),
+                       maybeRepoDir = findRepository())
+      case None =>
+        AppConfig.load(maybeRepoDir = findRepository())
     }
   }
 
@@ -79,7 +108,20 @@ object Main {
  */
 class ConfiguredMain(config: AppConfig) {
   private[hipsleek] def run(): Unit = {
-    import config.{ command, repoDir, rev }
+    import config.{ command, rev }
+
+    val repoDir: Path = config.repoDir getOrElse {
+      System.err.println(
+          """Unable to find REPO_DIR. Try:
+            | * Running the program in the mercurial repository, or
+            |   a descendant folder of a mercurial repo.
+            | * Putting a .hipsleektest.conf file with REPO_DIR=/path/to/repo line
+            |   in the current directory, or in some ancestor folder of the CWD.
+            | * Compiling this program with an application.conf with REPO_DIR=/path/to/repo line""".stripMargin)
+      // 'Fatal' error, quit.
+      System.exit(1)
+      throw new IllegalStateException
+    }
 
     command match {
       case "sleek"  => runSleekTests(repoDir, rev)

@@ -17,7 +17,7 @@ object ConfigDefaults {
  * @param timeout is in seconds
  * @param significantTimeThreshold is in seconds
  */
-case class AppConfig(repoDir: Path,
+case class AppConfig(repoDir: Option[Path],
                      revs: List[String] = List(),
                      command: String = "none",
                      timeout: Int = DefaultTimeout,
@@ -46,10 +46,24 @@ object AppConfig {
    *
    * Throws a [[com.typesafe.config.ConfigException]] if required keys in the
    * config (e.g. `REPO_DIR`) are missing.
+   *
+   * @param maybeRepoDir use this as the repository directory, if not `None`.
    */
-  def load(configuration: Config = ConfigFactory.load()): AppConfig = {
-    // Compulsory configuration settings
-    val repoDir = Paths.get(configuration.getString("REPO_DIR"))
+  def load(configuration: Config = ConfigFactory.load(),
+           maybeRepoDir: Option[Path] = None):
+      AppConfig = {
+    // Compulsory configuration setting
+    val repoDir = try {
+      if (!maybeRepoDir.isEmpty) {
+        maybeRepoDir
+      } else {
+        Some(Paths.get(configuration.getString("REPO_DIR")))
+      }
+    } catch {
+      // 'Compulsory', but complain about this elsewhere.
+      // @param configuration has lowest precedence for setting REPO_DIR
+      case e: ConfigException.Missing => None
+    }
 
     // Optional configuration settings
     // Use defaults if missing from `configuration`
