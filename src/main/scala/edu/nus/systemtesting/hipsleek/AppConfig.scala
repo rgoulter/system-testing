@@ -90,7 +90,7 @@ object AppConfig {
   val CommandLineOptionsParser = new scopt.OptionParser[AppConfig]("system-tests") {
     import VisibilityOptions.ShowANSI
 
-    head("run-system-tests", "0.4.0-SNAPSHOT")
+    head("run-system-tests", "0.4.0")
     help("help") text("prints this usage text")
     version("version")
     opt[Int]('t', "timeout") action { (x, c) =>
