@@ -89,8 +89,9 @@ case class TestCaseResult(val command: Path,
     reporter.print(if (pad >= 0) {" " * pad} else {"\n" + " " * ResultCol})
 
     val resStr = result match {
-      case TestPassed => reporter.inColor(ColorGreen)("Passed")
-      case TestFailed => reporter.inColor(ColorRed  )("Failed")
+      case TestPassed => reporter.inColor(ColorGreen)(" Passed")
+      case TestFailed if executionSucceeded => reporter.inColor(ColorRed  )(" Failed")
+      case TestFailed if !executionSucceeded => reporter.inColor(ColorRed  )("Invalid")
     }
 
     reporter.println(resStr)
