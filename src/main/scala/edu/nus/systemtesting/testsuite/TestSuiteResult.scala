@@ -5,9 +5,11 @@ import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.ReporterColors._
+import edu.nus.systemtesting.output.VisibilityOptions._
 import java.io.PrintWriter
 
 import GlobalReporter.reporter
+import GlobalReporter.visibility
 
 
 /**
@@ -21,7 +23,7 @@ case class TestSuiteResult(val hostname: String,
   lazy val (valid, invalid) = results.partition(_.executionSucceeded)
   lazy val (successes, failures) = valid.partition(_.result equals TestPassed)
 
-  def generateTestStatistics(): Unit = {
+  def generateTestStatistics(): Unit = visibility.when(ShowSummary) {
     // There's probably a tidier way to do this with some printf function, but..
     val TotalMsg = "Total number of tests:         "
     val PassMsg  = "Total number of tests passed:  "
