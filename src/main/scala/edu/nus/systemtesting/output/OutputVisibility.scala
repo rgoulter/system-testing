@@ -63,4 +63,42 @@ case class OutputVisibility(
       f
     }
   }
+
+  def copyWith(key: VisibilityOption, b: Boolean = true): OutputVisibility = {
+    this.copy(visibility = visibility + (key -> b))
+  }
+}
+
+object OutputVisibility {
+  /**
+   * Verbose prints 'everything'. Useful for when generating the results.
+   */
+  val PresetVerbose = new OutputVisibility(
+    visibility = Map(
+      ShowANSI -> true,
+      ShowInvalidResults -> true,
+      ShowPassingResults -> true,
+      ShowFailingResults -> true,
+      ShowFailingDiff -> true,
+      ShowInvalidReasons -> true,
+      ShowExecutionTime -> true,
+      ShowSummary -> true
+    )
+  )
+
+  /**
+   * Verbose prints 'everything'. Useful for when running diff.
+   */
+  val PresetSummaryOnly = new OutputVisibility(
+    visibility = Map(
+      ShowANSI -> true,
+      ShowInvalidResults -> false,
+      ShowPassingResults -> false,
+      ShowFailingResults -> false,
+      ShowFailingDiff -> false,
+      ShowInvalidReasons -> false,
+      ShowExecutionTime -> false,
+      ShowSummary -> true
+    )
+  )
 }

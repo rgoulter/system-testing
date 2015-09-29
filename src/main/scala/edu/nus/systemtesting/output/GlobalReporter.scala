@@ -6,5 +6,9 @@ package edu.nus.systemtesting.output
  * @author richardg
  */
 object GlobalReporter {
-  var reporter = new ANSIReporter()
+  // Set as ANSI reporter in main;
+  // easier to have only 'when' and not 'whenNot' in OutputVisibility.
+  var reporter: Reporter = new PlainReporter()
+
+  var visibility = OutputVisibility.PresetVerbose
 }

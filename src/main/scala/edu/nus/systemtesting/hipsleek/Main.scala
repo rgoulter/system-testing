@@ -13,6 +13,9 @@ import com.typesafe.config.ConfigFactory
 import edu.nus.systemtesting.FileSystemUtilities
 import java.io.IOException
 import com.typesafe.config.ConfigException
+import edu.nus.systemtesting.output.VisibilityOptions
+import edu.nus.systemtesting.output.PlainReporter
+import edu.nus.systemtesting.output.ANSIReporter
 
 object Main {
   /** Expected filename for the application conf. */
@@ -97,6 +100,15 @@ object Main {
     // run with configuration.
     AppConfig.CommandLineOptionsParser.parse(args, appCfg) foreach { config =>
       val configuredMain = new ConfiguredMain(config)
+
+      // Configure output visibility
+      import config.outputVis
+      import VisibilityOptions.ShowANSI
+
+      outputVis.when(ShowANSI) {
+        GlobalReporter.reporter = new ANSIReporter()
+      }
+
       configuredMain.run()
     }
   }
