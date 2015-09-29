@@ -4,7 +4,9 @@ import java.nio.file.Path
 
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.ReporterColors._
+import edu.nus.systemtesting.output.VisibilityOptions._
 import GlobalReporter.reporter
+import GlobalReporter.visibility
 
 /**
  * A system level test will either Pass or Fail.
@@ -71,7 +73,16 @@ case class TestCaseResult(val command: Path,
   /**
    * @param threshold the min value `executionTime` (in seconds) needs to be to be shown.
    */
-  def displayResult(threshold: Long = 1L) = {
+  def displayResult(threshold: Long = 1L): Unit = {
+    val canOutput = result match {
+      case TestPassed => visibility.show(ShowPassingResults)
+      case TestFailed if executionSucceeded => visibility.show(ShowFailingResults)
+      case TestFailed if !executionSucceeded => visibility.show(ShowInvalidResults)
+    }
+
+    if (!canOutput)
+      return
+
     // Assuming that execCmd is of same form as run in Runnable
     // Output (cmd, args?, filename) relative to projectDir, corpusDir
     val trimmedArgs = arguments.trim()
@@ -97,8 +108,10 @@ case class TestCaseResult(val command: Path,
     reporter.println(resStr)
 
 
-    if (executionTime > threshold * 1000) {
-      reporter.log(s"Runtime: $executionTime milliseconds")
+    visibility.when(ShowExecutionTime) {
+      if (executionTime > threshold * 1000) {
+        reporter.log(s"Runtime: $executionTime milliseconds")
+      }
     }
 
 
@@ -112,21 +125,25 @@ case class TestCaseResult(val command: Path,
         val truncatedRemarks = rmIter.take(TruncateOutputTo).toList
         val remaining = rmIter.size
 
-        truncatedRemarks.foreach(reporter.log)
-        if (remaining > 0)
-          reporter.log(s"$remaining lines remaining (truncated)...")
+        visibility.when(ShowInvalidReasons) {
+          truncatedRemarks foreach reporter.log
+          if (remaining > 0)
+            reporter.log(s"$remaining lines remaining (truncated)...")
 
-        reporter.println()
+          reporter.println()
+        }
       }
       case Right(results) => {
         val diff = results.filterNot(_.passed)
 
-        diff.foreach({ case Result(key, expected, got) =>
-          reporter.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
-        })
+        visibility.when(ShowFailingDiff) {
+          diff foreach { case Result(key, expected, got) =>
+            reporter.println(s"Expected ${expect(expected)}, but got ${actual(got)} for $key")
+          }
 
-        if (!diff.isEmpty)
-          reporter.println()
+          if (!diff.isEmpty)
+            reporter.println()
+        }
       }
     }
   }

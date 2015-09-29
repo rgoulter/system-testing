@@ -97,6 +97,8 @@ object AppConfig {
       c.copy(timeout = x) } text("timeout time (in seconds) for each individual test case")
     opt[Int]('T', "significant-time") action { (x, c) =>
       c.copy(significantTimeThreshold = x) } text("minimum time (in seconds) for timing results to be shown")
+    opt[Unit]("terse") action { (_, c) =>
+      c.copy(outputVis = OutputVisibility.PresetSummaryOnly) } text("preset: output shows only the summary")
     opt[Unit]("no-ansi") action { (_, c) =>
       c.copy(outputVis = c.outputVis.copyWith(ShowANSI, false)) } text("output without ANSI codes (i.e. no colour)")
     cmd("sleek") action { (_, c) =>

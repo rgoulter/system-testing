@@ -64,6 +64,9 @@ case class OutputVisibility(
     }
   }
 
+  def show(key: VisibilityOption): Boolean =
+    visibility.getOrElse(key, false)
+
   def copyWith(key: VisibilityOption, b: Boolean = true): OutputVisibility = {
     this.copy(visibility = visibility + (key -> b))
   }
