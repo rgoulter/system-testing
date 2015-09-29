@@ -109,6 +109,8 @@ object Main {
         GlobalReporter.reporter = new ANSIReporter()
       }
 
+      GlobalReporter.visibility = outputVis
+
       configuredMain.run()
     }
   }
