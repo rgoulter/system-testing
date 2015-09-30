@@ -116,11 +116,6 @@ object AppConfig {
           arg[String]("<revision>") optional() action { (x, c) =>
           c.copy(revs = List(x)) } text("optional revision of project to test against")
           )
-    cmd("svcomp") action { (_, c) =>
-        c.copy(command = "svcomp") } text("run svcomp test cases") children(
-          arg[String]("<revision>") optional() action { (x, c) =>
-          c.copy(revs = List(x)) } text("optional revision of project to test against")
-          )
     cmd("diff") action { (_, c) =>
         c.copy(command = "diff") } text("diff the sleek/hip test results") children(
           opt[Unit]('s', "sleek") action { (_, c) =>

@@ -14,7 +14,6 @@ import com.typesafe.config.ConfigException
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
-import edu.nus.systemtesting.hipsleek.SVCompTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.output.VisibilityOptions
@@ -151,7 +150,6 @@ class ConfiguredMain(config: AppConfig) {
       case "sleek"  => runSleekTests(repoDir, rev)
       case "hip"    => runHipTests(repoDir, rev)
       case "all"    => runAllTests(repoDir, rev)
-      case "svcomp" => runSVCompTests
       case "diff"   => runSuiteDiff(repoDir, config.rev1, config.rev2)
       case _        => showHelpText
     }
@@ -434,11 +432,6 @@ class ConfiguredMain(config: AppConfig) {
     (new ResultsArchive).saveTestSuiteResult(res, "hip")
 
     Some(res)
-  }
-
-  private def runSVCompTests(): Unit = {
-    reporter.header("Running SVComp Tests")
-    SVCompTestSuiteUsage.run()
   }
 
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
