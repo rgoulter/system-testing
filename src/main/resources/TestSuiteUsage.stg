@@ -34,15 +34,8 @@ class <name>TestSuiteUsage(
        checkAgainst expectedOutput
        timeoutAfter timeout)
 
-  def run(): TestSuiteResult = {
-    val tests =
-      <testSets:{tset|<tset.name>Tests}; separator=" ++\n" >
-
-    val suite = new TestSuite(tests, revision, significantTime)
-    val suiteResult = suite.runAllTests
-
-    suiteResult
-  }
+  override def allTests =
+    <testSets:{tset|<tset.name>Tests}; separator=" ++\n" >
 
 <! Now generate the set of tests for each test set. !>
   <testSets:{tset|val <tset.name>Tests = List(
