@@ -25,55 +25,12 @@ object FileSystemUtilities {
     try { op(p) } finally { p.close() }
   }
 
-  /**
-   * Returns an array containing all files starting from parent directory and
-   * traversing downwards
-   */
-  def getRecursiveListOfFiles(dir: File): Array[File] = {
-    val these = dir.listFiles
-    these ++ these.filter(_.isDirectory).flatMap(getRecursiveListOfFiles)
-  }
-
-  /** Returns an array of files matching provided Regex and parent directory */
-  def getRecursiveListOfFilesWithRegex(dir: File, regex: String): Array[File] = {
-    val files = getRecursiveListOfFiles(dir)
-    files.filter(file => file.getName().endsWith(regex))
-  }
-
-  def getRecursiveListOfFilesWithRegex(directoryName: String, regex: String): Array[File] = {
-    getRecursiveListOfFilesWithRegex(new File(directoryName), regex)
-  }
-
-  def getFileList(directory: String, extension: String): Array[String] = {
-    getRecursiveListOfFilesWithRegex(directory, extension).map(_.getAbsolutePath())
-  }
-
-  /** Check if file or folder exists */
-  def fileOrDirectoryExists(path: String) = Files.exists(Paths.get(path))
-
   /** Create directory if it doesn't exist */
   def createDirectory(path: String) = {
-    if (!fileOrDirectoryExists(path)) {
+    if (!Files.exists(Paths.get(path))) {
       val directory = new File(path)
       directory.mkdir()
     }
-  }
-
-  /**
-   * Reads file content as string and returns it
-   */
-  def readFile(path: String): String = {
-    var lines = ""
-
-    try {
-      val source = scala.io.Source.fromFile(path)
-      lines = source.getLines mkString NEW_LINE
-      source.close()
-    } catch {
-      case ex: FileNotFoundException =>
-    }
-
-    lines
   }
 
   /**
@@ -115,13 +72,5 @@ object FileSystemUtilities {
         }
       }
     })
-  }
-
-  /**
-   * Get Current date as string
-   */
-  def getCurrentDateString(): String = {
-    val formatter = new SimpleDateFormat("yyyy-MM-dd")
-    formatter.format(new Date())
   }
 }

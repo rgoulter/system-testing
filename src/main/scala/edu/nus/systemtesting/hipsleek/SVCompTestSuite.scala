@@ -1,7 +1,6 @@
 package edu.nus.systemtesting.hipsleek
 
 import java.io.PrintWriter
-import edu.nus.systemtesting.FileSystemUtilities.getFileList
 import edu.nus.systemtesting.output.GlobalReporter
 
 import GlobalReporter.reporter
@@ -11,7 +10,8 @@ case class SVCompTestSuite(directory: String,
                            arguments: String = """-infer "@term" --svcomp-compete""",
                            fileType: String = ".c",
                            printer: PrintWriter = new PrintWriter(System.out, true)) {
-  private val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
+//  private val files = getFileList(directory, fileType).filter(x => x.matches(".*true.*|.*false.*|.*unknown.*"))
+  private lazy val files: List[String] = throw new UnsupportedOperationException
 
   val tests =
     files.map(file =>
