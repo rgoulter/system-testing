@@ -176,10 +176,10 @@ class ConfiguredMain(config: AppConfig) {
       // No results found, so, must run the prog. to get results
       case None => {
         reporter.log("sleek,hip testsuite results not found, running test suites...")
-        runTestsWith(repoDir, rev) { case (projDir, revision) =>
+        runTestsWith(repoDir, rev, "examples/working") { case (binDir, corpusDir, revision) =>
           for {
-            sleek <- runPreparedSleekTests(projDir, revision)
-            hip   <- runPreparedHipTests(projDir, revision)
+            sleek <- runPreparedSleekTests(binDir, corpusDir resolve "sleek", revision)
+            hip   <- runPreparedHipTests(binDir, corpusDir resolve "hip", revision)
           } yield (sleek, hip)
         }
       }
@@ -201,7 +201,7 @@ class ConfiguredMain(config: AppConfig) {
       // No results found, so, must run the prog. to get results
       case None => {
         reporter.log("sleek testsuite results not found, running test suite...")
-        runTestsWith(repoDir, rev)(runPreparedSleekTests)
+        runTestsWith(repoDir, rev, "examples/working/sleek")(runPreparedSleekTests)
       }
     }
   }
@@ -221,7 +221,7 @@ class ConfiguredMain(config: AppConfig) {
       // No results found, so, must run the prog. to get results
       case None => {
         reporter.log("hip testsuite results not found, running test suite...")
-        runTestsWith(repoDir, rev)(runPreparedHipTests)
+        runTestsWith(repoDir, rev, "examples/working/hip")(runPreparedHipTests)
       }
     }
   }
@@ -239,10 +239,10 @@ class ConfiguredMain(config: AppConfig) {
     }
   }
 
-  private def runTestsWith[T](repoDir: Path, rev: Option[String])
-                             (f: (Path, String) => Option[T]):
+  private def runTestsWith[T](repoDir: Path, rev: Option[String], examplesDir: String)
+                             (f: (Path, Path, String) => Option[T]):
       Option[T] = {
-    runTestsWithRepo(repoDir, rev)(f)
+    runTestsWithRepo(repoDir, rev, examplesDir)(f)
   }
 
   /**
@@ -254,8 +254,8 @@ class ConfiguredMain(config: AppConfig) {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo[T](repoDir: Path, rev: Option[String])
-                                (f: (Path, String) => Option[T]):
+  private def runTestsWithRepo[T](repoDir: Path, rev: Option[String], examplesDir: String)
+                                 (f: (Path, Path, String) => Option[T]):
       Option[T] = {
     // Prepare the repo, if necessary
     reporter.log("Preparing repo...")
@@ -269,33 +269,55 @@ class ConfiguredMain(config: AppConfig) {
       case None => repo.isDirty()
     }
 
-    val tmpDir = Files.createTempDirectory("edunussystest")
+    withTmpDir("edunussystest") { tmpDir =>
+      val projectDir = if (isDirty) {
+        // i.e. LIVE, "in place"
+        repoDir
+      } else {
+        val tmp = tmpDir.toAbsolutePath()
 
-    val projectDir = if (isDirty) {
-      // i.e. LIVE, "in place"
-      repoDir
-    } else {
-      val tmp = tmpDir.toAbsolutePath()
+        // create archive of repo in tmp
+        repo.archive(tmp, rev)
 
-      // create archive of repo in tmp
-      repo.archive(tmp, rev)
+        tmp
+      }
 
-      tmp
+      val prep = new HipSleekPreparation(projectDir)
+      val (prepWorked, prepRemarks) = prep.prepare()
+
+      prepRemarks.foreach(reporter.log)
+      reporter.println()
+
+      // Run the tests
+      if (prepWorked) {
+        // TODO: Copy to cache..
+
+        val binDir = projectDir
+        val corpusDir = projectDir resolve examplesDir
+
+        f(binDir, corpusDir, revision)
+      } else {
+        None
+      }
     }
+  }
 
-    val prep = new HipSleekPreparation(projectDir)
-    val (prepWorked, prepRemarks) = prep.prepare()
+  /**
+   * @param f synchronous function; tmpdir is removed after f finishes
+   */
+  private def withTmpDir[T](name: String = "edunussystest",
+                            removeAfterUse: Boolean = true)
+                           (f: Path => T): T = {
+    val tmpDir = Files createTempDirectory "edunussystest"
 
-    prepRemarks.foreach(reporter.log)
-    reporter.println()
-
-    // Run the tests
-    val rtn = if (prepWorked) f(projectDir, revision) else None
+    val rtn = f(tmpDir)
 
     // Finished running the tests, clean up.
     try {
-      reporter.log("Deleting " + tmpDir)
-      FileSystemUtilities.rmdir(tmpDir)
+      if (removeAfterUse) {
+        reporter.log("Deleting " + tmpDir)
+        FileSystemUtilities rmdir tmpDir
+      }
     } catch {
       case ioEx: IOException => {
         System.err.println(s"Unable to delete dir $tmpDir")
@@ -307,13 +329,12 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedSleekTests(projectDir: Path, revision: String): Option[TestSuiteResult] = {
+  private def runPreparedSleekTests(binDir: Path, examplesDir: Path, revision: String): Option[TestSuiteResult] = {
     reporter.header("Running Sleek Tests")
 
     val significantTime = config.significantTimeThreshold
     val testCaseTimeout = config.timeout
-    val examplesDir = projectDir resolve "examples/working/sleek"
-    val suite = new SleekTestSuiteUsage(projectDir,
+    val suite = new SleekTestSuiteUsage(binDir,
                                         significantTime,
                                         testCaseTimeout,
                                         revision,
@@ -327,13 +348,12 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedHipTests(projectDir: Path, revision: String): Option[TestSuiteResult] = {
+  private def runPreparedHipTests(binDir: Path, examplesDir: Path, revision: String): Option[TestSuiteResult] = {
     reporter.header("Running Hip Tests")
 
     val significantTime = config.significantTimeThreshold
     val testCaseTimeout = config.timeout
-    val examplesDir = projectDir resolve "examples/working/hip"
-    val suite = new HipTestSuiteUsage(projectDir,
+    val suite = new HipTestSuiteUsage(binDir,
                                       significantTime,
                                       testCaseTimeout,
                                       revision,
