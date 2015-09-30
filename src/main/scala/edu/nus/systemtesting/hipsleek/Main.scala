@@ -312,7 +312,12 @@ class ConfiguredMain(config: AppConfig) {
 
     val significantTime = config.significantTimeThreshold
     val testCaseTimeout = config.timeout
-    val suite = new SleekTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision)
+    val examplesDir = projectDir resolve "examples/working/sleek"
+    val suite = new SleekTestSuiteUsage(projectDir,
+                                        significantTime,
+                                        testCaseTimeout,
+                                        revision,
+                                        examplesDir = examplesDir)
 
     val res = suite.run()
 
@@ -327,7 +332,12 @@ class ConfiguredMain(config: AppConfig) {
 
     val significantTime = config.significantTimeThreshold
     val testCaseTimeout = config.timeout
-    val suite = new HipTestSuiteUsage(projectDir, significantTime, testCaseTimeout, revision)
+    val examplesDir = projectDir resolve "examples/working/hip"
+    val suite = new HipTestSuiteUsage(projectDir,
+                                      significantTime,
+                                      testCaseTimeout,
+                                      revision,
+                                      examplesDir = examplesDir)
 
     val res = suite.run()
 

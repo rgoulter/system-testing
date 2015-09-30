@@ -9,7 +9,7 @@ trait ConstructTests[T <: TestCase] {
 /**
  * Class to facilitate DSL-esque construction of test cases.
  */
-case class TestCaseBuilder(val projectDir: Path = Paths.get(""),
+case class TestCaseBuilder(val binDir: Path = Paths.get(""),
                            val commandName: Path = Paths.get(""),
                            val corpusDir: Path = Paths.get(""),
                            val fileName: Path = Paths.get(""),
@@ -22,8 +22,8 @@ case class TestCaseBuilder(val projectDir: Path = Paths.get(""),
   // Helper functions for DSL-esque construction of testcase.
   //
 
-  def inProjectDir(projDir: Path) =
-    copy(projectDir = projDir)
+  def withBinaries(binDir: Path) =
+    copy(binDir = binDir)
 
   def runCommand(commandName: Path) =
     copy(commandName = commandName)

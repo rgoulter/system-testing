@@ -11,11 +11,11 @@ case class Result(val key: String, val expected: String, val actual: String) {
 }
 
 /**
- * @param commandName relative to project directory
- * @param corpusDir relative to project directory
+ * @param commandName relative to `binDir`
+ * @param corpusDir absolute path
  * @param fileName relative to corpusDir directory
  */
-abstract class TestCase(val projectDir: Path,
+abstract class TestCase(val binDir: Path,
                         val commandName: Path,
                         val corpusDir: Path,
                         val fileName: Path,
@@ -31,9 +31,9 @@ abstract class TestCase(val projectDir: Path,
    */
   def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]]
 
-  val absCmdPath = projectDir resolve commandName
+  val absCmdPath = binDir resolve commandName
 
-  val absFilePath = (projectDir resolve corpusDir) resolve fileName
+  val absFilePath = corpusDir resolve fileName
 
   def formCommand(): String = {
     Seq(absCmdPath,
@@ -58,8 +58,8 @@ abstract class TestCase(val projectDir: Path,
       // Only check results if both cmd, file exist.
       checkResults(expectedOutput, output)
     } else {
-      Left(List(if (!cmdExists) Some(s"$commandName doesn't exist in $projectDir!") else None,
-                if (!fileExists) Some(s"${corpusDir resolve fileName} doesn't exist in $projectDir!") else None).flatten)
+      Left(List(if (!cmdExists) Some(s"$commandName doesn't exist!") else None,
+                if (!fileExists) Some(s"$fileName doesn't exist!") else None).flatten)
     }
 
     new TestCaseResult(commandName, fileName, arguments, time, check)

@@ -12,7 +12,7 @@ import edu.nus.systemtesting.TestCaseBuilder
   * Generated from revision 79da9697f0c2 of `run-fast-tests.pl`.
   */
 class SleekTestSuiteUsage(
-    projDir: Path,
+    binDir: Path,
     significantTime: Long,
     timeout: Int,
     revision : String,
@@ -24,7 +24,7 @@ class SleekTestSuiteUsage(
            args: String,
            expectedOutput: String): SleekTestCase =
     (new TestCaseBuilder
-       inProjectDir projDir
+       withBinaries binDir
        runCommand cmd
        withCorpus examplesDir
        onFile Paths.get(file)

@@ -12,7 +12,7 @@ import java.nio.file.Paths
 
 trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
   implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
-    new SleekTestCase(tc.projectDir,
+    new SleekTestCase(tc.binDir,
                       tc.commandName,
                       tc.corpusDir,
                       tc.fileName,
@@ -21,7 +21,7 @@ trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
                       tc.timeout)
 }
 
-class SleekTestCase(projDir: Path = Paths.get(""),
+class SleekTestCase(binDir: Path = Paths.get(""),
                     cmd: Path = Paths.get(""),
                     corpDir: Path = Paths.get(""),
                     fn: Path = Paths.get(""),
@@ -29,7 +29,7 @@ class SleekTestCase(projDir: Path = Paths.get(""),
                     expectedOut: String = "",
                     timeout: Int = 300,
                     regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
-    extends TestCase(projDir, cmd, corpDir, fn, args, expectedOut, timeout) {
+    extends TestCase(binDir, cmd, corpDir, fn, args, expectedOut, timeout) {
   def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
@@ -41,7 +41,7 @@ class SleekTestCase(projDir: Path = Paths.get(""),
 
     if (results.isEmpty) {
       val testFlags = arguments.split(" ").filter(isFlag)
-      val SleekFlags = flagsOfProgram(projectDir resolve commandName)
+      val SleekFlags = flagsOfProgram(absCmdPath)
       val invalidFlags = testFlags.filterNot(SleekFlags.contains)
 
       if (!invalidFlags.isEmpty) {

@@ -15,7 +15,7 @@ import java.nio.file.Paths
 
 trait ConstructHipTests extends ConstructTests[HipTestCase] {
   implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
-    new HipTestCase(tc.projectDir,
+    new HipTestCase(tc.binDir,
                     tc.commandName,
                     tc.corpusDir,
                     tc.fileName,
@@ -24,7 +24,7 @@ trait ConstructHipTests extends ConstructTests[HipTestCase] {
                     tc.timeout)
 }
 
-class HipTestCase(projDir: Path = Paths.get(""),
+class HipTestCase(binDir: Path = Paths.get(""),
                   cmd: Path = Paths.get(""),
                   corpDir: Path = Paths.get(""),
                   fn: Path = Paths.get(""),
@@ -32,7 +32,7 @@ class HipTestCase(projDir: Path = Paths.get(""),
                   expectedOut: String = "",
                   timeout: Int = 300,
                   regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
-    extends TestCase(projDir, cmd, corpDir, fn, args, expectedOut, timeout) {
+    extends TestCase(binDir, cmd, corpDir, fn, args, expectedOut, timeout) {
   def buildExpectedOutputMap(results: String): Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     results.split(",").map(result =>
@@ -66,7 +66,7 @@ class HipTestCase(projDir: Path = Paths.get(""),
 
     if (results.isEmpty) {
       val testFlags = arguments.split(" ").filter(isFlag)
-      val SleekFlags = flagsOfProgram(projectDir resolve commandName)
+      val SleekFlags = flagsOfProgram(absCmdPath)
       val invalidFlags = testFlags.filterNot(SleekFlags.contains)
 
       if (!invalidFlags.isEmpty) {
