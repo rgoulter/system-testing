@@ -18,6 +18,7 @@ import edu.nus.systemtesting.hipsleek.SVCompTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.output.VisibilityOptions
+import edu.nus.systemtesting.BinCache
 
 object Main {
   /** Expected filename for the application conf. */
@@ -123,6 +124,8 @@ object Main {
  * immutable configuration.
  */
 class ConfiguredMain(config: AppConfig) {
+  val binCache = new BinCache() // config me
+
   private[hipsleek] def run(): Unit = {
     import config.{ command, rev }
 
@@ -242,7 +245,19 @@ class ConfiguredMain(config: AppConfig) {
   private def runTestsWith[T](repoDir: Path, rev: Option[String], examplesDir: String)
                              (f: (Path, Path, String) => Option[T]):
       Option[T] = {
-    runTestsWithRepo(repoDir, rev, examplesDir)(f)
+    // check if bin cache has the binaries already
+    val repo = new Repository(repoDir)
+    val revision = repo.identify(rev)
+
+    binCache.binFor(Paths.get("hip"), revision) match {
+      case Some(p) => {
+        val binDir = p getParent()
+        runTestsWithCached(repoDir, binDir, rev, examplesDir)(f)
+      }
+
+      case None =>
+        runTestsWithRepo(repoDir, rev, examplesDir)(f)
+    }
   }
 
   /**
@@ -257,7 +272,7 @@ class ConfiguredMain(config: AppConfig) {
   private def runTestsWithRepo[T](repoDir: Path, rev: Option[String], examplesDir: String)
                                  (f: (Path, Path, String) => Option[T]):
       Option[T] = {
-    // Prepare the repo, if necessary
+    // Prepare the repo
     reporter.log("Preparing repo...")
 
     val repo = new Repository(repoDir)
@@ -290,15 +305,59 @@ class ConfiguredMain(config: AppConfig) {
 
       // Run the tests
       if (prepWorked) {
-        // TODO: Copy to cache..
-
         val binDir = projectDir
         val corpusDir = projectDir resolve examplesDir
+
+        // Copy to cache..
+        // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
+        binCache.cache(binDir, Paths.get("sleek"), revision)
+        binCache.cache(binDir, Paths.get("hip"), revision)
 
         f(binDir, corpusDir, revision)
       } else {
         None
       }
+    }
+  }
+
+  private def runTestsWithCached[T](repoDir: Path, binDir: Path, rev: Option[String], examplesDir: String)
+                                   (f: (Path, Path, String) => Option[T]):
+      Option[T] = {
+    // don't know whether it's hip/sleek we want, but we make/cache both, so.
+    require((binDir resolve "sleek").toFile().exists())
+    require((binDir resolve "hip").toFile().exists())
+
+    reporter.log("Using cached binaries...")
+
+    val repo = new Repository(repoDir)
+    val revision = repo.identify(rev)
+
+    val isDirty = rev match {
+      case Some(s) => false
+      // If no rev given, use Working Directory of repo.
+      case None => repo.isDirty()
+    }
+
+    // Need to have corpusDir; easiest to get from archive.
+    // May be nice if could just "hg cat" (or so) over a bunch of files,
+    //  might save time.
+    withTmpDir("edunussystest") { tmpDir =>
+      val projectDir = if (isDirty) {
+        // i.e. LIVE, "in place",
+        // esp. in case user makes use of example they modified/added
+        repoDir
+      } else {
+        val tmp = tmpDir.toAbsolutePath()
+
+        // create archive of repo in tmp
+        repo.archive(tmp, rev)
+
+        tmp
+      }
+
+      val corpusDir = projectDir resolve examplesDir
+
+      f(binDir, corpusDir, revision)
     }
   }
 

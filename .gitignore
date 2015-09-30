@@ -24,6 +24,7 @@ hs_err_pid*
 # Run results
 logs/
 results/
+bincache/
 
 *conf
 .settings
