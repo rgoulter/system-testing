@@ -137,6 +137,11 @@ class ConfiguredMain(config: AppConfig) {
       throw new IllegalStateException
     }
 
+    if (!(repoDir resolve ".hg").toFile().exists()) {
+      System.err.println(s"ERROR! Not a Mercurial repository! REPODIR=$repoDir")
+      System.exit(1)
+    }
+
     command match {
       case "sleek"  => runSleekTests(repoDir, rev)
       case "hip"    => runHipTests(repoDir, rev)
@@ -220,19 +225,13 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   private def results(repoDir: Path, rev: Option[String], name: String): Option[TestSuiteResult] = {
-    val isRepo = (repoDir resolve ".hg").toFile().exists()
+    val repo = new Repository(repoDir)
+    val revision = repo.identify(rev)
 
-    if (isRepo) {
-      val repo = new Repository(repoDir)
-      val revision = repo.identify(rev)
-
-      if (!repo.isDirty()) {
-        // TODO: Also should check if the results we get is 'the same' as
-        //       the tests we want to run.
-        (new ResultsArchive).resultsFor(name, revision)
-      } else {
-        None
-      }
+    if (!repo.isDirty()) {
+      // TODO: Also should check if the results we get is 'the same' as
+      //       the tests we want to run.
+      (new ResultsArchive).resultsFor(name, revision)
     } else {
       None
     }
@@ -241,13 +240,7 @@ class ConfiguredMain(config: AppConfig) {
   private def runTestsWith[T](repoDir: Path, rev: Option[String])
                              (f: (Path, String) => Option[T]):
       Option[T] = {
-    val isRepo = (repoDir resolve ".hg").toFile().exists()
-
-    if (isRepo) {
-      runTestsWithRepo(repoDir, rev)(f)
-    } else {
-      runTestsWithFolder(repoDir, rev)(f)
-    }
+    runTestsWithRepo(repoDir, rev)(f)
   }
 
   /**
@@ -311,33 +304,6 @@ class ConfiguredMain(config: AppConfig) {
     }
 
     rtn
-  }
-
-  /**
-   * `projectDir` not assumed to be repository.
-   * It *is* assumed that `projectDir` will be used for making, running the
-   * executables/tests.
-   */
-  private def runTestsWithFolder[T](projectDir: Path, rev: Option[String])
-                                   (f: (Path, String) => Option[T]):
-      Option[T] = {
-    // i.e. LIVE, "in place"
-    val revision = rev.getOrElse("unknown")
-
-    // Prepare the repo, if necessary
-    reporter.log("Preparing folder...")
-
-    val prep = new HipSleekPreparation(projectDir)
-    val (prepWorked, prepRemarks) = prep.prepare()
-
-    prepRemarks.foreach(reporter.log)
-    reporter.println()
-
-    // Run the tests
-    if (prepWorked)
-      f(projectDir, revision)
-    else
-      None
   }
 
   /** Assumes that the project dir has been prepared successfully */
