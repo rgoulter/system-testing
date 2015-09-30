@@ -1,6 +1,7 @@
 package edu.nus.systemtesting.hipsleek.app
 
 import java.nio.file.{ Files, Path, Paths }
+import scala.concurrent.ExecutionContext
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.serialisation.ResultsArchive
@@ -392,7 +393,10 @@ class ConfiguredMain(config: AppConfig) {
 
     // Finished running the tests, clean up.
     try {
-      if (removeAfterUse) {
+      // TODO: Haven't implemented Async properly, so the
+      // tmpdirs are removed before the tests are run!
+      val ImplementedAsyncProperly = false
+      if (removeAfterUse && ImplementedAsyncProperly) {
         reporter.log("Deleting " + tmpDir)
         FileSystemUtilities rmdir tmpDir
       }
@@ -416,11 +420,15 @@ class ConfiguredMain(config: AppConfig) {
                                         significantTime,
                                         testCaseTimeout,
                                         revision,
-                                        examplesDir = examplesDir)
+                                        examplesDir = examplesDir).suite
 
-    val res = suite.run()
+    val (res, future) = suite.runAllTests()
 
-    (new ResultsArchive).saveTestSuiteResult(res, "sleek")
+    // Save results once all the results have been evaluated.
+    import ExecutionContext.Implicits.global
+    future.onComplete { x =>
+      (new ResultsArchive).saveTestSuiteResult(res, "sleek")
+    }
 
     Some(res)
   }
@@ -435,9 +443,15 @@ class ConfiguredMain(config: AppConfig) {
                                       significantTime,
                                       testCaseTimeout,
                                       revision,
-                                      examplesDir = examplesDir)
+                                      examplesDir = examplesDir).suite
 
-    val res = suite.run()
+    val (res, future) = suite.runAllTests()
+
+    // Save results once all the results have been evaluated.
+    import ExecutionContext.Implicits.global
+    future.onComplete { x =>
+      (new ResultsArchive).saveTestSuiteResult(res, "sleek")
+    }
 
     (new ResultsArchive).saveTestSuiteResult(res, "hip")
 

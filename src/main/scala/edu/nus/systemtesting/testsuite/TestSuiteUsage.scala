@@ -11,9 +11,6 @@ abstract class TestSuiteUsage(val revision: String,
   /** To be implemented by subclass. */
   def allTests: List[TestCase]
 
-  def run(): TestSuiteResult = {
-    val suite = new TestSuite(allTests, revision, significantTime)
-
-    suite.runAllTests
-  }
+  def suite: TestSuite =
+    new TestSuite(allTests, revision, significantTime)
 }
