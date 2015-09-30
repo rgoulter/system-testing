@@ -1,4 +1,4 @@
-package edu.nus.systemtesting.hipsleek
+package edu.nus.systemtesting.hipsleek.app
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory

@@ -1,4 +1,4 @@
-package edu.nus.systemtesting.hipsleek
+package edu.nus.systemtesting.hipsleek.legacy
 
 import scala.io.Source
 import scala.util.matching.Regex

@@ -22,7 +22,7 @@ libraryDependencies += "org.antlr" % "stringtemplate" % "4.0.2"
 
 resolvers += Resolver.sonatypeRepo("public")
 
-mainClass in Compile := Some("edu.nus.systemtesting.hipsleek.Main")
+mainClass in Compile := Some("edu.nus.systemtesting.hipsleek.app.Main")
 
 
 import com.github.retronym.SbtOneJar._

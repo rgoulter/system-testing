@@ -1,8 +1,7 @@
-package edu.nus.systemtesting.hipsleek
+package edu.nus.systemtesting.hipsleek.legacy
 
 import scala.beans.BeanProperty
 import scala.io.Source
-
 import org.stringtemplate.v4.ST
 import org.stringtemplate.v4.STGroupString
 
