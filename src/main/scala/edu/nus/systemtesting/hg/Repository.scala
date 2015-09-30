@@ -21,8 +21,9 @@ class Repository(dir: Path) {
    * Creates a copy of some revision of the repo at some `dest`.
    * (Latest revision if `rev` is `None`).
    */
-  def archive(dest: Path, rev: Option[String]): Boolean = {
-    val cmd = "hg archive" + s"${rev.map(r => s" -r $r").getOrElse("")} ${dest.toString()}"
+  def archive(dest: Path, rev: Option[String], includePatterns: List[String] = List()): Boolean = {
+    val inclArgs = includePatterns.map("-I " + _ + " ").mkString
+    val cmd = "hg archive " + inclArgs + s"${rev.map(r => s" -r $r").getOrElse("")} ${dest.toString()}"
     val proc = Process(cmd, repoDir)
 
     println(s"Exporting archive of $dir to $dest " +

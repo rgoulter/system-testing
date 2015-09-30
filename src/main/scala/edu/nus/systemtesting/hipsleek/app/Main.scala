@@ -349,8 +349,19 @@ class ConfiguredMain(config: AppConfig) {
       } else {
         val tmp = tmpDir.toAbsolutePath()
 
+        // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
+        // TODO Hardcoded for now, due to architecture.
+        val foldersUsed =  List(
+          "examples/working/sleek",
+          "examples/working/hip",
+          "examples/working/hip_baga",
+          "examples/working/infer",
+          "examples/working/tree_shares",
+          "examples/modular_examples"
+        )
+
         // create archive of repo in tmp
-        repo.archive(tmp, rev)
+        repo.archive(tmp, rev, foldersUsed)
 
         tmp
       }
