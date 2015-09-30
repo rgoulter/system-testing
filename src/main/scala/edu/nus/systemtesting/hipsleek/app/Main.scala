@@ -157,19 +157,15 @@ class ConfiguredMain(config: AppConfig) {
 
   private def runAllTests(repoDir: Path, rev: Option[String]):
       Option[(TestSuiteResult, TestSuiteResult)] = {
-    (for {
+    // Disadvantage in using for comp. here is
+    // if *either* isn't present, *BOTH* are re-run. Bad idea.
+    ((for {
       sleekRes <- results(repoDir, rev, "sleek")
       hipRes <- results(repoDir, rev, "hip")
     } yield (sleekRes, hipRes)) match {
       case rtn@Some((sleekTSRes, hipTSRes)) => {
-
         val revision = sleekTSRes.repoRevision
-
         reporter.log(s"Found sleek testsuite results for $revision.")
-        sleekTSRes.displayResult(config.significantTimeThreshold)
-        TestSuiteResultAnalysis printTallyOfInvalidTests sleekTSRes
-        hipTSRes.displayResult(config.significantTimeThreshold)
-        TestSuiteResultAnalysis printTallyOfInvalidTests hipTSRes
 
         rtn
       }
@@ -184,17 +180,22 @@ class ConfiguredMain(config: AppConfig) {
           } yield (sleek, hip)
         }
       }
+    }) map { case (sleekTSRes, hipTSRes) =>
+      // Map, so we can output this:
+      sleekTSRes.displayResult(config.significantTimeThreshold)
+      TestSuiteResultAnalysis printTallyOfInvalidTests sleekTSRes
+      hipTSRes.displayResult(config.significantTimeThreshold)
+      TestSuiteResultAnalysis printTallyOfInvalidTests hipTSRes
+
+      (sleekTSRes, hipTSRes)
     }
   }
 
   private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    results(repoDir, rev, "sleek") match {
+    (results(repoDir, rev, "sleek") match {
       case Some(testSuiteResult) => {
         val revision = testSuiteResult.repoRevision
-
         reporter.log(s"Found sleek testsuite results for $revision.")
-        testSuiteResult.displayResult(config.significantTimeThreshold)
-        TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
         Some(testSuiteResult)
       }
@@ -204,17 +205,20 @@ class ConfiguredMain(config: AppConfig) {
         reporter.log("sleek testsuite results not found, running test suite...")
         runTestsWith(repoDir, rev, "examples/working/sleek")(runPreparedSleekTests)
       }
+    }) map { testSuiteResult =>
+      // Map, so we can output this:
+      testSuiteResult.displayResult(config.significantTimeThreshold)
+      TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
+
+      testSuiteResult
     }
   }
 
   private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    results(repoDir, rev, "hip") match {
+    (results(repoDir, rev, "hip") match {
       case Some(testSuiteResult) => {
         val revision = testSuiteResult.repoRevision
-
         reporter.log(s"Found hip testsuite results for $revision.")
-        testSuiteResult.displayResult(config.significantTimeThreshold)
-        TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
         Some(testSuiteResult)
       }
@@ -224,6 +228,12 @@ class ConfiguredMain(config: AppConfig) {
         reporter.log("hip testsuite results not found, running test suite...")
         runTestsWith(repoDir, rev, "examples/working/hip")(runPreparedHipTests)
       }
+    }) map { testSuiteResult =>
+      // Map, so we can output this:
+      testSuiteResult.displayResult(config.significantTimeThreshold)
+      TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
+
+      testSuiteResult
     }
   }
 

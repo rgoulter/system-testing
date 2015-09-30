@@ -14,10 +14,6 @@ abstract class TestSuiteUsage(val revision: String,
   def run(): TestSuiteResult = {
     val suite = new TestSuite(allTests, revision, significantTime)
 
-    val suiteResult = suite.runAllTests
-
-    TestSuiteResultAnalysis printTallyOfInvalidTests suiteResult
-
-    suiteResult
+    suite.runAllTests
   }
 }

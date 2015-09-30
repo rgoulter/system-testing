@@ -111,7 +111,7 @@ trait TestSuiteResultImplicits extends TestCaseResultImplicits {
       val datetime = DateTimeFormatter.parseDateTime(datetimeStr)
       revision    <- (c --\ Revision).as[String]
       results     <- (c --\ Results).as[List[TestCaseResult]]
-    } yield TestSuiteResult(host, datetime, revision, results))
+    } yield TestSuiteResult.withResults(host, datetime, revision, results))
 }
 
 abstract class Json[T] {

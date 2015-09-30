@@ -1,5 +1,9 @@
 package edu.nus.systemtesting.testsuite
 
+import scala.concurrent.Future
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext
 import org.joda.time.DateTime
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.TestPassed
@@ -17,9 +21,12 @@ import GlobalReporter.visibility
  */
 case class TestSuiteResult(val hostname: String,
                            val datetime: DateTime,
-                           val repoRevision : String,
-                           resultsIter : Iterable[TestCaseResult]) {
-  val results = resultsIter.toList
+                           val repoRevision: String,
+                           resultFutures: List[Future[TestCaseResult]]) {
+  lazy val results = resultFutures map { future =>
+    // timeout taken care of by TestCase
+    Await result (future, Duration.Inf)
+  }
   lazy val (valid, invalid) = results.partition(_.executionSucceeded)
   lazy val (successes, failures) = valid.partition(_.result equals TestPassed)
 
@@ -39,8 +46,28 @@ case class TestSuiteResult(val hostname: String,
    * @param threshold for [[TestCaseResult.displayResult]], in seconds.
    */
   def displayResult(threshold: Long = 1L): Unit = {
-    results.foreach(_.displayResult(threshold))
+    // want to display result as-we-go;
+    // waiting for result to be evaluated takes too long.
+    resultFutures map { future =>
+      // timeout taken care of by TestCase
+      val tcr = Await result (future, Duration.Inf)
+      tcr.displayResult(threshold)
+    }
 
     generateTestStatistics()
+  }
+}
+
+object TestSuiteResult {
+  def withResults(hostname: String,
+                  datetime: DateTime,
+                  repoRevision: String,
+                  resultsIter: List[TestCaseResult]): TestSuiteResult = {
+    import ExecutionContext.Implicits.global
+
+    // Since TestSuiteResult needs Futures in it's c'tor.
+    val resultFutures = resultsIter.map(Future(_))
+
+    new TestSuiteResult(hostname, datetime, repoRevision, resultFutures)
   }
 }
