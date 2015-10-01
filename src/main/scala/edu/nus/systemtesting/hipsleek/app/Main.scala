@@ -472,11 +472,9 @@ class ConfiguredMain(config: AppConfig) {
     // Save results once all the results have been evaluated.
     import ExecutionContext.Implicits.global
     future.onComplete { x =>
-      (new ResultsArchive).saveTestSuiteResult(res, "sleek")
+      (new ResultsArchive).saveTestSuiteResult(res, "hip")
       resultsSaved success ()
     }
-
-    (new ResultsArchive).saveTestSuiteResult(res, "hip")
 
     res
   }
