@@ -175,10 +175,8 @@ class ConfiguredMain(config: AppConfig) {
       case None => {
         reporter.log("sleek,hip testsuite results not found, running test suites...")
         runTestsWith(repoDir, rev, "examples/working") { case (binDir, corpusDir, revision) =>
-          for {
-            sleek <- runPreparedSleekTests(binDir, corpusDir resolve "sleek", revision)
-            hip   <- runPreparedHipTests(binDir, corpusDir resolve "hip", revision)
-          } yield (sleek, hip)
+          (runPreparedSleekTests(binDir, corpusDir resolve "sleek", revision),
+           runPreparedHipTests(binDir, corpusDir resolve "hip", revision))
         }
       }
     }) map { case (sleekTSRes, hipTSRes) =>
@@ -252,7 +250,7 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   private def runTestsWith[T](repoDir: Path, rev: Option[String], examplesDir: String)
-                             (f: (Path, Path, String) => Option[T]):
+                             (f: (Path, Path, String) => T):
       Option[T] = {
     // check if bin cache has the binaries already
     val repo = new Repository(repoDir)
@@ -261,7 +259,7 @@ class ConfiguredMain(config: AppConfig) {
     binCache.binFor(Paths.get("hip"), revision) match {
       case Some(p) => {
         val binDir = p getParent()
-        runTestsWithCached(repoDir, binDir, rev, examplesDir)(f)
+        Some(runTestsWithCached(repoDir, binDir, rev, examplesDir)(f))
       }
 
       case None =>
@@ -279,7 +277,7 @@ class ConfiguredMain(config: AppConfig) {
    * run the tests in.
    */
   private def runTestsWithRepo[T](repoDir: Path, rev: Option[String], examplesDir: String)
-                                 (f: (Path, Path, String) => Option[T]):
+                                 (f: (Path, Path, String) => T):
       Option[T] = {
     // Prepare the repo
     reporter.log("Preparing repo...")
@@ -322,7 +320,7 @@ class ConfiguredMain(config: AppConfig) {
         binCache.cache(binDir, Paths.get("sleek"), revision)
         binCache.cache(binDir, Paths.get("hip"), revision)
 
-        f(binDir, corpusDir, revision)
+        Some(f(binDir, corpusDir, revision))
       } else {
         None
       }
@@ -330,8 +328,7 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   private def runTestsWithCached[T](repoDir: Path, binDir: Path, rev: Option[String], examplesDir: String)
-                                   (f: (Path, Path, String) => Option[T]):
-      Option[T] = {
+                                   (f: (Path, Path, String) => T): T = {
     // don't know whether it's hip/sleek we want, but we make/cache both, so.
     require((binDir resolve "sleek").toFile().exists())
     require((binDir resolve "hip").toFile().exists())
@@ -411,7 +408,7 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedSleekTests(binDir: Path, examplesDir: Path, revision: String): Option[TestSuiteResult] = {
+  private def runPreparedSleekTests(binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
     reporter.header("Running Sleek Tests")
 
     val significantTime = config.significantTimeThreshold
@@ -430,11 +427,11 @@ class ConfiguredMain(config: AppConfig) {
       (new ResultsArchive).saveTestSuiteResult(res, "sleek")
     }
 
-    Some(res)
+    res
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedHipTests(binDir: Path, examplesDir: Path, revision: String): Option[TestSuiteResult] = {
+  private def runPreparedHipTests(binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
     reporter.header("Running Hip Tests")
 
     val significantTime = config.significantTimeThreshold
@@ -455,7 +452,7 @@ class ConfiguredMain(config: AppConfig) {
 
     (new ResultsArchive).saveTestSuiteResult(res, "hip")
 
-    Some(res)
+    res
   }
 
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
