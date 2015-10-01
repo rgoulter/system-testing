@@ -1,7 +1,8 @@
 package edu.nus.systemtesting.hipsleek.app
 
 import java.nio.file.{ Files, Path, Paths }
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ Await, ExecutionContext, Future, Promise, future, promise }
+import scala.concurrent.duration.Duration
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.serialisation.ResultsArchive
@@ -158,6 +159,9 @@ class ConfiguredMain(config: AppConfig) {
 
   private def runAllTests(repoDir: Path, rev: Option[String]):
       Option[(TestSuiteResult, TestSuiteResult)] = {
+    val sleekPromise = promise[Unit]
+    val hipPromise = promise[Unit]
+
     // Disadvantage in using for comp. here is
     // if *either* isn't present, *BOTH* are re-run. Bad idea.
     ((for {
@@ -168,6 +172,9 @@ class ConfiguredMain(config: AppConfig) {
         val revision = sleekTSRes.repoRevision
         reporter.log(s"Found sleek testsuite results for $revision.")
 
+        sleekPromise success ()
+        hipPromise success ()
+
         rtn
       }
 
@@ -175,8 +182,8 @@ class ConfiguredMain(config: AppConfig) {
       case None => {
         reporter.log("sleek,hip testsuite results not found, running test suites...")
         runTestsWith(repoDir, rev, "examples/working") { case (binDir, corpusDir, revision) =>
-          (runPreparedSleekTests(binDir, corpusDir resolve "sleek", revision),
-           runPreparedHipTests(binDir, corpusDir resolve "hip", revision))
+          (runPreparedSleekTests(sleekPromise)(binDir, corpusDir resolve "sleek", revision),
+           runPreparedHipTests(hipPromise)(binDir, corpusDir resolve "hip", revision))
         }
       }
     }) map { case (sleekTSRes, hipTSRes) =>
@@ -186,15 +193,22 @@ class ConfiguredMain(config: AppConfig) {
       hipTSRes.displayResult(config.significantTimeThreshold)
       TestSuiteResultAnalysis printTallyOfInvalidTests hipTSRes
 
+      Await.ready(sleekPromise.future, Duration.Inf)
+      Await.ready(hipPromise.future, Duration.Inf)
+
       (sleekTSRes, hipTSRes)
     }
   }
 
   private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
+    val resultsWritten = promise[Unit]
+
     (results(repoDir, rev, "sleek") match {
       case Some(testSuiteResult) => {
         val revision = testSuiteResult.repoRevision
         reporter.log(s"Found sleek testsuite results for $revision.")
+
+        resultsWritten success ()
 
         Some(testSuiteResult)
       }
@@ -202,22 +216,28 @@ class ConfiguredMain(config: AppConfig) {
       // No results found, so, must run the prog. to get results
       case None => {
         reporter.log("sleek testsuite results not found, running test suite...")
-        runTestsWith(repoDir, rev, "examples/working/sleek")(runPreparedSleekTests)
+        runTestsWith(repoDir, rev, "examples/working/sleek")(runPreparedSleekTests(resultsWritten))
       }
     }) map { testSuiteResult =>
       // Map, so we can output this:
       testSuiteResult.displayResult(config.significantTimeThreshold)
       TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
+      Await.ready(resultsWritten.future, Duration.Inf)
+
       testSuiteResult
     }
   }
 
   private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
+    val resultsWritten = promise[Unit]
+
     (results(repoDir, rev, "hip") match {
       case Some(testSuiteResult) => {
         val revision = testSuiteResult.repoRevision
         reporter.log(s"Found hip testsuite results for $revision.")
+
+        resultsWritten success ()
 
         Some(testSuiteResult)
       }
@@ -225,12 +245,14 @@ class ConfiguredMain(config: AppConfig) {
       // No results found, so, must run the prog. to get results
       case None => {
         reporter.log("hip testsuite results not found, running test suite...")
-        runTestsWith(repoDir, rev, "examples/working/hip")(runPreparedHipTests)
+        runTestsWith(repoDir, rev, "examples/working/hip")(runPreparedHipTests(resultsWritten))
       }
     }) map { testSuiteResult =>
       // Map, so we can output this:
       testSuiteResult.displayResult(config.significantTimeThreshold)
       TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
+
+      Await.ready(resultsWritten.future, Duration.Inf)
 
       testSuiteResult
     }
@@ -408,7 +430,8 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedSleekTests(binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
+  private def runPreparedSleekTests(resultsSaved: Promise[Unit])
+                                   (binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
     reporter.header("Running Sleek Tests")
 
     val significantTime = config.significantTimeThreshold
@@ -425,13 +448,15 @@ class ConfiguredMain(config: AppConfig) {
     import ExecutionContext.Implicits.global
     future.onComplete { x =>
       (new ResultsArchive).saveTestSuiteResult(res, "sleek")
+      resultsSaved success ()
     }
 
     res
   }
 
   /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedHipTests(binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
+  private def runPreparedHipTests(resultsSaved: Promise[Unit])
+                                 (binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
     reporter.header("Running Hip Tests")
 
     val significantTime = config.significantTimeThreshold
@@ -448,6 +473,7 @@ class ConfiguredMain(config: AppConfig) {
     import ExecutionContext.Implicits.global
     future.onComplete { x =>
       (new ResultsArchive).saveTestSuiteResult(res, "sleek")
+      resultsSaved success ()
     }
 
     (new ResultsArchive).saveTestSuiteResult(res, "hip")
