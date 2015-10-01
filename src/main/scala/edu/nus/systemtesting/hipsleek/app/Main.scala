@@ -157,98 +157,68 @@ class ConfiguredMain(config: AppConfig) {
     }
   }
 
-  private def runAllTests(repoDir: Path, rev: Option[String]):
-      Option[(TestSuiteResult, TestSuiteResult)] = {
-    // Disadvantage in using for comp. here is
-    // if *either* isn't present, *BOTH* are re-run. Bad idea.
-    ((for {
-      sleekRes <- results(repoDir, rev, "sleek")
-      hipRes <- results(repoDir, rev, "hip")
-    } yield (sleekRes, hipRes)) match {
-      case rtn@Some((sleekTSRes, hipTSRes)) => {
-        val revision = sleekTSRes.repoRevision
-        reporter.log(s"Found sleek testsuite results for $revision.")
+  type RunPreparedTests = (Path, Path, String) => TestSuiteResult
 
-        rtn map { x => (x, false) }
-      }
+  private val SleekSuites: List[(String, RunPreparedTests)] =
+      List(("sleek", runPreparedSleekTests))
 
-      // No results found, so, must run the prog. to get results
-      case None => {
-        reporter.log("sleek,hip testsuite results not found, running test suites...")
-        runTestsWith(repoDir, rev, "examples/working") { case (binDir, corpusDir, revision) =>
-          ((runPreparedSleekTests(binDir, corpusDir resolve "sleek", revision),
-            runPreparedHipTests(binDir, corpusDir resolve "hip", revision)),
-           true)
+  private val HipSuites: List[(String, RunPreparedTests)] =
+      List(("hip", runPreparedHipTests))
+
+  private val AllSuites: List[(String, RunPreparedTests)] =
+      List(("sleek", runPreparedSleekTests),
+           ("hip", runPreparedHipTests))
+
+  private def runAllTests: (Path, Option[String]) => Option[List[TestSuiteResult]] =
+    runTests(AllSuites)
+
+  private def runSleekTests: (Path, Option[String]) => Option[List[TestSuiteResult]] =
+    runTests(SleekSuites)
+
+  private def runHipTests: (Path, Option[String]) => Option[List[TestSuiteResult]] =
+    runTests(HipSuites)
+
+  private def runTests(suites: List[(String, RunPreparedTests)])(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] = {
+    val lo = suites map { case (suiteName, runPreparedTests) =>
+      (results(repoDir, rev, suiteName) match {
+        case Some(testSuiteResult) => {
+          val revision = testSuiteResult.repoRevision
+          reporter.log(s"Found $suiteName testsuite results for $revision.")
+
+          Some(testSuiteResult, false)
         }
-      }
-    }) map { case ((sleekTSRes, hipTSRes), shouldSaveResults) =>
-      // Map, so we can output this:
-      sleekTSRes.displayResult(config.significantTimeThreshold)
-      TestSuiteResultAnalysis printTallyOfInvalidTests sleekTSRes
-      hipTSRes.displayResult(config.significantTimeThreshold)
-      TestSuiteResultAnalysis printTallyOfInvalidTests hipTSRes
 
-      if (shouldSaveResults) {
-        (new ResultsArchive).saveTestSuiteResult(sleekTSRes, "sleek")
-        (new ResultsArchive).saveTestSuiteResult(hipTSRes, "hip")
-      }
+        // No results found, so, must run the prog. to get results
+        case None => {
+          reporter.log(suiteName + " testsuite results not found, running test suite...")
+          runTestsWith(repoDir, rev, "examples/working/" + suiteName)(runPreparedTests) map { x => (x, true) }
+        }
+      }) map { case (testSuiteResult, shouldSaveResults) =>
+        // Map, so we can output this:
+        testSuiteResult.displayResult(config.significantTimeThreshold)
+        TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
-      (sleekTSRes, hipTSRes)
+        if (shouldSaveResults) {
+          (new ResultsArchive).saveTestSuiteResult(testSuiteResult, suiteName)
+        }
+
+        testSuiteResult
+      }
     }
-  }
 
-  private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    (results(repoDir, rev, "sleek") match {
-      case Some(testSuiteResult) => {
-        val revision = testSuiteResult.repoRevision
-        reporter.log(s"Found sleek testsuite results for $revision.")
+    // Returning Option[List] means if any test fails,
+    //  then they *all* fail.
+    // None is returned iff test prep (i.e. running make) fails, so this isn't bad.
+    //
+    // TODO This is poorly handled at the moment; it's possible some commits fail to build?
+    //
+    // Regardless, above implementation will also call runTestsWith many (<=twice) times.
+    // may be preferable to have the more convoluted logic s.t. only calls runWith once;
+    // -- but with current impl, binaries cached, so this makes little difference..
 
-        Some(testSuiteResult, false)
-      }
-
-      // No results found, so, must run the prog. to get results
-      case None => {
-        reporter.log("sleek testsuite results not found, running test suite...")
-        runTestsWith(repoDir, rev, "examples/working/sleek")(runPreparedSleekTests) map { x => (x, true) }
-      }
-    }) map { case (testSuiteResult, shouldSaveResults) =>
-      // Map, so we can output this:
-      testSuiteResult.displayResult(config.significantTimeThreshold)
-      TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
-
-      if (shouldSaveResults) {
-        (new ResultsArchive).saveTestSuiteResult(testSuiteResult, "sleek")
-      }
-
-      testSuiteResult
-    }
-  }
-
-  private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    (results(repoDir, rev, "hip") match {
-      case Some(testSuiteResult) => {
-        val revision = testSuiteResult.repoRevision
-        reporter.log(s"Found hip testsuite results for $revision.")
-
-        Some(testSuiteResult, false)
-      }
-
-      // No results found, so, must run the prog. to get results
-      case None => {
-        reporter.log("hip testsuite results not found, running test suite...")
-        runTestsWith(repoDir, rev, "examples/working/hip")(runPreparedHipTests) map { x => (x, true) }
-      }
-    }) map { case (testSuiteResult, shouldSaveResults) =>
-      // Map, so we can output this:
-      testSuiteResult.displayResult(config.significantTimeThreshold)
-      TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
-
-      if (shouldSaveResults) {
-        (new ResultsArchive).saveTestSuiteResult(testSuiteResult, "sleek")
-      }
-
-      testSuiteResult
-    }
+    // one-liner from:
+    // http://stackoverflow.com/questions/2569014/convert-a-list-of-options-to-an-option-of-list-using-scalaz
+    if (lo contains None) None else Some(lo.flatten)
   }
 
   private def results(repoDir: Path, rev: Option[String], name: String): Option[TestSuiteResult] = {
@@ -507,13 +477,18 @@ class ConfiguredMain(config: AppConfig) {
   /** Used for `diffSuiteResults`, to save typing / screen space. */
   type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
+  // The magic used below is a bit annoying,
+  // but to work around it, 
+  // while runSleekTests, runHipTests, runAllTests only return 1-2 things,
+  // is over-engineering it..
+
   /** For use with `diffSuiteResults`, for running just sleek results. */
   private def sleekResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
     (for {
       oldRes <- runSleekTests(repoDir, Some(rev1))
       curRes <- runSleekTests(repoDir, rev2)
-    } yield ("sleek", oldRes, curRes)).toList
+    } yield ("sleek", oldRes(0), curRes(0))).toList
   }
 
   /** For use with `diffSuiteResults`, for running just hip results. */
@@ -522,7 +497,7 @@ class ConfiguredMain(config: AppConfig) {
     (for {
       oldRes <- runHipTests(repoDir, Some(rev1))
       curRes <- runHipTests(repoDir, rev2)
-    } yield ("hip", oldRes, curRes)).toList
+    } yield ("hip", oldRes(0), curRes(0))).toList
   }
 
   /**
@@ -534,10 +509,10 @@ class ConfiguredMain(config: AppConfig) {
   private def allResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
     (for {
-      (oldSleekRes, oldHipRes) <- runAllTests(repoDir, Some(rev1))
-      (curSleekRes, curHipRes) <- runAllTests(repoDir, rev2)
-    } yield List(("sleek", oldSleekRes, curSleekRes),
-                 ("hip", oldHipRes, curHipRes))).toList.flatten
+      oldSuiteResults <- runAllTests(repoDir, Some(rev1))
+      curSuiteResults <- runAllTests(repoDir, rev2)
+    } yield List(("sleek", oldSuiteResults(0), curSuiteResults(0)),
+                 ("hip",   oldSuiteResults(1), curSuiteResults(1)))).toList.flatten
   }
 
   private def diffSuiteResults(repoDir: Path,
