@@ -23,13 +23,13 @@ class ResultsArchive(val resultsDir: String = "results") {
 
     // cf. filenameForSuiteResult
     val ResultNameRegex = "(.*)-([0-9a-f]+)-(\\d+)-(\\d+)\\.json".r
-    val resultTuples = filesInDir.map({ file =>
+    val resultTuples = filesInDir.flatMap({ file =>
       file.getName() match {
         case ResultNameRegex(name, rev, date, time) =>
           Some((name, rev, date + time, file))
         case _ => None
       }
-    }).flatten
+    })
 
     // Build map of (name, rev) => [(datetimeStr, file)]
     val resultsMap = resultTuples.map({case (n,r,_,_) =>
@@ -52,13 +52,13 @@ class ResultsArchive(val resultsDir: String = "results") {
   }
 
   def resultsFor(name: String, rev: String): Option[TestSuiteResult] = {
-    resultFiles.get((name, rev)).map({ file =>
+    resultFiles.get((name, rev)).flatMap({ file =>
       val src = Source.fromFile(file)
       val content = src.mkString
       src.close()
 
       TestSuiteResultJson.load(content)
-    }).flatten
+    })
   }
 
   /** In format of `$name-$revision-$datetime.json` */

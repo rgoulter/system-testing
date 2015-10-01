@@ -72,13 +72,13 @@ class SleekTestCase(binDir: Path = Paths.get(""),
         "Fail"
     }
 
-    val resultUnits = expectedOutputList.zip(results).zipWithIndex.map({
+    val resultUnits = expectedOutputList.zip(results).zipWithIndex.flatMap({
       case ((expected, resultLine), idx) => {
         val actual = resultFromOutputLine(resultLine)
 
         Some(Result(idx.toString, expected, actual))
       }
-    }).flatten
+    })
 
     return Right(resultUnits)
   }

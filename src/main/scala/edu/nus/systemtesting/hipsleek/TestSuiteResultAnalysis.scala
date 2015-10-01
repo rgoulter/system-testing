@@ -27,9 +27,9 @@ class TestSuiteResultAnalysis(tsr: TestSuiteResult) {
   def outputMatchingRegex(tcr: TestCaseResult, regex: Regex): List[String] = {
     // Need to get lines of remark, since all output can be
     // as a single string.
-    val remLines = (tcr.remarks toList) map { rem => rem.lines.toList } flatten
+    val remLines = (tcr.remarks toList) flatMap { rem => rem.lines.toList }
 
-    remLines map { line => (regex findFirstIn line) } flatten
+    remLines flatMap { line => (regex findFirstIn line) }
   }
 
   def testCasesWithOutputMatching(regex: Regex): List[TestCaseResult] = {
@@ -60,13 +60,13 @@ class TestSuiteResultAnalysis(tsr: TestSuiteResult) {
   // Exception occurred: Globals.Illegal_Prover_Format("z3.smt_of_typ: list(int) not supported for SMT")
   val ExcRegex = "Exception [^:]+: ([^\\(]*)(?:\\(\"(.*)\"\\))?".r
   val mappedInvalid =
-    invalid map { tcr =>
+    invalid flatMap { tcr =>
       val matching = outputMatchingRegex(tcr, ExcRegex)
       if (!matching.isEmpty)
         Some((tcr, matching))
       else
         None
-    } flatten
+    }
 
   val (exceptionTCs, allExcOutp) = mappedInvalid.unzip
 

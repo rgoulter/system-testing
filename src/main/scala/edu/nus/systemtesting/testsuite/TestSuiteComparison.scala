@@ -180,9 +180,9 @@ object TestSuiteComparison {
     val curTestMap = curTests.map(tcr => (tcr.cmdFnArgsKey -> tcr)).toMap
 
     // Partition (Compatible TestCaseResults)
-    val compatibleTests = oldTests.map({ oldTCR =>
+    val compatibleTests = oldTests.flatMap({ oldTCR =>
       curTestMap.get(oldTCR.cmdFnArgsKey).map(curTCR => (oldTCR -> curTCR))
-    }).flatten
+    })
 
     val (usedOld, usedCur) = compatibleTests.unzip
     val unusedOld = oldTests.filterNot(usedOld.contains)
@@ -192,11 +192,11 @@ object TestSuiteComparison {
     val unusedCurMap = unusedCur.map(tcr => (tcr.cmdFnKey -> tcr)).toMap
 
     // Partition Unused (Different Args)
-    val argsChangedTests = unusedOld.map({ oldTCR =>
+    val argsChangedTests = unusedOld.flatMap({ oldTCR =>
       // assumes cmdFn key is unique-ish,
       // otherwise `argsChangedTests` is nonsense
       unusedCurMap.get(oldTCR.cmdFnKey).map(curTCR => (oldTCR -> curTCR))
-    }).flatten
+    })
 
     // Test is 'removed' if (cmd,file) pair not in new tests.
     // Test is 'new' if (cmd,file) pair not in old tests.

@@ -83,7 +83,7 @@ object SuiteGenerator {
 
     // Just to be sure, check for uniqueness of (cmd, args, filename) across
     // each TestSet.
-    val allTests = testSets map { _.tests } flatten
+    val allTests = testSets flatMap { _.tests }
 
     allTests.foldLeft(Set[(String, String)]()) { (set, test) =>
       val k = key(test)

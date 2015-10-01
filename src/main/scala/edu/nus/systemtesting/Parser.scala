@@ -13,9 +13,9 @@ object Parser {
   def filterLinesMatchingRegex(text: String, regex: String) = {
     val lines = text.split("\n")
 
-    lines.map(line => {
+    lines.flatMap(line => {
       val pattern = regex.r
       pattern.findFirstIn(line)
-    }).flatten
+    })
   }
 }

@@ -85,7 +85,7 @@ class HipTestCase(binDir: Path = Paths.get(""),
     // TODO: check that all the results methods contain the method name.
     // If not, then the test is 'under specified' relative to the actual file, and we should note that.
 
-    val resultUnits = results.map(outputLine => {
+    val resultUnits = results.flatMap(outputLine => {
       val (methodName, actual) = resultFromOutputLine(outputLine)
 
       expectedOutputMap.get(methodName) match {
@@ -98,7 +98,7 @@ class HipTestCase(binDir: Path = Paths.get(""),
         // Easier to ignore, for now.
         case None => None
       }
-    }).flatten
+    })
 
     return Right(resultUnits)
   }
