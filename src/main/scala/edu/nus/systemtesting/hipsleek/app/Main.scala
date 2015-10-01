@@ -1,7 +1,7 @@
 package edu.nus.systemtesting.hipsleek.app
 
 import java.nio.file.{ Files, Path, Paths }
-import scala.concurrent.{ Await, ExecutionContext, Future, Promise, future, promise }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
@@ -198,14 +198,10 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   private def runSleekTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    val resultsWritten = promise[Unit]
-
     (results(repoDir, rev, "sleek") match {
       case Some(testSuiteResult) => {
         val revision = testSuiteResult.repoRevision
         reporter.log(s"Found sleek testsuite results for $revision.")
-
-        resultsWritten success ()
 
         Some(testSuiteResult, false)
       }
@@ -229,8 +225,6 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   private def runHipTests(repoDir: Path, rev: Option[String]): Option[TestSuiteResult] = {
-    val resultsWritten = promise[Unit]
-
     (results(repoDir, rev, "hip") match {
       case Some(testSuiteResult) => {
         val revision = testSuiteResult.repoRevision
