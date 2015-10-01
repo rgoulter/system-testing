@@ -15,7 +15,7 @@ import GlobalReporter.reporter
 class TestSuite(tests: List[TestCase],
                 revision: String,
                 significantTime: Long) {
-  def runAllTests(): (TestSuiteResult, Future[Unit]) = {
+  def runAllTests(): TestSuiteResult = {
     // Use global ExecutionContext for executing context.
     import ExecutionContext.Implicits.global
 
@@ -27,7 +27,7 @@ class TestSuite(tests: List[TestCase],
     // Asynchronously, run each test case (synchronously),
     // so that `TestSuite.runAllTests()` returns, but TestCases don't
     // necessarily have results yet.
-    val finishAllTests = Future {
+    Future {
       val startTime = System.currentTimeMillis
 
       tcPromises foreach { case (tc, p) =>
@@ -56,6 +56,6 @@ class TestSuite(tests: List[TestCase],
     val now = DateTime.now()
     val suiteResult = TestSuiteResult(hostname, now, revision, tcFutures)
 
-    (suiteResult, finishAllTests)
+    suiteResult
   }
 }
