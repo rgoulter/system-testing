@@ -34,7 +34,7 @@ class JsonSpec extends FlatSpec {
   val SampleResult = Result("key1", "expected1", "output1")
   val SampleTestCaseResult1 = new TestCaseResult(cmd1, filename1, "--args", 10L, Left(List("remark1", "remark2")))
   val SampleTestCaseResult2 = new TestCaseResult(cmd1, filename1, "--args", 10L, Right(List(SampleResult)))
-  val SampleTestSuiteResult = new TestSuiteResult("soccf-plser2-05", DateTime.now(), "abcd", List(SampleTestCaseResult1, SampleTestCaseResult2))
+  val SampleTestSuiteResult = TestSuiteResult.withResults("soccf-plser2-05", DateTime.now(), "abcd", List(SampleTestCaseResult1, SampleTestCaseResult2))
 
   // test Result to/from,
   "JSON Serialistion" should "be able to encode/decode Result objects" in {

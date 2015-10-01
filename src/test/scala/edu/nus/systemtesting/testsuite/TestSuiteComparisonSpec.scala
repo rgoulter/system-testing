@@ -22,10 +22,11 @@ class TestSuiteComparisonSpec extends FlatSpec {
   val arbitraryDateTime = DateTime.now()
 
   def results(rev: String, tcResults: Iterable[TestCaseResult]): TestSuiteResult = {
-    TestSuiteResult(arbitraryHostname,
+    TestSuiteResult.withResults(
+                    arbitraryHostname,
                     arbitraryDateTime,
                     rev,
-                    tcResults)
+                    tcResults.toList)
   }
 
   val arbitraryCommand = Paths.get("cmd")
