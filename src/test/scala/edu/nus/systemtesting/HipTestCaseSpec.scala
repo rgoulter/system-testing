@@ -2,20 +2,32 @@ package edu.nus.systemtesting
 
 import org.scalatest.FlatSpec
 import edu.nus.systemtesting.hipsleek.HipTestCase
-import edu.nus.systemtesting.hipsleek.ConstructHipTests
 import java.nio.file.Paths
+import edu.nus.systemtesting.hipsleek.HipTestCase
 
 /**
  * @author richardg
  */
-class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] with ConstructHipTests {
-  def testCase(): TestCaseBuilder = {
+class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
+  def testCase(): Testable = {
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
-    (new TestCaseBuilder
+    (new Testable
        runCommand Paths.get("hip")
        onFile Paths.get("infinity/inflist.ss")
        withArguments "--dsd --en-inf")
+  }
+
+  implicit def constructTestCase(tcb: Testable): HipTestCase = {
+    new HipTestCase(
+      Paths.get("."),
+      tcb.commandName,
+      Paths.get("."),
+      tcb.fileName,
+      tcb.arguments,
+      tcb.expectedOutput,
+      100
+    )
   }
 
   val outp = ExecutionOutput.outputFromString(OutputDumps.HipExResource)

@@ -6,23 +6,19 @@ import edu.nus.systemtesting.ExecutionOutput
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.Result
 import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.TestCaseBuilder
-import edu.nus.systemtesting.ConstructTests
-import scala.Left
-import scala.Right
 import java.nio.file.Path
 import java.nio.file.Paths
 
-trait ConstructHipTests extends ConstructTests[HipTestCase] {
-  implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
-    new HipTestCase(tc.binDir,
-                    tc.commandName,
-                    tc.corpusDir,
-                    tc.fileName,
-                    tc.arguments,
-                    tc.expectedOutput,
-                    tc.timeout)
-}
+//trait ConstructHipTests extends ConstructTests[HipTestCase] {
+//  implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
+//    new HipTestCase(tc.binDir,
+//                    tc.commandName,
+//                    tc.corpusDir,
+//                    tc.fileName,
+//                    tc.arguments,
+//                    tc.expectedOutput,
+//                    tc.timeout)
+//}
 
 class HipTestCase(binDir: Path = Paths.get(""),
                   cmd: Path = Paths.get(""),

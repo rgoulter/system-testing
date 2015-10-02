@@ -3,7 +3,6 @@ package edu.nus.systemtesting.testsuite
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import edu.nus.systemtesting.hipsleek.SleekTestCase
-import edu.nus.systemtesting.hipsleek.ConstructSleekTests
 import java.nio.file.Paths
 import org.scalatest.prop.PropertyChecks
 import org.joda.time.DateTime

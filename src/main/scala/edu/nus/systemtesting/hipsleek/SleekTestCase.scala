@@ -5,21 +5,19 @@ import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
 import edu.nus.systemtesting.ExecutionOutput
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.Result
-import edu.nus.systemtesting.TestCaseBuilder
-import edu.nus.systemtesting.ConstructTests
 import java.nio.file.Path
 import java.nio.file.Paths
 
-trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
-  implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
-    new SleekTestCase(tc.binDir,
-                      tc.commandName,
-                      tc.corpusDir,
-                      tc.fileName,
-                      tc.arguments,
-                      tc.expectedOutput,
-                      tc.timeout)
-}
+//trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
+//  implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
+//    new SleekTestCase(tc.binDir,
+//                      tc.commandName,
+//                      tc.corpusDir,
+//                      tc.fileName,
+//                      tc.arguments,
+//                      tc.expectedOutput,
+//                      tc.timeout)
+//}
 
 class SleekTestCase(binDir: Path = Paths.get(""),
                     cmd: Path = Paths.get(""),
