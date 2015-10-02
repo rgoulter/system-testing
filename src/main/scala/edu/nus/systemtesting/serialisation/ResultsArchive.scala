@@ -28,7 +28,7 @@ class ResultsArchive(val resultsDir: String = "results") {
     //   / . - _
     // and sometimes uppercase letters.
     // not all illegal, but maybe annoying
-    fn toString() replaceAll("[/.-_]+", "") toLowerCase()
+    fn toString() replaceAll("[-/._]+", "") toLowerCase()
 
   private def tidyArgs(args: String): String =
     // arguments may contain the following non-alphanumerics:
@@ -75,13 +75,16 @@ class ResultsArchive(val resultsDir: String = "results") {
 
     val filesInDir = revDir.listFiles()
 
-    val ResultNameRegex = "(.*)-([0-9a-z]+)-([0-9a-z]+)\\.json".r
+    val ResultNameRegex = "(.*)_([0-9a-z]+)_([0-9a-z]*)\\.json".r
 
     filesInDir flatMap { file =>
       file.getName() match {
         case ResultNameRegex(cmd, fn, args) =>
           Some(((cmd, fn, args), file))
-        case _ => None
+        case _ => {
+          System.err.println(s"WARNING: File not matching regex: ${file.getName()}")
+          None
+        }
       }
     } toMap
   }
@@ -105,7 +108,7 @@ class ResultsArchive(val resultsDir: String = "results") {
 
   def resultFor(repoRevision: String, cmd: Path, filename: Path, args: String): Option[TestCaseResult] = {
     resultFiles get(repoRevision) flatMap { revMap =>
-      revMap.get(tidyCommand(cmd), tidyFilename(filename), tidyArgs(args))
+      revMap.get((tidyCommand(cmd), tidyFilename(filename), tidyArgs(args)))
     } flatMap { file =>
       // FileSystemUtilities readFromFile ??
       val src = Source.fromFile(file)
@@ -121,12 +124,16 @@ class ResultsArchive(val resultsDir: String = "results") {
   }
 
   def saveTestCaseResult(repoRevision: String, tcResult: TestCaseResult): Unit = {
-    FileSystemUtilities.checkOutputDirectory(resultsDir)
     val filename = filenameForTCResult(repoRevision, tcResult)
+    val path = Paths.get(resultsDir, filename)
+
+    // ensure the folder exists
+    val parentDir = path.getParent().toFile()
+    parentDir.mkdirs()
+
     val dump = TestCaseResultJson.dump(tcResult)
 
-    val path = Paths.get(resultsDir, filename)
-    reporter.log(s"\nSaving results to $path\n") // this *will* be excessive...
+    reporter.log(s"Saving results to $path") // this *will* be excessive...
     FileSystemUtilities.printToFile(path.toFile())(_.print(dump))
   }
 }

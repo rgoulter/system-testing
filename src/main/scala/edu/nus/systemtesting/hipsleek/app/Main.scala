@@ -20,6 +20,7 @@ import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.BinCache
+import edu.nus.systemtesting.serialisation.ResultsArchive
 
 object Main {
   /** Expected filename for the application conf. */
@@ -374,7 +375,8 @@ class ConfiguredMain(config: AppConfig) {
                                         revision,
                                         examplesDir = examplesDir).suite
 
-    suite.runAllTests()
+    val resultsArch = new ResultsArchive()
+    suite.runAllTests(resultsArch)
   }
 
   /** Assumes that the project dir has been prepared successfully */
@@ -389,7 +391,8 @@ class ConfiguredMain(config: AppConfig) {
                                       revision,
                                       examplesDir = examplesDir).suite
 
-    suite.runAllTests()
+    val resultsArch = new ResultsArchive()
+    suite.runAllTests(resultsArch)
   }
 
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {

@@ -6,16 +6,16 @@ import scala.concurrent.ExecutionContext
 import scala.collection.mutable.MutableList
 import scala.sys.process.stringToProcess
 import org.joda.time.DateTime
-
 import edu.nus.systemtesting.{ Result, TestCase,
                                TestCaseResult, TestFailed, TestPassed }
 import edu.nus.systemtesting.output.GlobalReporter
 import GlobalReporter.reporter
+import edu.nus.systemtesting.serialisation.ResultsArchive
 
 class TestSuite(tests: List[TestCase],
                 revision: String,
                 significantTime: Long) {
-  def runAllTests(): TestSuiteResult = {
+  def runAllTests(resultsArch: ResultsArchive): TestSuiteResult = {
     // Use global ExecutionContext for executing context.
     import ExecutionContext.Implicits.global
 
@@ -31,8 +31,26 @@ class TestSuite(tests: List[TestCase],
       val startTime = System.currentTimeMillis
 
       tcPromises foreach { case (tc, p) =>
-        // TODO Load or run each result individually.
-        val testResult = tc.generateOutput
+        // Load or run each result individually.
+        // May be worth recording how many loaded vs computed??..
+        val testResult = resultsArch.resultFor(revision)(tc) match {
+          case Some(tcr) => tcr
+
+          case None => {
+            val tcr = tc.generateOutput
+
+            // Didn't have results, save them.
+            try {
+              resultsArch.saveTestCaseResult(revision, tcr)
+            } catch {
+              case e: Throwable => {
+                e.printStackTrace()
+              }
+            }
+
+            tcr
+          }
+        }
 
         // the promise always succeeds.
         // (not to be confused with the result of the test; even

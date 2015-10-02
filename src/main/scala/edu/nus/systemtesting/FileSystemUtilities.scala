@@ -29,7 +29,7 @@ object FileSystemUtilities {
   def createDirectory(path: String) = {
     if (!Files.exists(Paths.get(path))) {
       val directory = new File(path)
-      directory.mkdir()
+      directory.mkdirs()
     }
   }
 
