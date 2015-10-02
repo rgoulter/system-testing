@@ -199,7 +199,8 @@ class ConfiguredMain(config: AppConfig) {
         TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
         if (shouldSaveResults) {
-          (new ResultsArchive).saveTestSuiteResult(testSuiteResult, suiteName)
+          // REMOVE ME
+//          (new ResultsArchive).saveTestSuiteResult(testSuiteResult, suiteName)
         }
 
         testSuiteResult
@@ -225,13 +226,12 @@ class ConfiguredMain(config: AppConfig) {
     val repo = new Repository(repoDir)
     val revision = repo.identify(rev)
 
-    if (!repo.isDirty()) {
-      // TODO: Also should check if the results we get is 'the same' as
-      //       the tests we want to run.
-      (new ResultsArchive).resultsFor(name, revision)
-    } else {
-      None
-    }
+//    if (!repo.isDirty()) {
+//      (new ResultsArchive).resultsFor(name, revision)
+//    } else {
+//      None
+//    }
+    None
   }
 
   private def runTestsWith[T](repoDir: Path, rev: Option[String], examplesDir: String)

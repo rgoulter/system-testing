@@ -1,90 +1,132 @@
 package edu.nus.systemtesting.serialisation
 
+import java.io.File
 import java.nio.file.{ Files, Path, Paths }
 import scala.io.Source
 import org.joda.time.format.ISODateTimeFormat
-
 import edu.nus.systemtesting.FileSystemUtilities
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
-
 import GlobalReporter.reporter
+import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.TestCase
 
 class ResultsArchive(val resultsDir: String = "results") {
+  // Results stored become keyed by:
+  //   revision, command, filename, args
+  // Store at:
+  //   $resultsDir/$revision/$command_filename_args.json
+
+  private def tidyCommand(cmd: Path): String =
+    // assume as either "sleek" or "hip",
+    cmd toFile() getName()
+
+  private def tidyFilename(fn: Path): String =
+    // filename may contain the following non-alphanumerics:
+    //   / . - _
+    // and sometimes uppercase letters.
+    // not all illegal, but maybe annoying
+    fn toString() replaceAll("[/.-_]+", "") toLowerCase()
+
+  private def tidyArgs(args: String): String =
+    // arguments may contain the following non-alphanumerics:
+    //  -
+    // and be space-separated.
+    args replaceAll("[- ]+", "")
+
+  /** In format of `$name-$revision-$datetime.json` */
+  private def filenameForTCResult(repoRevision: String, tcResult: TestCaseResult): String = {
+    import tcResult.{ command, filename, arguments }
+
+    // cmd
+    val cmd = tidyCommand(command)
+
+    // cf. http://superuser.com/questions/358855/what-characters-are-safe-in-cross-platform-file-names-for-linux-windows-and-os
+    // the best non-alphanumerics to use in filenames are:
+    //   -.,;_
+
+    val fn = tidyFilename(filename)
+
+    val niceArgs = tidyArgs(arguments)
+
+    s"$repoRevision/${cmd}_${fn}_${niceArgs}.json"
+  }
+
   /**
-   * Map of `(name, rev) => File`.
+   * Map of `(rev) => Map[(cmd, fn, args) => File]`.
    * `rev` expected to be 'short'. (12 chars).
    */
   private lazy val resultFiles = {
     FileSystemUtilities.checkOutputDirectory(resultsDir)
-    val filesInDir = Paths.get(resultsDir).toFile().listFiles()
+    val revDirs = Paths get(resultsDir) toFile() listFiles()
 
-    // cf. filenameForSuiteResult
-    val ResultNameRegex = "(.*)-([0-9a-f]+)-(\\d+)-(\\d+)\\.json".r
-    val resultTuples = filesInDir.flatMap({ file =>
-      file.getName() match {
-        case ResultNameRegex(name, rev, date, time) =>
-          Some((name, rev, date + time, file))
-        case _ => None
-      }
-    })
+    // assume each of revDirs is a revision..
 
-    // Build map of (name, rev) => [(datetimeStr, file)]
-    val resultsMap = resultTuples.map({case (n,r,_,_) =>
-      (n,r)
-    }).toSet[(String, String)].map({ case (n,r) =>
-      val dtFilePairs = resultTuples.filter({ case (name, rev, _, _) =>
-        name == n && rev == r
-      }).map({ case (_, _, dt, f) => (dt, f) })
-
-      (n,r) -> dtFilePairs
-    }).toMap
-
-    // Take the latest result
-    // from (name,rev) => (datetimeStr, file) map
-    resultsMap.map({ case (nameRev, ls) =>
-      val (latestDateTime, file) = ls.max
-
-      nameRev -> file
-    })
+    revDirs map { revDir =>
+      (revDir getName(), filesForRevisionDir(revDir))
+    } toMap
   }
 
-  def resultsFor(name: String, rev: String): Option[TestSuiteResult] = {
-    resultFiles.get((name, rev)).flatMap({ file =>
+  private def filesForRevisionDir(revDir: File): Map[(String, String, String), File] = {
+    // cf. filenameForTCResult
+    //   $resultsDir/$revision/$command_filename_args.json
+
+    val filesInDir = revDir.listFiles()
+
+    val ResultNameRegex = "(.*)-([0-9a-z]+)-([0-9a-z]+)\\.json".r
+
+    filesInDir flatMap { file =>
+      file.getName() match {
+        case ResultNameRegex(cmd, fn, args) =>
+          Some(((cmd, fn, args), file))
+        case _ => None
+      }
+    } toMap
+  }
+
+  def resultsFor(repoRevision: String, cmd: String): List[TestCaseResult] = {
+    (resultFiles get(repoRevision) toList) flatMap { revMap =>
+      (revMap keys) filter { case (c, _, _) =>
+        c == cmd
+      } flatMap { k =>
+        revMap get k
+      }
+    } flatMap { file =>
+      // FileSystemUtilities readFromFile ??
+      val src = Source fromFile file
+      val content = src.mkString
+      src.close()
+
+      TestCaseResultJson.load(content)
+    }
+  }
+
+  def resultFor(repoRevision: String, cmd: Path, filename: Path, args: String): Option[TestCaseResult] = {
+    resultFiles get(repoRevision) flatMap { revMap =>
+      revMap.get(tidyCommand(cmd), tidyFilename(filename), tidyArgs(args))
+    } flatMap { file =>
+      // FileSystemUtilities readFromFile ??
       val src = Source.fromFile(file)
       val content = src.mkString
       src.close()
 
-      TestSuiteResultJson.load(content)
-    })
+      TestCaseResultJson.load(content)
+    }
   }
 
-  /** In format of `$name-$revision-$datetime.json` */
-  private def filenameForSuiteResult(suiteResult: TestSuiteResult, name: String): String = {
-    import suiteResult.{ repoRevision, datetime }
-    val datetimeStr = datetime.toString("yyyyMMdd-HHmmss")
-
-    s"$name-${repoRevision}-${datetimeStr}.json"
+  def resultFor(repoRevision: String)(tc: TestCase): Option[TestCaseResult] = {
+    resultFor(repoRevision, tc.commandName, tc.fileName, tc.arguments)
   }
 
-  /**
-   * Note for `name` that [[edu.nus.systemtesting.testsuite.TestSuiteResult]] isn't necessarily from one command
-   * (`hip` or `sleek`). With the current design, convenient to consider results
-   * as 'hip results' or 'sleek results', though.
-   *
-   * @param name e.g. `"hip"`, `"sleek"`
-   */
-  def saveTestSuiteResult(suiteResult: TestSuiteResult, name: String): Unit = {
-    import suiteResult.{ repoRevision, datetime }
-
+  def saveTestCaseResult(repoRevision: String, tcResult: TestCaseResult): Unit = {
     FileSystemUtilities.checkOutputDirectory(resultsDir)
-    val filename = filenameForSuiteResult(suiteResult, name)
-    val dump = TestSuiteResultJson.dump(suiteResult)
+    val filename = filenameForTCResult(repoRevision, tcResult)
+    val dump = TestCaseResultJson.dump(tcResult)
 
     val path = Paths.get(resultsDir, filename)
-    reporter.log(s"\nSaving results to $path\n")
+    reporter.log(s"\nSaving results to $path\n") // this *will* be excessive...
     FileSystemUtilities.printToFile(path.toFile())(_.print(dump))
   }
 }
