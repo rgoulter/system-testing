@@ -9,7 +9,6 @@ import edu.nus.systemtesting.serialisation.TestCaseResultImplicits
 import edu.nus.systemtesting.serialisation.Json
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import org.joda.time.DateTime
-import edu.nus.systemtesting.serialisation.TestSuiteResultJson
 import java.nio.file.Paths
 
 /**
@@ -46,26 +45,5 @@ class JsonSpec extends FlatSpec {
     checkIdempotent(SampleTestCaseResult1, TestCaseResultJson)
 
     checkIdempotent(SampleTestCaseResult2, TestCaseResultJson)
-  }
-
-  // test TestCaseResult to/from
-  it should "be able to encode/decode TestSuiteResult objects" in {
-//    checkIdempotent(SampleTestSuiteResult, TestSuiteResultJson)
-    // TestSuiteResult is a bit special.
-    // May be useful to instead have EvaluatedTSR?
-    val json = TestSuiteResultJson
-
-    val dump = json.dump(SampleTestSuiteResult)
-    val load = json.load(dump)
-
-    load match {
-      case None => fail()
-      case Some(res) => {
-        assert(SampleTestSuiteResult.hostname equals res.hostname, s"Couldn't load from:\n$dump\nGot: $res")
-        assert(SampleTestSuiteResult.datetime equals res.datetime, s"Couldn't load from:\n$dump\nGot: $res")
-        assert(SampleTestSuiteResult.repoRevision equals res.repoRevision, s"Couldn't load from:\n$dump\nGot: $res")
-        assert(SampleTestSuiteResult.results equals res.results, s"Couldn't load from:\n$dump\nGot: $res")
-      }
-    }
   }
 }

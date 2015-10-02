@@ -31,6 +31,7 @@ class TestSuite(tests: List[TestCase],
       val startTime = System.currentTimeMillis
 
       tcPromises foreach { case (tc, p) =>
+        // TODO Load or run each result individually.
         val testResult = tc.generateOutput
 
         // the promise always succeeds.

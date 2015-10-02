@@ -90,30 +90,6 @@ trait TestCaseResultImplicits extends ResultImplicits {
     })
 }
 
-trait TestSuiteResultImplicits extends TestCaseResultImplicits {
-  private val Host = "hostname"
-  private val Datetime = "datetime"
-  private val Revision = "revision"
-  private val Results = "results"
-
-  implicit def TestSuiteResultEncodeJson: EncodeJson[TestSuiteResult] =
-    EncodeJson((r: TestSuiteResult) =>
-      (Host     := r.hostname) ->:
-      (Datetime := r.datetime.toString(DateTimeFormatter)) ->:
-      (Revision := r.repoRevision) ->:
-      (Results  := r.results.toList) ->:
-      jEmptyObject)
-
-  implicit def TestSuiteResultDecodeJson: DecodeJson[TestSuiteResult] =
-    DecodeJson(c => for {
-      host        <- (c --\ Host).as[String]
-      datetimeStr <- (c --\ Datetime).as[String]
-      val datetime = DateTimeFormatter.parseDateTime(datetimeStr)
-      revision    <- (c --\ Revision).as[String]
-      results     <- (c --\ Results).as[List[TestCaseResult]]
-    } yield TestSuiteResult.withResults(host, datetime, revision, results))
-}
-
 abstract class Json[T] {
   implicit def encode: EncodeJson[T]
 
@@ -134,9 +110,4 @@ object ResultJson extends Json[Result] with ResultImplicits {
 object TestCaseResultJson extends Json[TestCaseResult] with TestCaseResultImplicits {
   implicit def encode = TestCaseResultEncodeJson
   implicit def decode = TestCaseResultDecodeJson
-}
-
-object TestSuiteResultJson extends Json[TestSuiteResult] with TestSuiteResultImplicits {
-  implicit def encode = TestSuiteResultEncodeJson
-  implicit def decode = TestSuiteResultDecodeJson
 }

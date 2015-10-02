@@ -180,28 +180,10 @@ class ConfiguredMain(config: AppConfig) {
 
   private def runTests(suites: List[(String, RunPreparedTests)])(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] = {
     val lo = suites map { case (suiteName, runPreparedTests) =>
-      (results(repoDir, rev, suiteName) match {
-        case Some(testSuiteResult) => {
-          val revision = testSuiteResult.repoRevision
-          reporter.log(s"Found $suiteName testsuite results for $revision.")
-
-          Some(testSuiteResult, false)
-        }
-
-        // No results found, so, must run the prog. to get results
-        case None => {
-          reporter.log(suiteName + " testsuite results not found, running test suite...")
-          runTestsWith(repoDir, rev, "examples/working/" + suiteName)(runPreparedTests) map { x => (x, true) }
-        }
-      }) map { case (testSuiteResult, shouldSaveResults) =>
+      runTestsWith(repoDir, rev, "examples/working/" + suiteName)(runPreparedTests) map { testSuiteResult =>
         // Map, so we can output this:
         testSuiteResult.displayResult(config.significantTimeThreshold)
         TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
-
-        if (shouldSaveResults) {
-          // REMOVE ME
-//          (new ResultsArchive).saveTestSuiteResult(testSuiteResult, suiteName)
-        }
 
         testSuiteResult
       }
@@ -220,18 +202,6 @@ class ConfiguredMain(config: AppConfig) {
     // one-liner from:
     // http://stackoverflow.com/questions/2569014/convert-a-list-of-options-to-an-option-of-list-using-scalaz
     if (lo contains None) None else Some(lo.flatten)
-  }
-
-  private def results(repoDir: Path, rev: Option[String], name: String): Option[TestSuiteResult] = {
-    val repo = new Repository(repoDir)
-    val revision = repo.identify(rev)
-
-//    if (!repo.isDirty()) {
-//      (new ResultsArchive).resultsFor(name, revision)
-//    } else {
-//      None
-//    }
-    None
   }
 
   private def runTestsWith[T](repoDir: Path, rev: Option[String], examplesDir: String)
