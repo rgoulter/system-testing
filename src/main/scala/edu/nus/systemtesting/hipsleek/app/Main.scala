@@ -275,6 +275,8 @@ class ConfiguredMain(config: AppConfig) {
         // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
         binCache.cache(binDir, Paths.get("sleek"), revision)
         binCache.cache(binDir, Paths.get("hip"), revision)
+        // apparently prelude.ss needs to be in, or hip will break.
+        binCache.cache(binDir, Paths.get("prelude.ss"), revision)
 
         Some(f(binDir, corpusDir, revision))
       } else {

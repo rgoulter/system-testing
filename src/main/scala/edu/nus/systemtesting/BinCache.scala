@@ -29,7 +29,8 @@ class BinCache(val cacheDir: String = "bincache") {
     // TODO: could warn if overwriting some file?
     Files.copy(binDir resolve cmd, dest)
 
-    assume(dest.toFile().canExecute())
+    // e.g. prelude.ss needn't be executable
+    // assume(dest.toFile().canExecute())
 
     dest
   }
