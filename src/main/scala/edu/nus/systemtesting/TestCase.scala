@@ -21,7 +21,7 @@ abstract class TestCase(val binDir: Path,
                         val fileName: Path,
                         val arguments: String = "",
                         val expectedOutput: String = "",
-                        val timeout: Int) {
+                        val timeout: Int) extends Testable {
   /**
    * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].
    *

@@ -22,7 +22,15 @@ case class TestCaseResult(val command: Path,
                           val filename: Path,
                           val arguments: String,
                           val executionTime: Long,
-                          val results: Either[Iterable[String], Iterable[Result]]) {
+                          val results: Either[Iterable[String], Iterable[Result]])
+    extends Testable {
+  // for Testable trait, the names are slightly different
+  val commandName = command
+  val fileName = filename
+  // can't recover expected output; format is different..
+  val expectedOutput =
+    throw new UnsupportedOperationException("Can't recover expected output")
+
   val result: TestResult = results match {
     case Left(_) => TestFailed
     case Right(res) => if (res.forall(_.passed)) TestPassed else TestFailed
