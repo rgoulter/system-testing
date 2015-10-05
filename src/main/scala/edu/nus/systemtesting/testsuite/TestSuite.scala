@@ -27,7 +27,7 @@ class TestSuite(tests: List[TestCase],
     // Asynchronously, run each test case (synchronously),
     // so that `TestSuite.runAllTests()` returns, but TestCases don't
     // necessarily have results yet.
-    Future {
+    val fut = Future {
       val startTime = System.currentTimeMillis
 
       tcPromises foreach { case (tc, p) =>
@@ -68,6 +68,11 @@ class TestSuite(tests: List[TestCase],
       reporter.println()
       reporter.log(s"Total time taken to run all tests: $timeTaken seconds")
       reporter.println()
+    }
+
+    fut onFailure { case e: Throwable =>
+      System.err.println("Something went wrong in future!!!")
+      e.printStackTrace()
     }
 
     // assuming the `hostname` command can't/won't fail
