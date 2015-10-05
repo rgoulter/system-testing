@@ -1,23 +1,26 @@
 package edu.nus.systemtesting.hipsleek
 
-import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
-import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
-import edu.nus.systemtesting.ExecutionOutput
-import edu.nus.systemtesting.TestCase
-import edu.nus.systemtesting.Result
 import java.nio.file.Path
 import java.nio.file.Paths
+import edu.nus.systemtesting.ExecutionOutput
+import edu.nus.systemtesting.PreparedSystem
+import edu.nus.systemtesting.Result
+import edu.nus.systemtesting.Testable
+import edu.nus.systemtesting.TestCaseConfiguration
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
+import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
 
-//trait ConstructSleekTests extends ConstructTests[SleekTestCase] {
-//  implicit def constructTestCase(tc: TestCaseBuilder): SleekTestCase =
-//    new SleekTestCase(tc.binDir,
-//                      tc.commandName,
-//                      tc.corpusDir,
-//                      tc.fileName,
-//                      tc.arguments,
-//                      tc.expectedOutput,
-//                      tc.timeout)
-//}
+object SleekTestCase {
+  implicit def constructTestCase(ps: PreparedSystem, tc: Testable, conf: TestCaseConfiguration): SleekTestCase =
+    new SleekTestCase(ps.binDir,
+                      tc.commandName,
+                      ps.corpusDir,
+                      tc.fileName,
+                      tc.arguments,
+                      tc.expectedOutput,
+                      conf.timeout)
+}
 
 class SleekTestCase(binDir: Path = Paths.get(""),
                     cmd: Path = Paths.get(""),

@@ -9,10 +9,10 @@ import edu.nus.systemtesting.hipsleek.HipTestCase
  * @author richardg
  */
 class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
-  def testCase(): Testable = {
+  def testCase(): TestCaseBuilder = {
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
-    (new Testable
+    (new TestCaseBuilder
        runCommand Paths.get("hip")
        onFile Paths.get("infinity/inflist.ss")
        withArguments "--dsd --en-inf")

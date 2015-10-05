@@ -11,7 +11,7 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import GlobalReporter.reporter
 import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.Testable
 
 class ResultsArchive(val resultsDir: String = "results") {
   // Results stored become keyed by:
@@ -119,7 +119,7 @@ class ResultsArchive(val resultsDir: String = "results") {
     }
   }
 
-  def resultFor(repoRevision: String)(tc: TestCase): Option[TestCaseResult] = {
+  def resultFor(repoRevision: String)(tc: Testable): Option[TestCaseResult] = {
     resultFor(repoRevision, tc.commandName, tc.fileName, tc.arguments)
   }
 

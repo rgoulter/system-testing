@@ -14,13 +14,23 @@ case class PreparedSystem(val binDir: Path = Paths.get(""),
     copy(corpusDir = corpusDir)
 }
 
+trait Testable {
+  val commandName: Path
+  val fileName: Path
+  val arguments: String
+
+  // not sure this one counts?
+  // nor that we need it?
+  val expectedOutput: String
+}
+
 /**
  * Class to facilitate DSL-esque construction of test cases.
  */
-case class Testable(val commandName: Path = Paths.get(""),
-                    val fileName: Path = Paths.get(""),
-                    val arguments: String = "",
-                    val expectedOutput: String = "") {
+case class TestCaseBuilder(val commandName: Path = Paths.get(""),
+                           val fileName: Path = Paths.get(""),
+                           val arguments: String = "",
+                           val expectedOutput: String = "") extends Testable {
   def runCommand(commandName: Path) =
     copy(commandName = commandName)
 

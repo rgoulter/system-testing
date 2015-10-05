@@ -10,7 +10,7 @@ trait TestCaseBehaviors[T <: TestCase] { this: FlatSpec =>
   // TestCase.generateTestResult needs an execution time
   val ArbitraryExecutionTime = 200L
 
-  def testCase(): Testable
+  def testCase(): TestCaseBuilder
 
   implicit def constructTestCase(tcb: Testable): T
 

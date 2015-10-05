@@ -8,10 +8,10 @@ import java.nio.file.Paths
  * @author richardg
  */
 class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] {
-  def testCase(): Testable = {
+  def testCase(): TestCaseBuilder = {
     // Since `outp` below comes from `OutputDumps`,
     // the constants here are all arbitrary.
-    (new Testable
+    (new TestCaseBuilder
        runCommand Paths.get("sleek")
        onFile Paths.get("sleek.slk")
        withArguments " ")

@@ -3,22 +3,25 @@ package edu.nus.systemtesting.hipsleek
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.ProgramFlags.{ isFlag, flagsOfProgram }
 import edu.nus.systemtesting.ExecutionOutput
-import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.Result
+import edu.nus.systemtesting.PreparedSystem
+import edu.nus.systemtesting.Testable
+import edu.nus.systemtesting.TestCaseConfiguration
+import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseResult
 import java.nio.file.Path
 import java.nio.file.Paths
 
-//trait ConstructHipTests extends ConstructTests[HipTestCase] {
-//  implicit def constructTestCase(tc: TestCaseBuilder): HipTestCase =
-//    new HipTestCase(tc.binDir,
-//                    tc.commandName,
-//                    tc.corpusDir,
-//                    tc.fileName,
-//                    tc.arguments,
-//                    tc.expectedOutput,
-//                    tc.timeout)
-//}
+object HipTestCase {
+  implicit def constructTestCase(ps: PreparedSystem, tc: Testable, conf: TestCaseConfiguration): HipTestCase =
+    new HipTestCase(ps.binDir,
+                    tc.commandName,
+                    ps.corpusDir,
+                    tc.fileName,
+                    tc.arguments,
+                    tc.expectedOutput,
+                    conf.timeout)
+}
 
 class HipTestCase(binDir: Path = Paths.get(""),
                   cmd: Path = Paths.get(""),
