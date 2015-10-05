@@ -172,23 +172,23 @@ class ConfiguredMain(config: AppConfig) {
 
   type RunPreparedTests = (Path, Path, String) => TestSuiteResult
 
-  private def runAllTests(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] =
-    Some(List(altRunTests(HipTestCase.constructTestCase,
-                          "hip",
-                          HipTestSuiteUsage.allTestable)(repoDir, rev),
-              altRunTests(SleekTestCase.constructTestCase,
-                          "sleek",
-                          SleekTestSuiteUsage.allTestable)(repoDir, rev)))
+  private def runAllTests(repoDir: Path, rev: Option[String]): (TestSuiteResult, TestSuiteResult) =
+    (altRunTests(SleekTestCase.constructTestCase,
+                 "sleek",
+                 SleekTestSuiteUsage.allTestable)(repoDir, rev),
+     altRunTests(HipTestCase.constructTestCase,
+                 "hip",
+                 HipTestSuiteUsage.allTestable)(repoDir, rev))
 
-  private def runHipTests(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] =
-    Some(List(altRunTests(HipTestCase.constructTestCase,
-                          "hip",
-                          HipTestSuiteUsage.allTestable)(repoDir, rev)))
+  private def runHipTests(repoDir: Path, rev: Option[String]): TestSuiteResult =
+    altRunTests(HipTestCase.constructTestCase,
+                "hip",
+                HipTestSuiteUsage.allTestable)(repoDir, rev)
 
-  private def runSleekTests(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] =
-    Some(List(altRunTests(SleekTestCase.constructTestCase,
-                          "sleek",
-                          SleekTestSuiteUsage.allTestable)(repoDir, rev)))
+  private def runSleekTests(repoDir: Path, rev: Option[String]): TestSuiteResult =
+    altRunTests(SleekTestCase.constructTestCase,
+                "sleek",
+                SleekTestSuiteUsage.allTestable)(repoDir, rev)
 
   // construct e.g. HipTestCase.constructTestCase
   private def altRunTests(construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase,
@@ -470,27 +470,22 @@ class ConfiguredMain(config: AppConfig) {
   /** Used for `diffSuiteResults`, to save typing / screen space. */
   type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
-  // The magic used below is a bit annoying,
-  // but to work around it, 
-  // while runSleekTests, runHipTests, runAllTests only return 1-2 things,
-  // is over-engineering it..
-
   /** For use with `diffSuiteResults`, for running just sleek results. */
   private def sleekResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
-    (for {
-      oldRes <- runSleekTests(repoDir, Some(rev1))
-      curRes <- runSleekTests(repoDir, rev2)
-    } yield ("sleek", oldRes(0), curRes(0))).toList
+    val oldRes = runSleekTests(repoDir, Some(rev1))
+    val curRes = runSleekTests(repoDir, rev2)
+
+    List(("sleek", oldRes, curRes))
   }
 
   /** For use with `diffSuiteResults`, for running just hip results. */
   private def hipResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
-    (for {
-      oldRes <- runHipTests(repoDir, Some(rev1))
-      curRes <- runHipTests(repoDir, rev2)
-    } yield ("hip", oldRes(0), curRes(0))).toList
+    val oldRes = runHipTests(repoDir, Some(rev1))
+    val curRes = runHipTests(repoDir, rev2)
+
+    List(("hip", oldRes, curRes))
   }
 
   /**
@@ -501,11 +496,11 @@ class ConfiguredMain(config: AppConfig) {
    */
   private def allResultPairs(repoDir: Path, rev1: String, rev2: Option[String]):
       DiffableResults = {
-    (for {
-      oldSuiteResults <- runAllTests(repoDir, Some(rev1))
-      curSuiteResults <- runAllTests(repoDir, rev2)
-    } yield List(("sleek", oldSuiteResults(0), curSuiteResults(0)),
-                 ("hip",   oldSuiteResults(1), curSuiteResults(1)))).toList.flatten
+    val (oldSleekResults, oldHipResults) = runAllTests(repoDir, Some(rev1))
+    val (curSleekResults, curHipResults) = runAllTests(repoDir, rev2)
+
+    List(("sleek", oldSleekResults, curSleekResults),
+         ("hip",   oldHipResults, curHipResults))
   }
 
   private def diffSuiteResults(repoDir: Path,
