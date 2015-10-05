@@ -33,6 +33,8 @@ bincache/
 oc.out
 a.omega
 mona.failure
+.oc_temp_hip
+fixcalc1.inp
 
 # Scala worksheets.
 *.sc
