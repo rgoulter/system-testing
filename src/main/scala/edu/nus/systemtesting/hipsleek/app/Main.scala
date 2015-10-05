@@ -13,7 +13,9 @@ import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
+import edu.nus.systemtesting.hipsleek.HipTestCase
 import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
+import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.output.GlobalReporter
@@ -21,6 +23,7 @@ import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.serialisation.ResultsArchive
+import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import com.typesafe.config.ConfigFactory
@@ -165,49 +168,53 @@ class ConfiguredMain(config: AppConfig) {
 
   type RunPreparedTests = (Path, Path, String) => TestSuiteResult
 
-  private val SleekSuites: List[(String, RunPreparedTests)] =
-      List(("sleek", runPreparedSleekTests))
+  private def runAllTests(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] =
+    Some(List(altRunTests(HipTestCase.constructTestCase,
+                          "hip",
+                          HipTestSuiteUsage.allTestable)(repoDir, rev),
+              altRunTests(SleekTestCase.constructTestCase,
+                          "sleek",
+                          SleekTestSuiteUsage.allTestable)(repoDir, rev)))
 
-  private val HipSuites: List[(String, RunPreparedTests)] =
-      List(("hip", runPreparedHipTests))
+  private def runHipTests(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] =
+    Some(List(altRunTests(HipTestCase.constructTestCase,
+                          "hip",
+                          HipTestSuiteUsage.allTestable)(repoDir, rev)))
 
-  private val AllSuites: List[(String, RunPreparedTests)] =
-      List(("sleek", runPreparedSleekTests),
-           ("hip", runPreparedHipTests))
+  private def runSleekTests(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] =
+    Some(List(altRunTests(SleekTestCase.constructTestCase,
+                          "sleek",
+                          SleekTestSuiteUsage.allTestable)(repoDir, rev)))
 
-  private def runAllTests: (Path, Option[String]) => Option[List[TestSuiteResult]] =
-    runTests(AllSuites)
+  // construct e.g. HipTestCase.constructTestCase
+  private def altRunTests(construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase,
+                          suiteName: String,
+                          allTestable: List[Testable])
+                         (repoDir: Path,
+                          rev: Option[String]): TestSuiteResult = {
+    (runTestsWith(repoDir, rev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
+      // Ideally, preparedSys would itself do the building of repo.
+      // i.e. building the repo would be delayed until necessary.
+      // At the moment, though, since any system loading tests will *have* the
+      // tests, this is not going to slow things down.
+      lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-  private def runSleekTests: (Path, Option[String]) => Option[List[TestSuiteResult]] =
-    runTests(SleekSuites)
+      val resultsFor = runTestCaseForRevision(repoRevision, preparedSys)(construct)
 
-  private def runHipTests: (Path, Option[String]) => Option[List[TestSuiteResult]] =
-    runTests(HipSuites)
+      val suite = suiteFor(allTestable, repoRevision)
 
-  private def runTests(suites: List[(String, RunPreparedTests)])(repoDir: Path, rev: Option[String]): Option[List[TestSuiteResult]] = {
-    val lo = suites map { case (suiteName, runPreparedTests) =>
-      runTestsWith(repoDir, rev, "examples/working/" + suiteName)(runPreparedTests) map { testSuiteResult =>
-        // Map, so we can output this:
-        testSuiteResult.displayResult(config.significantTimeThreshold)
-        TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
+      // runPrepared just gets TSuite from *TSUsage, then calls runAll w/ archive, rtn result
+      val testSuiteResult = suite.runAllTests(resultsFor)
 
-        testSuiteResult
-      }
+      // displayResult blocks until all results computed
+      testSuiteResult.displayResult(config.significantTimeThreshold)
+      TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
+
+      testSuiteResult
+    }) getOrElse {
+      // Failed to build (TODO: should use proper exc class for this)
+      throw new RuntimeException("Failed to build repository at revision " + rev)
     }
-
-    // Returning Option[List] means if any test fails,
-    //  then they *all* fail.
-    // None is returned iff test prep (i.e. running make) fails, so this isn't bad.
-    //
-    // TODO This is poorly handled at the moment; it's possible some commits fail to build?
-    //
-    // Regardless, above implementation will also call runTestsWith many (<=twice) times.
-    // may be preferable to have the more convoluted logic s.t. only calls runWith once;
-    // -- but with current impl, binaries cached, so this makes little difference..
-
-    // one-liner from:
-    // http://stackoverflow.com/questions/2569014/convert-a-list-of-options-to-an-option-of-list-using-scalaz
-    if (lo contains None) None else Some(lo.flatten)
   }
 
   private def runTestsWith[T](repoDir: Path, rev: Option[String], examplesDir: String)
@@ -307,6 +314,7 @@ class ConfiguredMain(config: AppConfig) {
       case None => repo.isDirty()
     }
 
+
     // Need to have corpusDir; easiest to get from archive.
     // May be nice if could just "hg cat" (or so) over a bunch of files,
     //  might save time.
@@ -353,10 +361,7 @@ class ConfiguredMain(config: AppConfig) {
 
     // Finished running the tests, clean up.
     try {
-      // TODO: Haven't implemented Async properly, so the
-      // tmpdirs are removed before the tests are run!
-      val ImplementedAsyncProperly = false
-      if (removeAfterUse && ImplementedAsyncProperly) {
+      if (removeAfterUse) {
         reporter.log("Deleting " + tmpDir)
         FileSystemUtilities rmdir tmpDir
       }
@@ -370,36 +375,40 @@ class ConfiguredMain(config: AppConfig) {
     rtn
   }
 
-  /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedSleekTests(binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
-    reporter.header("Running Sleek Tests")
-
-    val significantTime = config.significantTimeThreshold
-    val testCaseTimeout = config.timeout
-    val suite = new SleekTestSuiteUsage(binDir,
-                                        significantTime,
-                                        testCaseTimeout,
-                                        revision,
-                                        examplesDir = examplesDir).suite
-
+  // should be able to replace runWith, callback nature with this...
+  private def runTestCaseForRevision(repoRevision: String, preparedSys: => PreparedSystem)
+                                    (implicit construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase):
+      (Testable => TestCaseResult) = {
     val resultsArch = new ResultsArchive()
-    suite.runAllTests(resultsArch)
+
+    { tc: Testable =>
+      resultsArch.resultFor(repoRevision)(tc) match {
+        case Some(tcr) => tcr
+
+        case None => {
+          val conf = TestCaseConfiguration(timeout = config.timeout)
+          val tcase = construct(preparedSys, tc, conf)
+
+          // Run the TestCase, save results
+          val tcr = tcase.generateOutput
+
+          // Didn't have results, save them.
+          try {
+            resultsArch.saveTestCaseResult(repoRevision, tcr)
+          } catch {
+            case e: Throwable => {
+              e.printStackTrace()
+            }
+          }
+
+          tcr
+        }
+      }
+    }
   }
 
-  /** Assumes that the project dir has been prepared successfully */
-  private def runPreparedHipTests(binDir: Path, examplesDir: Path, revision: String): TestSuiteResult = {
-    reporter.header("Running Hip Tests")
-
-    val significantTime = config.significantTimeThreshold
-    val testCaseTimeout = config.timeout
-    val suite = new HipTestSuiteUsage(binDir,
-                                      significantTime,
-                                      testCaseTimeout,
-                                      revision,
-                                      examplesDir = examplesDir).suite
-
-    val resultsArch = new ResultsArchive()
-    suite.runAllTests(resultsArch)
+  private def suiteFor(allTests: List[Testable], repoRevision: String): TestSuite = {
+    new TestSuite(allTests, repoRevision, config.significantTimeThreshold)
   }
 
   private def runSuiteDiff(repoDir: Path, rev1: Option[String], rev2: Option[String]): Unit = {
