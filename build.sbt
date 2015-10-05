@@ -28,3 +28,8 @@ mainClass in Compile := Some("edu.nus.systemtesting.hipsleek.app.Main")
 import com.github.retronym.SbtOneJar._
 
 oneJarSettings
+
+// Tag the slow tests as slow, to save time.
+addCommandAlias("testNotSlow", "testOnly -- -l edu.nus.systest.tags.SlowTest")
+
+addCommandAlias("t", "~testNotSlow")
