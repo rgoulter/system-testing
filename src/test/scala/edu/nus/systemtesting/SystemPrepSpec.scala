@@ -54,7 +54,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
     tmpDir.delete()
   }
 
-  "Hip/Sleek system prep" should "make a valid repo" in {
+  "Hip/Sleek system prep" should "make a valid repo" taggedAs(SlowTest) in {
     val prep = new HipSleekPreparation(tmpArchiveDir)
 
     val (res, remarks) = prep.prepare()
@@ -62,7 +62,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
     assert(res)
   }
 
-  it should "detect when make failed" in {
+  it should "detect when make failed" taggedAs(SlowTest) in {
     val prep = new HipSleekPreparation(tmpArchiveDir)
 
     // Need to break something in the build.
