@@ -32,9 +32,9 @@ class ResultsArchive(val resultsDir: String = "results") {
 
   private def tidyArgs(args: String): String =
     // arguments may contain the following non-alphanumerics:
-    //  -
+    //  - / . _
     // and be space-separated.
-    args replaceAll("[- ]+", "")
+    args replaceAll("[-/._ ]+", "")
 
   /** In format of `$name-$revision-$datetime.json` */
   private def filenameForTCResult(repoRevision: String, tcResult: TestCaseResult): String = {
