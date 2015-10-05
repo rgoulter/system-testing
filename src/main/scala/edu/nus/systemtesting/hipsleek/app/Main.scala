@@ -1,26 +1,31 @@
 package edu.nus.systemtesting.hipsleek.app
 
+import java.io.IOException
 import java.nio.file.{ Files, Path, Paths }
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration.Duration
-import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.output.GlobalReporter
-import edu.nus.systemtesting.serialisation.ResultsArchive
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.testsuite.TestSuiteComparison
-import edu.nus.systemtesting.output.GlobalReporter.reporter
-import com.typesafe.config.ConfigFactory
+import edu.nus.systemtesting.BinCache
 import edu.nus.systemtesting.FileSystemUtilities
-import java.io.IOException
-import com.typesafe.config.ConfigException
-import edu.nus.systemtesting.output.ANSIReporter
+import edu.nus.systemtesting.PreparedSystem
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseConfiguration
+import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.Testable
+import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
+import edu.nus.systemtesting.output.GlobalReporter
+import edu.nus.systemtesting.output.GlobalReporter.reporter
+import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.VisibilityOptions
-import edu.nus.systemtesting.BinCache
 import edu.nus.systemtesting.serialisation.ResultsArchive
+import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.testsuite.TestSuiteComparison
+import com.typesafe.config.ConfigFactory
+import com.typesafe.config.ConfigException
+import edu.nus.systemtesting.TestCaseConfiguration
 
 object Main {
   /** Expected filename for the application conf. */
