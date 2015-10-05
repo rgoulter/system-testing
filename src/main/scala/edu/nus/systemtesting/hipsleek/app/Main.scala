@@ -30,6 +30,10 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigException
 import edu.nus.systemtesting.TestCaseConfiguration
 
+class UnableToBuildException(repoDir: Path,
+                             rev: Option[String])
+  extends RuntimeException(s"Cannot build for revision ${rev getOrElse ""} in dir $repoDir")
+
 object Main {
   /** Expected filename for the application conf. */
   val ConfigFilename = ".hipsleektest.conf"
@@ -212,8 +216,8 @@ class ConfiguredMain(config: AppConfig) {
 
       testSuiteResult
     }) getOrElse {
-      // Failed to build (TODO: should use proper exc class for this)
-      throw new RuntimeException("Failed to build repository at revision " + rev)
+      // Failed to build is the only reason runTestsWith will return None
+      throw new UnableToBuildException(repoDir, rev)
     }
   }
 
