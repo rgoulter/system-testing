@@ -9,7 +9,7 @@ import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 abstract class TestSuiteUsage(val revision: String,
                               val significantTime: Long) {
   /** To be implemented by subclass. */
-  val allTests: List[TestCase]
+  def allTests: List[TestCase]
 
   def suite: TestSuite =
     new TestSuite(allTests, revision, significantTime)

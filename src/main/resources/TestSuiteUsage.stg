@@ -30,7 +30,7 @@ class <name>TestSuiteUsage(
   def construct(tc: Testable): <name>TestCase =
     <name>TestCase.constructTestCase(usagePrepRepo, tc, usageConf)
 
-  override val allTests =
+  override def allTests =
     <name>TestSuiteUsage.allTestable map construct
 }
 

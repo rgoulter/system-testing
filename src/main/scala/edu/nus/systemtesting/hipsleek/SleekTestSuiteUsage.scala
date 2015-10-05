@@ -28,7 +28,7 @@ class SleekTestSuiteUsage(
   def construct(tc: Testable): SleekTestCase =
     SleekTestCase.constructTestCase(usagePrepRepo, tc, usageConf)
 
-  override val allTests =
+  override def allTests =
     SleekTestSuiteUsage.allTestable map construct
 }
 
@@ -41,7 +41,7 @@ object SleekTestSuiteUsage {
            expectedOutput: String): TestCaseBuilder =
     TestCaseBuilder(cmd, Paths.get(file), args, expectedOutput)
 
-  val allTestable =
+  def allTestable =
       SleekTests ++
       SleekBarrTests ++
       SleekDfracTests ++

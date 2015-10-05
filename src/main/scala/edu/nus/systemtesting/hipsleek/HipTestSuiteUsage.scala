@@ -28,7 +28,7 @@ class HipTestSuiteUsage(
   def construct(tc: Testable): HipTestCase =
     HipTestCase.constructTestCase(usagePrepRepo, tc, usageConf)
 
-  override val allTests =
+  override def allTests =
     HipTestSuiteUsage.allTestable map construct
 }
 
@@ -41,7 +41,7 @@ object HipTestSuiteUsage {
            expectedOutput: String): TestCaseBuilder =
     TestCaseBuilder(cmd, Paths.get(file), args, expectedOutput)
 
-  val allTestable =
+  def allTestable =
     ArrayTests ++
 //    HipTrTests ++
     InfinityTests ++
