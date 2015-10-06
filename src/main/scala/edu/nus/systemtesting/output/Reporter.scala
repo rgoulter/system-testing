@@ -25,7 +25,7 @@ trait Reporter {
     print(message)
     print("\n")
   }
-  
+
   /** Ordinary message */
   def log(message: String): Unit =
     println(message)
@@ -35,7 +35,7 @@ trait Reporter {
     println(inColor(ColorRed)(message))
 
   def header(message: String, color: String = ColorWhite): Unit = {
-    val NumCol = 30
+    val NumCol = message.length
     def output(m: String) = println(inColor(color)(m))
 
     println()
