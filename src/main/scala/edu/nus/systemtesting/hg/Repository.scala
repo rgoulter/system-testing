@@ -119,13 +119,15 @@ class Repository(dir: Path) {
       throw new IllegalArgumentException(s"Revisions must be related in linear manner")
     }
 
-    val branch1 = branchOf(Some(rev1))
-    val branch2 = branchOf(Some(rev2))
-
-    require(branch1 == branch2)
-
-    // I'm not sure what happens if e.g. rev1, rev2 not related
-    val cmd = s"""hg log --template={node|short}\\n -r $oldest:$newest -b $branch1"""
+    // from `hg help revsets`,
+    //   "x::y"
+    //     A DAG range, meaning all changesets that are descendants of x and
+    //     ancestors of y, including x and y themselves. If the first endpoint is
+    //     left out, this is equivalent to "ancestors(y)", if the second is left
+    //     out it is equivalent to "descendants(x)".
+    //
+    //     An alternative syntax is "x..y".
+    val cmd = s"""hg log --template={node|short}\\n -r $oldest::$newest"""
     val proc = Process(cmd, repoDir)
 
     val execOutp = Runnable.executeProc(proc)
