@@ -123,6 +123,29 @@ class ResultsArchive(val resultsDir: String = "results") {
     resultFor(repoRevision, tc.commandName, tc.fileName, tc.arguments)
   }
 
+  /**
+   * Return list of `(revision, test case results)` pairs for the given tcr.
+   *
+   * Of course, this is just the latest which have been recorded,
+   * not necessarily all the results which could be computed.
+   */
+  def resultsFor(tc: Testable): List[(String, TestCaseResult)] = {
+    // resultFiles :: Map of `(rev) => Map[(cmd, fn, args) => File]`.
+    resultFiles.iterator flatMap { case (rev, m) =>
+      // m is Map[(cmd, fn, args) => file]
+      m.get((tc.commandName.toString, tc.fileName.toString, tc.arguments)) flatMap { file =>
+        // FileSystemUtilities readFromFile ??
+        val src = Source fromFile file
+        val content = src.mkString
+        src.close()
+
+        TestCaseResultJson.load(content) map { tcr =>
+          (rev, tcr)
+        }
+      }
+    } toList
+  }
+
   def saveTestCaseResult(repoRevision: String, tcResult: TestCaseResult): Unit = {
     val filename = filenameForTCResult(repoRevision, tcResult)
     val path = Paths.get(resultsDir, filename)
