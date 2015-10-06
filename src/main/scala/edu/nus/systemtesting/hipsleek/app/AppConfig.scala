@@ -129,6 +129,9 @@ object AppConfig {
           arg[String]("<rev1 [rev2]>") optional() maxOccurs(2) action { (x, c) =>
           c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current)")
           )
+    cmd("bisect") action { (_, c) =>
+        c.copy(command = "bisect") } text("(WIP) bisect some TestCase to see when it broke.") children(
+          )
     checkConfig { c =>
         if (c.command == "diff" && c.commands.isEmpty)
           failure("Must specify --hip, --sleek, or --all to diff command")

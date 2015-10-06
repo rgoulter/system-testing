@@ -8,6 +8,7 @@ import edu.nus.systemtesting.BinCache
 import edu.nus.systemtesting.FileSystemUtilities
 import edu.nus.systemtesting.PreparedSystem
 import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
@@ -21,6 +22,7 @@ import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.ANSIReporter
+import edu.nus.systemtesting.output.ReporterColors
 import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.testsuite.TestSuite
@@ -166,6 +168,7 @@ class ConfiguredMain(config: AppConfig) {
       case "hip"    => runHipTests(repoDir, rev)
       case "all"    => runAllTests(repoDir, rev)
       case "diff"   => runSuiteDiff(repoDir, config.rev1, config.rev2)
+      case "bisect"   => runBisect(repoDir)
       case _        => showHelpText
     }
   }
@@ -517,6 +520,110 @@ class ConfiguredMain(config: AppConfig) {
       }
     } else {
       reporter.log(s"Results unavailable for one of $rev1 or $rev2")
+    }
+  }
+
+  private def runBisect(repoDir: Path): Unit = {
+    // MAGIC: absent of actual UX, just run bisect on
+    // TC[hip, , term/benchs/key/Even.ss]
+    val bisectTestable = new TestCaseBuilder(Paths.get("hip"), Paths.get("term/benchs/key/Even.ss"), "", "???")
+    val initWorkingCommit = "53282f401727"
+    val initFailingCommit = "79da9697f0c2"
+
+    // assumptions/requirements:
+    // * revs have linear relationship with each other
+    //   - commitsInRange probably assumes same branch,
+    //     which may be too strong an assumption
+    // * newer rev is failing, older rev is passing
+
+    // get proper expectedOutput for the testable
+    val results = new ResultsArchive()
+    val workingTCR = results.resultFor(initWorkingCommit)(bisectTestable) getOrElse { 
+      // probably should be a bit more robust about this
+      throw new IllegalArgumentException(s"Expected to find result for $initWorkingCommit")
+    }
+    val workingTCRExp = workingTCR.expected
+
+    // MAGIC: Recovering expectedOutput from TCR is a bit hard
+    def recoverHipExpectedOuput(exp: List[(String, String)]): String = {
+      exp map { case (k, v) => k + ": " + v } mkString(", ")
+    }
+
+    val bisectTC = bisectTestable copy (expectedOutput = recoverHipExpectedOuput(workingTCRExp))
+
+    println("running bisect...")
+
+    runBisect(repoDir, initWorkingCommit, initFailingCommit, bisectTC)
+  }
+
+  private def runBisect(repoDir: Path, rev1: String, rev2: String, tc: Testable): Unit = {
+    import Math.{ log, ceil, floor }
+    import ReporterColors.{ ColorCyan, ColorMagenta }
+
+    val results = new ResultsArchive()
+    val repo = new Repository(repoDir)
+    val suiteName = "hip"
+    val construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase =
+      HipTestCase.constructTestCase
+
+    // Check that the given revisions to arg make sense
+    val tcr1 = results.resultFor(rev1)(tc)
+    val tcr2 = results.resultFor(rev2)(tc)
+    assume(rev1 != rev2, "Must be different commits")
+    assume(!tcr1.isEmpty, "Must have result for " + rev1)
+    assume(!tcr2.isEmpty, "Must have result for " + rev2)
+    assume(tcr1.get.passed, s"Assumed $tc passes for $rev1")
+    assume(!tcr2.get.passed, s"Assumed $tc fails for $rev2")
+
+    // Load all the results we have for the given testable.
+    val revResPairs = results resultsFor tc
+    val revs = revResPairs map { case (r,_) => r }
+
+    // 'bisect' is only interesting if we have the 'latest' failing,
+    // and some earlier commit failing
+    val revRange = repo.commitsInRange(rev1, rev2)
+    val revRangeLen = revRange.length
+    val numSteps = ceil(log(revRangeLen) / log(2)) toInt
+
+    if (revRangeLen == 2) {
+      reporter.header("Bisect Result", ColorCyan)
+      println(s"Latest working commit: $rev1")
+      println(s"Earliest failing commit: $rev2")
+    } else {
+      reporter.header(s"$revRangeLen commits in range. $numSteps steps remain.", ColorMagenta)
+
+      val nextRevIdx = if (revRangeLen % 2 == 0) revRangeLen / 2 else (revRangeLen - 1) / 2
+      val nextRev = revRange(nextRevIdx)
+
+      // n.b. this exports archive to tmpDir each time, either to build, or
+      // just for the examples.
+      val nextTCR = (runTestsWith(repoDir, Some(nextRev), "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
+        // Ideally, preparedSys would itself do the building of repo.
+        // i.e. building the repo would be delayed until necessary.
+        // At the moment, though, since any system loading tests will *have* the
+        // tests, this is not going to slow things down.
+        lazy val preparedSys = PreparedSystem(binDir, corpusDir)
+
+        val resultsFor = runTestCaseForRevision(nextRev, preparedSys)(construct)
+
+        // by this point,
+        // tc *must* have proper expectedOutput
+        resultsFor(tc)
+      }) getOrElse {
+        // Failed to build is the only reason runTestsWith will return None
+        // TODO: Bisect *probably* needs to be more mature about handling this.
+        throw new UnableToBuildException(repoDir, Some(nextRev))
+      }
+
+      // output result, right
+      nextTCR.displayResult()
+
+      // this is more complicated if we got an error for nextTCR
+      if (nextTCR.passed) {
+        runBisect(repoDir, nextRev, rev2, tc)
+      } else {
+        runBisect(repoDir, rev1, nextRev, tc)
+      }
     }
   }
 

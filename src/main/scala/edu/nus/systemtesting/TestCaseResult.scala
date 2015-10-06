@@ -58,8 +58,8 @@ case class TestCaseResult(val command: Path,
     (arguments trim() split "\\s+" sorted) mkString " "
 
   def expected() = results match {
-    case Left(_) => List[String]()
-    case Right(results) => results map(_.expected) toList
+    case Left(_) => List[(String, String)]()
+    case Right(results) => results map { r => (r.key, r.expected) } toList
   }
 
   /**
