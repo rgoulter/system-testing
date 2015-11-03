@@ -4,6 +4,7 @@ import scala.sys.process.Process
 import java.io.File
 import edu.nus.systemtesting.Runnable
 import java.nio.file.Path
+import org.joda.time.format.ISODateTimeFormat
 
 class UnknownRevisionException(badRev: String, repoDir: Path)
     extends IllegalArgumentException(s"Bad revision: $badRev in HG repo $repoDir")
@@ -27,20 +28,39 @@ class Repository(dir: Path) {
     // but ensures a safety when dealing with commits.
     require(isRevisionish(revHash))
 
+    lazy val age: String =
+      logForTemplate("{date|age}\\n", revHash)
+
+    lazy val date = {
+      val isoStr = logForTemplate("{date|isoDate}\\n", revHash)
+
+      val isoFmt = ISODateTimeFormat.dateTime()
+      isoFmt.parseDateTime(isoStr)
+    }
+
+    lazy val branch =
+      new Branch(logForTemplate("{branch}\\n", revHash))
+
     override def toString() = revHash
   }
 
-  // implicitly want to treat Branch as commit, by-way-of latestCommit.
-  class Branch(name: String) {
+  object Branch {
+    implicit def branchToCommit(b: Branch): Commit = b.latestCommit
+  }
+
+  class Branch(val name: String) {
     lazy val latestCommit: Commit =
-      ???
+      // Unintuitively, with reverse() this gets the latest.
+      // hg log -r "limit(reverse(branch($BRANCH)), 1)"
+      new Commit(logForTemplate("{node|short}\\n", s"limit(reverse(branch($name)), 1)\\n"))
 
     lazy val earliestCommit: Commit =
-      ???
+      // hg log -r "limit((branch($BRANCH)), 1)"
+      new Commit(logForTemplate("{node|short}\\n", s"limit(branch($name), 1)\\n"))
 
     // may not have a parent branch
     lazy val branchedFrom: Option[Commit] =
-      ???
+      parents(earliestCommit).headOption
 
     override def toString() = name
   }
@@ -99,18 +119,6 @@ class Repository(dir: Path) {
       throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
 
-  def branchOf(rev: Option[String] = None): String = {
-    val cmd = "hg identify -b" + rev.map(r => s" -r $r").getOrElse("")
-    val proc = Process(cmd, repoDir)
-
-    val execOutp = Runnable.executeProc(proc)
-
-    if (execOutp.exitValue == 0)
-      execOutp.output.trim()
-    else
-      throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
-  }
-
   /**
    * Returns list of (short) revision hashes of the parent(s) of the given
    * revision.
@@ -150,6 +158,17 @@ class Repository(dir: Path) {
     }
   }
 
+  def logForTemplate(template: String, revStr: String): String = {
+    val cmd = s"""hg log --template=$template -r $revStr"""
+    val proc = Process(cmd, repoDir)
+
+    val execOutp = Runnable.executeProc(proc)
+
+    assert(execOutp.exitValue == 0)
+
+    execOutp.output.trim()
+  }
+
   /**
    * Returns a List of all the commits in the range `rev1...rev2`,
    * on the same branch.
@@ -175,6 +194,8 @@ class Repository(dir: Path) {
     //     out it is equivalent to "descendants(x)".
     //
     //     An alternative syntax is "x..y".
+
+    // TODO: Can simplify to use logForTemplate
     val cmd = s"""hg log --template={node|short}\\n -r $oldest::$newest"""
     val proc = Process(cmd, repoDir)
 
