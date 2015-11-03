@@ -15,13 +15,45 @@ class UnknownRevisionException(badRev: String, repoDir: Path)
 class Repository(dir: Path) {
   require((dir resolve ".hg") toFile() exists, "dir must be an HG repository")
 
+  class Commit(rev: String) {
+    val HashLength = 12
+
+    require(rev.length >= HashLength)
+
+    val revHash = rev.substring(0, HashLength)
+    val isDirty = rev.last == '+'
+
+    // this is an extra invocation to HG (if construct using identify()),
+    // but ensures a safety when dealing with commits.
+    require(isRevisionish(revHash))
+
+    override def toString() = revHash
+  }
+
+  // implicitly want to treat Branch as commit, by-way-of latestCommit.
+  class Branch(name: String) {
+    lazy val latestCommit: Commit =
+      ???
+
+    lazy val earliestCommit: Commit =
+      ???
+
+    // may not have a parent branch
+    lazy val branchedFrom: Option[Commit] =
+      ???
+
+    override def toString() = name
+  }
+
   val repoDir = dir toFile
 
   /**
    * Creates a copy of some revision of the repo at some `dest`.
    * (Latest revision if `rev` is `None`).
    */
-  def archive(dest: Path, rev: Option[String], includePatterns: List[String] = List()): Boolean = {
+  def archive(dest: Path, revision: Commit, includePatterns: List[String] = List()): Boolean = {
+    val rev = Some(revision.revHash) // XXX: Can simplify
+
     val inclArgs = includePatterns.map("-I " + _ + " ").mkString
     val cmd = "hg archive " + inclArgs + s"${rev.map(r => s" -r $r").getOrElse("")} ${dest.toString()}"
     val proc = Process(cmd, repoDir)
@@ -34,14 +66,35 @@ class Repository(dir: Path) {
     execOutp.exitValue != 0
   }
 
-  def identify(rev: Option[String] = None): String = {
-    val cmd = "hg identify -i" + rev.map(r => s" -r $r").getOrElse("")
+  /** Whether the given `rev` evaluaties to a revision hash in the repo. */
+  def isRevisionish(rev: String): Boolean = {
+    require(rev != "")
+
+    val cmd = s"hg identify -i -r $rev"
     val proc = Process(cmd, repoDir)
 
     val execOutp = Runnable.executeProc(proc)
 
+    execOutp.exitValue == 0
+  }
+
+  /**
+   * Return `Commit` instance of the given rev, or throw `UnknownRevisionException`
+   * if the argument doesn't resolve to a commit.
+   *
+   * If `rev` is `None`, then the revision may be dirty.
+   */
+  def identify(rev: Option[String] = None): Commit = {
+    val cmd = "hg identify -i" + rev.map(r => s" -r $r").getOrElse("")
+    val proc = Process(cmd, repoDir)
+
+    // Output of `hg id -i` is 12-chars of the hash,
+    // additionally, a `+` if the rev is `dirty`.
+
+    val execOutp = Runnable.executeProc(proc)
+
     if (execOutp.exitValue == 0)
-      execOutp.output.trim()
+      new Commit(execOutp.output.trim())
     else
       throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
@@ -64,23 +117,21 @@ class Repository(dir: Path) {
    *
    * Will mostly return list length one, except for merge commits.
    */
-  def parents(rev: Option[String] = None): List[String] = {
+  def parents(revision: Commit): List[Commit] = {
+    val rev = if (revision.isDirty) None else Some(revision.revHash)
+
     val cmd = "hg parents --template {node|short}" + rev.map(r => s" -r $r").getOrElse("")
     val proc = Process(cmd, repoDir)
 
     val execOutp = Runnable.executeProc(proc)
 
     if (execOutp.exitValue == 0)
-      execOutp.output.trim().lines.toList
+      execOutp.output.trim().lines.map(new Commit(_)).toList
     else
       throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
 
-  def commonAncestor(rev1: String, rev2: String): String = {
-    // check rev1, rev2 are actually in the repo. These throw ex. if not
-    require(identify(Some(rev1)) != "")
-    require(identify(Some(rev2)) != "")
-
+  def commonAncestor(rev1: Commit, rev2: Commit): Commit = {
     // I'm not sure what happens if e.g. rev1, rev2 not related
     val cmd = s"hg debugancestor $rev1 $rev2"
     val proc = Process(cmd, repoDir)
@@ -92,7 +143,8 @@ class Repository(dir: Path) {
       //   16470:45c49c7e0321316504d10f1202aa0f58cfddd840
       // can either pass to identify(), or just trim + take 2nd.
       val res = execOutp.output.trim()
-      res.split(":")(1)
+
+      new Commit(res.split(":")(1))
     } else {
       throw new IllegalStateException
     }
@@ -105,15 +157,11 @@ class Repository(dir: Path) {
    * Assumes rev1, rev2 both valid revisions, and one is ancestor of the other,
    * and must be on the same branch.
    */
-  def commitsInRange(rev1: String, rev2: String): List[String] = {
-    // check rev1, rev2 are actually in the repo. These throw ex. if not
-    require(identify(Some(rev1)) != "")
-    require(identify(Some(rev2)) != "")
-
+  def commitsInRange(rev1: Commit, rev2: Commit): List[Commit] = {
     val oldest = commonAncestor(rev1, rev2)
-    val newest = if (oldest startsWith rev1) {
+    val newest = if (oldest.revHash startsWith rev1.revHash) {
       rev2
-    } else if (oldest startsWith rev2) {
+    } else if (oldest.revHash startsWith rev2.revHash) {
       rev1
     } else {
       throw new IllegalArgumentException(s"Revisions must be related in linear manner")
@@ -133,14 +181,14 @@ class Repository(dir: Path) {
     val execOutp = Runnable.executeProc(proc)
 
     if (execOutp.exitValue == 0)
-      execOutp.output.trim().lines.toList
+      execOutp.output.trim().lines.map(new Commit(_)).toList
     else
       throw new IllegalStateException
   }
 
   def isDirty(): Boolean = {
-    val hash = identify()
-    hash.endsWith("+")
+    // whether repo is dirty is property of commit, not of repo.
+    identify().isDirty
   }
 
   def status(): Iterable[(String, String)] = {
@@ -172,19 +220,19 @@ class Repository(dir: Path) {
 
 /** For debugging purposes */
 private object RepositoryApp extends App {
+  // Hardcoded, but that's fine.
+  import java.nio.file.Paths
+  val repo = new Repository(Paths.get("/home/richardg/hg/sleekex"))
+
   // range of commits 45c49c:79da9 should be like:
   //   45/40/c6/24/cc/ad/7a/4b/ce/80/79
 //  val rev1 = "45c49c"
 //  val rev2 = "79da9"
   //   01/f6/0b/c6/d1/89/0c/f5/fd/ff/a5/3b/f5
-  val rev1 = "0111c"
-  val rev2 = "f59ebb"
-
-  // Hardcoded, but that's fine.
-  import java.nio.file.Paths
-  val repo = new Repository(Paths.get("/home/richardg/hg/sleekex"))
+  val rev1 = new repo.Commit("0111c")
+  val rev2 = new repo.Commit("f59ebb")
 
   val range = repo.commitsInRange(rev1, rev2)
   println(range)
-  println(range map { s => s.substring(0, 2) } mkString("/"))
+  println(range map { s => s.revHash.substring(0, 2) } mkString("/"))
 }

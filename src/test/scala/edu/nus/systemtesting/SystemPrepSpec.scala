@@ -37,6 +37,8 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
   val repo = new Repository(REPO_DIR)
 
+  val KnownGoodCommit = repo.identify(Some(KnownGoodRevision))
+
   var tmpArchiveDir: Path = _
 
   before {
@@ -45,7 +47,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
     // constructing an archive takes ~10s
     // though, building the ML code takes much more time, so.
-    repo.archive(tmpArchiveDir, Some(KnownGoodRevision))
+    repo.archive(tmpArchiveDir, KnownGoodCommit)
   }
 
   after {
