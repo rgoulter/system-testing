@@ -4,10 +4,25 @@ import scala.sys.process.Process
 import java.io.File
 import edu.nus.systemtesting.Runnable
 import java.nio.file.Path
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.ISODateTimeFormat
 
 class UnknownRevisionException(badRev: String, repoDir: Path)
     extends IllegalArgumentException(s"Bad revision: $badRev in HG repo $repoDir")
+
+object Repository {
+  def parseHgIsodate(dateStr : String): DateTime = {
+    // Using `isodate` filter, we get a datetime string like:
+    //   2015-09-23 14:07 +0800
+    // This can be matched in Joda using format:
+    //   yyyy-MM-DD HH:mm Z
+    // Note that may need to be careful about timezones, to be precise:
+    // cf. http://stackoverflow.com/questions/16794772/joda-time-parse-a-date-with-timezone-and-retain-that-timezone#16796199
+    val df = DateTimeFormat.forPattern("yyyy-MM-DD HH:mm Z");
+    df.withOffsetParsed().parseDateTime(dateStr);
+  }
+}
 
 /**
  * For modelling non-destructive mercurial commands on a repository.
@@ -32,10 +47,8 @@ class Repository(dir: Path) {
       logForTemplate("{date|age}\\n", revHash)
 
     lazy val date = {
-      val isoStr = logForTemplate("{date|isoDate}\\n", revHash)
-
-      val isoFmt = ISODateTimeFormat.dateTime()
-      isoFmt.parseDateTime(isoStr)
+      val isoStr = logForTemplate("{date|isodate}\\n", revHash)
+      Repository.parseHgIsodate(isoStr)
     }
 
     lazy val branch =
