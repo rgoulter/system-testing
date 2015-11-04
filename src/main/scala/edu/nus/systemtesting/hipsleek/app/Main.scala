@@ -142,23 +142,7 @@ object Main {
 class ConfiguredMain(config: AppConfig) {
   val binCache = new BinCache() // config me
 
-  val repoDir: Path = config.repoDir getOrElse {
-    System.err.println(
-        """Unable to find REPO_DIR. Try:
-          | * Running the program in the mercurial repository, or
-          |   a descendant folder of a mercurial repo.
-          | * Putting a .hipsleektest.conf file with REPO_DIR=/path/to/repo line
-          |   in the current directory, or in some ancestor folder of the CWD.
-          | * Compiling this program with an application.conf with REPO_DIR=/path/to/repo line""".stripMargin)
-    // 'Fatal' error, quit.
-    System.exit(1)
-    throw new IllegalStateException
-  }
-
-  if (!(repoDir resolve ".hg").toFile().exists()) {
-    System.err.println(s"ERROR! Not a Mercurial repository! REPODIR=$repoDir")
-    System.exit(1)
-  }
+  val repoDir: Path = config.repoDirOrDie
 
   // Each instance of `ConfiguredMain` only ever uses the one `Repository`
   val Repo = new Repository(repoDir)
@@ -467,7 +451,7 @@ class ConfiguredMain(config: AppConfig) {
   type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
   /** For use with `diffSuiteResults`, for running just sleek results. */
-  private def sleekResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
+  private[app] def sleekResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
       DiffableResults = {
     val oldRes = runSleekTests(rev1)
     val curRes = runSleekTests(rev2)
@@ -476,7 +460,7 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   /** For use with `diffSuiteResults`, for running just hip results. */
-  private def hipResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
+  private[app] def hipResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
       DiffableResults = {
     val oldRes = runHipTests(rev1)
     val curRes = runHipTests(rev2)
@@ -490,7 +474,7 @@ class ConfiguredMain(config: AppConfig) {
    * The way it is implemented, the output of `diffSuiteResults` won't combine
    * the diff results together, so sleek diff will be followed by hip diff.
    */
-  private def allResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
+  private[app] def allResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
       DiffableResults = {
     val (oldSleekResults, oldHipResults) = runAllTests(rev1)
     val (curSleekResults, curHipResults) = runAllTests(rev2)
@@ -499,9 +483,9 @@ class ConfiguredMain(config: AppConfig) {
          ("hip",   oldHipResults, curHipResults))
   }
 
-  private def diffSuiteResults(rev1: Repo.Commit,
-                               rev2: Repo.Commit,
-                               resultsFor: (Repo.Commit, Repo.Commit) => DiffableResults): Unit = {
+  private[app] def diffSuiteResults(rev1: Repo.Commit,
+                                    rev2: Repo.Commit,
+                                    resultsFor: (Repo.Commit, Repo.Commit) => DiffableResults): Unit = {
     val diffable = resultsFor(rev1, rev2)
 
     if (!diffable.isEmpty) {
@@ -545,7 +529,7 @@ class ConfiguredMain(config: AppConfig) {
       exp map { case (k, v) => v } mkString(", ")
     }
 
-    // Need to use the proper expectedOutput here.
+    // XXX: Need to use the proper expectedOutput here.
     // TODO: recover*ExpectedOutput above is awkward/magic, may be *TestCase could overload exp.
     //       to allow for more appropriate types...?
     val bisectTC = bisectTestable copy (expectedOutput = recoverHipExpectedOuput(workingTCRExp))

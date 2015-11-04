@@ -7,6 +7,7 @@ import ConfigDefaults._
 import java.nio.file.{ Path, Paths }
 import edu.nus.systemtesting.output.OutputVisibility
 import edu.nus.systemtesting.output.VisibilityOptions
+import edu.nus.systemtesting.hg.Repository
 
 object ConfigDefaults {
   val DefaultTimeout = 300
@@ -40,6 +41,28 @@ case class AppConfig(repoDir: Option[Path],
 
   def isRunAll: Boolean =
     Seq("sleek", "hip").forall(commands contains _)
+
+  def repoDirOrDie: Path = {
+    val dir: Path = repoDir getOrElse {
+      System.err.println(
+          """Unable to find REPO_DIR. Try:
+            | * Running the program in the mercurial repository, or
+            |   a descendant folder of a mercurial repo.
+            | * Putting a .hipsleektest.conf file with REPO_DIR=/path/to/repo line
+            |   in the current directory, or in some ancestor folder of the CWD.
+            | * Compiling this program with an application.conf with REPO_DIR=/path/to/repo line""".stripMargin)
+      // 'Fatal' error, quit.
+      System.exit(1)
+      throw new IllegalStateException
+    }
+
+    if (!(dir resolve ".hg").toFile().exists()) {
+      System.err.println(s"ERROR! Not a Mercurial repository! REPODIR=$repoDir")
+      System.exit(1)
+    }
+
+    dir
+  }
 }
 
 object AppConfig {
