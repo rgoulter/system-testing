@@ -19,7 +19,7 @@ object Repository {
     //   yyyy-MM-DD HH:mm Z
     // Note that may need to be careful about timezones, to be precise:
     // cf. http://stackoverflow.com/questions/16794772/joda-time-parse-a-date-with-timezone-and-retain-that-timezone#16796199
-    val df = DateTimeFormat.forPattern("yyyy-MM-DD HH:mm Z");
+    val df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
     df.withOffsetParsed().parseDateTime(dateStr);
   }
 }
@@ -65,11 +65,11 @@ class Repository(dir: Path) {
     lazy val latestCommit: Commit =
       // Unintuitively, with reverse() this gets the latest.
       // hg log -r "limit(reverse(branch($BRANCH)), 1)"
-      new Commit(logForTemplate("{node|short}\\n", s"limit(reverse(branch($name)), 1)\\n"))
+      new Commit(logForTemplate("{node|short}\\n", s"limit(reverse(branch('$name')), 1)"))
 
     lazy val earliestCommit: Commit =
       // hg log -r "limit((branch($BRANCH)), 1)"
-      new Commit(logForTemplate("{node|short}\\n", s"limit(branch($name), 1)\\n"))
+      new Commit(logForTemplate("{node|short}\\n", s"limit(branch('$name'), 1)"))
 
     // may not have a parent branch
     lazy val branchedFrom: Option[Commit] =
@@ -171,12 +171,16 @@ class Repository(dir: Path) {
     }
   }
 
-  def logForTemplate(template: String, revStr: String): String = {
-    val cmd = s"""hg log --template=$template -r $revStr"""
+  def logForTemplate(template: String, revStr: String, additionalArgs: String*): String = {
+    val cmd = Seq("hg", "log", s"--template=$template", "-r", revStr) ++ additionalArgs
     val proc = Process(cmd, repoDir)
 
     val execOutp = Runnable.executeProc(proc)
 
+    if (execOutp.exitValue != 0) {
+      println(s"### ERROR running command: ${cmd.mkString(" ")}")
+      println(execOutp.errOutput)
+    }
     assert(execOutp.exitValue == 0)
 
     execOutp.output.trim()
@@ -250,6 +254,27 @@ class Repository(dir: Path) {
       (parts(0), parts(1))
     })
   }
+
+  def heads(): List[Commit] = {
+    val heads = logForTemplate("{node|short}\\n", "head()")
+    heads.lines.toList.map(new Commit(_))
+  }
+
+  def tip(): Commit = {
+    val tipHash = logForTemplate("{node|short}\\n", "tip")
+    new Commit(tipHash)
+  }
+
+  def recentBranches(): List[Commit] = {
+    val latestCommit = tip()
+    val recentDate = latestCommit.date.minusDays(30)
+
+    val fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm")
+    val dateStr = recentDate.toString(fmt)
+
+    val rec = logForTemplate("{node|short}\\n", "head()", "--date", s">$dateStr")
+    rec.lines.toList.map(new Commit(_))
+  }
 }
 
 /** For debugging purposes */
@@ -258,15 +283,24 @@ private object RepositoryApp extends App {
   import java.nio.file.Paths
   val repo = new Repository(Paths.get("/home/richardg/hg/sleekex"))
 
-  // range of commits 45c49c:79da9 should be like:
-  //   45/40/c6/24/cc/ad/7a/4b/ce/80/79
-//  val rev1 = "45c49c"
-//  val rev2 = "79da9"
-  //   01/f6/0b/c6/d1/89/0c/f5/fd/ff/a5/3b/f5
-  val rev1 = new repo.Commit("0111c")
-  val rev2 = new repo.Commit("f59ebb")
+  val t = repo.tip()
+  val tdate = t.date
 
-  val range = repo.commitsInRange(rev1, rev2)
-  println(range)
-  println(range map { s => s.revHash.substring(0, 2) } mkString("/"))
+  val isoFmt = ISODateTimeFormat.dateTime()
+  val dateStr = tdate.toString(isoFmt)
+  println("Latest commit:" + dateStr)
+
+  def branchInfo(b: repo.Branch) {
+    val bf = b.branchedFrom
+    val bfStr = bf.map({ c => Seq(c.branch.name, c.revHash, c.age).mkString(" ") }).getOrElse("-")
+
+    println(s"${b.name} ${b.latestCommit.revHash} ${b.age} branched from $bfStr")
+  }
+
+  println("### Recent Branches: ###")
+  val recentBr = repo.recentBranches()
+  recentBr.foreach { x =>
+    branchInfo(x.branch)
+  }
+  println(recentBr.length + " many.")
 }
