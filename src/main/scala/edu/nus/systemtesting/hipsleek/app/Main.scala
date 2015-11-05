@@ -483,19 +483,27 @@ class ConfiguredMain(config: AppConfig) {
          ("hip",   oldHipResults, curHipResults))
   }
 
+  /**
+   * Run the given `resultsFor` function, apply to `TestSuiteComparison`.
+   * Outputs the result of the comparison.
+   */
   private[app] def diffSuiteResults(rev1: Repo.Commit,
                                     rev2: Repo.Commit,
-                                    resultsFor: (Repo.Commit, Repo.Commit) => DiffableResults): Unit = {
+                                    resultsFor: (Repo.Commit, Repo.Commit) => DiffableResults): List[TestSuiteComparison] = {
     val diffable = resultsFor(rev1, rev2)
 
     if (!diffable.isEmpty) {
-      diffable foreach { case (name, oldTSRes, curTSRes) =>
+      diffable map { case (name, oldTSRes, curTSRes) =>
         val diff = TestSuiteComparison(oldTSRes, curTSRes)
 
         diff.display(name)
+
+        diff
       }
     } else {
       reporter.log(s"Results unavailable for one of $rev1 or $rev2")
+
+      List()
     }
   }
 
