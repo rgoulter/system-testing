@@ -11,6 +11,53 @@ import org.joda.time.format.ISODateTimeFormat
 class UnknownRevisionException(badRev: String, repoDir: Path)
     extends IllegalArgumentException(s"Bad revision: $badRev in HG repo $repoDir")
 
+
+class Commit(repo: Repository, rev: String) {
+  val HashLength = 12
+
+  require(rev.length >= HashLength)
+
+  val revHash = rev.substring(0, HashLength)
+  val isDirty = rev.last == '+'
+
+  lazy val age: String =
+    repo.logForTemplate("{date|age}\\n", revHash)
+
+  lazy val date = {
+    val isoStr = repo.logForTemplate("{date|isodate}\\n", revHash)
+    Repository.parseHgIsodate(isoStr)
+  }
+
+  lazy val branch =
+    new Branch(repo, repo.logForTemplate("{branch}\\n", revHash))
+
+  override def toString() = revHash
+}
+
+
+object Branch {
+  implicit def branchToCommit(b: Branch): Commit = b.latestCommit
+}
+
+
+class Branch(repo: Repository, val name: String) {
+  lazy val latestCommit: Commit =
+    // Unintuitively, with reverse() this gets the latest.
+    // hg log -r "limit(reverse(branch($BRANCH)), 1)"
+    new Commit(repo, repo.logForTemplate("{node|short}\\n", s"limit(reverse(branch('$name')), 1)"))
+
+  lazy val earliestCommit: Commit =
+    // hg log -r "limit((branch($BRANCH)), 1)"
+    new Commit(repo, repo.logForTemplate("{node|short}\\n", s"limit(branch('$name'), 1)"))
+
+  // may not have a parent branch
+  lazy val branchedFrom: Option[Commit] =
+    repo.parents(earliestCommit).headOption
+
+  override def toString() = name
+}
+
+
 object Repository {
   def parseHgIsodate(dateStr : String): DateTime = {
     // Using `isodate` filter, we get a datetime string like:
@@ -30,53 +77,6 @@ object Repository {
  */
 class Repository(dir: Path) {
   require((dir resolve ".hg") toFile() exists, "dir must be an HG repository")
-
-  class Commit(rev: String) {
-    val HashLength = 12
-
-    require(rev.length >= HashLength)
-
-    val revHash = rev.substring(0, HashLength)
-    val isDirty = rev.last == '+'
-
-    // this is an extra invocation to HG (if construct using identify()),
-    // but ensures a safety when dealing with commits.
-    require(isRevisionish(revHash))
-
-    lazy val age: String =
-      logForTemplate("{date|age}\\n", revHash)
-
-    lazy val date = {
-      val isoStr = logForTemplate("{date|isodate}\\n", revHash)
-      Repository.parseHgIsodate(isoStr)
-    }
-
-    lazy val branch =
-      new Branch(logForTemplate("{branch}\\n", revHash))
-
-    override def toString() = revHash
-  }
-
-  object Branch {
-    implicit def branchToCommit(b: Branch): Commit = b.latestCommit
-  }
-
-  class Branch(val name: String) {
-    lazy val latestCommit: Commit =
-      // Unintuitively, with reverse() this gets the latest.
-      // hg log -r "limit(reverse(branch($BRANCH)), 1)"
-      new Commit(logForTemplate("{node|short}\\n", s"limit(reverse(branch('$name')), 1)"))
-
-    lazy val earliestCommit: Commit =
-      // hg log -r "limit((branch($BRANCH)), 1)"
-      new Commit(logForTemplate("{node|short}\\n", s"limit(branch('$name'), 1)"))
-
-    // may not have a parent branch
-    lazy val branchedFrom: Option[Commit] =
-      parents(earliestCommit).headOption
-
-    override def toString() = name
-  }
 
   val repoDir = dir toFile
 
@@ -127,7 +127,7 @@ class Repository(dir: Path) {
     val execOutp = Runnable.executeProc(proc)
 
     if (execOutp.exitValue == 0)
-      new Commit(execOutp.output.trim())
+      new Commit(this, execOutp.output.trim())
     else
       throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
@@ -147,7 +147,7 @@ class Repository(dir: Path) {
     val execOutp = Runnable.executeProc(proc)
 
     if (execOutp.exitValue == 0)
-      execOutp.output.trim().lines.map(new Commit(_)).toList
+      execOutp.output.trim().lines.map(new Commit(this, _)).toList
     else
       throw new UnknownRevisionException(rev.getOrElse("<head>"), dir)
   }
@@ -165,7 +165,7 @@ class Repository(dir: Path) {
       // can either pass to identify(), or just trim + take 2nd.
       val res = execOutp.output.trim()
 
-      new Commit(res.split(":")(1))
+      new Commit(this, res.split(":")(1))
     } else {
       throw new IllegalStateException
     }
@@ -219,7 +219,7 @@ class Repository(dir: Path) {
     val execOutp = Runnable.executeProc(proc)
 
     if (execOutp.exitValue == 0)
-      execOutp.output.trim().lines.map(new Commit(_)).toList
+      execOutp.output.trim().lines.map(new Commit(this, _)).toList
     else
       throw new IllegalStateException
   }
@@ -257,12 +257,12 @@ class Repository(dir: Path) {
 
   def heads(): List[Commit] = {
     val heads = logForTemplate("{node|short}\\n", "head()")
-    heads.lines.toList.map(new Commit(_))
+    heads.lines.toList.map(new Commit(this, _))
   }
 
   def tip(): Commit = {
     val tipHash = logForTemplate("{node|short}\\n", "tip")
-    new Commit(tipHash)
+    new Commit(this, tipHash)
   }
 
   def recentBranches(): List[Commit] = {
@@ -273,7 +273,7 @@ class Repository(dir: Path) {
     val dateStr = recentDate.toString(fmt)
 
     val rec = logForTemplate("{node|short}\\n", "head()", "--date", s">$dateStr")
-    rec.lines.toList.map(new Commit(_))
+    rec.lines.toList.map(new Commit(this, _))
   }
 }
 
@@ -290,7 +290,7 @@ private object RepositoryApp extends App {
   val dateStr = tdate.toString(isoFmt)
   println("Latest commit:" + dateStr)
 
-  def branchInfo(b: repo.Branch) {
+  def branchInfo(b: Branch) {
     val bf = b.branchedFrom
     val bfStr = bf.map({ c => Seq(c.branch.name, c.revHash, c.age).mkString(" ") }).getOrElse("-")
 

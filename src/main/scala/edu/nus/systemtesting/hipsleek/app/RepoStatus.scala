@@ -1,5 +1,7 @@
 package edu.nus.systemtesting.hipsleek.app
 
+import edu.nus.systemtesting.hg.Branch
+import edu.nus.systemtesting.hg.Commit
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.GlobalReporter
@@ -35,13 +37,13 @@ object RepoStatus {
 
 class ConfiguredRepoStatus(config: AppConfig) {
   val repoDir = config.repoDirOrDie
-  val Repo = new Repository(repoDir)
+  val repo = new Repository(repoDir)
 
   // Don't run, but need ConfiguredMain to invoke diffs between commits
   val configuredMain = new ConfiguredMain(config)
 
   def runStatus(): Unit = {
-    val t = Repo.tip()
+    val t = repo.tip()
     println(s"Latest commit: ${t.revHash} (${t.age})")
 
     //
@@ -49,7 +51,7 @@ class ConfiguredRepoStatus(config: AppConfig) {
     //
     reporter.header("Recent Branches")
 
-    val recentBr = Repo.recentBranches()
+    val recentBr = repo.recentBranches()
     recentBr.foreach { x =>
       branchInfo(x.branch)
     }
@@ -59,7 +61,7 @@ class ConfiguredRepoStatus(config: AppConfig) {
 
     // Find default commit..
     // MAGIC: 'default' as the main development branch.
-    val defaultB = new Repo.Branch("default")
+    val defaultB = new Branch(repo, "default")
 
     //
     // Run diffs
@@ -79,19 +81,14 @@ class ConfiguredRepoStatus(config: AppConfig) {
       // unlikely to want 'status report' of *just* the Sleek ones, right?
       val resultPairs = configuredMain.sleekResultPairs(_, _)
 
-      // using instance-based Commit objects was a bad idea;
-      // quick Hack to get around that.
-      val oldestC = new configuredMain.Repo.Commit(earliestCommit.revHash)
-      val newestC = new configuredMain.Repo.Commit(latestCommit.revHash)
-
       reporter.header(s"Run Diff (${idx+1}/${recentBr.length})")
 
-      configuredMain.diffSuiteResults(oldestC, newestC, resultPairs)
+      configuredMain.diffSuiteResults(earliestCommit, latestCommit, resultPairs)
     }
   }
 
   // outputs a one-line summary of a branch
-  def branchInfo(b: Repo.Branch) {
+  def branchInfo(b: Branch) {
     val bf = b.branchedFrom
     val bfStr = bf.map({ c => f"${c.branch.name}%15s ${c.revHash} ${c.age}" }).getOrElse("-")
 

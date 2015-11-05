@@ -12,6 +12,8 @@ import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
+import edu.nus.systemtesting.hg.Branch
+import edu.nus.systemtesting.hg.Commit
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import edu.nus.systemtesting.hipsleek.HipTestCase
@@ -145,12 +147,12 @@ class ConfiguredMain(config: AppConfig) {
   val repoDir: Path = config.repoDirOrDie
 
   // Each instance of `ConfiguredMain` only ever uses the one `Repository`
-  val Repo = new Repository(repoDir)
+  val repo = new Repository(repoDir)
 
   private[hipsleek] def run(): Unit = {
     import config.{ command, rev }
 
-    val revision = Repo.identify(rev)
+    val revision = repo.identify(rev)
 
     command match {
       case "sleek"  => runSleekTests(revision)
@@ -164,7 +166,7 @@ class ConfiguredMain(config: AppConfig) {
 
   type RunPreparedTests = (Path, Path, String) => TestSuiteResult
 
-  private def runAllTests(rev: Repo.Commit): (TestSuiteResult, TestSuiteResult) =
+  private def runAllTests(rev: Commit): (TestSuiteResult, TestSuiteResult) =
     (altRunTests(SleekTestCase.constructTestCase,
                  "sleek",
                  SleekTestSuiteUsage.allTestable)(rev),
@@ -172,12 +174,12 @@ class ConfiguredMain(config: AppConfig) {
                  "hip",
                  HipTestSuiteUsage.allTestable)(rev))
 
-  private def runHipTests(rev: Repo.Commit): TestSuiteResult =
+  private def runHipTests(rev: Commit): TestSuiteResult =
     altRunTests(HipTestCase.constructTestCase,
                 "hip",
                 HipTestSuiteUsage.allTestable)(rev)
 
-  private def runSleekTests(rev: Repo.Commit): TestSuiteResult =
+  private def runSleekTests(rev: Commit): TestSuiteResult =
     altRunTests(SleekTestCase.constructTestCase,
                 "sleek",
                 SleekTestSuiteUsage.allTestable)(rev)
@@ -186,7 +188,7 @@ class ConfiguredMain(config: AppConfig) {
   private def altRunTests(construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase,
                           suiteName: String,
                           allTestable: List[Testable])
-                         (rev: Repo.Commit): TestSuiteResult = {
+                         (rev: Commit): TestSuiteResult = {
     (runTestsWith(rev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
       // Ideally, preparedSys would itself do the building of repo.
       // i.e. building the repo would be delayed until necessary.
@@ -212,8 +214,8 @@ class ConfiguredMain(config: AppConfig) {
     }
   }
 
-  private def runTestsWith[T](revision: Repo.Commit, examplesDir: String)
-                             (f: (Path, Path, Repo.Commit) => T):
+  private def runTestsWith[T](revision: Commit, examplesDir: String)
+                             (f: (Path, Path, Commit) => T):
       Option[T] = {
     // check if bin cache has the binaries already
     binCache.binFor(Paths.get("hip"), revision.revHash) match {
@@ -236,8 +238,8 @@ class ConfiguredMain(config: AppConfig) {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo[T](revision: Repo.Commit, examplesDir: String)
-                                 (f: (Path, Path, Repo.Commit) => T):
+  private def runTestsWithRepo[T](revision: Commit, examplesDir: String)
+                                 (f: (Path, Path, Commit) => T):
       Option[T] = {
     // Prepare the repo
     reporter.log("Preparing repo...")
@@ -252,7 +254,7 @@ class ConfiguredMain(config: AppConfig) {
         val tmp = tmpDir.toAbsolutePath()
 
         // create archive of repo in tmp
-        Repo.archive(tmp, revision)
+        repo.archive(tmp, revision)
 
         tmp
       }
@@ -282,8 +284,8 @@ class ConfiguredMain(config: AppConfig) {
     }
   }
 
-  private def runTestsWithCached[T](binDir: Path, revision: Repo.Commit, examplesDir: String)
-                                   (f: (Path, Path, Repo.Commit) => T): T = {
+  private def runTestsWithCached[T](binDir: Path, revision: Commit, examplesDir: String)
+                                   (f: (Path, Path, Commit) => T): T = {
     // don't know whether it's hip/sleek we want, but we make/cache both, so.
     require((binDir resolve "sleek").toFile().exists())
     require((binDir resolve "hip").toFile().exists())
@@ -315,7 +317,7 @@ class ConfiguredMain(config: AppConfig) {
         )
 
         // create archive of repo in tmp
-        Repo.archive(tmp, revision, foldersUsed)
+        repo.archive(tmp, revision, foldersUsed)
 
         tmp
       }
@@ -353,7 +355,7 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   // should be able to replace runWith, callback nature with this...
-  private def runTestCaseForRevision(repoRevision: Repo.Commit, preparedSys: => PreparedSystem)
+  private def runTestCaseForRevision(repoRevision: Commit, preparedSys: => PreparedSystem)
                                     (implicit construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase):
       (Testable => TestCaseResult) = {
     val resultsArch = new ResultsArchive()
@@ -384,14 +386,14 @@ class ConfiguredMain(config: AppConfig) {
     }
   }
 
-  private def suiteFor(allTests: List[Testable], repoRevision: Repo.Commit): TestSuite = {
+  private def suiteFor(allTests: List[Testable], repoRevision: Commit): TestSuite = {
     // XXX: This *ignores* dirty?
     new TestSuite(allTests, repoRevision.revHash, config.significantTimeThreshold)
   }
 
   private def runSuiteDiff(rev1: Option[String], rev2: Option[String]): Unit = {
     // Select whether to run sleek, hip or both
-    val resultPairs: (Repo.Commit, Repo.Commit) => DiffableResults = if (config.isRunAll) {
+    val resultPairs: (Commit, Commit) => DiffableResults = if (config.isRunAll) {
       allResultPairs
     } else if (config.isRunSleek) {
       sleekResultPairs
@@ -407,28 +409,28 @@ class ConfiguredMain(config: AppConfig) {
         println(s"Diff on $r1 -> $r2")
 
         // Using Repo.identify lets the args be shorter than 12 chars. :-)
-        val revision1 = Repo.identify(rev1)
-        val revision2 = Repo.identify(rev2)
+        val revision1 = repo.identify(rev1)
+        val revision2 = repo.identify(rev2)
 
         diffSuiteResults(revision1, revision2, resultPairs)
       }
       case (Some(r1), None) => {
         println(s"Diff on $r1 -> 'head'")
 
-        val revision1 = Repo.identify(rev1)
-        val revision2 = Repo.identify()
+        val revision1 = repo.identify(rev1)
+        val revision2 = repo.identify()
 
         diffSuiteResults(revision1, revision2, resultPairs)
       }
       case (None, _) => {
         // Since no rev was given, run on ...
-        val revision = Repo.identify()
+        val revision = repo.identify()
 
         if (revision.isDirty) {
           // "Did working dir break anything?"
           println(s"Diff on 'head^' -> 'head+' (dirty)")
 
-          val parentRevs = Repo.parents(revision)
+          val parentRevs = repo.parents(revision)
 
           parentRevs foreach { parentRevision =>
             diffSuiteResults(parentRevision, revision, resultPairs)
@@ -436,8 +438,8 @@ class ConfiguredMain(config: AppConfig) {
         } else {
           println(s"Diff on 'head^' -> 'head'")
 
-          val curRev = Repo.identify()
-          val parentRevs = Repo.parents(curRev)
+          val curRev = repo.identify()
+          val parentRevs = repo.parents(curRev)
 
           parentRevs foreach { rev =>
             diffSuiteResults(rev, curRev, resultPairs)
@@ -451,7 +453,7 @@ class ConfiguredMain(config: AppConfig) {
   type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
   /** For use with `diffSuiteResults`, for running just sleek results. */
-  private[app] def sleekResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
+  private[app] def sleekResultPairs(rev1: Commit, rev2: Commit):
       DiffableResults = {
     val oldRes = runSleekTests(rev1)
     val curRes = runSleekTests(rev2)
@@ -460,7 +462,7 @@ class ConfiguredMain(config: AppConfig) {
   }
 
   /** For use with `diffSuiteResults`, for running just hip results. */
-  private[app] def hipResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
+  private[app] def hipResultPairs(rev1: Commit, rev2: Commit):
       DiffableResults = {
     val oldRes = runHipTests(rev1)
     val curRes = runHipTests(rev2)
@@ -474,7 +476,7 @@ class ConfiguredMain(config: AppConfig) {
    * The way it is implemented, the output of `diffSuiteResults` won't combine
    * the diff results together, so sleek diff will be followed by hip diff.
    */
-  private[app] def allResultPairs(rev1: Repo.Commit, rev2: Repo.Commit):
+  private[app] def allResultPairs(rev1: Commit, rev2: Commit):
       DiffableResults = {
     val (oldSleekResults, oldHipResults) = runAllTests(rev1)
     val (curSleekResults, curHipResults) = runAllTests(rev2)
@@ -487,9 +489,9 @@ class ConfiguredMain(config: AppConfig) {
    * Run the given `resultsFor` function, apply to `TestSuiteComparison`.
    * Outputs the result of the comparison.
    */
-  private[app] def diffSuiteResults(rev1: Repo.Commit,
-                                    rev2: Repo.Commit,
-                                    resultsFor: (Repo.Commit, Repo.Commit) => DiffableResults): List[TestSuiteComparison] = {
+  private[app] def diffSuiteResults(rev1: Commit,
+                                    rev2: Commit,
+                                    resultsFor: (Commit, Commit) => DiffableResults): List[TestSuiteComparison] = {
     val diffable = resultsFor(rev1, rev2)
 
     if (!diffable.isEmpty) {
@@ -511,8 +513,8 @@ class ConfiguredMain(config: AppConfig) {
     // MAGIC: absent of actual UX, just run bisect on
     // TC[hip, , term/benchs/key/Even.ss]
     val bisectTestable = new TestCaseBuilder(Paths.get("hip"), Paths.get("term/benchs/key/Even.ss"), "", "???")
-    val initWorkingCommit = new Repo.Commit("53282f401727")
-    val initFailingCommit = new Repo.Commit("79da9697f0c2")
+    val initWorkingCommit = new Commit(repo, "53282f401727")
+    val initFailingCommit = new Commit(repo, "79da9697f0c2")
 
     // assumptions/requirements:
     // * revs have linear relationship with each other
@@ -547,7 +549,7 @@ class ConfiguredMain(config: AppConfig) {
     runBisect(initWorkingCommit, initFailingCommit, bisectTC)
   }
 
-  private def runBisect(rev1: Repo.Commit, rev2: Repo.Commit, tc: Testable): Unit = {
+  private def runBisect(rev1: Commit, rev2: Commit, tc: Testable): Unit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
@@ -571,7 +573,7 @@ class ConfiguredMain(config: AppConfig) {
 
     // 'bisect' is only interesting if we have the 'latest' failing,
     // and some earlier commit failing
-    val revRange = Repo.commitsInRange(rev1, rev2)
+    val revRange = repo.commitsInRange(rev1, rev2)
     val revRangeLen = revRange.length
     val numSteps = ceil(log(revRangeLen) / log(2)) toInt
 
