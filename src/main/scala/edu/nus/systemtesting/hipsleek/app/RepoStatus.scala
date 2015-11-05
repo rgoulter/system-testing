@@ -42,6 +42,8 @@ class ConfiguredRepoStatus(config: AppConfig) {
   // Don't run, but need ConfiguredMain to invoke diffs between commits
   val configuredMain = new ConfiguredMain(config)
 
+  val MainBranch = "default"
+
   def runStatus(): Unit = {
     val t = repo.tip()
     println(s"Latest commit: ${t.revHash} (${t.age})")
@@ -51,24 +53,26 @@ class ConfiguredRepoStatus(config: AppConfig) {
     //
     reporter.header("Recent Branches")
 
-    val recentBr = repo.recentBranches()
-    recentBr.foreach { x =>
+    val recentBranches = repo.recentBranches()
+    recentBranches.foreach { x =>
       branchInfo(x.branch)
     }
 
     println()
-    println(recentBr.length + " total")
+    println(recentBranches.length + " total")
 
     // Find default commit..
-    // MAGIC: 'default' as the main development branch.
-    val defaultB = new Branch(repo, "default")
+    val defaultB = new Branch(repo, MainBranch)
 
     //
     // Run diffs
     //
     reporter.header("Running Diffs")
+
+    val diffableBranches = recentBranches.filterNot(_.branch.name == MainBranch)
+
     // MAGIC: 'default' as the main development branch.
-    recentBr.filterNot(_.branch.name == "default").zipWithIndex.foreach { case (c, idx) =>
+    diffableBranches.zipWithIndex.foreach { case (c, idx) =>
       val branch = c.branch
       import branch.{ latestCommit, earliestCommit }
 
@@ -81,9 +85,25 @@ class ConfiguredRepoStatus(config: AppConfig) {
       // unlikely to want 'status report' of *just* the Sleek ones, right?
       val resultPairs = configuredMain.sleekResultPairs(_, _)
 
-      reporter.header(s"Run Diff (${idx+1}/${recentBr.length})")
+      reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
 
-      configuredMain.diffSuiteResults(earliestCommit, latestCommit, resultPairs)
+      val diffs = configuredMain.diffSuiteResults(earliestCommit, latestCommit, resultPairs)
+
+      //
+      // Bisect
+      // each of the { was working -> now failing } TestCases.
+      //
+      diffs foreach { tsCmp =>
+        val numBisects = tsCmp.usedToPass.length
+
+        tsCmp.usedToPass.zipWithIndex foreach { case ((oldTC, _), idx) =>
+          reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
+
+          val bisectTC = configuredMain.recoverTestableFromTCR(oldTC)
+
+          configuredMain.runBisect(earliestCommit, latestCommit, bisectTC)
+        }
+      }
     }
   }
 

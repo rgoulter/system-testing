@@ -528,9 +528,20 @@ class ConfiguredMain(config: AppConfig) {
       // probably should be a bit more robust about this
       throw new IllegalArgumentException(s"Expected to find result for $initWorkingCommit")
     }
-    val workingTCRExp = workingTCR.expected
 
-    // MAGIC: Recovering expectedOutput from TCR is a bit hard
+    val bisectTC = recoverTestableFromTCR(workingTCR)
+
+    println("running bisect...")
+
+    runBisect(initWorkingCommit, initFailingCommit, bisectTC)
+  }
+
+  private[app] def recoverTestableFromTCR(tcr: TestCaseResult): Testable = {
+    // n.b. cannot recover `expectedOutput` from tcr directly.
+
+    val bisectTestable = new TestCaseBuilder(tcr.command, tcr.filename, tcr.arguments, "???")
+    val tcrExp = tcr.expected
+
     def recoverHipExpectedOuput(exp: List[(String, String)]): String = {
       exp map { case (k, v) => k + ": " + v } mkString(", ")
     }
@@ -539,24 +550,42 @@ class ConfiguredMain(config: AppConfig) {
       exp map { case (k, v) => v } mkString(", ")
     }
 
-    // XXX: Need to use the proper expectedOutput here.
-    // TODO: recover*ExpectedOutput above is awkward/magic, may be *TestCase could overload exp.
-    //       to allow for more appropriate types...?
-    val bisectTC = bisectTestable copy (expectedOutput = recoverHipExpectedOuput(workingTCRExp))
+    // recover*ExpectedOutput above is awkward/magic, may be *TestCase could overload exp.
+    // to allow for more appropriate types...?
+    val expectedOutp =
+      if (tcr.command.endsWith("hip"))
+        recoverHipExpectedOuput(tcrExp)
+      else if (tcr.command.endsWith("sleek"))
+        recoverSleekExpectedOuput(tcrExp)
+      else
+        throw new UnsupportedOperationException(s"Expected command ${tcr.command} to be `sleek` or `hip`.")
 
-    println("running bisect...")
+    println(s"Recovered Expected output:" + expectedOutp)
 
-    runBisect(initWorkingCommit, initFailingCommit, bisectTC)
+    bisectTestable copy (expectedOutput = expectedOutp)
   }
 
-  private def runBisect(rev1: Commit, rev2: Commit, tc: Testable): Unit = {
+  private[app] def runBisect(rev1: Commit, rev2: Commit, tc: Testable): Unit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
     val results = new ResultsArchive()
-    val suiteName = "hip"
+
+    // MAGIC, & awkward, but difficult to think of a better way of doing this currently
+    val suiteName =
+      if (tc.commandName.endsWith("sleek"))
+        "sleek"
+      else if (tc.commandName.endsWith("hip"))
+        "hip"
+      else
+        throw new UnsupportedOperationException(s"Expected testable command ${tc.commandName} to be either `sleek` or `hip`.")
     val construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase =
-      HipTestCase.constructTestCase
+      if (tc.commandName.endsWith("sleek"))
+        SleekTestCase.constructTestCase
+      else if (tc.commandName.endsWith("hip"))
+        HipTestCase.constructTestCase
+      else
+        throw new UnsupportedOperationException(s"Expected testable command ${tc.commandName} to be either `sleek` or `hip`.")
 
     // Check that the given revisions to arg make sense
     val tcr1 = results.resultFor(rev1.revHash)(tc)
