@@ -608,7 +608,13 @@ class ConfiguredMain(config: AppConfig) {
     var rev2 = failingCommit
     var revRange = repo.commitsInRange(rev1, rev2).toBuffer
 
+    // Removing all the build failures here (as opposed to later) can make
+    // re-running a status 'not-idempotent', as such, and so may have to build
+    // or run different commits/tests.
     val buildFailureCommits = scala.collection.mutable.Set[Commit]()
+    results.loadBuildFailureCommits().foreach { revHash =>
+      buildFailureCommits += new Commit(repo, revHash.trim())
+    }
 
     def revRangeLen = revRange.length
     def numSteps = ceil(log(revRangeLen) / log(2)) toInt
@@ -661,6 +667,7 @@ class ConfiguredMain(config: AppConfig) {
           // Exclude the current `nextRev` from nextRevIdx
           revRange -= nextRev
           buildFailureCommits += nextRev
+          results.addBuildFailureCommit(nextRev.revHash)
         }
       }
     }

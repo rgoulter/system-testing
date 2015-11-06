@@ -12,6 +12,9 @@ import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import GlobalReporter.reporter
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
+import java.io.PrintWriter
+import java.io.FileOutputStream
+import java.io.IOException
 
 class ResultsArchive(val resultsDir: String = "results") {
   // Results stored become keyed by:
@@ -158,5 +161,45 @@ class ResultsArchive(val resultsDir: String = "results") {
 
     reporter.log(s"Saving results to $path") // this *will* be excessive...
     FileSystemUtilities.printToFile(path.toFile())(_.print(dump))
+  }
+
+  //
+  // Build failures
+  //
+  val BuildFailureFilename = "build_failures"
+
+  private val buildFilePath = Paths.get(BuildFailureFilename)
+
+  def addBuildFailureCommit(revHash: String): Unit = {
+    // ensure the file exists
+    FileSystemUtilities.checkOutputDirectory(resultsDir)
+    val buildFile = buildFilePath.toFile()
+
+    val out = new PrintWriter(new FileOutputStream(buildFile, true), true)
+
+    out.println(revHash)
+
+    out.flush()
+    out.close()
+  }
+
+  def loadBuildFailureCommits(): Set[String] = {
+    // ensure the file exists
+    FileSystemUtilities.checkOutputDirectory(resultsDir)
+
+    try {
+      val buildFile = buildFilePath.toFile()
+      val inSrc = scala.io.Source.fromFile(buildFile)
+
+      val buildFailuresSet = inSrc.getLines().toSet
+
+      inSrc.close()
+
+      buildFailuresSet
+    } catch {
+      case e : IOException => {
+        Set()
+      }
+    }
   }
 }
