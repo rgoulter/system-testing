@@ -81,9 +81,7 @@ class ConfiguredRepoStatus(config: AppConfig) {
       // TODO: Or should this be commonAncestor with branched-from?
       // val latestMergeC = Repo.commonAncestor(latestCommit, defaultB)
 
-      // XXX: resultPairs should be 'all'.
-      // unlikely to want 'status report' of *just* the Sleek ones, right?
-      val resultPairs = configuredMain.sleekResultPairs(_, _)
+      val resultPairs = configuredMain.allResultPairs(_, _)
 
       reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
 
