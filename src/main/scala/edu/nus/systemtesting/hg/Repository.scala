@@ -32,6 +32,17 @@ class Commit(repo: Repository, rev: String) {
     new Branch(repo, repo.logForTemplate("{branch}\\n", revHash))
 
   override def toString() = revHash
+
+  override def equals(o: Any): Boolean =
+    o match {
+      case cmt : Commit =>
+        // assumes repos are the same?
+        cmt.revHash == revHash && cmt.isDirty == isDirty
+      case _ => false
+    }
+
+  override def hashCode(): Int =
+    rev.hashCode()
 }
 
 
