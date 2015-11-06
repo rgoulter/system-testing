@@ -565,7 +565,7 @@ class ConfiguredMain(config: AppConfig) {
     bisectTestable copy (expectedOutput = expectedOutp)
   }
 
-  private[app] def runBisect(rev1: Commit, rev2: Commit, tc: Testable): Unit = {
+  private[app] def runBisect(workingCommit: Commit, failingCommit: Commit, tc: Testable): Unit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
@@ -588,29 +588,35 @@ class ConfiguredMain(config: AppConfig) {
         throw new UnsupportedOperationException(s"Expected testable command ${tc.commandName} to be either `sleek` or `hip`.")
 
     // Check that the given revisions to arg make sense
-    val tcr1 = results.resultFor(rev1.revHash)(tc)
-    val tcr2 = results.resultFor(rev2.revHash)(tc)
-    assume(rev1 != rev2, "Must be different commits")
-    assume(!tcr1.isEmpty, "Must have result for " + rev1)
-    assume(!tcr2.isEmpty, "Must have result for " + rev2)
-    assume(tcr1.get.passed, s"Assumed $tc passes for $rev1")
-    assume(!tcr2.get.passed, s"Assumed $tc fails for $rev2")
+    val tcr1 = results.resultFor(workingCommit.revHash)(tc)
+    val tcr2 = results.resultFor(failingCommit.revHash)(tc)
+    assume(workingCommit != failingCommit, "Must be different commits")
+    assume(!tcr1.isEmpty, "Must have result for " + workingCommit)
+    assume(!tcr2.isEmpty, "Must have result for " + failingCommit)
+    assume(tcr1.get.passed, s"Assumed $tc passes for $workingCommit")
+    assume(!tcr2.get.passed, s"Assumed $tc fails for $failingCommit")
 
     // Load all the results we have for the given testable.
-    val revResPairs = results resultsFor tc
-    val revs = revResPairs map { case (r,_) => r }
+//    val revResPairs = results resultsFor tc
+//    val revs = revResPairs map { case (r,_) => r }
 
     // 'bisect' is only interesting if we have the 'latest' failing,
     // and some earlier commit failing
-    val revRange = repo.commitsInRange(rev1, rev2)
-    val revRangeLen = revRange.length
-    val numSteps = ceil(log(revRangeLen) / log(2)) toInt
 
-    if (revRangeLen == 2) {
-      reporter.header("Bisect Result", ColorCyan)
-      println(s"Latest working commit: $rev1")
-      println(s"Earliest failing commit: $rev2")
-    } else {
+    // Bisect vars
+    var rev1 = workingCommit
+    var rev2 = failingCommit
+    var revRange = repo.commitsInRange(rev1, rev2).toBuffer
+
+    val buildFailureCommits = scala.collection.mutable.Set[Commit]()
+
+    def revRangeLen = revRange.length
+    def numSteps = ceil(log(revRangeLen) / log(2)) toInt
+
+    while (revRangeLen > 2) {
+      revRange = repo.commitsInRange(rev1, rev2).toBuffer
+      revRange --= buildFailureCommits
+
       reporter.header(s"$revRangeLen commits in range. $numSteps steps remain.", ColorMagenta)
 
       val nextRevIdx = if (revRangeLen % 2 == 0) revRangeLen / 2 else (revRangeLen - 1) / 2
@@ -618,7 +624,7 @@ class ConfiguredMain(config: AppConfig) {
 
       // n.b. this exports archive to tmpDir each time, either to build, or
       // just for the examples.
-      val nextTCR = (runTestsWith(nextRev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
+      val maybeNextTCR = (runTestsWith(nextRev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
         // Ideally, preparedSys would itself do the building of repo.
         // i.e. building the repo would be delayed until necessary.
         // At the moment, though, since any system loading tests will *have* the
@@ -630,22 +636,38 @@ class ConfiguredMain(config: AppConfig) {
         // by this point,
         // tc *must* have proper expectedOutput
         resultsFor(tc)
-      }) getOrElse {
-        // Failed to build is the only reason runTestsWith will return None
-        // TODO: Bisect *probably* needs to be more mature about handling this.
-        throw new UnableToBuildException(repoDir, Some(nextRev.revHash))
-      }
+      })
 
-      // output result, right
-      nextTCR.displayResult()
+      maybeNextTCR match {
+        case Some(nextTCR) => {
+          // output result, right
+          nextTCR.displayResult()
 
-      // this is more complicated if we got an error for nextTCR
-      if (nextTCR.passed) {
-        runBisect(nextRev, rev2, tc)
-      } else {
-        runBisect(rev1, nextRev, tc)
+          if (nextTCR.passed) {
+            rev1 = nextRev
+          } else {
+            rev2 = nextRev
+          }
+        }
+
+        case None => {
+          // Failed to build is the only reason runTestsWith will return None
+          // TODO: Unfortunately, this can be due to timeouts, if `make`
+          //  happens to take longer than 5m (!) to build.
+          //  - I intend to 'fix' that, though, so.
+
+          println("Build failure.")
+
+          // Exclude the current `nextRev` from nextRevIdx
+          revRange -= nextRev
+          buildFailureCommits += nextRev
+        }
       }
     }
+
+    reporter.header("Bisect Result", ColorCyan)
+    println(s"Latest working commit: $rev1")
+    println(s"Earliest failing commit: $rev2")
   }
 
   private def showHelpText(): Unit = {
