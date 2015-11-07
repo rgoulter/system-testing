@@ -9,7 +9,9 @@ import org.scalatest.ConfigMap
 import edu.nus.systemtesting.hg.Repository
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfter
+import edu.nus.systemtesting.hipsleek.BuildFailed
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
+import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import com.typesafe.config.ConfigException
 import java.nio.file.Paths
 
@@ -61,7 +63,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
     val (res, remarks) = prep.prepare()
 
-    assert(res)
+    assert(res.isInstanceOf[SuccessfulBuildResult[Unit]])
   }
 
   it should "detect when make failed" taggedAs(SlowTest) in {
@@ -77,6 +79,6 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
 
     val (res, remarks) = prep.prepare()
 
-    assert(!res)
+    assert(res.isInstanceOf[BuildFailed[Unit]])
   }
 }

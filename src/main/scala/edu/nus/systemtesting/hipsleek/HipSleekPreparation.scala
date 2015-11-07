@@ -10,6 +10,16 @@ import edu.nus.systemtesting.output.GlobalReporter
 import GlobalReporter.reporter
 import java.nio.file.Path
 
+sealed class BuildResult[T]
+
+case class SuccessfulBuildResult[T](val res: T) extends BuildResult[T]
+
+case class BuildTimedOut[T]() extends BuildResult[T]
+
+case class BuildFailed[T]() extends BuildResult[T]
+
+
+
 object HipSleekPreparation {
   /**
    * Map of Prover name -> prover executable name.
@@ -46,7 +56,7 @@ object HipSleekPreparation {
  * @author richardg
  */
 class HipSleekPreparation(val projectDir: Path) {
-  def prepare(): (Boolean, Iterable[String]) = {
+  def prepare(): (BuildResult[Unit], Iterable[String]) = {
     // In order to `make native`, need to make the xml dep.
     val xmlDepDir = projectDir resolve "xml"
 
@@ -54,19 +64,27 @@ class HipSleekPreparation(val projectDir: Path) {
     val mkXmlOutp = executeProc(Process("make", xmlDepDir toFile))
 
     if (mkXmlOutp.exitValue != 0) {
-      return (false,
+      // It's quite unlikely that the xml part will time out.
+      // (so no need to treat timeout distinctly)
+      return (BuildFailed(),
               "Error building XML dep, err output:" +: mkXmlOutp.stderrLines.toList)
     }
 
     // make native
     // (takes about 3 minutes)
     reporter.log(s"Calling 'make native' in ${projectDir.toString()}")
+    // XXX note that this may timeout...
     val mkNativeOutp = executeProc(Process("make native", projectDir toFile),
                                    timeout = 300)
 
     if (mkNativeOutp.exitValue != 0) {
-      return (false,
-              "Error building `make native`, err output:" +: mkNativeOutp.stderrLines.toList)
+      if (mkNativeOutp.timedOut) {
+        return (BuildTimedOut(),
+                List("Error building `make native`, timed out."))
+      } else {
+        return (BuildFailed(),
+                "Error building `make native`, err output:" +: mkNativeOutp.stderrLines.toList)
+      }
     }
 
     reporter.log("Built successfully!")
@@ -81,6 +99,6 @@ class HipSleekPreparation(val projectDir: Path) {
       case (name, cmd) => s"WARNING! Missing $name, expected to find `$cmd` on PATH!"
     })
 
-    (true, warnings)
+    (SuccessfulBuildResult(()), warnings)
   }
 }

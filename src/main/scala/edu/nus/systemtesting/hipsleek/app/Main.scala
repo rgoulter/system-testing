@@ -33,9 +33,14 @@ import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigException
 import edu.nus.systemtesting.TestCaseConfiguration
+import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
+import edu.nus.systemtesting.hipsleek.BuildFailed
+import edu.nus.systemtesting.hipsleek.BuildTimedOut
+import edu.nus.systemtesting.hipsleek.BuildResult
 
 class UnableToBuildException(repoDir: Path,
-                             rev: Option[String])
+                             rev: Option[String],
+                             val timedOut: Boolean = false)
   extends RuntimeException(s"Cannot build for revision ${rev getOrElse ""} in dir $repoDir")
 
 object Main {
@@ -208,20 +213,24 @@ class ConfiguredMain(config: AppConfig) {
       TestSuiteResultAnalysis printTallyOfInvalidTests testSuiteResult
 
       testSuiteResult
-    }) getOrElse {
-      // Failed to build is the only reason runTestsWith will return None
-      throw new UnableToBuildException(repoDir, Some(rev.revHash))
+    }) match {
+      case SuccessfulBuildResult(tsr) => tsr
+      case BuildFailed() =>
+        throw new UnableToBuildException(repoDir, Some(rev.revHash))
+      case BuildTimedOut() =>
+        throw new UnableToBuildException(repoDir, Some(rev.revHash), timedOut = true)
     }
   }
 
   private def runTestsWith[T](revision: Commit, examplesDir: String)
                              (f: (Path, Path, Commit) => T):
-      Option[T] = {
+      BuildResult[T] = {
     // check if bin cache has the binaries already
     binCache.binFor(Paths.get("hip"), revision.revHash) match {
       case Some(p) if !revision.isDirty => {
         val binDir = p getParent()
-        Some(runTestsWithCached(binDir, revision, examplesDir)(f))
+        // *May* be worth distinguishing "SuccessfulBuild" vs "Loaded Results"
+        SuccessfulBuildResult(runTestsWithCached(binDir, revision, examplesDir)(f))
       }
 
       case None =>
@@ -240,7 +249,7 @@ class ConfiguredMain(config: AppConfig) {
    */
   private def runTestsWithRepo[T](revision: Commit, examplesDir: String)
                                  (f: (Path, Path, Commit) => T):
-      Option[T] = {
+      BuildResult[T] = {
     // Prepare the repo
     reporter.log("Preparing repo...")
 
@@ -260,26 +269,32 @@ class ConfiguredMain(config: AppConfig) {
       }
 
       val prep = new HipSleekPreparation(projectDir)
-      val (prepWorked, prepRemarks) = prep.prepare()
+      val (prepResult, prepRemarks) = prep.prepare()
 
       prepRemarks.foreach(reporter.log)
       reporter.println()
 
       // Run the tests
-      if (prepWorked) {
-        val binDir = projectDir
-        val corpusDir = projectDir resolve examplesDir
+      prepResult match {
+        case SuccessfulBuildResult(()) => {
+          val binDir = projectDir
+          val corpusDir = projectDir resolve examplesDir
 
-        // Copy to cache..
-        // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
-        binCache.cache(binDir, Paths.get("sleek"), revision.revHash)
-        binCache.cache(binDir, Paths.get("hip"), revision.revHash)
-        // apparently prelude.ss needs to be in, or hip will break.
-        binCache.cache(binDir, Paths.get("prelude.ss"), revision.revHash)
+          // Copy to cache..
+          // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
+          binCache.cache(binDir, Paths.get("sleek"), revision.revHash)
+          binCache.cache(binDir, Paths.get("hip"), revision.revHash)
+          // apparently prelude.ss needs to be in, or hip will break.
+          binCache.cache(binDir, Paths.get("prelude.ss"), revision.revHash)
 
-        Some(f(binDir, corpusDir, revision))
-      } else {
-        None
+          SuccessfulBuildResult(f(binDir, corpusDir, revision))
+        }
+        case BuildTimedOut() => {
+          BuildTimedOut()
+        }
+        case BuildFailed() => {
+          BuildFailed()
+        }
       }
     }
   }
@@ -645,7 +660,7 @@ class ConfiguredMain(config: AppConfig) {
       })
 
       maybeNextTCR match {
-        case Some(nextTCR) => {
+        case SuccessfulBuildResult(nextTCR) => {
           // output result, right
           nextTCR.displayResult()
 
@@ -656,12 +671,16 @@ class ConfiguredMain(config: AppConfig) {
           }
         }
 
-        case None => {
+        case BuildTimedOut() => {
           // Failed to build is the only reason runTestsWith will return None
-          // TODO: Unfortunately, this can be due to timeouts, if `make`
-          //  happens to take longer than 5m (!) to build.
-          //  - I intend to 'fix' that, though, so.
+          println("Build failure.")
 
+          // Do nothing, with the logic that maybe trying again will help.
+          // TODO: 'build timed out' is nonsense.
+        }
+
+        case BuildFailed() => {
+          // Failed to build is the only reason runTestsWith will return None
           println("Build failure.")
 
           // Exclude the current `nextRev` from nextRevIdx

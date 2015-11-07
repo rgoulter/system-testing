@@ -11,7 +11,8 @@ import scala.sys.process.ProcessBuilder
 
 class ExecutionOutput(val stdoutLines: Array[String],
                       val stderrLines: Array[String],
-                      val exitValue: Int) {
+                      val exitValue: Int,
+                      val timedOut: Boolean = false) {
   /** `STDOUT` output from the execution. */
   def output = stdoutLines.mkString("\n")
 
@@ -67,7 +68,7 @@ object Runnable {
       case ex: TimeoutException => {
         proc.destroy()
 
-        new ExecutionOutput(Array(), Array("TIMEOUT"), -2)
+        new ExecutionOutput(Array(), Array("TIMEOUT"), -2, timedOut = true)
       }
     }
   }
