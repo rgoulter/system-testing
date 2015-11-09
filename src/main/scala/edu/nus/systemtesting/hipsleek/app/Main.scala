@@ -151,7 +151,17 @@ class ConfiguredMain(config: AppConfig) {
       case "hip"    => runHipTests(revision)
       case "all"    => runAllTests(revision)
       case "diff"   => runSuiteDiff(config.rev1, config.rev2)
-      case "bisect"   => runBisect()
+      case "bisect" => runBisect()
+      case "status-repo" => {
+        val repoStatus = new RepoStatus(config)
+        repoStatus.runStatus()
+      }
+      case "status-branch" => {
+        System.err.println("To be implemented.")
+      }
+      case "status" => {
+        System.err.println("To be implemented.")
+      }
       case _        => showHelpText
     }
   }

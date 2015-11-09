@@ -155,6 +155,16 @@ object AppConfig {
     cmd("bisect") action { (_, c) =>
         c.copy(command = "bisect") } text("(WIP) bisect some TestCase to see when it broke.") children(
           )
+    cmd("status-repo") action { (_, c) =>
+        c.copy(command = "status-repo") } text("Report on the status of the repository (all recent branches).") children(
+          )
+    cmd("status-branch") action { (_, c) =>
+        c.copy(command = "status-branch") } text("Report on the status of the current branch.") children(
+          // TODO: arg as to which branch to report on..
+          )
+    cmd("status") action { (_, c) =>
+        c.copy(command = "status") } text("Report on the status of the current commit or working directory.") children(
+          )
     checkConfig { c =>
         if (c.command == "diff" && c.commands.isEmpty)
           failure("Must specify --hip, --sleek, or --all to diff command")

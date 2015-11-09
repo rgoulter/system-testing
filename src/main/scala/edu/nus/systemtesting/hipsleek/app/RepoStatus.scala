@@ -9,33 +9,7 @@ import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.VisibilityOptions
 import org.joda.time.format.ISODateTimeFormat
 
-/**
- * @author richardg
- */
-object RepoStatus {
-  def main(args: Array[String]): Unit = {
-    val appCfg = Main.loadConfig()
-
-    // Override options from loaded config with CLAs,
-    // run with configuration.
-    AppConfig.CommandLineOptionsParser.parse(args, appCfg) foreach { config =>
-      // Configure output visibility
-      import config.outputVis
-      import VisibilityOptions.ShowANSI
-
-      outputVis.when(ShowANSI) {
-        GlobalReporter.reporter = new ANSIReporter()
-      }
-
-      GlobalReporter.visibility = outputVis
-
-      val configuredStatus = new ConfiguredRepoStatus(config)
-      configuredStatus.runStatus()
-    }
-  }
-}
-
-class ConfiguredRepoStatus(config: AppConfig) {
+class RepoStatus(config: AppConfig) {
   val repo = new Repository(config.repoDirOrDie)
 
   // Don't run, but need ConfiguredMain to invoke diffs between commits
