@@ -6,8 +6,16 @@ import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.GlobalReporter.reporter
+import edu.nus.systemtesting.output.HTMLOutput
 import edu.nus.systemtesting.output.VisibilityOptions
 import org.joda.time.format.ISODateTimeFormat
+import edu.nus.systemtesting.testsuite.TestSuiteComparison
+import edu.nus.systemtesting.Testable
+
+class BranchStatus(val branch: Branch,
+                   val tsCmp: List[TestSuiteComparison],
+                   val bisectResults: List[(Testable, Commit)]) {
+}
 
 class RepoStatus(config: AppConfig) {
   val repo = new Repository(config.repoDirOrDie)
@@ -21,7 +29,7 @@ class RepoStatus(config: AppConfig) {
 
   val MainBranch = "default"
 
-  def runStatus(): Unit = {
+  def runStatus(): List[BranchStatus] = {
     val t = repo.tip()
     println(s"Latest commit: ${t.revHash} (${t.age})")
 
@@ -49,7 +57,7 @@ class RepoStatus(config: AppConfig) {
     val diffableBranches = recentBranches.filterNot(_.branch.name == MainBranch)
 
     // MAGIC: 'default' as the main development branch.
-    diffableBranches.zipWithIndex.foreach { case (c, idx) =>
+    val res = diffableBranches.zipWithIndex.map { case (c, idx) =>
       val branch = c.branch
       import branch.{ latestCommit, earliestCommit }
 
@@ -68,18 +76,27 @@ class RepoStatus(config: AppConfig) {
       // Bisect
       // each of the { was working -> now failing } TestCases.
       //
-      diffs foreach { tsCmp =>
+      val bisectRes = diffs map { tsCmp =>
         val numBisects = tsCmp.usedToPass.length
 
-        tsCmp.usedToPass.zipWithIndex foreach { case ((oldTC, _), idx) =>
+        tsCmp.usedToPass.zipWithIndex map { case ((oldTC, _), idx) =>
           reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
 
           val bisectTC = configuredMain.recoverTestableFromTCR(oldTC)
 
-          bisect(earliestCommit, latestCommit, bisectTC)
+          val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC)
+
+          (bisectTC, firstFailingC)
         }
-      }
+      } flatten
+
+      new BranchStatus(branch, diffs, bisectRes)
     }
+
+    // XXX Dump branch statuses to HTML.
+    HTMLOutput.dumpRepoStatus(t, res)
+
+    res
   }
 
   // outputs a one-line summary of a branch

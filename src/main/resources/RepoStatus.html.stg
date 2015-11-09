@@ -1,0 +1,38 @@
+delimiters "$", "$"
+
+//
+// TCR
+//
+
+// 'name' expected to be like "sleek --args /path/to/file.slk"
+tcrPassing(name) ::= <<
+$name$ <span class="pass">Passed</span><br/>
+>>
+
+tcrFailed(name, expected, actual) ::= <<
+$name$ <span class="pass">Failed</span><br/>
+TODO: expected X but got Y.<br/>
+>>
+
+tcrInvalid(name, output) ::= <<
+$name$ <span class="pass">Passed</span><br/>
+TODO: output was.<br/>
+>>
+
+
+//
+// TSR
+//
+
+tsrSummary(totalCt, passedCt, failedCt, invalidCt) ::= <<
+TODO: TSR summary table
+>>
+
+
+
+page(content) ::= <<
+<html>
+  <body>
+  </body>
+</html>
+>>

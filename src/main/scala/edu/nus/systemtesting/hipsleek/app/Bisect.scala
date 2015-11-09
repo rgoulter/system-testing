@@ -35,7 +35,7 @@ class Bisect(config: AppConfig) {
   import runHipSleek.runTestCaseForRevision
 
 
-  private[app] def bisect(workingCommit: Commit, failingCommit: Commit, tc: Testable): Unit = {
+  private[app] def bisect(workingCommit: Commit, failingCommit: Commit, tc: Testable): Commit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
@@ -161,5 +161,8 @@ class Bisect(config: AppConfig) {
     reporter.header("Bisect Result", ColorCyan)
     println(s"Latest working commit: $rev1")
     println(s"Earliest failing commit: $rev2")
+
+    // return first commit which fails
+    rev2
   }
 }

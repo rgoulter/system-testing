@@ -60,7 +60,7 @@ class Diff(config: AppConfig) {
 
     if (!diffable.isEmpty) {
       diffable map { case (name, oldTSRes, curTSRes) =>
-        val diff = TestSuiteComparison(oldTSRes, curTSRes)
+        val diff = TestSuiteComparison(name, oldTSRes, curTSRes)
 
         diff.display(name)
 

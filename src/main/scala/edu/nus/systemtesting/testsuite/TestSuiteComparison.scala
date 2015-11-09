@@ -20,6 +20,8 @@ import GlobalReporter.reporter
  */
 class TestSuiteComparison(val oldRevision: String,
                           val curRevision: String,
+                          val oldTSR: TestSuiteResult,
+                          val curTSR: TestSuiteResult,
                           val argsChangedTests: List[TestCaseDiffPair],
                           val removedTests: List[TestCaseResult],
                           val newTests:     List[TestCaseResult],
@@ -29,7 +31,8 @@ class TestSuiteComparison(val oldRevision: String,
                           val usedToPass: List[TestCaseDiffPair],
                           val diffDiffs:  List[TestCaseDiffPair],
                           val curSlower:  List[TestCaseDiffPair],
-                          val curQuicker: List[TestCaseDiffPair]) {
+                          val curQuicker: List[TestCaseDiffPair],
+                          val comparisonName: String = "") {
   val unchanged = {
     // unsure about whether curSlower, curQuicker should 'count'
     List(argsChangedTests,
@@ -155,7 +158,7 @@ object TestSuiteComparison {
    * Construct a [[TestSuiteComparison]], conveniently computes values for
    * each of the parameters.
    */
-  def apply(oldTS: TestSuiteResult, curTS: TestSuiteResult): TestSuiteComparison = {
+  def apply(name: String, oldTS: TestSuiteResult, curTS: TestSuiteResult): TestSuiteComparison = {
     // It can't be assumed that oldTS, currTS ran the same set of TestCases
     // (in terms of *SuiteUsage), since these can change over time as TestCases
     // are added, program flags change, etc.
@@ -272,8 +275,11 @@ object TestSuiteComparison {
 
     // Now construct TestSuiteComparison from the above
     new TestSuiteComparison(
+      comparisonName = name,
       oldRevision = oldRevision,
       curRevision = curRevision,
+      oldTSR = oldTS,
+      curTSR = curTS,
       argsChangedTests = argsChangedTests,
       removedTests = removedTests,
       newTests = newTests,
