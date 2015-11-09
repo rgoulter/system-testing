@@ -30,10 +30,17 @@ object HTMLOutput {
   // TCR
   //
 
-  def htmlOfPassingTCR(c: String, name: String, tcr: TestCaseResult): String = {
-    val template = htmlSTG.getInstanceOf("tcrPassing"); 
+  def strOfTCR(tcr: TestCaseResult): String = {
+    if (tcr.arguments.trim().isEmpty())
+      tcr.command + " " + tcr.filename
+    else
+      tcr.command + " " + tcr.arguments + " " + tcr.filename
+  }
 
-    template.add("name", "TODO: cmd, args, filename")
+  def htmlOfPassingTCR(c: String, name: String, tcr: TestCaseResult): String = {
+    val template = htmlSTG.getInstanceOf("tcrPassing");
+
+    template.add("name", strOfTCR(tcr))
 
     // XXX Output runtime, if larger than threshold..
 
@@ -41,20 +48,29 @@ object HTMLOutput {
   }
 
   def htmlOfFailingTCR(c: String, name: String, tcr: TestCaseResult): String = {
-    val template = htmlSTG.getInstanceOf("tcrFailing"); 
+    val template = htmlSTG.getInstanceOf("tcrFailing");
 
-    template.add("name", "TODO: cmd, args, filename")
-    template.add("expected", ???)
-    template.add("actual", ???)
+    val (expA, actA) = (tcr.diff.map { res =>
+      (res.expected, res.actual)
+    }) unzip
+
+    template.add("name", strOfTCR(tcr))
+    template.add("expected", expA.toArray)
+    template.add("actual", actA.toArray)
 
     template.render()
   }
 
   def htmlOfInvalidTCR(c: String, name: String, tcr: TestCaseResult): String = {
-    val template = htmlSTG.getInstanceOf("tcrInvalid"); 
+    val template = htmlSTG.getInstanceOf("tcrInvalid");
 
-    template.add("name", "TODO: cmd, args, filename")
-    template.add("output", ???)
+    template.add("name", strOfTCR(tcr))
+
+    // ENHANCEMENT: be able to 'truncate' output,
+    //  if the output is excessive.
+    val outputStr = tcr.remarks.map { s => s + "<br/>\n" } mkString
+
+    template.add("output", outputStr)
 
     template.render()
   }
@@ -68,7 +84,7 @@ object HTMLOutput {
   }
 
   def htmlOfTSRSummary(tsr: TestSuiteResult): String = {
-    val template = htmlSTG.getInstanceOf("tsrSummary"); 
+    val template = htmlSTG.getInstanceOf("tsrSummary");
 
     template.add("totalCt", tsr.results.length)
     template.add("passedCt", tsr.successes.length)
@@ -95,7 +111,31 @@ object HTMLOutput {
   }
 
   def htmlOfDiff(tsCmp: TestSuiteComparison, bisectResults: List[(Testable, Commit)]): String = {
-    "TODO: html of diff"
+    val template = htmlSTG.getInstanceOf("tsrCmp");
+
+    // copied from TSCmp class; for 'consistency'.
+    def tcrToString(tcr: TestCaseResult): String = {
+      import tcr.{ command, arguments, filename }
+      s"TC[$command, $arguments, $filename]"
+    }
+
+    def strOfTCPair(tcPair: (TestCaseResult, TestCaseResult)): String = {
+      val (oldTC, curTC) = tcPair
+      tcrToString(curTC)
+    }
+
+    template.add("name", tsCmp.comparisonName)
+    template.add("oldRev", tsCmp.oldRevision)
+    template.add("curRev", tsCmp.curRevision)
+    template.add("nowValid", (tsCmp.nowSuccessfullyRuns map strOfTCPair) toArray)
+    template.add("nowInvalid", (tsCmp.usedToSuccessfullyRun map strOfTCPair) toArray)
+    template.add("nowPasses", (tsCmp.nowPasses map strOfTCPair) toArray)
+    template.add("nowFails", (tsCmp.usedToPass map strOfTCPair) toArray)
+    template.add("diffDiffs", (tsCmp.diffDiffs map strOfTCPair) toArray)
+    template.add("nowSlower", (tsCmp.curSlower map strOfTCPair) toArray)
+    template.add("nowQuicker", (tsCmp.curQuicker map strOfTCPair) toArray)
+
+    template.render()
   }
 
   def htmlOfBranchStatus(branchStatus: BranchStatus): String = {
@@ -123,9 +163,25 @@ object HTMLOutput {
     title + content
   }
 
+  def htmlOfBranchesTable(branchStatuses: List[BranchStatus]): String = {
+    val template = htmlSTG.getInstanceOf("branchesToC");
+
+    val names = ???
+    val revs = ???
+    val ages = ???
+    val branchedFroms = ???
+
+//    template.add("names", names toArray)
+//    template.add("revs", revs toArray)
+//    template.add("ages", ages toArray)
+//    template.add("branchedFroms", branchedFroms toArray)
+
+    template.render()
+  }
+
   def dumpRepoStatus(tip: Commit, branchStatuses: List[BranchStatus]): Unit = {
     // generate ToC from recent branches
-    val branchesToC = "to be implemented: HTML of Table of Contents for branches<br/>\n"
+    val branchesToC = htmlOfBranchesTable(branchStatuses)
 
     // generate + concatenate HTML for each branch status,
     val branchesContent = branchStatuses map { bs =>
@@ -134,7 +190,7 @@ object HTMLOutput {
 
     val htmlContent = branchesToC + branchesContent
 
-    val template = htmlSTG.getInstanceOf("page"); 
+    val template = htmlSTG.getInstanceOf("page");
 
     template.add("content", htmlContent)
 

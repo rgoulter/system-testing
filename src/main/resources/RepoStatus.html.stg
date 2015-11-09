@@ -6,17 +6,22 @@ delimiters "$", "$"
 
 // 'name' expected to be like "sleek --args /path/to/file.slk"
 tcrPassing(name) ::= <<
-$name$ <span class="pass">Passed</span><br/>
+$name$ <span class="tcrPass">Passed</span><br/>
 >>
 
+// ENHANCEMENT: Colors for exp, act.
 tcrFailed(name, expected, actual) ::= <<
-$name$ <span class="pass">Failed</span><br/>
+$name$ <span class="tcrFail">Failed</span><br/>
 TODO: expected X but got Y.<br/>
+$expected, actual:{exp,act|Expected $exp$ but got $act$.<br/>
+}$
 >>
 
 tcrInvalid(name, output) ::= <<
-$name$ <span class="pass">Passed</span><br/>
-TODO: output was.<br/>
+$name$ <span class="tcrInvalid">Invalid</span><br/>
+Binary failed to execute. Please investigate.<br/>
+Output was:<br/>
+$output$
 >>
 
 
@@ -25,9 +30,57 @@ TODO: output was.<br/>
 //
 
 tsrSummary(totalCt, passedCt, failedCt, invalidCt) ::= <<
-TODO: TSR summary table
+Summary<br/>
+
+<span class="tsrSummary">
+  <span>Total number of tests: <b class="tsrTotal">$totalCt$</b></span>
+  <span>Total number of tests passed: <b class="tsrTotalPassed">$passedCt$</b></span>
+  <span>Total number of tests failed: <b class="tsrTotalFailed">$failedCt$</b></span>
+  <span>Total number of tests invalid: <b class="tsrTotalInvalid">$invalidCt$</b></span>
+</span>
 >>
 
+
+//
+// TS Cmp / Diff
+//
+
+// could use <li/> here?
+// ENHANCEMENT: Colors for items.
+diffList(name, ls) ::= <<
+$if(!ls.empty)$
+$name$:<br/>
+$ls:{$it$|$it$<br/>
+}$
+$endif$
+>>
+
+// * skip the add/rm tests, args changed (for now)
+// * another simplification: all as array-of-string.
+tsrCmp(name, oldRev, curRev, nowValid, nowInvalid, nowPasses, nowFails, diffDiffs, nowSlower, nowQuicker) ::= <<
+<b>Diff Between $oldRev$ to $curRev$</b><br/>
+
+diffList("Now Valid", nowValid)
+diffList("Now Invalid", nowInvalid)
+diffList("Now Passes", nowPasses)
+diffList("Now Fails", nowFails)
+diffList("Still Fails, Different Diffs", diffDiffs)
+diffList("Now Slower", nowSlower)
+diffList("Now Quicker", nowQuicker)
+>>
+
+
+//
+// Branch
+//
+
+
+branchInfo(name, rev, age, branchedFrom) ::= <<
+>>
+
+branchesToC(names, revs, ages, branchedFroms) ::= <<
+To be implemented.<br/>
+>>
 
 
 page(content) ::= <<
