@@ -75,7 +75,7 @@ class HipSleekPreparation(val projectDir: Path) {
     reporter.log(s"Calling 'make native' in ${projectDir.toString()}")
     // XXX note that this may timeout...
     val mkNativeOutp = executeProc(Process("make native", projectDir toFile),
-                                   timeout = 300)
+                                   timeout = 300 * 10) // Let's increase timeout, since can be slow to run, sometimes.
 
     if (mkNativeOutp.exitValue != 0) {
       if (mkNativeOutp.timedOut) {
