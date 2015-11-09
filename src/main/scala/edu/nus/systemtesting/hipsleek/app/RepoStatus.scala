@@ -36,11 +36,14 @@ object RepoStatus {
 }
 
 class ConfiguredRepoStatus(config: AppConfig) {
-  val repoDir = config.repoDirOrDie
-  val repo = new Repository(repoDir)
+  val repo = new Repository(config.repoDirOrDie)
 
   // Don't run, but need ConfiguredMain to invoke diffs between commits
   val configuredMain = new ConfiguredMain(config)
+  val diff = new Diff(config)
+  import diff.{ allResultPairs, diffSuiteResults }
+  val bisector = new Bisect(config)
+  import bisector.bisect
 
   val MainBranch = "default"
 
@@ -81,11 +84,11 @@ class ConfiguredRepoStatus(config: AppConfig) {
       // TODO: Or should this be commonAncestor with branched-from?
       // val latestMergeC = Repo.commonAncestor(latestCommit, defaultB)
 
-      val resultPairs = configuredMain.allResultPairs(_, _)
+      val resultPairs = allResultPairs(_, _)
 
       reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
 
-      val diffs = configuredMain.diffSuiteResults(earliestCommit, latestCommit, resultPairs)
+      val diffs = diffSuiteResults(earliestCommit, latestCommit, resultPairs)
 
       //
       // Bisect
@@ -99,7 +102,7 @@ class ConfiguredRepoStatus(config: AppConfig) {
 
           val bisectTC = configuredMain.recoverTestableFromTCR(oldTC)
 
-          configuredMain.runBisect(earliestCommit, latestCommit, bisectTC)
+          bisect(earliestCommit, latestCommit, bisectTC)
         }
       }
     }
