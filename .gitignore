@@ -25,6 +25,7 @@ hs_err_pid*
 logs/
 results/
 bincache/
+build_failures
 
 *conf
 .settings
