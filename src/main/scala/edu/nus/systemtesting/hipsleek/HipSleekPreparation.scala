@@ -10,7 +10,7 @@ import edu.nus.systemtesting.output.GlobalReporter
 import GlobalReporter.reporter
 import java.nio.file.Path
 
-sealed class BuildResult[T]
+sealed abstract class BuildResult[T]
 
 case class SuccessfulBuildResult[T](val res: T) extends BuildResult[T]
 
