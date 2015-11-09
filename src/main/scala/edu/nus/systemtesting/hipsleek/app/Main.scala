@@ -611,6 +611,23 @@ class ConfiguredMain(config: AppConfig) {
     assume(tcr1.get.passed, s"Assumed $tc passes for $workingCommit")
     assume(!tcr2.get.passed, s"Assumed $tc fails for $failingCommit")
 
+    // n.b. this exports archive to tmpDir each time, either to build, or
+    // just for the examples.
+    def runTest(rev: Commit): BuildResult[TestCaseResult] =
+      runTestsWith(rev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
+        // Ideally, preparedSys would itself do the building of repo.
+        // i.e. building the repo would be delayed until necessary.
+        // At the moment, though, since any system loading tests will *have* the
+        // tests, this is not going to slow things down.
+        lazy val preparedSys = PreparedSystem(binDir, corpusDir)
+
+        val resultsFor = runTestCaseForRevision(rev, preparedSys)(construct)
+
+        // by this point,
+        // tc *must* have proper expectedOutput
+        resultsFor(tc)
+      }
+
     // Load all the results we have for the given testable.
 //    val revResPairs = results resultsFor tc
 //    val revs = revResPairs map { case (r,_) => r }
@@ -623,13 +640,17 @@ class ConfiguredMain(config: AppConfig) {
     var rev2 = failingCommit
     var revRange = repo.commitsInRange(rev1, rev2).toBuffer
 
-    // Removing all the build failures here (as opposed to later) can make
-    // re-running a status 'not-idempotent', as such, and so may have to build
-    // or run different commits/tests.
+    // Commits which we encounter which have failed
     val buildFailureCommits = scala.collection.mutable.Set[Commit]()
-    results.loadBuildFailureCommits().foreach { revHash =>
-      buildFailureCommits += new Commit(repo, revHash.trim())
-    }
+
+    // Load the set of all commits which have previously been recorded as
+    // 'build failure'.
+    // It's a Bad Idea to add these to `buildFailureCommits` now, since this
+    // would affect the commits which get used for the bisection. That results
+    // in the bisection taking *even longer*.
+    val globalBuildFailureCommits = results.loadBuildFailureCommits().map { revHash =>
+      new Commit(repo, revHash.trim())
+    } toSet
 
     def revRangeLen = revRange.length
     def numSteps = ceil(log(revRangeLen) / log(2)) toInt
@@ -643,50 +664,41 @@ class ConfiguredMain(config: AppConfig) {
       val nextRevIdx = if (revRangeLen % 2 == 0) revRangeLen / 2 else (revRangeLen - 1) / 2
       val nextRev = revRange(nextRevIdx)
 
-      // n.b. this exports archive to tmpDir each time, either to build, or
-      // just for the examples.
-      val maybeNextTCR = (runTestsWith(nextRev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
-        // Ideally, preparedSys would itself do the building of repo.
-        // i.e. building the repo would be delayed until necessary.
-        // At the moment, though, since any system loading tests will *have* the
-        // tests, this is not going to slow things down.
-        lazy val preparedSys = PreparedSystem(binDir, corpusDir)
+      if (globalBuildFailureCommits contains nextRev) {
+        // Only at the time we would encounter a failing commit,
+        // note that the commit fails (in this bisection), continue.
+        buildFailureCommits += nextRev
+      } else {
+        val maybeNextTCR = runTest(nextRev)
 
-        val resultsFor = runTestCaseForRevision(nextRev, preparedSys)(construct)
+        maybeNextTCR match {
+          case SuccessfulBuildResult(nextTCR) => {
+            // output result, right
+            nextTCR.displayResult()
 
-        // by this point,
-        // tc *must* have proper expectedOutput
-        resultsFor(tc)
-      })
-
-      maybeNextTCR match {
-        case SuccessfulBuildResult(nextTCR) => {
-          // output result, right
-          nextTCR.displayResult()
-
-          if (nextTCR.passed) {
-            rev1 = nextRev
-          } else {
-            rev2 = nextRev
+            if (nextTCR.passed) {
+              rev1 = nextRev
+            } else {
+              rev2 = nextRev
+            }
           }
-        }
 
-        case BuildTimedOut() => {
-          // Failed to build is the only reason runTestsWith will return None
-          println("Build failure.")
+          case BuildTimedOut() => {
+            // Failed to build is the only reason runTestsWith will return None
+            println("Build timed out. Ignoring...")
 
-          // Do nothing, with the logic that maybe trying again will help.
-          // TODO: 'build timed out' is nonsense.
-        }
+            // Do nothing, with the logic that maybe trying again will help.
+            // TODO: 'build timed out' is nonsense.
+          }
 
-        case BuildFailed() => {
-          // Failed to build is the only reason runTestsWith will return None
-          println("Build failure.")
+          case BuildFailed() => {
+            // Failed to build is the only reason runTestsWith will return None
+            println("Build failure.")
 
-          // Exclude the current `nextRev` from nextRevIdx
-          revRange -= nextRev
-          buildFailureCommits += nextRev
-          results.addBuildFailureCommit(nextRev.revHash)
+            // Exclude the current `nextRev` from nextRevIdx
+            buildFailureCommits += nextRev
+            results.addBuildFailureCommit(nextRev.revHash)
+          }
         }
       }
     }
