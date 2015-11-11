@@ -166,15 +166,26 @@ object HTMLOutput {
   def htmlOfBranchesTable(branchStatuses: List[BranchStatus]): String = {
     val template = htmlSTG.getInstanceOf("branchesToC");
 
-    val names = ???
-    val revs = ???
-    val ages = ???
-    val branchedFroms = ???
+    val branches = branchStatuses.map (_.branch)
 
-//    template.add("names", names toArray)
-//    template.add("revs", revs toArray)
-//    template.add("ages", ages toArray)
-//    template.add("branchedFroms", branchedFroms toArray)
+    val names = branches map(_.name)
+    val revs = branches map(_.revHash)
+    val ages = branches map(_.age)
+    val branchedFroms = branches map { br =>
+      br.branchedFrom.map { c =>
+        val branch = c.branch
+        val bfName = branch.name
+        val bfRev = branch.revHash
+        val bfAge = branch.age
+
+        s"$bfName $bfRev $bfAge"
+      } getOrElse "-"
+    }
+
+    template.add("names", names toArray)
+    template.add("revs", revs toArray)
+    template.add("ages", ages toArray)
+    template.add("branchedFroms", branchedFroms toArray)
 
     template.render()
   }

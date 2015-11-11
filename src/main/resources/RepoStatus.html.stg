@@ -10,7 +10,7 @@ $name$ <span class="tcrPass">Passed</span><br/>
 >>
 
 // ENHANCEMENT: Colors for exp, act.
-tcrFailed(name, expected, actual) ::= <<
+tcrFailing(name, expected, actual) ::= <<
 $name$ <span class="tcrFail">Failed</span><br/>
 TODO: expected X but got Y.<br/>
 $expected, actual:{exp,act|Expected $exp$ but got $act$.<br/>
@@ -50,7 +50,7 @@ Summary<br/>
 diffList(name, ls) ::= <<
 $if(!ls.empty)$
 $name$:<br/>
-$ls:{$it$|$it$<br/>
+$ls:{it|$it$<br/>
 }$
 $endif$
 >>
@@ -79,13 +79,18 @@ branchInfo(name, rev, age, branchedFrom) ::= <<
 >>
 
 branchesToC(names, revs, ages, branchedFroms) ::= <<
-To be implemented.<br/>
+<table>
+  <tr><td>Name</td><td>Revision</td><td>Age</td><td>Branched From</td></tr>
+  $names,revs,ages,branchedFroms:{name,rev,age,branchedFrom|<tr><td>$name$</td><td>$rev$</td><td>$age$</td><td>$branchedFrom$</td></tr>
+}$
+</table>
 >>
 
 
 page(content) ::= <<
 <html>
   <body>
+  $content$
   </body>
 </html>
 >>
