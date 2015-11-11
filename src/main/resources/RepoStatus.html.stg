@@ -6,22 +6,20 @@ delimiters "$", "$"
 
 // 'name' expected to be like "sleek --args /path/to/file.slk"
 tcrPassing(name) ::= <<
-$name$ <span class="tcrPass">Passed</span><br/>
+$name$ <span class="tcr pass">Passed</span><br/>
 >>
 
 // ENHANCEMENT: Colors for exp, act.
 tcrFailing(name, expected, actual) ::= <<
-$name$ <span class="tcrFail">Failed</span><br/>
-TODO: expected X but got Y.<br/>
+$name$ <span class="tcr fail">Failed</span><br/>
 $expected, actual:{exp,act|Expected $exp$ but got $act$.<br/>
 }$
 >>
 
 tcrInvalid(name, output) ::= <<
-$name$ <span class="tcrInvalid">Invalid</span><br/>
-Binary failed to execute. Please investigate.<br/>
-Output was:<br/>
-$output$
+$name$ <span class="tcr invalid">Invalid</span><br/>
+$output:{line|$line$<br/>
+}$
 >>
 
 
@@ -30,13 +28,14 @@ $output$
 //
 
 tsrSummary(totalCt, passedCt, failedCt, invalidCt) ::= <<
+<br/>
 Summary<br/>
 
 <span class="tsrSummary">
-  <span>Total number of tests: <b class="tsrTotal">$totalCt$</b></span>
-  <span>Total number of tests passed: <b class="tsrTotalPassed">$passedCt$</b></span>
-  <span>Total number of tests failed: <b class="tsrTotalFailed">$failedCt$</b></span>
-  <span>Total number of tests invalid: <b class="tsrTotalInvalid">$invalidCt$</b></span>
+  <span>Total number of tests: <b class="tsrTotal">$totalCt$</b><br/></span>
+  <span>Total number of tests passed: <b class="tsrTotalPassed pass">$passedCt$</b><br/></span>
+  <span>Total number of tests failed: <b class="tsrTotalFailed fail">$failedCt$</b><br/></span>
+  <span>Total number of tests invalid: <b class="tsrTotalInvalid invalid">$invalidCt$</b><br/></span>
 </span>
 >>
 
@@ -60,13 +59,13 @@ $endif$
 tsrCmp(name, oldRev, curRev, nowValid, nowInvalid, nowPasses, nowFails, diffDiffs, nowSlower, nowQuicker) ::= <<
 <b>Diff Between $oldRev$ to $curRev$</b><br/>
 
-diffList("Now Valid", nowValid)
-diffList("Now Invalid", nowInvalid)
-diffList("Now Passes", nowPasses)
-diffList("Now Fails", nowFails)
-diffList("Still Fails, Different Diffs", diffDiffs)
-diffList("Now Slower", nowSlower)
-diffList("Now Quicker", nowQuicker)
+$diffList("Now Valid", nowValid)$
+$diffList("Now Invalid", nowInvalid)$
+$diffList("Now Passes", nowPasses)$
+$diffList("Now Fails", nowFails)$
+$diffList("Still Fails, Different Diffs", diffDiffs)$
+$diffList("Now Slower", nowSlower)$
+$diffList("Now Quicker", nowQuicker)$
 >>
 
 

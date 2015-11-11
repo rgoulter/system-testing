@@ -26,6 +26,24 @@ object HTMLOutput {
   val tgContent = Source.fromInputStream(tgIS).mkString
   val htmlSTG = new STGroupString(tgContent)
 
+  // escape HTML, based on:
+  // http://stackoverflow.com/a/25228492/2488640
+  def escapeHTML(s: String): String = {
+    val out = new StringBuilder(Math.max(16, s.length()));
+
+    for (c <- s) {
+      if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+        out.append("&#");
+        out.append(c.toInt.toString());
+        out.append(';');
+      } else {
+        out.append(c);
+      }
+    }
+
+    out.toString();
+  }
+
   //
   // TCR
   //
@@ -40,7 +58,7 @@ object HTMLOutput {
   def htmlOfPassingTCR(c: String, name: String, tcr: TestCaseResult): String = {
     val template = htmlSTG.getInstanceOf("tcrPassing");
 
-    template.add("name", strOfTCR(tcr))
+    template.add("name", escapeHTML(strOfTCR(tcr)))
 
     // XXX Output runtime, if larger than threshold..
 
@@ -54,7 +72,7 @@ object HTMLOutput {
       (res.expected, res.actual)
     }) unzip
 
-    template.add("name", strOfTCR(tcr))
+    template.add("name", escapeHTML(strOfTCR(tcr)))
     template.add("expected", expA.toArray)
     template.add("actual", actA.toArray)
 
@@ -64,13 +82,13 @@ object HTMLOutput {
   def htmlOfInvalidTCR(c: String, name: String, tcr: TestCaseResult): String = {
     val template = htmlSTG.getInstanceOf("tcrInvalid");
 
-    template.add("name", strOfTCR(tcr))
+    template.add("name", escapeHTML(strOfTCR(tcr)))
 
     // ENHANCEMENT: be able to 'truncate' output,
     //  if the output is excessive.
-    val outputStr = tcr.remarks.map { s => s + "<br/>\n" } mkString
+    val outputList = tcr.remarks.map { s => escapeHTML(s) }
 
-    template.add("output", outputStr)
+    template.add("output", outputList toArray)
 
     template.render()
   }
@@ -124,7 +142,7 @@ object HTMLOutput {
       tcrToString(curTC)
     }
 
-    template.add("name", tsCmp.comparisonName)
+    template.add("name", escapeHTML(tsCmp.comparisonName))
     template.add("oldRev", tsCmp.oldRevision)
     template.add("curRev", tsCmp.curRevision)
     template.add("nowValid", (tsCmp.nowSuccessfullyRuns map strOfTCPair) toArray)
@@ -191,13 +209,15 @@ object HTMLOutput {
   }
 
   def dumpRepoStatus(tip: Commit, branchStatuses: List[BranchStatus]): Unit = {
+    println("Generating HTML...")
+
     // generate ToC from recent branches
     val branchesToC = htmlOfBranchesTable(branchStatuses)
 
     // generate + concatenate HTML for each branch status,
     val branchesContent = branchStatuses map { bs =>
       htmlOfBranchStatus(bs) + "<br>\n"
-    }
+    } mkString
 
     val htmlContent = branchesToC + branchesContent
 
@@ -214,5 +234,7 @@ object HTMLOutput {
     pw.println(repoStatusHTML)
     pw.flush()
     pw.close()
+
+    println("Done.")
   }
 }
