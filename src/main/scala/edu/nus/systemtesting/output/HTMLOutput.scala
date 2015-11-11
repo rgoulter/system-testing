@@ -90,13 +90,14 @@ object HTMLOutput {
   def htmlOfFailingTCR(c: String, name: String, tcr: TestCaseResult): String = {
     val template = htmlSTG.getInstanceOf("tcrFailing");
 
-    val (expA, actA) = (tcr.diff.map { res =>
-      (res.expected, res.actual)
-    }) unzip
+    val (expA, actA, keyA) = (tcr.diff.map { res =>
+      (res.expected, res.actual, res.key)
+    }) unzip3
 
     template.add("name", escapeHTML(strOfTCR(tcr)))
     template.add("expected", expA.toArray)
     template.add("actual", actA.toArray)
+    template.add("key", keyA.toArray)
 
     template.render()
   }
@@ -140,12 +141,15 @@ object HTMLOutput {
     val title = s"TSR for $name at Revision $c<br/>\n"
 
     val tcrs = tsr.results.map { tcr => htmlOfTestCaseResult(c, name, tcr) + "\n" } mkString
+    val tcrsDiv = s"""<div class="tcrs">
+  $tcrs
+</div>"""
 
     val summary = htmlOfTSRSummary(tsr) + "\n"
 
     // TODO: TSR Tally
 
-    title + tcrs + summary
+    title + tcrsDiv + summary
   }
 
   def htmlOfDiff(tsCmp: TestSuiteComparison, bisectResults: List[(Testable, Commit)]): String = {

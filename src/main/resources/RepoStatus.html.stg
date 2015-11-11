@@ -6,18 +6,18 @@ delimiters "$", "$"
 
 // 'name' expected to be like "sleek --args /path/to/file.slk"
 tcrPassing(name) ::= <<
-$name$ <span class="tcr pass">Passed</span><br/>
+<span class="tcr name">$name$</span><span class="tcr result pass">Passed</span><br class="tcr" />
 >>
 
 // ENHANCEMENT: Colors for exp, act.
-tcrFailing(name, expected, actual) ::= <<
-$name$ <span class="tcr fail">Failed</span><br/>
-$expected, actual:{exp,act|Expected $exp$ but got $act$.<br/>
+tcrFailing(name, expected, actual, key) ::= <<
+<span class="tcr name">$name$</span><span class="tcr result fail">Failed</span><br class="tcr" />
+$expected, actual, key:{exp,act,k|Expected <span class="diffExpected">$exp$</span> but got <span class="diffActual">$act$</span> for $k$.<br/>
 }$
 >>
 
 tcrInvalid(name, output) ::= <<
-$name$ <span class="tcr invalid">Invalid</span><br/>
+<span class="tcr name">$name$</span><span class="tcr result invalid">Invalid</span><br class="tcr" />
 $output$
 >>
 
@@ -95,11 +95,11 @@ conciseText(short, long, count) ::= <<
 <div class="conciseText">
   <div class="shortText visible">
     $lines(short)$
-    <p>[<a href="#">Show</a> ($count$ more lines)]</p>
+    <p>[<a>Show</a> ($count$ more lines)]</p>
   </div>
   <div class="expandedText hide">
     $lines(long)$
-    <p>[<a href="#">Hide</a>]</p>
+    <p>[<a>Hide</a>]</p>
   </div>
 </div>
 >>
@@ -109,6 +109,19 @@ page(content) ::= <<
 <html>
   <head>
     <style type="text/css">
+      .pass { color: darkgreen; }
+      .fail { color: red; }
+      .invalid { color: red; }
+
+      .diffExpected { color: darkcyan; }
+      .diffActual { color: darkmagenta; }
+
+      div.tcrs { width: 800px; }
+
+      span.tcr.name { float: left; }
+      span.tcr.result { float: right; }
+      br.tcr { clear: both; }
+
       .hide { display: none; }
     </style>
 
