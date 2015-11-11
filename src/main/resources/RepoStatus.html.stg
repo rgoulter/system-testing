@@ -18,8 +18,7 @@ $expected, actual:{exp,act|Expected $exp$ but got $act$.<br/>
 
 tcrInvalid(name, output) ::= <<
 $name$ <span class="tcr invalid">Invalid</span><br/>
-$output:{line|$line$<br/>
-}$
+$output$
 >>
 
 
@@ -86,9 +85,69 @@ branchesToC(names, revs, ages, branchedFroms) ::= <<
 >>
 
 
+lines(arr) ::= <<
+$arr:{line|$line$<br/>
+}$
+>>
+
+// classnames here must match those used in `page`.
+conciseText(short, long, count) ::= <<
+<div class="conciseText">
+  <div class="shortText visible">
+    $lines(short)$
+    <p>[<a href="#">Show</a> ($count$ more lines)]</p>
+  </div>
+  <div class="expandedText hide">
+    $lines(long)$
+    <p>[<a href="#">Hide</a>]</p>
+  </div>
+</div>
+>>
+
+
 page(content) ::= <<
 <html>
-  <body>
+  <head>
+    <style type="text/css">
+      .hide { display: none; }
+    </style>
+
+    <script type="text/javascript">
+    //<![CDATA[
+
+    function init() {
+      // Initialise conciseText show/hide
+      var conciseTexts = document.getElementsByClassName("conciseText")
+      for (var i = 0; i < conciseTexts.length; i++) {
+        var ct = conciseTexts[i];
+        var h2 = ct.getElementsByTagName("a")
+
+        for (var j = 0; j < h2.length; j++) {
+          h2[j].onclick = toggleConciseTextItem;
+        }
+      }
+    }
+
+    function toggleConciseTextItem() {
+      // this gets annoying;
+      // look at parentNode's parentNode (conciseText),
+      // then switch which div has 'hide'.
+      var conciseTextDiv = this.parentNode.parentNode.parentNode;
+
+      var wasVis = conciseTextDiv.getElementsByClassName("visible")[0]
+      var wasHid = conciseTextDiv.getElementsByClassName("hide")[0]
+
+      wasVis.classList.add("hide")
+      wasVis.classList.remove("visible")
+
+      wasHid.classList.add("visible")
+      wasHid.classList.remove("hide")
+    }
+
+     //]]>
+    </script>
+  </head>
+  <body onload="init()">
   $content$
   </body>
 </html>

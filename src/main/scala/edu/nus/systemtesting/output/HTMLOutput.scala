@@ -44,6 +44,28 @@ object HTMLOutput {
     out.toString();
   }
 
+  def conciseText(s: List[String]): String = {
+    val TruncateTo = 5
+
+    if (s.length > TruncateTo) {
+      val short = s.take(TruncateTo)
+
+      val template = htmlSTG.getInstanceOf("conciseText");
+
+      template.add("short", short toArray)
+      template.add("long", s toArray)
+      template.add("count", s.length - TruncateTo)
+
+      template.render()
+    } else {
+      val template = htmlSTG.getInstanceOf("lines");
+
+      template.add("arr", s toArray)
+
+      template.render()
+    }
+  }
+
   //
   // TCR
   //
@@ -80,15 +102,13 @@ object HTMLOutput {
   }
 
   def htmlOfInvalidTCR(c: String, name: String, tcr: TestCaseResult): String = {
+    val outputList = tcr.remarks.map { s => escapeHTML(s) }
+    val outputStr = conciseText(outputList.toList)
+
     val template = htmlSTG.getInstanceOf("tcrInvalid");
 
     template.add("name", escapeHTML(strOfTCR(tcr)))
-
-    // ENHANCEMENT: be able to 'truncate' output,
-    //  if the output is excessive.
-    val outputList = tcr.remarks.map { s => escapeHTML(s) }
-
-    template.add("output", outputList toArray)
+    template.add("output", outputStr)
 
     template.render()
   }
