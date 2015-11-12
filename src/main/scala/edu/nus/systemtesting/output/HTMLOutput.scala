@@ -153,13 +153,25 @@ object HTMLOutput {
       strOfTCR(curTC)
     }
 
+    // XXX: How to mix in bisect results here?
+
     template.add("name", escapeHTML(tsCmp.comparisonName))
     template.add("oldRev", tsCmp.oldRevision)
     template.add("curRev", tsCmp.curRevision)
     template.add("nowValid", (tsCmp.nowSuccessfullyRuns map strOfTCPair) toArray)
     template.add("nowInvalid", (tsCmp.usedToSuccessfullyRun map strOfTCPair) toArray)
     template.add("nowPasses", (tsCmp.nowPasses map strOfTCPair) toArray)
-    template.add("nowFails", (tsCmp.usedToPass map strOfTCPair) toArray)
+    template.add("nowFails", (tsCmp.usedToPass map { case (oldTC, curTC) =>
+      val bisectResult = bisectResults.find({ case (tc, c) =>
+        tc.commandName == curTC.commandName &&
+        tc.fileName == curTC.fileName &&
+        tc.arguments == curTC.arguments
+      }).map({ case (tc, c) =>
+        c.revHash
+      }).getOrElse("?")
+
+      strOfTCR(curTC) + " first failure at <b>" + bisectResult + "</b>"
+    }) toArray)
     template.add("diffDiffs", (tsCmp.diffDiffs map strOfTCPair) toArray)
     template.add("nowSlower", (tsCmp.curSlower map strOfTCPair) toArray)
     template.add("nowQuicker", (tsCmp.curQuicker map strOfTCPair) toArray)
