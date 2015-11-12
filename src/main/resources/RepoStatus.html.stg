@@ -76,8 +76,8 @@ $diffList("Now Quicker", nowQuicker)$
 
 tsr(title,tcrsHTML,summary) ::= <<
 <div class="tsr">
-  <h3>$title$<span class="hide">...</span></h3>
-  <div class="tcrs visible">
+  <h3>$title$<span class="visible">...</span></h3>
+  <div class="tcrs hide">
     $tcrsHTML$
   </div>
   $summary$
