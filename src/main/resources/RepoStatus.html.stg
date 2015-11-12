@@ -6,18 +6,24 @@ delimiters "$", "$"
 
 // 'name' expected to be like "sleek --args /path/to/file.slk"
 tcrPassing(name) ::= <<
-<span class="tcr name">$name$</span><span class="tcr result pass">Passed</span><br class="tcr" />
+<span class="tcr header">
+  <span class="tcr name">$name$</span><span class="tcr result pass">Passed</span><br class="tcr" />
+</span>
 >>
 
 // ENHANCEMENT: Colors for exp, act.
 tcrFailing(name, expected, actual, key) ::= <<
-<span class="tcr name">$name$</span><span class="tcr result fail">Failed</span><br class="tcr" />
+<span class="tcr header">
+  <span class="tcr name">$name$</span><span class="tcr result fail">Failed</span><br class="tcr" />
+</span>
 $expected, actual, key:{exp,act,k|Expected <span class="diffExpected">$exp$</span> but got <span class="diffActual">$act$</span> for $k$.<br/>
 }$
 >>
 
 tcrInvalid(name, output) ::= <<
-<span class="tcr name">$name$</span><span class="tcr result invalid">Invalid</span><br class="tcr" />
+<span class="tcr header">
+  <span class="tcr name">$name$</span><span class="tcr result invalid">Invalid</span><br class="tcr" />
+</span>
 $output$
 >>
 
@@ -28,7 +34,7 @@ $output$
 
 tsrSummary(totalCt, passedCt, failedCt, invalidCt) ::= <<
 <br/>
-Summary<br/>
+<h4>Summary</h4><br/>
 
 <span class="tsrSummary">
   <span>Total number of tests: <b class="tsrTotal">$totalCt$</b><br/></span>
@@ -56,7 +62,7 @@ $endif$
 // * skip the add/rm tests, args changed (for now)
 // * another simplification: all as array-of-string.
 tsrCmp(name, oldRev, curRev, nowValid, nowInvalid, nowPasses, nowFails, diffDiffs, nowSlower, nowQuicker) ::= <<
-<b>Diff Between $oldRev$ to $curRev$</b><br/>
+<h4>Diff Between $oldRev$ to $curRev$</h4>
 
 $diffList("Now Valid", nowValid)$
 $diffList("Now Invalid", nowInvalid)$
@@ -118,7 +124,8 @@ page(content) ::= <<
 
       div.tcrs { width: 800px; }
 
-      span.tcr.name { float: left; }
+      /* use monospace to distinguish name */
+      span.tcr.name { background-color: lightgrey; font-family: "Lucida Console", Monaco, monospace; float: left; }
       span.tcr.result { float: right; }
       br.tcr { clear: both; }
 

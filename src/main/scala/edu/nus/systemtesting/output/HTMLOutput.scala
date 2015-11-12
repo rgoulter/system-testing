@@ -138,7 +138,7 @@ object HTMLOutput {
     // Summary
     // TSRAnalysis Tally
 
-    val title = s"TSR for $name at Revision $c<br/>\n"
+    val title = s"<h3>Result for $name Suite at Revision $c</h3>\n"
 
     val tcrs = tsr.results.map { tcr => htmlOfTestCaseResult(c, name, tcr) + "\n" } mkString
     val tcrsDiv = s"""<div class="tcrs">
@@ -155,15 +155,9 @@ object HTMLOutput {
   def htmlOfDiff(tsCmp: TestSuiteComparison, bisectResults: List[(Testable, Commit)]): String = {
     val template = htmlSTG.getInstanceOf("tsrCmp");
 
-    // copied from TSCmp class; for 'consistency'.
-    def tcrToString(tcr: TestCaseResult): String = {
-      import tcr.{ command, arguments, filename }
-      s"TC[$command, $arguments, $filename]"
-    }
-
     def strOfTCPair(tcPair: (TestCaseResult, TestCaseResult)): String = {
       val (oldTC, curTC) = tcPair
-      tcrToString(curTC)
+      strOfTCR(curTC)
     }
 
     template.add("name", escapeHTML(tsCmp.comparisonName))
@@ -181,7 +175,7 @@ object HTMLOutput {
   }
 
   def htmlOfBranchStatus(branchStatus: BranchStatus): String = {
-    val title = s"Branch ${branchStatus.branch.name}<br/>\n"
+    val title = s"<h2>Branch ${branchStatus.branch.name}</h2>\n"
 
     // per TSCmp: ["hip", "sleek"]
     //   Old Commit TSR...
