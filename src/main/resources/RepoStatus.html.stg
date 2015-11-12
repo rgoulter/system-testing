@@ -90,15 +90,24 @@ tsr(title,tcrsHTML,summary) ::= <<
 //
 
 
-branchInfo(name, rev, age, branchedFrom) ::= <<
->>
-
 branchesToC(names, revs, ages, branchedFroms) ::= <<
 <table>
   <tr><td>Name</td><td>Revision</td><td>Age</td><td>Branched From</td></tr>
-  $names,revs,ages,branchedFroms:{name,rev,age,branchedFrom|<tr><td>$name$</td><td>$rev$</td><td>$age$</td><td>$branchedFrom$</td></tr>
+  $names,revs,ages,branchedFroms:{name,rev,age,branchedFrom|<tr>
+  <td><a href="#branch_$name$">$name$</a></td>
+  <td>$rev$</td>
+  <td>$age$</td>
+  <td>$branchedFrom$</td>
+</tr>
 }$
 </table>
+>>
+
+branch(name,content) ::= <<
+<div class="branch">
+  <h2><a id="branch_$name$">Branch $name$</a></h2>
+  $content$
+</div>
 >>
 
 

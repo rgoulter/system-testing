@@ -180,8 +180,6 @@ object HTMLOutput {
   }
 
   def htmlOfBranchStatus(branchStatus: BranchStatus): String = {
-    val title = s"<h2>Branch ${branchStatus.branch.name}</h2>\n"
-
     // per TSCmp: ["hip", "sleek"]
     //   Old Commit TSR...
     //   New Commit TSR...
@@ -201,7 +199,12 @@ object HTMLOutput {
       oldTS + curTS + diffH + "\n\n"
     } mkString
 
-    title + content
+    val template = htmlSTG.getInstanceOf("branch");
+
+    template.add("name", branchStatus.branch.name)
+    template.add("content", content)
+
+    template.render()
   }
 
   def htmlOfBranchesTable(branchStatuses: List[BranchStatus]): String = {
