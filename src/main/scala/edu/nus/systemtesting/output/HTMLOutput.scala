@@ -14,6 +14,7 @@ import edu.nus.systemtesting.hipsleek.app.BranchStatus
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import java.io.PrintWriter
+import org.joda.time.format.DateTimeFormat
 
 /**
  * @author richardg
@@ -153,8 +154,6 @@ object HTMLOutput {
       strOfTCR(curTC)
     }
 
-    // XXX: How to mix in bisect results here?
-
     template.add("name", escapeHTML(tsCmp.comparisonName))
     template.add("oldRev", tsCmp.oldRevision)
     template.add("curRev", tsCmp.curRevision)
@@ -235,7 +234,12 @@ object HTMLOutput {
   }
 
   def dumpRepoStatus(tip: Commit, branchStatuses: List[BranchStatus]): Unit = {
-    println("Generating HTML...")
+    // dump to file
+    val df = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateStr = tip.date.toString(df)
+    val filename = s"status-repo-$dateStr-${tip.revHash}.html"
+
+    println(s"Generating HTML, to file $filename")
 
     // generate ToC from recent branches
     val branchesToC = htmlOfBranchesTable(branchStatuses)
@@ -252,9 +256,6 @@ object HTMLOutput {
     template.add("content", htmlContent)
 
     val repoStatusHTML = template.render()
-
-    // dump to file
-    val filename = "output.html" // XXX name as a function of the tip commit.
 
     val pw = new PrintWriter(filename)
     pw.println(repoStatusHTML)
