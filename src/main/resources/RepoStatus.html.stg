@@ -33,8 +33,7 @@ $output$
 //
 
 tsrSummary(totalCt, passedCt, failedCt, invalidCt) ::= <<
-<br/>
-<h4>Summary</h4><br/>
+<h4>Summary</h4>
 
 <span class="tsrSummary">
   <span>Total number of tests: <b class="tsrTotal">$totalCt$</b><br/></span>
@@ -53,9 +52,11 @@ tsrSummary(totalCt, passedCt, failedCt, invalidCt) ::= <<
 // ENHANCEMENT: Colors for items.
 diffList(name, ls) ::= <<
 $if(!ls.empty)$
-$name$:<br/>
-$ls:{it|$it$<br/>
+<h5>$name$:</h5>
+<ul>
+$ls:{it|<li>$it$</li>
 }$
+</ul>
 $endif$
 >>
 
@@ -71,6 +72,16 @@ $diffList("Now Fails", nowFails)$
 $diffList("Still Fails, Different Diffs", diffDiffs)$
 $diffList("Now Slower", nowSlower)$
 $diffList("Now Quicker", nowQuicker)$
+>>
+
+tsr(title,tcrsHTML,summary) ::= <<
+<div class="tsr">
+  <h3>$title$<span class="hide">...</span></h3>
+  <div class="tcrs visible">
+    $tcrsHTML$
+  </div>
+  $summary$
+</div>
 >>
 
 
@@ -137,14 +148,22 @@ page(content) ::= <<
 
     function init() {
       // Initialise conciseText show/hide
-      var conciseTexts = document.getElementsByClassName("conciseText")
+      var conciseTexts = document.getElementsByClassName("conciseText");
       for (var i = 0; i < conciseTexts.length; i++) {
         var ct = conciseTexts[i];
-        var h2 = ct.getElementsByTagName("a")
+        var h2 = ct.getElementsByTagName("a");
 
         for (var j = 0; j < h2.length; j++) {
           h2[j].onclick = toggleConciseTextItem;
         }
+      }
+
+      var tsrDivs = document.getElementsByClassName("tsr");
+      for (var i = 0; i < tsrDivs.length; i++) {
+        var tsrDiv = tsrDivs[i];
+        var h3 = tsrDiv.getElementsByTagName("h3")[0];
+
+        h3.onclick = toggleTCRs;
       }
     }
 
@@ -156,6 +175,20 @@ page(content) ::= <<
 
       var wasVis = conciseTextDiv.getElementsByClassName("visible")[0]
       var wasHid = conciseTextDiv.getElementsByClassName("hide")[0]
+
+      wasVis.classList.add("hide")
+      wasVis.classList.remove("visible")
+
+      wasHid.classList.add("visible")
+      wasHid.classList.remove("hide")
+    }
+
+    function toggleTCRs() {
+      // tsrDiv is h3's parent
+      var tsrDiv = this.parentNode;
+
+      var wasVis = tsrDiv.getElementsByClassName("visible")[0]
+      var wasHid = tsrDiv.getElementsByClassName("hide")[0]
 
       wasVis.classList.add("hide")
       wasVis.classList.remove("visible")

@@ -134,22 +134,15 @@ object HTMLOutput {
   }
 
   def htmlOfTestSuiteResult(c: String, name: String, tsr: TestSuiteResult): String = {
-    // TCR results ~ TCR.display
-    // Summary
-    // TSRAnalysis Tally
-
-    val title = s"<h3>Result for $name Suite at Revision $c</h3>\n"
-
     val tcrs = tsr.results.map { tcr => htmlOfTestCaseResult(c, name, tcr) + "\n" } mkString
-    val tcrsDiv = s"""<div class="tcrs">
-  $tcrs
-</div>"""
 
-    val summary = htmlOfTSRSummary(tsr) + "\n"
+    val template = htmlSTG.getInstanceOf("tsr");
 
-    // TODO: TSR Tally
+    template.add("title", s"Result for $name Suite at Revision $c")
+    template.add("tcrsHTML", tcrs)
+    template.add("summary", htmlOfTSRSummary(tsr))
 
-    title + tcrsDiv + summary
+    template.render()
   }
 
   def htmlOfDiff(tsCmp: TestSuiteComparison, bisectResults: List[(Testable, Commit)]): String = {
