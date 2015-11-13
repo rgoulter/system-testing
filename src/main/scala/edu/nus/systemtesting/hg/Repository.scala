@@ -110,6 +110,20 @@ class Repository(dir: Path) {
     execOutp.exitValue != 0
   }
 
+  def clone(dest: Path, revision: Option[Commit]): Unit = {
+    val rev = revision.map(_.revHash)
+
+    val cmd = "hg clone " + s"${rev.map(r => s" -u $r").getOrElse("")} . ${dest.toString()}"
+    val proc = Process(cmd, repoDir)
+
+    println(s"Cloning $dir to $dest with " +
+            s"(${rev.map(r => "Revision " + r).getOrElse("Current revision")})")
+    val execOutp = Runnable.executeProc(proc)
+
+    // for now, let's not deal with errors
+    execOutp.exitValue != 0
+  }
+
   /** Whether the given `rev` evaluaties to a revision hash in the repo. */
   def isRevisionish(rev: String): Boolean = {
     require(rev != "")
