@@ -11,6 +11,7 @@ import edu.nus.systemtesting.TestPassed
 import edu.nus.systemtesting.hg.Branch
 import edu.nus.systemtesting.hg.Commit
 import edu.nus.systemtesting.hipsleek.app.BranchStatus
+import edu.nus.systemtesting.hipsleek.app.DefaultBranchStatus
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import java.io.PrintWriter
@@ -233,7 +234,24 @@ object HTMLOutput {
     template.render()
   }
 
-  def dumpRepoStatus(tip: Commit, branchStatuses: List[BranchStatus]): Unit = {
+  def htmlOfDefaultBranchStatus(branchStatus: DefaultBranchStatus): String = {
+    // per TSCmp: ["hip", "sleek"]
+    //   Old Commit TSR...
+    //   New Commit TSR...
+
+    val content = branchStatus.tsRes map { case (diffName, tsr) =>
+      htmlOfTestSuiteResult(branchStatus.branch.revHash, diffName, tsr) + "\n\n"
+    } mkString
+
+    val template = htmlSTG.getInstanceOf("branch");
+
+    template.add("name", branchStatus.branch.name)
+    template.add("content", content)
+
+    template.render()
+  }
+
+  def dumpRepoStatus(tip: Commit, defaultStatus: DefaultBranchStatus, branchStatuses: List[BranchStatus]): Unit = {
     // dump to file
     val df = DateTimeFormat.forPattern("yyyy-MM-dd")
     val dateStr = tip.date.toString(df)
@@ -244,12 +262,14 @@ object HTMLOutput {
     // generate ToC from recent branches
     val branchesToC = htmlOfBranchesTable(branchStatuses)
 
+    val defaultBranchContent = htmlOfDefaultBranchStatus(defaultStatus) + "<br/>\n"
+
     // generate + concatenate HTML for each branch status,
     val branchesContent = branchStatuses map { bs =>
-      htmlOfBranchStatus(bs) + "<br>\n"
+      htmlOfBranchStatus(bs) + "<br/>\n"
     } mkString
 
-    val htmlContent = branchesToC + branchesContent
+    val htmlContent = branchesToC + defaultBranchContent + branchesContent
 
     val template = htmlSTG.getInstanceOf("page");
 

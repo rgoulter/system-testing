@@ -10,7 +10,15 @@ import edu.nus.systemtesting.output.HTMLOutput
 import edu.nus.systemtesting.output.VisibilityOptions
 import org.joda.time.format.ISODateTimeFormat
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.Testable
+
+/**
+ * For representing status of the `default` branch.
+ */
+class DefaultBranchStatus(val branch: Branch,
+                          val tsRes: List[(String, TestSuiteResult)]) {
+}
 
 class BranchStatus(val branch: Branch,
                    val tsCmp: List[TestSuiteComparison],
@@ -26,6 +34,8 @@ class RepoStatus(config: AppConfig) {
   import diff.{ allResultPairs, diffSuiteResults }
   val bisector = new Bisect(config)
   import bisector.bisect
+  val runHipSleek = new RunHipSleek(config)
+  import runHipSleek.runAllTests
 
   val MainBranch = "default"
 
@@ -48,6 +58,11 @@ class RepoStatus(config: AppConfig) {
 
     // Find default commit..
     val defaultB = new Branch(repo, MainBranch)
+
+    // The 'status' of the default branch is by running the tests on the latest
+    // commits.
+    val (sleekTSR, hipTSR) = runAllTests(defaultB)
+    val defaultStatus = new DefaultBranchStatus(defaultB, List(("sleek", sleekTSR), ("hip", hipTSR)))
 
     //
     // Run diffs
@@ -93,8 +108,8 @@ class RepoStatus(config: AppConfig) {
       new BranchStatus(branch, diffs, bisectRes)
     }
 
-    // XXX Dump branch statuses to HTML.
-    HTMLOutput.dumpRepoStatus(t, res)
+    // Dump branch statuses to HTML.
+    HTMLOutput.dumpRepoStatus(t, defaultStatus, res)
 
     res
   }
