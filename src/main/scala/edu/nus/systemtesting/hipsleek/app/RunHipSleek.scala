@@ -96,7 +96,7 @@ class RunHipSleek(config: AppConfig) {
   private[app] def runTestCaseForRevision(repoRevision: Commit, preparedSys: => PreparedSystem)
                                          (implicit construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase):
       (Testable => TestCaseResult) = {
-    val resultsArch = new ResultsArchive()
+    val resultsArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
 
     { tc: Testable =>
       resultsArch.resultFor(repoRevision.revHash)(tc) match {

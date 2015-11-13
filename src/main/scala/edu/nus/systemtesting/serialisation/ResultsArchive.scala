@@ -16,7 +16,7 @@ import java.io.PrintWriter
 import java.io.FileOutputStream
 import java.io.IOException
 
-class ResultsArchive(val resultsDir: String = "results") {
+class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: String = "build_failures") {
   // Results stored become keyed by:
   //   revision, command, filename, args
   // Store at:
@@ -166,9 +166,7 @@ class ResultsArchive(val resultsDir: String = "results") {
   //
   // Build failures
   //
-  val BuildFailureFilename = "build_failures"
-
-  private val buildFilePath = Paths.get(BuildFailureFilename)
+  private val buildFilePath = Paths.get(buildFailureFilename)
 
   def addBuildFailureCommit(revHash: String): Unit = {
     // ensure the file exists

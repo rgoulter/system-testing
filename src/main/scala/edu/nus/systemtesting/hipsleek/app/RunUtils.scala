@@ -20,7 +20,7 @@ import edu.nus.systemtesting.output.GlobalReporter.reporter
  * @author richardg
  */
 class RunUtils(config: AppConfig) {
-  val binCache = new BinCache() // config me
+  val binCache = new BinCache(config.binCacheDir)
 
   val repoDir: Path = config.repoDirOrDie
 

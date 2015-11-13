@@ -242,7 +242,7 @@ class ConfiguredMain(config: AppConfig) {
     // * newer rev is failing, older rev is passing
 
     // get proper expectedOutput for the testable
-    val results = new ResultsArchive()
+    val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
     val workingTCR = results.resultFor(initWorkingCommit.revHash)(bisectTestable) getOrElse { 
       // probably should be a bit more robust about this
       throw new IllegalArgumentException(s"Expected to find result for $initWorkingCommit")

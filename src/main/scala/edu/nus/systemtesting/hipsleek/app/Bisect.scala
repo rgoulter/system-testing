@@ -39,7 +39,7 @@ class Bisect(config: AppConfig) {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
-    val results = new ResultsArchive()
+    val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
 
     // MAGIC, & awkward, but difficult to think of a better way of doing this currently
     val suiteName =
