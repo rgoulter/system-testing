@@ -157,7 +157,9 @@ class ConfiguredMain(config: AppConfig) {
         repoStatus.runStatus()
       }
       case "status-branch" => {
-        System.err.println("To be implemented.")
+        val branchName = config.branchName.getOrElse("default")
+        val repoStatus = new RepoStatus(config)
+        repoStatus.runBranchStatus(branchName)
       }
       case "status" => {
         System.err.println("To be implemented.")

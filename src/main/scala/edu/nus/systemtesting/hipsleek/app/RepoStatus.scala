@@ -39,7 +39,67 @@ class RepoStatus(config: AppConfig) {
 
   val MainBranch = "default"
 
-  def runStatus(): List[BranchStatus] = {
+  private def runDefaultBranch(): DefaultBranchStatus = {
+    // Find default commit..
+    val defaultB = new Branch(repo, MainBranch)
+
+    // The 'status' of the default branch is by running the tests on the latest
+    // commits.
+    val (sleekTSR, hipTSR) = runAllTests(defaultB)
+    new DefaultBranchStatus(defaultB, List(("sleek", sleekTSR), ("hip", hipTSR)))
+  }
+
+  private def runBranch(branchName: String): BranchStatus = {
+    val branch = new Branch(repo, branchName)
+    import branch.{ latestCommit, earliestCommit }
+
+    // Find latest merge w/ default
+    // Assumption: all branches forked (eventually) w/ ... `default`.
+    // TODO: Or should this be commonAncestor with branched-from?
+    // val latestMergeC = Repo.commonAncestor(latestCommit, defaultB)
+
+    val resultPairs = allResultPairs(_, _)
+
+    // reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
+
+    val diffs = diffSuiteResults(earliestCommit, latestCommit, resultPairs)
+
+    //
+    // Bisect
+    // each of the { was working -> now failing } TestCases.
+    //
+    val bisectRes = diffs map { tsCmp =>
+      val numBisects = tsCmp.usedToPass.length
+
+      tsCmp.usedToPass.zipWithIndex map { case ((oldTC, _), idx) =>
+        reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
+
+        val bisectTC = configuredMain.recoverTestableFromTCR(oldTC)
+
+        val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC)
+
+        (bisectTC, firstFailingC)
+      }
+    } flatten
+
+    new BranchStatus(branch, diffs, bisectRes)
+  }
+
+  def runBranchStatus(branchName: String): Unit = {
+    if (branchName == MainBranch) {
+      val defaultSt = runDefaultBranch()
+
+      // Dump branch statuses to HTML.
+      HTMLOutput.dumpDefaultBranchStatus(defaultSt)
+    } else {
+      val branchSt = runBranch(branchName)
+
+      // Dump branch statuses to HTML.
+      HTMLOutput.dumpBranchStatus(branchSt)
+    }
+  }
+
+  def runStatus(): Unit = {
     val t = repo.tip()
     println(s"Latest commit: ${t.revHash} (${t.age})")
 
@@ -73,45 +133,14 @@ class RepoStatus(config: AppConfig) {
 
     // MAGIC: 'default' as the main development branch.
     val res = diffableBranches.zipWithIndex.map { case (c, idx) =>
+      reporter.header(s"Run Branch (${idx+1}/${recentBranches.length})")
+
       val branch = c.branch
-      import branch.{ latestCommit, earliestCommit }
-
-      // Find latest merge w/ default
-      // Assumption: all branches forked (eventually) w/ ... `default`.
-      // TODO: Or should this be commonAncestor with branched-from?
-      // val latestMergeC = Repo.commonAncestor(latestCommit, defaultB)
-
-      val resultPairs = allResultPairs(_, _)
-
-      reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
-
-      val diffs = diffSuiteResults(earliestCommit, latestCommit, resultPairs)
-
-      //
-      // Bisect
-      // each of the { was working -> now failing } TestCases.
-      //
-      val bisectRes = diffs map { tsCmp =>
-        val numBisects = tsCmp.usedToPass.length
-
-        tsCmp.usedToPass.zipWithIndex map { case ((oldTC, _), idx) =>
-          reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
-
-          val bisectTC = configuredMain.recoverTestableFromTCR(oldTC)
-
-          val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC)
-
-          (bisectTC, firstFailingC)
-        }
-      } flatten
-
-      new BranchStatus(branch, diffs, bisectRes)
+      runBranch(branch.name)
     }
 
     // Dump branch statuses to HTML.
     HTMLOutput.dumpRepoStatus(t, defaultStatus, res)
-
-    res
   }
 
   // outputs a one-line summary of a branch

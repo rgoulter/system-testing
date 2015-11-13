@@ -251,6 +251,63 @@ object HTMLOutput {
     template.render()
   }
 
+  def dumpBranchStatus(branchStatus: BranchStatus): Unit = {
+    val branch = branchStatus.branch
+
+    // dump to file
+    val df = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateStr = branch.date.toString(df)
+    val filename = s"status-branch-${branch.name}-$dateStr-${branch.revHash}.html"
+
+    println(s"Generating HTML, to file $filename")
+
+    // generate ToC from recent branches
+    // generate + concatenate HTML for each branch status,
+    val branchContent = htmlOfBranchStatus(branchStatus)
+
+    val htmlContent = branchContent
+
+    val template = htmlSTG.getInstanceOf("page");
+
+    template.add("content", htmlContent)
+
+    val repoStatusHTML = template.render()
+
+    val pw = new PrintWriter(filename)
+    pw.println(repoStatusHTML)
+    pw.flush()
+    pw.close()
+
+    println("Done.")
+  }
+
+  def dumpDefaultBranchStatus(defaultStatus: DefaultBranchStatus): Unit = {
+    // dump to file
+    val df = DateTimeFormat.forPattern("yyyy-MM-dd")
+    val dateStr = defaultStatus.branch.date.toString(df)
+    val filename = s"status-branch-default-$dateStr-${defaultStatus.branch.revHash}.html"
+
+    println(s"Generating HTML, to file $filename")
+
+    // generate ToC from recent branches
+    val defaultBranchContent = htmlOfDefaultBranchStatus(defaultStatus) + "<br/>\n"
+
+    val htmlContent = defaultBranchContent
+
+    val template = htmlSTG.getInstanceOf("page");
+
+    template.add("content", htmlContent)
+
+    val repoStatusHTML = template.render()
+
+    val pw = new PrintWriter(filename)
+    pw.println(repoStatusHTML)
+    pw.flush()
+    pw.close()
+
+    println("Done.")
+  }
+
   def dumpRepoStatus(tip: Commit, defaultStatus: DefaultBranchStatus, branchStatuses: List[BranchStatus]): Unit = {
     // dump to file
     val df = DateTimeFormat.forPattern("yyyy-MM-dd")

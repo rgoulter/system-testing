@@ -22,6 +22,7 @@ object ConfigDefaults {
 case class AppConfig(repoDir: Option[Path],
                      revs: List[String] = List(),
                      command: String = "none",
+                     branchName: Option[String] = None,
                      timeout: Int = DefaultTimeout,
                      commands: Set[String] = Set(),
                      significantTimeThreshold: Int = DefaultSignificantTimeThreshold,
@@ -160,7 +161,8 @@ object AppConfig {
           )
     cmd("status-branch") action { (_, c) =>
         c.copy(command = "status-branch") } text("Report on the status of the current branch.") children(
-          // TODO: arg as to which branch to report on..
+          arg[String]("[branch name]") optional() action { (x, c) =>
+            c.copy(branchName = Some(x)) } text("Name of branch to run status for. Default, if not given.")
           )
     cmd("status") action { (_, c) =>
         c.copy(command = "status") } text("Report on the status of the current commit or working directory.") children(
