@@ -85,13 +85,13 @@ class DirtyRepoSpec extends FlatSpec with BeforeAndAfter {
     // Load the config, using `tmpRepoDir` instead of config's `REPO_DIR`.
     val tmpConfig = AppConfig.load(configuration, Some(tmpRepoDir))
 
-    // replace the bin cache, results dir in the config.
+    // Replace the bin cache, results dir in the config.
     println("DirtyRepoTest: binCacheDir is " + tmpBinCacheDir.toString)
     println("DirtyRepoTest: resultsDir is " + tmpResultsDir.toString)
     val TestConfig = tmpConfig.copy(resultsDir = tmpResultsDir.toString,
                                     binCacheDir = tmpBinCacheDir.toString)
 
-    // XXX run some test on the repo;
+    // Run some test on the repo;
     val repo = new Repository(tmpRepoDir)
     val runHipSleek = new RunHipSleek(TestConfig)
 

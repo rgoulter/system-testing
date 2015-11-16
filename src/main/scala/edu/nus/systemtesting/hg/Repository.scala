@@ -93,17 +93,16 @@ class Repository(dir: Path) {
 
   /**
    * Creates a copy of some revision of the repo at some `dest`.
-   * (Latest revision if `rev` is `None`).
    */
   def archive(dest: Path, revision: Commit, includePatterns: List[String] = List()): Boolean = {
-    val rev = Some(revision.revHash) // XXX: Can simplify
+    import revision.revHash
 
     val inclArgs = includePatterns.map("-I " + _ + " ").mkString
-    val cmd = "hg archive " + inclArgs + s"${rev.map(r => s" -r $r").getOrElse("")} ${dest.toString()}"
+    val cmd = "hg archive " + inclArgs + "-r " + revHash + " " + dest.toString()
     val proc = Process(cmd, repoDir)
 
     println(s"Exporting archive of $dir to $dest " +
-            s"(${rev.map(r => "Revision " + r).getOrElse("Current revision")})")
+            s"(${"Revision " + revHash})")
     val execOutp = Runnable.executeProc(proc)
 
     // for now, let's not deal with errors
