@@ -23,6 +23,9 @@ case class AppConfig(repoDir: Option[Path],
                      revs: List[String] = List(),
                      command: String = "none",
                      branchName: Option[String] = None,
+                     bisectCmd:  Option[String] = None,
+                     bisectFile: Option[String] = None,
+                     bisectArgs: List[String] = List(),
                      resultsDir: String = "results",
                      buildFailuresFile: String = "build_failures",
                      binCacheDir: String = "bincache",
@@ -157,7 +160,17 @@ object AppConfig {
           c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current)")
           )
     cmd("bisect") action { (_, c) =>
-        c.copy(command = "bisect") } text("(WIP) bisect some TestCase to see when it broke.") children(
+        c.copy(command = "bisect") } text("bisect some TestCase to see when it broke.") children(
+          arg[String]("<rev1>") action { (x, c) =>
+            c.copy(revs = List(x)) } text("Earlist revision to bisect on. (Test must work here)."),
+          arg[String]("<rev2>") action { (x, c) =>
+            c.copy(revs = c.revs :+ x) } text("Latest revision to bisect on. (Test must fail here)."),
+          arg[String]("<sleek|hip>") action { (x, c) =>
+            c.copy(bisectCmd = Some(x)) } text("Test command. ('hip' or 'sleek')."),
+          arg[String]("<test file>") action { (x, c) =>
+            c.copy(bisectFile = Some(x)) } text("Test file."),
+          arg[String]("<test arguments>") unbounded() optional() action { (x, c) =>
+            c.copy(bisectArgs = c.bisectArgs :+ x) } text("Test arguments.")
           )
     cmd("status-repo") action { (_, c) =>
         c.copy(command = "status-repo") } text("Report on the status of the repository (all recent branches).") children(

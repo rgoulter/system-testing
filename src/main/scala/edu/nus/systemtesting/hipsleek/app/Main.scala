@@ -229,11 +229,18 @@ class ConfiguredMain(config: AppConfig) {
 
 
   private def runBisect(): Unit = {
-    // MAGIC: absent of actual UX, just run bisect on
-    // TC[hip, , term/benchs/key/Even.ss]
-    val bisectTestable = new TestCaseBuilder(Paths.get("hip"), Paths.get("term/benchs/key/Even.ss"), "", "???")
-    val initWorkingCommit = new Commit(repo, "53282f401727")
-    val initFailingCommit = new Commit(repo, "79da9697f0c2")
+    // TODO Could have this logic in the AppConfig itself?
+    val bisectRevs = config.revs
+    if (bisectRevs.length != 2) {
+      throw new IllegalArgumentException("bisect should be run with 2 commits")
+    }
+    val initWorkingCommit = repo.identify(Some(bisectRevs(0)))
+    val initFailingCommit = repo.identify(Some(bisectRevs(1)))
+    val testCmd = config.bisectCmd.getOrElse(throw new IllegalArgumentException("bisect needs to be run with a command"))
+    val testFile = config.bisectCmd.getOrElse(throw new IllegalArgumentException("bisect needs to be run with a file"))
+    val testArgs = config.bisectArgs.mkString(" ")
+
+    val bisectTestable = new TestCaseBuilder(Paths.get(testCmd), Paths.get(testFile), testArgs, "???")
 
     // assumptions/requirements:
     // * revs have linear relationship with each other
