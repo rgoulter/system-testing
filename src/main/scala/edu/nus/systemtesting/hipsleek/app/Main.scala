@@ -18,9 +18,9 @@ import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.serialisation.ResultsArchive
 
 class UnableToBuildException(repoDir: Path,
-                             rev: Option[String],
+                             val rev: Commit,
                              val timedOut: Boolean = false)
-  extends RuntimeException(s"Cannot build for revision ${rev getOrElse ""} in dir $repoDir")
+  extends RuntimeException(s"Cannot build for revision ${rev.revHash} in dir $repoDir")
 
 object Main {
   /** Expected filename for the application conf. */

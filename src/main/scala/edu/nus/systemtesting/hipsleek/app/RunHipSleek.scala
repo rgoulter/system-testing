@@ -81,9 +81,9 @@ class RunHipSleek(config: AppConfig) {
     }) match {
       case SuccessfulBuildResult(tsr) => tsr
       case BuildFailed() =>
-        throw new UnableToBuildException(repoDir, Some(rev.revHash))
+        throw new UnableToBuildException(repoDir, rev)
       case BuildTimedOut() =>
-        throw new UnableToBuildException(repoDir, Some(rev.revHash), timedOut = true)
+        throw new UnableToBuildException(repoDir, rev, timedOut = true)
     }
   }
 

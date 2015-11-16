@@ -31,6 +31,9 @@ class Commit(repo: Repository, rev: String) {
   lazy val branch =
     new Branch(repo, repo.logForTemplate("{branch}\\n", revHash))
 
+  lazy val parents =
+    repo.parents(this)
+
   override def toString() = revHash
 
   override def equals(o: Any): Boolean =
