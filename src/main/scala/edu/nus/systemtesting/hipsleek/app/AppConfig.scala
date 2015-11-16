@@ -12,6 +12,9 @@ import edu.nus.systemtesting.hg.Repository
 object ConfigDefaults {
   val DefaultTimeout = 300
   val DefaultSignificantTimeThreshold = 1
+  val DefaultResultsDir = "results"
+  val DefaultBuildFailuresFile = "build_failures"
+  val DefaultBinCacheDir = "bincache"
 }
 
 /**
@@ -26,9 +29,9 @@ case class AppConfig(repoDir: Option[Path],
                      bisectCmd:  Option[String] = None,
                      bisectFile: Option[String] = None,
                      bisectArgs: List[String] = List(),
-                     resultsDir: String = "results",
-                     buildFailuresFile: String = "build_failures",
-                     binCacheDir: String = "bincache",
+                     resultsDir: String = DefaultResultsDir,
+                     buildFailuresFile: String = DefaultBuildFailuresFile,
+                     binCacheDir: String = DefaultBinCacheDir,
                      timeout: Int = DefaultTimeout,
                      commands: Set[String] = Set(),
                      significantTimeThreshold: Int = DefaultSignificantTimeThreshold,
@@ -111,7 +114,28 @@ object AppConfig {
       case e: ConfigException.Missing => DefaultSignificantTimeThreshold
     }
 
+    val resultsDir = try {
+      configuration.getString("RESULTS_DIR")
+    } catch {
+      case e: ConfigException.Missing => DefaultResultsDir
+    }
+
+    val buildFailuresFile = try {
+      configuration.getString("BUILD_FAILURES_FILE")
+    } catch {
+      case e: ConfigException.Missing => DefaultBuildFailuresFile
+    }
+
+    val binCacheDir = try {
+      configuration.getString("BIN_CACHE_DIR")
+    } catch {
+      case e: ConfigException.Missing => DefaultBinCacheDir
+    }
+
     AppConfig(repoDir = repoDir,
+              resultsDir = resultsDir,
+              buildFailuresFile = buildFailuresFile,
+              binCacheDir = binCacheDir,
               timeout = timeout,
               significantTimeThreshold = significantTimeThreshold)
   }
