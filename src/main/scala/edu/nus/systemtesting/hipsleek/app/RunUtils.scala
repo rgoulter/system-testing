@@ -32,7 +32,7 @@ class RunUtils(config: AppConfig) {
                              (f: (Path, Path, Commit) => T):
       BuildResult[T] = {
     // check if bin cache has the binaries already
-    binCache.binFor(Paths.get("hip"), revision.revHash) match {
+    binCache.binFor(Paths.get("hip"), revision) match {
       case Some(p) if !revision.isDirty => {
         val binDir = p getParent()
         // *May* be worth distinguishing "SuccessfulBuild" vs "Loaded Results"
@@ -88,10 +88,10 @@ class RunUtils(config: AppConfig) {
 
           // Copy to cache..
           // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
-          binCache.cache(binDir, Paths.get("sleek"), revision.revHash)
-          binCache.cache(binDir, Paths.get("hip"), revision.revHash)
+          binCache.cache(binDir, Paths.get("sleek"), revision)
+          binCache.cache(binDir, Paths.get("hip"), revision)
           // apparently prelude.ss needs to be in, or hip will break.
-          binCache.cache(binDir, Paths.get("prelude.ss"), revision.revHash)
+          binCache.cache(binDir, Paths.get("prelude.ss"), revision)
 
           SuccessfulBuildResult(f(binDir, corpusDir, revision))
         }

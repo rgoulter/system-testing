@@ -3,6 +3,7 @@ package edu.nus.systemtesting
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import edu.nus.systemtesting.hg.Commit
 
 /**
  * @author richardg
@@ -17,29 +18,38 @@ class BinCache(val cacheDir: String = "bincache") {
   /**
    * @param cmd relative to bin/project dir; acts as a 'key'
    */
-  def cache(binDir: Path, cmd: Path, revHash: String): Path = {
-    // ensure $cacheDir/rev/path/to/bin exists.
-    // ASSUME at the moment, that cmd directly in binDir..
-    val dest = cachePath resolve revHash resolve cmd
-    val destDir = dest getParent()
-    FileSystemUtilities.checkOutputDirectory(destDir toString)
+  def cache(binDir: Path, cmd: Path, rev: Commit): Option[Path] = {
+    import rev.revHash
 
-    assume(destDir.toFile().exists())
+    // Can only cache if not dirty
+    if (!rev.isDirty) {
+      // ensure $cacheDir/rev/path/to/bin exists.
+      // ASSUME at the moment, that cmd directly in binDir..
+      val dest = cachePath resolve revHash resolve cmd
+      val destDir = dest getParent()
+      FileSystemUtilities.checkOutputDirectory(destDir toString)
 
-    // TODO: could warn if overwriting some file?
-    Files.copy(binDir resolve cmd, dest)
+      assume(destDir.toFile().exists())
 
-    // e.g. prelude.ss needn't be executable
-    // assume(dest.toFile().canExecute())
+      // TODO: could warn if overwriting some file?
+      Files.copy(binDir resolve cmd, dest)
 
-    dest
+      // e.g. prelude.ss needn't be executable
+      // assume(dest.toFile().canExecute())
+
+      Some(dest)
+    } else {
+      None
+    }
   }
 
   /**
    * @param cmd relative to project dir; acts as a 'key'
    * @param revHash needs to be the same as used by copy-to.
    */
-  def binFor(cmd: Path, revHash: String): Option[Path] = {
+  def binFor(cmd: Path, rev: Commit): Option[Path] = {
+    import rev.revHash
+
     val dest = cachePath resolve revHash resolve cmd
     val exe = dest toFile()
 

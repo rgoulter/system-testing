@@ -88,7 +88,9 @@ class RunHipSleek(config: AppConfig) {
   }
 
   private def suiteFor(allTests: List[Testable], repoRevision: Commit): TestSuite = {
-    // XXX: This *ignores* dirty?
+    // n.b. Technically this ignores 'dirty', since revHash doesn't include the `+`,
+    // but since the only effect is for the cache folders (elsewhere), doesn't
+    // matter too much here.
     new TestSuite(allTests, repoRevision.revHash, config.significantTimeThreshold)
   }
 
@@ -111,7 +113,7 @@ class RunHipSleek(config: AppConfig) {
 
           // Didn't have results, save them.
           try {
-            resultsArch.saveTestCaseResult(repoRevision.revHash, tcr)
+            resultsArch.saveTestCaseResult(repoRevision, tcr)
           } catch {
             case e: Throwable => {
               e.printStackTrace()

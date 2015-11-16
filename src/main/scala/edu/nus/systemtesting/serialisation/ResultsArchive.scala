@@ -5,6 +5,7 @@ import java.nio.file.{ Files, Path, Paths }
 import scala.io.Source
 import org.joda.time.format.ISODateTimeFormat
 import edu.nus.systemtesting.FileSystemUtilities
+import edu.nus.systemtesting.hg.Commit
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.testsuite.TestSuiteResult
@@ -149,18 +150,22 @@ class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: S
     } toList
   }
 
-  def saveTestCaseResult(repoRevision: String, tcResult: TestCaseResult): Unit = {
-    val filename = filenameForTCResult(repoRevision, tcResult)
-    val path = Paths.get(resultsDir, filename)
+  def saveTestCaseResult(rev: Commit, tcResult: TestCaseResult): Unit = {
+    if (!rev.isDirty) {
+      import rev.{ revHash => repoRevision }
 
-    // ensure the folder exists
-    val parentDir = path.getParent().toFile()
-    parentDir.mkdirs()
+      val filename = filenameForTCResult(repoRevision, tcResult)
+      val path = Paths.get(resultsDir, filename)
 
-    val dump = TestCaseResultJson.dump(tcResult)
+      // ensure the folder exists
+      val parentDir = path.getParent().toFile()
+      parentDir.mkdirs()
 
-    reporter.log(s"Saving results to $path") // this *will* be excessive...
-    FileSystemUtilities.printToFile(path.toFile())(_.print(dump))
+      val dump = TestCaseResultJson.dump(tcResult)
+
+      reporter.log(s"Saving results to $path") // this *will* be excessive...
+      FileSystemUtilities.printToFile(path.toFile())(_.print(dump))
+    }
   }
 
   //
