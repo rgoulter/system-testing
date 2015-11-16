@@ -55,10 +55,10 @@ class RunHipSleek(config: AppConfig) {
                 SleekTestSuiteUsage.allTestable)(rev)
 
   // construct e.g. HipTestCase.constructTestCase
-  private def altRunTests(construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase,
-                          suiteName: String,
-                          allTestable: List[Testable])
-                         (rev: Commit): TestSuiteResult = {
+  def altRunTests(construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase,
+                  suiteName: String,
+                  allTestable: List[Testable])
+                 (rev: Commit): TestSuiteResult = {
     (runTestsWith(rev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
       // Ideally, preparedSys would itself do the building of repo.
       // i.e. building the repo would be delayed until necessary.

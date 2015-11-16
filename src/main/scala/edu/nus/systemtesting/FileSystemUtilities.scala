@@ -73,4 +73,13 @@ object FileSystemUtilities {
       }
     })
   }
+
+  def isEmptyDirectory(dir: Path): Boolean = {
+    val f = dir.toFile
+    require(f.isDirectory)
+
+    val ls = f.list()
+    assert(ls != null)
+    ls.isEmpty
+  }
 }
