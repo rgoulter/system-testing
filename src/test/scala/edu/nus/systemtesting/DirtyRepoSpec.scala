@@ -78,7 +78,7 @@ class DirtyRepoSpec extends FlatSpec with BeforeAndAfter {
 
   // We know the system works for 'dirty' repos if it gets different results
   // for a test after a commit is made.
-  val KnownGoodTestCase = new TestCaseBuilder(Paths.get("sleek"), Paths.get("sleek.slk"), "", "Valid, Valid, Valid, Fail")
+  val KnownGoodTestCase = new TestCaseBuilder(Paths.get("sleek"), Paths.get("examples/working/sleek/sleek.slk"), "", "Valid, Valid, Valid, Fail")
 
 
   "Dirty Repositories" should "be build in place; not " taggedAs(SlowTest) in {
