@@ -59,7 +59,10 @@ class RunHipSleek(config: AppConfig) {
                   suiteName: String,
                   allTestable: List[Testable])
                  (rev: Commit): TestSuiteResult = {
-    (runTestsWith(rev) { case (binDir, corpusDir, repoRevision) =>
+    // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
+    val foldersUsed = (allTestable map { t => t.fileName.getParent().toString() } toSet) toList
+
+    (runTestsWith(rev, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
       // Ideally, preparedSys would itself do the building of repo.
       // i.e. building the repo would be delayed until necessary.
       // At the moment, though, since any system loading tests will *have* the

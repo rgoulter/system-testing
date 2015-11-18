@@ -68,8 +68,10 @@ class Bisect(config: AppConfig) {
 
     // n.b. this exports archive to tmpDir each time, either to build, or
     // just for the examples.
-    def runTest(rev: Commit): BuildResult[TestCaseResult] =
-      runTestsWith(rev) { case (binDir, corpusDir, repoRevision) =>
+    def runTest(rev: Commit): BuildResult[TestCaseResult] = {
+      val foldersUsed = List(tc.fileName.getParent().toString())
+
+      runTestsWith(rev, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
         // Ideally, preparedSys would itself do the building of repo.
         // i.e. building the repo would be delayed until necessary.
         // At the moment, though, since any system loading tests will *have* the
@@ -82,6 +84,7 @@ class Bisect(config: AppConfig) {
         // tc *must* have proper expectedOutput
         resultsFor(tc)
       }
+    }
 
     // Load all the results we have for the given testable.
 //    val revResPairs = results resultsFor tc

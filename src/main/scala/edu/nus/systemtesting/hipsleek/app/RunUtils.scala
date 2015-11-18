@@ -27,8 +27,7 @@ class RunUtils(config: AppConfig) {
   // Each instance of `ConfiguredMain` only ever uses the one `Repository`
   val repo = new Repository(repoDir)
 
-
-  private[app] def runTestsWith[T](revision: Commit)
+  private[app] def runTestsWith[T](revision: Commit, foldersUsed: List[String])
                              (f: (Path, Path, Commit) => T):
       BuildResult[T] = {
     // check if bin cache has the binaries already
@@ -36,7 +35,7 @@ class RunUtils(config: AppConfig) {
       case Some(p) if !revision.isDirty => {
         val binDir = p getParent()
         // *May* be worth distinguishing "SuccessfulBuild" vs "Loaded Results"
-        SuccessfulBuildResult(runTestsWithCached(binDir, revision)(f))
+        SuccessfulBuildResult(runTestsWithCached(binDir, revision, foldersUsed)(f))
       }
 
       case None =>
@@ -104,7 +103,7 @@ class RunUtils(config: AppConfig) {
     }
   }
 
-  private def runTestsWithCached[T](binDir: Path, revision: Commit)
+  private def runTestsWithCached[T](binDir: Path, revision: Commit, foldersUsed: List[String])
                                    (f: (Path, Path, Commit) => T): T = {
     // don't know whether it's hip/sleek we want, but we make/cache both, so.
     require((binDir resolve "sleek").toFile().exists())
@@ -124,18 +123,6 @@ class RunUtils(config: AppConfig) {
         repoDir
       } else {
         val tmp = tmpDir.toAbsolutePath()
-
-        // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
-        // TODO Hardcoded for now, due to architecture.
-        // XXX foldersUsed
-        val foldersUsed =  List(
-          "examples/working/sleek",
-          "examples/working/hip",
-          "examples/working/hip_baga",
-          "examples/working/infer",
-          "examples/working/tree_shares",
-          "examples/modular_examples"
-        )
 
         // create archive of repo in tmp
         repo.archive(tmp, revision, foldersUsed)
