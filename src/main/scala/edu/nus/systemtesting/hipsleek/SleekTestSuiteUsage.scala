@@ -39,7 +39,7 @@ object SleekTestSuiteUsage {
            file: String,
            args: String,
            expectedOutput: String): TestCaseBuilder =
-    TestCaseBuilder(cmd, Paths.get(file), args, expectedOutput)
+    TestCaseBuilder(cmd, Paths.get("examples/working/sleek", file), args, expectedOutput)
 
   def allTestable =
       SleekTests ++

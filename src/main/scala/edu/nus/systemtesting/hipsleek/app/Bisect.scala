@@ -69,7 +69,7 @@ class Bisect(config: AppConfig) {
     // n.b. this exports archive to tmpDir each time, either to build, or
     // just for the examples.
     def runTest(rev: Commit): BuildResult[TestCaseResult] =
-      runTestsWith(rev, "examples/working/" + suiteName) { case (binDir, corpusDir, repoRevision) =>
+      runTestsWith(rev) { case (binDir, corpusDir, repoRevision) =>
         // Ideally, preparedSys would itself do the building of repo.
         // i.e. building the repo would be delayed until necessary.
         // At the moment, though, since any system loading tests will *have* the

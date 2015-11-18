@@ -41,7 +41,7 @@ object <name>TestSuiteUsage(
            file: String,
            args: String,
            expectedOutput: String): TestCaseBuilder =
-    TestCaseBuilder(cmd, Paths.get(file), args, expectedOutput)
+    TestCaseBuilder(cmd, Paths.get("<examplesDir>", file), args, expectedOutput)
 
   override def allTestable =
     <testSets:{tset|<tset.name>Tests}; separator=" ++\n" >

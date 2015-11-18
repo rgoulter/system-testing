@@ -28,7 +28,7 @@ class RunUtils(config: AppConfig) {
   val repo = new Repository(repoDir)
 
 
-  private[app] def runTestsWith[T](revision: Commit, examplesDir: String)
+  private[app] def runTestsWith[T](revision: Commit)
                              (f: (Path, Path, Commit) => T):
       BuildResult[T] = {
     // check if bin cache has the binaries already
@@ -36,11 +36,11 @@ class RunUtils(config: AppConfig) {
       case Some(p) if !revision.isDirty => {
         val binDir = p getParent()
         // *May* be worth distinguishing "SuccessfulBuild" vs "Loaded Results"
-        SuccessfulBuildResult(runTestsWithCached(binDir, revision, examplesDir)(f))
+        SuccessfulBuildResult(runTestsWithCached(binDir, revision)(f))
       }
 
       case None =>
-        runTestsWithRepo(revision, examplesDir)(f)
+        runTestsWithRepo(revision)(f)
     }
   }
 
@@ -53,7 +53,7 @@ class RunUtils(config: AppConfig) {
    * to run, and it is assumed that this folder can be used to make, and
    * run the tests in.
    */
-  private def runTestsWithRepo[T](revision: Commit, examplesDir: String)
+  private def runTestsWithRepo[T](revision: Commit)
                                  (f: (Path, Path, Commit) => T):
       BuildResult[T] = {
     // Prepare the repo
@@ -84,7 +84,6 @@ class RunUtils(config: AppConfig) {
       prepResult match {
         case SuccessfulBuildResult(()) => {
           val binDir = projectDir
-          val corpusDir = projectDir resolve examplesDir
 
           // Copy to cache..
           // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
@@ -93,7 +92,7 @@ class RunUtils(config: AppConfig) {
           // apparently prelude.ss needs to be in, or hip will break.
           binCache.cache(binDir, Paths.get("prelude.ss"), revision)
 
-          SuccessfulBuildResult(f(binDir, corpusDir, revision))
+          SuccessfulBuildResult(f(binDir, projectDir, revision))
         }
         case BuildTimedOut() => {
           BuildTimedOut()
@@ -105,7 +104,7 @@ class RunUtils(config: AppConfig) {
     }
   }
 
-  private def runTestsWithCached[T](binDir: Path, revision: Commit, examplesDir: String)
+  private def runTestsWithCached[T](binDir: Path, revision: Commit)
                                    (f: (Path, Path, Commit) => T): T = {
     // don't know whether it's hip/sleek we want, but we make/cache both, so.
     require((binDir resolve "sleek").toFile().exists())
@@ -128,6 +127,7 @@ class RunUtils(config: AppConfig) {
 
         // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
         // TODO Hardcoded for now, due to architecture.
+        // XXX foldersUsed
         val foldersUsed =  List(
           "examples/working/sleek",
           "examples/working/hip",
@@ -143,9 +143,7 @@ class RunUtils(config: AppConfig) {
         tmp
       }
 
-      val corpusDir = projectDir resolve examplesDir
-
-      f(binDir, corpusDir, revision)
+      f(binDir, projectDir, revision)
     }
   }
 
