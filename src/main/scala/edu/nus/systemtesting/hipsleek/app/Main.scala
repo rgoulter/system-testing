@@ -150,6 +150,10 @@ class ConfiguredMain(config: AppConfig) {
       case "sleek"  => runSleekTests(revision)
       case "hip"    => runHipTests(revision)
       case "all"    => runAllTests(revision)
+      case "validate-sleek"  => {
+        val validator = new Validate(config)
+        validator.runSleekValidation()
+      }
       case "diff"   => runSuiteDiff(config.rev1, config.rev2)
       case "bisect" => runBisect()
       case "status-repo" => {
