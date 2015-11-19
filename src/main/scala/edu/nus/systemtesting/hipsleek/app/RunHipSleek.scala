@@ -1,7 +1,6 @@
 package edu.nus.systemtesting.hipsleek.app
 
 import java.nio.file.Path
-
 import edu.nus.systemtesting.PreparedSystem
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseConfiguration
@@ -20,6 +19,8 @@ import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.ExpectsOutput
+import edu.nus.systemtesting.ExpectsOutput
 
 /**
  * @author richardg
@@ -55,9 +56,9 @@ class RunHipSleek(config: AppConfig) {
                 SleekTestSuiteUsage.allTestable)(rev)
 
   // construct e.g. HipTestCase.constructTestCase
-  def altRunTests(construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase,
+  def altRunTests(construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase,
                   suiteName: String,
-                  allTestable: List[Testable])
+                  allTestable: List[Testable with ExpectsOutput])
                  (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
     val foldersUsed = (allTestable map { t => t.fileName.getParent().toString() } toSet) toList
@@ -90,7 +91,7 @@ class RunHipSleek(config: AppConfig) {
     }
   }
 
-  private def suiteFor(allTests: List[Testable], repoRevision: Commit): TestSuite = {
+  private def suiteFor(allTests: List[Testable with ExpectsOutput], repoRevision: Commit): TestSuite = {
     // n.b. Technically this ignores 'dirty', since revHash doesn't include the `+`,
     // but since the only effect is for the cache folders (elsewhere), doesn't
     // matter too much here.
@@ -99,11 +100,11 @@ class RunHipSleek(config: AppConfig) {
 
   // should be able to replace runWith, callback nature with this...
   private[app] def runTestCaseForRevision(repoRevision: Commit, preparedSys: => PreparedSystem)
-                                         (implicit construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase):
-      (Testable => TestCaseResult) = {
+                                         (implicit construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase):
+      (Testable with ExpectsOutput => TestCaseResult) = {
     val resultsArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
 
-    { tc: Testable =>
+    { tc: Testable with ExpectsOutput =>
       resultsArch.resultFor(repoRevision.revHash)(tc) match {
         case Some(tcr) => tcr
 

@@ -27,9 +27,6 @@ case class TestCaseResult(val command: Path,
   // for Testable trait, the names are slightly different
   val commandName = command
   val fileName = filename
-  // can't recover expected output; format is different..
-  lazy val expectedOutput =
-    throw new UnsupportedOperationException("Can't recover expected output")
 
   val result: TestResult = results match {
     case Left(_) => TestFailed

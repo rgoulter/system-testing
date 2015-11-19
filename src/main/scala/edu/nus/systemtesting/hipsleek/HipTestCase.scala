@@ -11,9 +11,10 @@ import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseResult
 import java.nio.file.Path
 import java.nio.file.Paths
+import edu.nus.systemtesting.ExpectsOutput
 
 object HipTestCase {
-  implicit def constructTestCase(ps: PreparedSystem, tc: Testable, conf: TestCaseConfiguration): HipTestCase =
+  implicit def constructTestCase(ps: PreparedSystem, tc: Testable with ExpectsOutput, conf: TestCaseConfiguration): HipTestCase =
     new HipTestCase(ps.binDir,
                     tc.commandName,
                     ps.corpusDir,
@@ -28,10 +29,10 @@ class HipTestCase(binDir: Path = Paths.get(""),
                   corpDir: Path = Paths.get(""),
                   fn: Path = Paths.get(""),
                   args: String = "",
-                  expectedOut: String = "",
+                  val expectedOutput: String = "",
                   timeout: Int = 300,
                   regex: String = "Procedure.*FAIL.*|Procedure.*SUCCESS.*")
-    extends TestCase(binDir, cmd, corpDir, fn, args, expectedOut, timeout) {
+    extends TestCase(binDir, cmd, corpDir, fn, args, timeout) with ExpectsOutput {
   def buildExpectedOutputMap(results: String): Map[String, String] = {
     // expected output is a string like "proc: SUCCESS, proc: FAIL"
     results.split(",").map(result =>
@@ -56,7 +57,7 @@ class HipTestCase(binDir: Path = Paths.get(""),
     (methodName, actual)
   }
 
-  override def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
+  override def checkResults(output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     val expectedOutputMap = buildExpectedOutputMap(expectedOutput)
 
     // `parse` is responsible for populating `results` with

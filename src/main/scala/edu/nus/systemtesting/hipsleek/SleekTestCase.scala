@@ -10,9 +10,10 @@ import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.Parser.filterLinesMatchingRegex
 import edu.nus.systemtesting.ProgramFlags.{ flagsOfProgram, isFlag }
+import edu.nus.systemtesting.ExpectsOutput
 
 object SleekTestCase {
-  implicit def constructTestCase(ps: PreparedSystem, tc: Testable, conf: TestCaseConfiguration): SleekTestCase =
+  implicit def constructTestCase(ps: PreparedSystem, tc: Testable with ExpectsOutput, conf: TestCaseConfiguration): SleekTestCase =
     new SleekTestCase(ps.binDir,
                       tc.commandName,
                       ps.corpusDir,
@@ -27,11 +28,11 @@ class SleekTestCase(binDir: Path = Paths.get(""),
                     corpDir: Path = Paths.get(""),
                     fn: Path = Paths.get(""),
                     args: String = "",
-                    expectedOut: String = "",
+                    val expectedOutput: String = "",
                     timeout: Int = 300,
                     regex: String = "Entail .*:\\s.*(Valid|Fail).*|Entailing lemma .*:\\s.*(Valid|Fail).*")
-    extends TestCase(binDir, cmd, corpDir, fn, args, expectedOut, timeout) {
-  def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
+    extends TestCase(binDir, cmd, corpDir, fn, args, timeout) with ExpectsOutput {
+  def checkResults(output: ExecutionOutput): Either[List[String], Iterable[Result]] = {
     // Sleek expected output is like
     //   "Fail, Valid, Valid, Fail"
     val expectedOutputList = expectedOutput.split(",").map(_.trim)

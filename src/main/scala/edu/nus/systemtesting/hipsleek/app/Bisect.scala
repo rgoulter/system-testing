@@ -3,7 +3,6 @@ package edu.nus.systemtesting.hipsleek.app
 import java.lang.Math.ceil
 import java.lang.Math.log
 import java.nio.file.Path
-
 import edu.nus.systemtesting.PreparedSystem
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseConfiguration
@@ -20,6 +19,7 @@ import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.ReporterColors
 import edu.nus.systemtesting.serialisation.ResultsArchive
+import edu.nus.systemtesting.ExpectsOutput
 
 /**
  * @author richardg
@@ -35,7 +35,7 @@ class Bisect(config: AppConfig) {
   import runHipSleek.runTestCaseForRevision
 
 
-  private[app] def bisect(workingCommit: Commit, failingCommit: Commit, tc: Testable): Commit = {
+  private[app] def bisect(workingCommit: Commit, failingCommit: Commit, tc: Testable with ExpectsOutput): Commit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
@@ -49,7 +49,7 @@ class Bisect(config: AppConfig) {
         "hip"
       else
         throw new UnsupportedOperationException(s"Expected testable command ${tc.commandName} to be either `sleek` or `hip`.")
-    val construct: (PreparedSystem, Testable, TestCaseConfiguration) => TestCase =
+    val construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
       if (tc.commandName.endsWith("sleek"))
         SleekTestCase.constructTestCase
       else if (tc.commandName.endsWith("hip"))

@@ -12,7 +12,7 @@ trait TestCaseBehaviors[T <: TestCase] { this: FlatSpec =>
 
   def testCase(): TestCaseBuilder
 
-  implicit def constructTestCase(tcb: Testable): T
+  implicit def constructTestCase(tcb: Testable with ExpectsOutput): T
 
   /**
    * A "valid" test will pass when expected, actual output are the same,

@@ -20,7 +20,6 @@ abstract class TestCase(val binDir: Path,
                         val corpusDir: Path,
                         val fileName: Path,
                         val arguments: String = "",
-                        val expectedOutput: String = "",
                         val timeout: Int) extends Testable {
   /**
    * Check whether the test passed using `expectedOutput`, against the [[ExecutionOutput]].
@@ -29,7 +28,7 @@ abstract class TestCase(val binDir: Path,
    * or a list of differences between the expected and actual output.
    * i.e. A passing test will return `Right` alternative with empty list.
    */
-  def checkResults(expectedOutput: String, output: ExecutionOutput): Either[List[String], Iterable[Result]]
+  def checkResults(output: ExecutionOutput): Either[List[String], Iterable[Result]]
 
   val absCmdPath = binDir resolve commandName
 
@@ -56,7 +55,7 @@ abstract class TestCase(val binDir: Path,
     val fileExists = absFilePath.toFile().exists()
     val check = if (!checkCmdFileExists || (cmdExists && fileExists)) {
       // Only check results if both cmd, file exist.
-      checkResults(expectedOutput, output)
+      checkResults(output)
     } else {
       Left(List(if (!cmdExists) Some(s"$commandName doesn't exist!") else None,
                 if (!fileExists) Some(s"$fileName doesn't exist!") else None).flatten)

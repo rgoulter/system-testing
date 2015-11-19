@@ -18,7 +18,9 @@ trait Testable {
   val commandName: Path
   val fileName: Path
   val arguments: String
+}
 
+trait ExpectsOutput {
   // not sure this one counts?
   // nor that we need it?
   val expectedOutput: String
@@ -30,7 +32,7 @@ trait Testable {
 case class TestCaseBuilder(val commandName: Path = Paths.get(""),
                            val fileName: Path = Paths.get(""),
                            val arguments: String = "",
-                           val expectedOutput: String = "") extends Testable {
+                           val expectedOutput: String = "") extends Testable with ExpectsOutput {
   def runCommand(commandName: Path) =
     copy(commandName = commandName)
 

@@ -18,7 +18,7 @@ class HipTestCaseSpec extends FlatSpec with TestCaseBehaviors[HipTestCase] {
        withArguments "--dsd --en-inf")
   }
 
-  implicit def constructTestCase(tcb: Testable): HipTestCase = {
+  implicit def constructTestCase(tcb: Testable with ExpectsOutput): HipTestCase = {
     new HipTestCase(
       Paths.get("."),
       tcb.commandName,

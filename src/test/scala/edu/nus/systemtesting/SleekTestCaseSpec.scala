@@ -17,7 +17,7 @@ class SleekTestCaseSpec extends FlatSpec with TestCaseBehaviors[SleekTestCase] {
        withArguments " ")
   }
 
-  implicit def constructTestCase(tcb: Testable): SleekTestCase = {
+  implicit def constructTestCase(tcb: Testable with ExpectsOutput): SleekTestCase = {
     new SleekTestCase(
       Paths.get("."),
       tcb.commandName,

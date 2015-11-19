@@ -2,10 +2,8 @@ package edu.nus.systemtesting.hipsleek.app
 
 import java.nio.file.Path
 import java.nio.file.Paths
-
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
-
 import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
@@ -16,6 +14,7 @@ import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.serialisation.ResultsArchive
+import edu.nus.systemtesting.ExpectsOutput
 
 class UnableToBuildException(repoDir: Path,
                              val rev: Commit,
@@ -266,9 +265,10 @@ class ConfiguredMain(config: AppConfig) {
     bisect(initWorkingCommit, initFailingCommit, bisectTC)
   }
 
-  private[app] def recoverTestableFromTCR(tcr: TestCaseResult): Testable = {
+  private[app] def recoverTestableFromTCR(tcr: TestCaseResult): Testable with ExpectsOutput = {
     // n.b. cannot recover `expectedOutput` from tcr directly.
 
+    // XXX Can we tidy this up, or ... ?
     val bisectTestable = new TestCaseBuilder(tcr.command, tcr.filename, tcr.arguments, "???")
     val tcrExp = tcr.expected
 
