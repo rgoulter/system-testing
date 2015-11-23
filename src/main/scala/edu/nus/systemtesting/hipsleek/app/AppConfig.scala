@@ -17,6 +17,30 @@ object ConfigDefaults {
   val DefaultBinCacheDir = "bincache"
 }
 
+
+
+/** for whether Sleek, Hip (or all) are run. */
+sealed trait ConfigCommand
+
+case class HipConfigArg() extends ConfigCommand
+
+case class SleekConfigArg(val isValidate: Boolean = false) extends ConfigCommand
+
+
+
+/** for whether Sleek, Hip (or all) are run. */
+sealed trait RunOption
+
+case class RunHipOnly() extends RunOption
+
+case class RunSleekOnly() extends RunOption
+
+case class RunAll() extends RunOption
+
+case class RunSleekValidateOnly() extends RunOption
+
+
+
 /**
  * @param commands which of `hip`, `sleek` should be run.
  * @param timeout is in seconds
@@ -33,7 +57,7 @@ case class AppConfig(repoDir: Option[Path],
                      buildFailuresFile: String = DefaultBuildFailuresFile,
                      binCacheDir: String = DefaultBinCacheDir,
                      timeout: Int = DefaultTimeout,
-                     commands: Set[String] = Set(),
+                     commands: Set[ConfigCommand] = Set(),
                      significantTimeThreshold: Int = DefaultSignificantTimeThreshold,
                      outputVis: OutputVisibility = OutputVisibility.PresetVerbose) {
   def rev(): Option[String] = revs.headOption
@@ -43,14 +67,19 @@ case class AppConfig(repoDir: Option[Path],
   def rev2(): Option[String] =
     if (revs.length == 2) Some(revs(1)) else None
 
-  def isRunSleek: Boolean =
-    commands.contains("sleek")
-
-  def isRunHip: Boolean =
-    commands.contains("hip")
-
-  def isRunAll: Boolean =
-    Seq("sleek", "hip").forall(commands contains _)
+  def runCommand: RunOption = {
+    if ((commands contains SleekConfigArg(false)) && (commands contains HipConfigArg())) {
+      RunAll()
+    } else if (commands contains HipConfigArg()) {
+      RunHipOnly()
+    } else if (commands contains SleekConfigArg(false)) {
+      RunSleekOnly()
+    } else if (commands contains SleekConfigArg(isValidate = true)) {
+      RunSleekValidateOnly()
+    } else {
+      throw new IllegalArgumentException("Invalid combination of commands.")
+    }
+  }
 
   def repoDirOrDie: Path = {
     val dir: Path = repoDir getOrElse {
@@ -176,13 +205,11 @@ object AppConfig {
     cmd("diff") action { (_, c) =>
         c.copy(command = "diff") } text("diff the sleek/hip test results") children(
           opt[Unit]('s', "sleek") action { (_, c) =>
-            c.copy(commands = c.commands + "sleek") } text("diff sleek results"),
+            c.copy(commands = c.commands + SleekConfigArg()) } text("diff sleek results"),
           opt[Unit]('h', "hip") action { (_, c) =>
-            c.copy(commands = c.commands + "hip") } text("diff hip results"),
+            c.copy(commands = c.commands + HipConfigArg()) } text("diff hip results"),
           opt[Unit]('a', "all") action { (_, c) =>
-            c.copy(commands = c.commands + "sleek" + "hip") } text("diff sleek, hip results"),
-          opt[Unit]("sleek") action { (_, c) =>
-            c.copy(commands = c.commands + "sleek") },
+            c.copy(commands = Set(SleekConfigArg(), HipConfigArg())) } text("diff sleek, hip results"),
           arg[String]("<rev1 [rev2]>") optional() maxOccurs(2) action { (x, c) =>
           c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current)")
           )

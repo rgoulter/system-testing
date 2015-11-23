@@ -174,15 +174,15 @@ class ConfiguredMain(config: AppConfig) {
 
   private def runSuiteDiff(rev1: Option[String], rev2: Option[String]): Unit = {
     // Select whether to run sleek, hip or both
-    val resultPairs: (Commit, Commit) => DiffableResults = if (config.isRunAll) {
-      allResultPairs
-    } else if (config.isRunSleek) {
-      sleekResultPairs
-    } else if (config.isRunHip) {
-      hipResultPairs
-    } else {
-      throw new IllegalStateException
-    }
+    val resultPairs: (Commit, Commit) => DiffableResults =
+      config.runCommand match {
+        case RunAll() => allResultPairs
+        case RunSleekOnly() => sleekResultPairs
+        case RunHipOnly() => hipResultPairs
+        case RunSleekValidateOnly() => ???
+        case _ =>
+          throw new IllegalStateException
+      }
 
     // Dispatch, depending on which revisions received as args
     (rev1, rev2) match {
