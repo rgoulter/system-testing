@@ -11,6 +11,8 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
 class Diff(config: AppConfig) {
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.{ runAllTests, runHipTests, runSleekTests }
+  val validate = new Validate(config)
+  import validate.runSleekValidateTests
 
 
   /** Used for `diffSuiteResults`, to save typing / screen space. */
@@ -47,6 +49,14 @@ class Diff(config: AppConfig) {
 
     List(("sleek", oldSleekResults, curSleekResults),
          ("hip",   oldHipResults, curHipResults))
+  }
+
+  private[app] def validateSleekResultPairs(rev1: Commit, rev2: Commit):
+      DiffableResults = {
+    val oldRes = runSleekValidateTests(rev1)
+    val curRes = runSleekValidateTests(rev2)
+
+    List(("sleek", oldRes, curRes)) // ???
   }
 
   /**
