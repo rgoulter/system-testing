@@ -210,6 +210,8 @@ object AppConfig {
             c.copy(commands = c.commands + HipConfigArg()) } text("diff hip results"),
           opt[Unit]('a', "all") action { (_, c) =>
             c.copy(commands = Set(SleekConfigArg(), HipConfigArg())) } text("diff sleek, hip results"),
+          opt[Unit]('S', "sleek-validate") action { (_, c) =>
+            c.copy(commands = Set(SleekConfigArg(isValidate = true))) } text("diff sleek results"),
           arg[String]("<rev1 [rev2]>") optional() maxOccurs(2) action { (x, c) =>
           c.copy(revs = c.revs :+ x) } text("optional revisions of project to test against. (old, current)")
           )

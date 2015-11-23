@@ -4,11 +4,17 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
+import edu.nus.systemtesting.PreparedSystem
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hg.Commit
 import edu.nus.systemtesting.hg.Repository
+import edu.nus.systemtesting.hipsleek.HipTestCase
+import edu.nus.systemtesting.hipsleek.SleekTestCase
+import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.GlobalReporter.reporter
@@ -135,7 +141,7 @@ class ConfiguredMain(config: AppConfig) {
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.{ runAllTests, runHipTests, runSleekTests }
   val diff = new Diff(config)
-  import diff.{ DiffableResults, allResultPairs, hipResultPairs, sleekResultPairs, diffSuiteResults }
+  import diff.{ DiffableResults, allResultPairs, hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
   val bisector = new Bisect(config)
   import bisector.bisect
 
@@ -153,7 +159,7 @@ class ConfiguredMain(config: AppConfig) {
         val validator = new Validate(config)
         validator.runSleekValidation()
       }
-      case "diff"   => runSuiteDiff(config.rev1, config.rev2)
+      case "diff"   => runSuiteDiff()
       case "bisect" => runBisect()
       case "status-repo" => {
         val repoStatus = new RepoStatus(config)
@@ -172,19 +178,20 @@ class ConfiguredMain(config: AppConfig) {
   }
 
 
-  private def runSuiteDiff(rev1: Option[String], rev2: Option[String]): Unit = {
+  private def runSuiteDiff(): Unit = {
     // Select whether to run sleek, hip or both
     val resultPairs: (Commit, Commit) => DiffableResults =
       config.runCommand match {
-        case RunAll() => allResultPairs
-        case RunSleekOnly() => sleekResultPairs
-        case RunHipOnly() => hipResultPairs
-        case RunSleekValidateOnly() => ???
+        case RunAll()               => allResultPairs
+        case RunSleekOnly()         => sleekResultPairs
+        case RunHipOnly()           => hipResultPairs
+        case RunSleekValidateOnly() => validateSleekResultPairs
         case _ =>
           throw new IllegalStateException
       }
 
     // Dispatch, depending on which revisions received as args
+    import config.{ rev1, rev2 }
     (rev1, rev2) match {
       case (Some(r1), Some(r2)) => {
         println(s"Diff on $r1 -> $r2")
@@ -258,19 +265,34 @@ class ConfiguredMain(config: AppConfig) {
       throw new IllegalArgumentException(s"Expected to find result for $initWorkingCommit")
     }
 
-    val bisectTC = recoverTestableFromTCR(workingTCR)
+    val (bisectTC, construct) = recoverFromTCR(workingTCR)
+
+
 
     println("running bisect...")
 
-    bisect(initWorkingCommit, initFailingCommit, bisectTC)
+    bisect(initWorkingCommit, initFailingCommit, bisectTC, construct)
   }
 
-  private[app] def recoverTestableFromTCR(tcr: TestCaseResult): Testable with ExpectsOutput = {
+  private[app] def recoverFromTCR(tcr: TestCaseResult):
+      (Testable with ExpectsOutput,
+       (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase) = {
     // n.b. cannot recover `expectedOutput` from tcr directly.
 
-    // XXX Can we tidy this up, or ... ?
-    val bisectTestable = new TestCaseBuilder(tcr.command, tcr.filename, tcr.arguments, "???")
     val tcrExp = tcr.expected
+
+    val testKind =
+      if (tcr.command.endsWith("hip")) {
+        HipConfigArg()
+      } else if (tcr.command.endsWith("sleek")) {
+        // MAGIC
+        if (!tcrExp.exists { case (_, v) => v == "OK" })
+          // run-fast-tests style Sleek Test Case
+          SleekConfigArg(isValidate = false)
+        else
+          SleekConfigArg(isValidate = false)
+      } else
+        throw new UnsupportedOperationException(s"Expected command ${tcr.command} to be `sleek` or `hip`.")
 
     def recoverHipExpectedOuput(exp: List[(String, String)]): String = {
       exp map { case (k, v) => k + ": " + v } mkString(", ")
@@ -282,17 +304,26 @@ class ConfiguredMain(config: AppConfig) {
 
     // recover*ExpectedOutput above is awkward/magic, may be *TestCase could overload exp.
     // to allow for more appropriate types...?
-    val expectedOutp =
-      if (tcr.command.endsWith("hip"))
-        recoverHipExpectedOuput(tcrExp)
-      else if (tcr.command.endsWith("sleek"))
-        recoverSleekExpectedOuput(tcrExp)
-      else
-        throw new UnsupportedOperationException(s"Expected command ${tcr.command} to be `sleek` or `hip`.")
+    val expectedOutp = testKind match {
+      case HipConfigArg()        => recoverHipExpectedOuput(tcrExp)
+      case SleekConfigArg(false) => recoverSleekExpectedOuput(tcrExp)
+      // Validate Sleek test case doesn't need any expectedOutp
+      case SleekConfigArg(true)  => ""
+    }
 
     println(s"Recovered Expected output:" + expectedOutp)
 
-    bisectTestable copy (expectedOutput = expectedOutp)
+    val testable = new TestCaseBuilder(tcr.command, tcr.filename, tcr.arguments, expectedOutp)
+
+    // MAGIC, & awkward, but difficult to think of a better way of doing this currently
+    val construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
+      testKind match {
+        case HipConfigArg()        => HipTestCase.constructTestCase
+        case SleekConfigArg(false) => SleekTestCase.constructTestCase
+        case SleekConfigArg(true)  => ValidateableSleekTestCase.constructTestCase
+      }
+
+    (testable, construct)
   }
 
   private def showHelpText(): Unit = {

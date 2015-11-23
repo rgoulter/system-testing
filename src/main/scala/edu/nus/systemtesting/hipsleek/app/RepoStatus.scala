@@ -105,9 +105,9 @@ class RepoStatus(config: AppConfig) {
       tsCmp.usedToPass.zipWithIndex map { case ((oldTC, _), idx) =>
         reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
 
-        val bisectTC = configuredMain.recoverTestableFromTCR(oldTC)
+        val (bisectTC, construct) = configuredMain.recoverFromTCR(oldTC)
 
-        val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC)
+        val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC, construct)
 
         (bisectTC, firstFailingC)
       }

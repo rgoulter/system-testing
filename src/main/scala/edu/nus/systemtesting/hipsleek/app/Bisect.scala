@@ -35,27 +35,14 @@ class Bisect(config: AppConfig) {
   import runHipSleek.runTestCaseForRevision
 
 
-  private[app] def bisect(workingCommit: Commit, failingCommit: Commit, tc: Testable with ExpectsOutput): Commit = {
+  private[app] def bisect(workingCommit: Commit,
+                          failingCommit: Commit,
+                          tc: Testable with ExpectsOutput,
+                          construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase): Commit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
     val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
-
-    // MAGIC, & awkward, but difficult to think of a better way of doing this currently
-    val suiteName =
-      if (tc.commandName.endsWith("sleek"))
-        "sleek"
-      else if (tc.commandName.endsWith("hip"))
-        "hip"
-      else
-        throw new UnsupportedOperationException(s"Expected testable command ${tc.commandName} to be either `sleek` or `hip`.")
-    val construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
-      if (tc.commandName.endsWith("sleek"))
-        SleekTestCase.constructTestCase
-      else if (tc.commandName.endsWith("hip"))
-        HipTestCase.constructTestCase
-      else
-        throw new UnsupportedOperationException(s"Expected testable command ${tc.commandName} to be either `sleek` or `hip`.")
 
     // Check that the given revisions to arg make sense
     val tcr1 = results.resultFor(workingCommit.revHash)(tc)

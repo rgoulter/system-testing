@@ -56,7 +56,7 @@ class Diff(config: AppConfig) {
     val oldRes = runSleekValidateTests(rev1)
     val curRes = runSleekValidateTests(rev2)
 
-    List(("sleek", oldRes, curRes)) // ???
+    List(("sleek-validate", oldRes, curRes))
   }
 
   /**
