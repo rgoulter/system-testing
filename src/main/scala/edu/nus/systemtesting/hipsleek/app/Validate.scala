@@ -69,7 +69,6 @@ class Validate(config: AppConfig) {
 
   private[app] def runSleekValidateTests(rev: Commit): TestSuiteResult =
     altRunTests(ValidateableSleekTestCase.constructTestCase,
-                "sleek", // ???
                 allTestable)(rev)
 
   def runSleekValidation(): Unit = {

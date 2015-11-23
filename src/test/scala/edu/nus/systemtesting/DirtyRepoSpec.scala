@@ -99,7 +99,7 @@ class DirtyRepoSpec extends FlatSpec with BeforeAndAfter {
     assert(repoCommit.isDirty)
 
     // Run the test
-    val tsr = runHipSleek.altRunTests(SleekTestCase.constructTestCase, "sleek", List(KnownGoodTestCase))(repoCommit)
+    val tsr = runHipSleek.altRunTests(SleekTestCase.constructTestCase, List(KnownGoodTestCase))(repoCommit)
     val results = tsr.results
     assert(!results.isEmpty)
     val tcr = results.head

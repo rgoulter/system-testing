@@ -39,25 +39,20 @@ class RunHipSleek(config: AppConfig) {
 
   private[app] def runAllTests(rev: Commit): (TestSuiteResult, TestSuiteResult) =
     (altRunTests(SleekTestCase.constructTestCase,
-                 "sleek",
                  SleekTestSuiteUsage.allTestable)(rev),
      altRunTests(HipTestCase.constructTestCase,
-                 "hip",
                  HipTestSuiteUsage.allTestable)(rev))
 
   private[app] def runHipTests(rev: Commit): TestSuiteResult =
     altRunTests(HipTestCase.constructTestCase,
-                "hip",
                 HipTestSuiteUsage.allTestable)(rev)
 
   private[app] def runSleekTests(rev: Commit): TestSuiteResult =
     altRunTests(SleekTestCase.constructTestCase,
-                "sleek",
                 SleekTestSuiteUsage.allTestable)(rev)
 
   // construct e.g. HipTestCase.constructTestCase
   def altRunTests(construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase,
-                  suiteName: String,
                   allTestable: List[Testable with ExpectsOutput])
                  (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
