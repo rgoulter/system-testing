@@ -31,8 +31,9 @@ class Validate(config: AppConfig) {
   val runUtils = new RunUtils(config)
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.runTestCaseForRevision
+  import runHipSleek.{ altRunTests, runTestCaseForRevision }
 
+  /** Based upon the `test/` dirname convention. */
   def listTestableDirs(): List[Path] = {
     // make use of unix commands: find, xargs, dirname, grep
     import scala.sys.process._
@@ -56,12 +57,23 @@ class Validate(config: AppConfig) {
     dir.listFiles().toList.filter(f => f.getName.endsWith(".slk") && f.isFile()).filter(isValidateableFile)
   }
 
-  def runSleekValidation(): Unit = {
-    // list the appropriate test dirs,
-    val dirs = listTestableDirs()
+  // no expected output needed,
+  // assumes validateable should run without any arguments
+  private def testableForFile(f: File): Testable with ExpectsOutput =
+    (new TestCaseBuilder()
+       runCommand Paths.get("sleek")
+       onFile repoDirPath.relativize(f.toPath()))
 
-    // get the appropriate *.slk files for these,
-    val testableFiles = dirs.flatMap(listValidateableInDir)
+  def allTestable: List[Testable with ExpectsOutput] =
+    listTestableDirs() flatMap listValidateableInDir map testableForFile
+
+  private[app] def runSleekValidateTests(rev: Commit): TestSuiteResult =
+    altRunTests(ValidateableSleekTestCase.constructTestCase,
+                "sleek", // ???
+                allTestable)(rev)
+
+  def runSleekValidation(): Unit = {
+    val testableFiles = listTestableDirs() flatMap listValidateableInDir
 
     println("Testable files:")
     testableFiles.foreach(println)
@@ -73,32 +85,24 @@ class Validate(config: AppConfig) {
     // run these using ValidateableSleekTestcase
     // making use of alt-run-tests, whatever.
 
-    // no expected output needed,
-    // assumes validateable should run without any arguments
-    def testableForFile(f: File): Testable with ExpectsOutput =
-      (new TestCaseBuilder()
-         runCommand Paths.get("sleek")
-         onFile repoDirPath.relativize(f.toPath()))
-
     runTestsWith(repoC, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
       // XXX readjust so as to not use archives every fucking time
-      def runTest(validateableFile: File): TestCaseResult = {
-        val tc = testableForFile(validateableFile)
-          // Ideally, preparedSys would itself do the building of repo.
-          // i.e. building the repo would be delayed until necessary.
-          // At the moment, though, since any system loading tests will *have* the
-          // tests, this is not going to slow things down.
-          lazy val preparedSys = PreparedSystem(binDir, corpusDir)
+      def runTest(tc: Testable with ExpectsOutput): TestCaseResult = {
+        // Ideally, preparedSys would itself do the building of repo.
+        // i.e. building the repo would be delayed until necessary.
+        // At the moment, though, since any system loading tests will *have* the
+        // tests, this is not going to slow things down.
+        lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-          val resultsFor = runTestCaseForRevision(repoC, preparedSys)(ValidateableSleekTestCase.constructTestCase)
+        val resultsFor = runTestCaseForRevision(repoC, preparedSys)(ValidateableSleekTestCase.constructTestCase)
 
-          // by this point,
-          // tc *must* have proper expectedOutput
-          resultsFor(testableForFile(validateableFile))
+        // by this point,
+        // tc *must* have proper expectedOutput
+        resultsFor(tc)
       }
 
-      testableFiles.foreach(file => {
-        val tcr = runTest(file)
+      allTestable foreach(tc => {
+        val tcr = runTest(tc)
         tcr.displayResult()
       })
     }
