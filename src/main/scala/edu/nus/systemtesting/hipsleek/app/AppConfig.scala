@@ -201,6 +201,8 @@ object AppConfig {
           )
     cmd("validate-sleek") action { (_, c) =>
         c.copy(command = "validate-sleek") } text("run automatically-discovered validateable sleek test cases") children(
+          arg[String]("<revision>") optional() action { (x, c) =>
+          c.copy(revs = List(x)) } text("optional revision of project to test against")
           )
     cmd("diff") action { (_, c) =>
         c.copy(command = "diff") } text("diff the sleek/hip test results") children(

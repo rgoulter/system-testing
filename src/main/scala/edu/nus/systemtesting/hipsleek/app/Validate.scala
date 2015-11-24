@@ -79,7 +79,7 @@ class Validate(config: AppConfig) {
 
     val foldersUsed = testableFiles.map(_.getParent)
 
-    val repoC = repo.identify()
+    val repoC = config.rev map (c => new Commit(repo, c)) getOrElse repo.identify()
 
     // run these using ValidateableSleekTestcase
     // making use of alt-run-tests, whatever.
