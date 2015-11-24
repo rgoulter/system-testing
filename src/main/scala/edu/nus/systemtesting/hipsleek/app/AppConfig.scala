@@ -53,6 +53,8 @@ case class AppConfig(repoDir: Option[Path],
                      bisectCmd:  Option[String] = None,
                      bisectFile: Option[String] = None,
                      bisectArgs: List[String] = List(),
+                     developmentDir: Option[String] = None,
+                     validateDirs: List[String] = List(),
                      resultsDir: String = DefaultResultsDir,
                      buildFailuresFile: String = DefaultBuildFailuresFile,
                      binCacheDir: String = DefaultBinCacheDir,
@@ -161,7 +163,17 @@ object AppConfig {
       case e: ConfigException.Missing => DefaultBinCacheDir
     }
 
+    val validateDirs: List[String] = try {
+      val cfgList = configuration.getList("VALIDATE_DIRS")
+      (for {
+        i <- 0 until cfgList.size()
+      } yield cfgList.get(i).unwrapped().toString()) toList
+    } catch {
+      case e: ConfigException.Missing => List()
+    }
+
     AppConfig(repoDir = repoDir,
+              validateDirs = validateDirs,
               resultsDir = resultsDir,
               buildFailuresFile = buildFailuresFile,
               binCacheDir = binCacheDir,
@@ -202,7 +214,9 @@ object AppConfig {
     cmd("validate-sleek") action { (_, c) =>
         c.copy(command = "validate-sleek") } text("run automatically-discovered validateable sleek test cases") children(
           arg[String]("<revision>") optional() action { (x, c) =>
-          c.copy(revs = List(x)) } text("optional revision of project to test against")
+          c.copy(revs = List(x)) } text("optional revision of project to test against"),
+          opt[String]('d', "dir") action { (x, c) =>
+            c.copy(developmentDir = Some(x)) } text("a directory to run tests on (relative to $REPO_DIR)")
           )
     cmd("diff") action { (_, c) =>
         c.copy(command = "diff") } text("diff the sleek/hip test results") children(

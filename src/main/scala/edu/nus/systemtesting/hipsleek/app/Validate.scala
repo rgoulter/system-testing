@@ -39,7 +39,12 @@ class Validate(config: AppConfig) {
     import scala.sys.process._
     val testDirs = Process(s"find $repoDirPath -mindepth 2 -type d -name test") #| "grep -v \\.hg" !!
 
-    testDirs.split("\n").toList.map(repoDirPath.resolve)
+    val foundDirs = testDirs.split("\n").toList.map(repoDirPath.resolve)
+
+    // use VALIDATE_DIRS from the config.
+    val validateDirs = config.validateDirs map (repoDirPath resolve)
+
+    foundDirs ++ validateDirs
   }
 
   def isValidateableFile(f: File): Boolean = {
@@ -72,7 +77,12 @@ class Validate(config: AppConfig) {
                 allTestable)(rev)
 
   def runSleekValidation(): Unit = {
-    val testableFiles = listTestableDirs() flatMap listValidateableInDir
+    // If developmentDir specified, use that, otherwise
+    // rely on automated discovery / configured validate dirs.
+    val testableDirPaths =
+      config.developmentDir map (ddir => List(repoDirPath.resolve(ddir))) getOrElse listTestableDirs()
+    val testableFiles =
+      testableDirPaths flatMap listValidateableInDir
 
     println("Testable files:")
     testableFiles.foreach(println)
@@ -85,7 +95,6 @@ class Validate(config: AppConfig) {
     // making use of alt-run-tests, whatever.
 
     runTestsWith(repoC, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
-      // XXX readjust so as to not use archives every fucking time
       def runTest(tc: Testable with ExpectsOutput): TestCaseResult = {
         // Ideally, preparedSys would itself do the building of repo.
         // i.e. building the repo would be delayed until necessary.
