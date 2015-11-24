@@ -232,6 +232,8 @@ object AppConfig {
           )
     cmd("status-repo") action { (_, c) =>
         c.copy(command = "status-repo") } text("Report on the status of the repository (all recent branches).") children(
+          opt[Unit]('S', "sleek-validate") action { (_, c) =>
+            c.copy(commands = c.commands + SleekConfigArg(isValidate = true)) } text("construct status using sleek-validate")
           )
     cmd("status-branch") action { (_, c) =>
         c.copy(command = "status-branch") } text("Report on the status of the current branch.") children(

@@ -31,7 +31,7 @@ class RepoStatus(config: AppConfig) {
   // Don't run, but need ConfiguredMain to invoke diffs between commits
   val configuredMain = new ConfiguredMain(config)
   val diff = new Diff(config)
-  import diff.{ allResultPairs, diffSuiteResults }
+  import diff.{ allResultPairs, validateSleekResultPairs, diffSuiteResults }
   val bisector = new Bisect(config)
   import bisector.bisect
   val runHipSleek = new RunHipSleek(config)
@@ -58,7 +58,14 @@ class RepoStatus(config: AppConfig) {
     // TODO: Or should this be commonAncestor with branched-from?
     // val latestMergeC = Repo.commonAncestor(latestCommit, defaultB)
 
-    val resultPairs = allResultPairs(_, _)
+    val configHasValidate = config.commands contains SleekConfigArg(isValidate = true)
+
+    val resultPairs =
+      if (!configHasValidate)
+        allResultPairs(_, _)
+      else
+        validateSleekResultPairs(_, _)
+
 
     // reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
 
