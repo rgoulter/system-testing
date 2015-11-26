@@ -69,6 +69,7 @@ case class AppConfig(repoDir: Option[Path],
                      buildFailuresFile: String = DefaultBuildFailuresFile,
                      binCacheDir: String = DefaultBinCacheDir,
                      timeout: Int = DefaultTimeout,
+                     saveResultOnTimeout: Boolean = true,
                      commands: Set[ConfigCommand] = Set(),
                      significantTimeThreshold: Int = DefaultSignificantTimeThreshold,
                      outputVis: OutputVisibility = OutputVisibility.PresetVerbose) {

@@ -112,7 +112,12 @@ class RunHipSleek(config: AppConfig) {
 
           // Didn't have results, save them.
           try {
-            resultsArch.saveTestCaseResult(repoRevision, tcr)
+            val isTimedOut = tcr.executionTime >= config.timeout
+            val canSave = config.saveResultOnTimeout || !isTimedOut
+
+            if (canSave) {
+              resultsArch.saveTestCaseResult(repoRevision, tcr)
+            }
           } catch {
             case e: Throwable => {
               e.printStackTrace()

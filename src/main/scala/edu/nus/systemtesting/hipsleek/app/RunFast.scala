@@ -5,21 +5,27 @@ import java.io.PrintWriter
 import java.nio.file.Path
 import java.nio.file.Paths
 import scala.io.Source
-import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.output.GlobalReporter.reporter
-import edu.nus.systemtesting.testsuite.TestSuiteComparison
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.TestCaseResult
+import scala.concurrent.Channel
+import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.PreparedSystem
+import edu.nus.systemtesting.Testable
+import edu.nus.systemtesting.TestCase
+import edu.nus.systemtesting.TestCaseConfiguration
+import edu.nus.systemtesting.TestCaseBuilder
+import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.hg.Commit
+import edu.nus.systemtesting.hg.Repository
+import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.hipsleek.BuildResult
+import edu.nus.systemtesting.hipsleek.HipTestCase
 import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
+import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
-import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
-import edu.nus.systemtesting.Testable
-import edu.nus.systemtesting.ExpectsOutput
+import edu.nus.systemtesting.serialisation.ResultsArchive
+import edu.nus.systemtesting.testsuite.TestSuiteComparison
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 
 /**
  * Generates, runs a subset of some set of testables.
@@ -34,10 +40,7 @@ class RunFast(config: AppConfig) {
   val repo = new Repository(config.repoDirOrDie)
 
 
-  val runUtils = new RunUtils(config)
-  import runUtils.runTestsWith
-  val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.{ altRunTests, runTestCaseForRevision }
+  val validate = new Validate(config)
 
 
   def DefaultFastCacheName(name: String) = s".fasttests_$name"
@@ -56,7 +59,7 @@ class RunFast(config: AppConfig) {
       src.close()
 
       Some(content.lines.toList map { line =>
-        line.split(" ") match {
+        line.split(" ", 2) match {
           case Array(filename) => FastTestRow(filename)
           case Array(filename, args) => FastTestRow(filename, Some(args))
         }
@@ -109,25 +112,100 @@ class RunFast(config: AppConfig) {
         case All() => filterTestable(SleekTestSuiteUsage.allTestable ++ HipTestSuiteUsage.allTestable, fastTests)
 
         case SleekValidateOnly() => {
-          // XXX construct ValidateableSleekTestCase directly
+          // construct ValidateableSleekTestCase directly
+          fastTests map { fastTest =>
+            TestCaseBuilder(Paths.get("sleek"), Paths.get(fastTest.filename))
+          }
         }
       }
     }
   }
 
-  private def saveFastTests(suite: Suite, data: List[Testable with ExpectsOutput]): Unit = {
+  private def saveFastTests(suite: Suite, data: List[Testable]): Unit = {
     saveToFile(fileForSuite(suite), data map rowFromTestable)
   }
 
-  private def generateFastTestablesForSuite(suite: Suite): List[Testable with ExpectsOutput] = {
-    // XXX get the universe of testable for the suite,
+  private def allConstructTestCase(ps: PreparedSystem, tc: Testable with ExpectsOutput, conf: TestCaseConfiguration):
+      TestCase = {
+    if (tc.toString endsWith "hip") {
+      HipTestCase.constructTestCase(ps, tc, conf)
+    } else {
+      // assume if-not-hip then must be sleek
+      SleekTestCase.constructTestCase(ps, tc, conf)
+    }
+  }
 
-    // XXX if we have sufficent number of results, can compute from that,
+  private def generateFastTestablesForSuite(suite: Suite): List[Testable] = {
+    // get the universe of testable for the suite,
+    val allTestable = suite match {
+      case HipOnly()           => HipTestSuiteUsage.allTestable
+      case SleekOnly()         => SleekTestSuiteUsage.allTestable
+      case All()               => SleekTestSuiteUsage.allTestable ++ HipTestSuiteUsage.allTestable
+      case SleekValidateOnly() => validate.allTestable
+    }
 
-    // XXX otherwise, must run with a short timeout + don't save results (for T/O),
-    // so as to see which tests are "quick"
+    val construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
+      suite match {
+        case HipOnly()           => HipTestCase.constructTestCase
+        case SleekOnly()         => SleekTestCase.constructTestCase
 
-    List()
+        // This is more involved;
+        case All()               => allConstructTestCase
+        case SleekValidateOnly() => ValidateableSleekTestCase.constructTestCase
+      }
+
+    // if we have sufficent number of results, can compute from that,
+    val resArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
+    val extantResults = allTestable map (resArch.resultsFor) filterNot (_.isEmpty)
+
+    val timeTestablePairs = if (extantResults.length == allTestable.length) {
+      extantResults map { res =>
+        val timings = res map { case (rev, tcr) => tcr.executionTime }
+        val avgTiming = timings.foldLeft(0L)({ (sum, time) => sum + time }) / timings.length
+
+        val testable = res.head._2
+
+        (avgTiming, testable)
+      }
+    } else {
+      // otherwise, must run with a short timeout + don't save results (for T/O),
+      // so as to see which tests are "quick"
+
+      // Only save results for tests which take 10s or less.
+      val QuickTimeout = 10
+      val quickConfig = config.copy(saveResultOnTimeout = false,
+                                    timeout = QuickTimeout)
+
+      val runHipSleek = new RunHipSleek(quickConfig)
+      import runHipSleek.{ altRunTests, runTestCaseForRevision }
+
+      // If repo is dirty, this will be needlessly expensive.
+      val repoC = repo.identify()
+
+      // n.b. *might* throw UnableToBuildException here
+      // XXX BUG: It seems this doesn't save the test case result, even for non-timeout?
+      val tsr = altRunTests(construct, allTestable)(repoC)
+
+      // wait for the results
+      tsr.results map { tcr => (tcr.executionTime, tcr) }
+    }
+
+    val sortedTCRs = timeTestablePairs.sortBy { case (time, tc) => time }
+
+    // Try to keep the timing under 2 mins for running the tests
+    val FastTestTime = 120 * 1000
+
+    sortedTCRs.foldLeft(List[TestCaseResult]())({ (fastTests, timeTCPair) =>
+      val (tcTime, tc) = timeTCPair
+
+      val totalTime = fastTests.foldLeft(0L) { (sum, tcr) => sum + tcr.executionTime }
+
+      if (totalTime < FastTestTime) {
+        fastTests :+ tc
+      } else {
+        fastTests
+      }
+    })
   }
 
   private def suiteFromString(suite: String): Suite =
@@ -157,10 +235,24 @@ class RunFast(config: AppConfig) {
     //
 
     val fastTests = loadFastTests(suite) match {
-      case Some(xs) if !isForcedGenerate => xs
-      case None => {
+      case Some(xs) if !isForcedGenerate => {
+        println("Loading fast tests from cached file.")
+        xs
+      }
+      case Some(xs) if isForcedGenerate => {
+        println("File exists, but flag forced generation. Generating.")
         val xs = generateFastTestablesForSuite(suite)
 
+        println("Saving cache of fast tests.")
+        saveFastTests(suite, xs)
+
+        xs
+      }
+      case None => {
+        println("No fast tests cache file found for this suite. Generating.")
+        val xs = generateFastTestablesForSuite(suite)
+
+        println("Saving cache of fast tests.")
         saveFastTests(suite, xs)
 
         xs
