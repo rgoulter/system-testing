@@ -22,6 +22,11 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.ExpectsOutput
 
+object RunHipSleek {
+  def foldersUsedFromTestable(testable: List[Testable]): List[String] =
+    (testable map { t => t.fileName.getParent().toString() } toSet) toList
+}
+
 /**
  * @author richardg
  */
@@ -56,7 +61,7 @@ class RunHipSleek(config: AppConfig) {
                   allTestable: List[Testable with ExpectsOutput])
                  (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
-    val foldersUsed = (allTestable map { t => t.fileName.getParent().toString() } toSet) toList
+    val foldersUsed = RunHipSleek.foldersUsedFromTestable(allTestable)
 
     (runTestsWith(rev, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
       // Ideally, preparedSys would itself do the building of repo.
@@ -112,7 +117,12 @@ class RunHipSleek(config: AppConfig) {
 
           // Didn't have results, save them.
           try {
-            resultsArch.saveTestCaseResult(repoRevision, tcr)
+            val isTimedOut = tcr.executionTime >= config.timeout
+            val canSave = config.saveResultOnTimeout || !isTimedOut
+
+            if (canSave) {
+              resultsArch.saveTestCaseResult(repoRevision, tcr)
+            }
           } catch {
             case e: Throwable => {
               e.printStackTrace()

@@ -159,6 +159,9 @@ class ConfiguredMain(config: AppConfig) {
         val validator = new Validate(config)
         validator.runSleekValidation()
       }
+      case "fast" => {
+        new RunFast(config) run
+      }
       case "diff"   => runSuiteDiff()
       case "bisect" => runBisect()
       case "status-repo" => {
@@ -182,10 +185,10 @@ class ConfiguredMain(config: AppConfig) {
     // Select whether to run sleek, hip or both
     val resultPairs: (Commit, Commit) => DiffableResults =
       config.runCommand match {
-        case RunAll()               => allResultPairs
-        case RunSleekOnly()         => sleekResultPairs
-        case RunHipOnly()           => hipResultPairs
-        case RunSleekValidateOnly() => validateSleekResultPairs
+        case All()               => allResultPairs
+        case SleekOnly()         => sleekResultPairs
+        case HipOnly()           => hipResultPairs
+        case SleekValidateOnly() => validateSleekResultPairs
         case _ =>
           throw new IllegalStateException
       }

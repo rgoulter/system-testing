@@ -93,6 +93,15 @@ class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: S
     } toMap
   }
 
+  private def resultFromFile(file: File): Option[TestCaseResult] = {
+    // FileSystemUtilities readFromFile ??
+    val src = Source fromFile file
+    val content = src.mkString
+    src.close()
+
+    TestCaseResultJson.load(content)
+  }
+
   def resultsFor(repoRevision: String, cmd: String): List[TestCaseResult] = {
     (resultFiles get(repoRevision) toList) flatMap { revMap =>
       (revMap keys) filter { case (c, _, _) =>
@@ -100,27 +109,13 @@ class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: S
       } flatMap { k =>
         revMap get k
       }
-    } flatMap { file =>
-      // FileSystemUtilities readFromFile ??
-      val src = Source fromFile file
-      val content = src.mkString
-      src.close()
-
-      TestCaseResultJson.load(content)
-    }
+    } flatMap resultFromFile
   }
 
   def resultFor(repoRevision: String, cmd: Path, filename: Path, args: String): Option[TestCaseResult] = {
     resultFiles get(repoRevision) flatMap { revMap =>
       revMap.get((tidyCommand(cmd), tidyFilename(filename), tidyArgs(args)))
-    } flatMap { file =>
-      // FileSystemUtilities readFromFile ??
-      val src = Source.fromFile(file)
-      val content = src.mkString
-      src.close()
-
-      TestCaseResultJson.load(content)
-    }
+    } flatMap resultFromFile
   }
 
   def resultFor(repoRevision: String)(tc: Testable): Option[TestCaseResult] = {
@@ -137,7 +132,7 @@ class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: S
     // resultFiles :: Map of `(rev) => Map[(cmd, fn, args) => File]`.
     resultFiles.iterator flatMap { case (rev, m) =>
       // m is Map[(cmd, fn, args) => file]
-      m.get((tc.commandName.toString, tc.fileName.toString, tc.arguments)) flatMap { file =>
+      m.get((tidyCommand(tc.commandName), tidyFilename(tc.fileName), tc.arguments)) flatMap { file =>
         // FileSystemUtilities readFromFile ??
         val src = Source fromFile file
         val content = src.mkString

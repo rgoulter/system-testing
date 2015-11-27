@@ -29,15 +29,23 @@ case class SleekConfigArg(val isValidate: Boolean = false) extends ConfigCommand
 
 
 /** for whether Sleek, Hip (or all) are run. */
-sealed trait RunOption
+sealed trait Suite
 
-case class RunHipOnly() extends RunOption
+case class HipOnly() extends Suite {
+  override def toString(): String = "hip"
+}
 
-case class RunSleekOnly() extends RunOption
+case class SleekOnly() extends Suite {
+  override def toString(): String = "sleek"
+}
 
-case class RunAll() extends RunOption
+case class All() extends Suite {
+  override def toString(): String = "all"
+}
 
-case class RunSleekValidateOnly() extends RunOption
+case class SleekValidateOnly() extends Suite {
+  override def toString(): String = "sleek-validate"
+}
 
 
 
@@ -53,12 +61,15 @@ case class AppConfig(repoDir: Option[Path],
                      bisectCmd:  Option[String] = None,
                      bisectFile: Option[String] = None,
                      bisectArgs: List[String] = List(),
+                     runFastGenerate: Boolean = false,
+                     runFastSuite: Option[String] = None,
                      developmentDir: Option[String] = None,
                      validateDirs: List[String] = List(),
                      resultsDir: String = DefaultResultsDir,
                      buildFailuresFile: String = DefaultBuildFailuresFile,
                      binCacheDir: String = DefaultBinCacheDir,
                      timeout: Int = DefaultTimeout,
+                     saveResultOnTimeout: Boolean = true,
                      commands: Set[ConfigCommand] = Set(),
                      significantTimeThreshold: Int = DefaultSignificantTimeThreshold,
                      outputVis: OutputVisibility = OutputVisibility.PresetVerbose) {
@@ -69,15 +80,15 @@ case class AppConfig(repoDir: Option[Path],
   def rev2(): Option[String] =
     if (revs.length == 2) Some(revs(1)) else None
 
-  def runCommand: RunOption = {
+  def runCommand: Suite = {
     if ((commands contains SleekConfigArg(false)) && (commands contains HipConfigArg())) {
-      RunAll()
+      All()
     } else if (commands contains HipConfigArg()) {
-      RunHipOnly()
+      HipOnly()
     } else if (commands contains SleekConfigArg(false)) {
-      RunSleekOnly()
+      SleekOnly()
     } else if (commands contains SleekConfigArg(isValidate = true)) {
-      RunSleekValidateOnly()
+      SleekValidateOnly()
     } else {
       throw new IllegalArgumentException("Invalid combination of commands.")
     }
@@ -217,6 +228,13 @@ object AppConfig {
           c.copy(revs = List(x)) } text("optional revision of project to test against"),
           opt[String]('d', "dir") action { (x, c) =>
             c.copy(developmentDir = Some(x)) } text("a directory to run tests on (relative to $REPO_DIR)")
+          )
+    cmd("fast") action { (_, c) =>
+        c.copy(command = "fast") } text("run a fast set of test cases, or cache which are fast") children(
+          opt[Unit]('g', "generate") action { (_, c) =>
+            c.copy(runFastGenerate = true) } text("generate new cache of which tests are fast"),
+          arg[String]("<suite name>") optional() action { (x, c) =>
+          c.copy(runFastSuite = Some(x)) } text("name of suite of tests to run fast subset of.")
           )
     cmd("diff") action { (_, c) =>
         c.copy(command = "diff") } text("diff the sleek/hip test results") children(
