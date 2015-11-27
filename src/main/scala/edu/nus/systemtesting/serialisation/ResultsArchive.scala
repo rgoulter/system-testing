@@ -132,7 +132,7 @@ class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: S
     // resultFiles :: Map of `(rev) => Map[(cmd, fn, args) => File]`.
     resultFiles.iterator flatMap { case (rev, m) =>
       // m is Map[(cmd, fn, args) => file]
-      m.get((tc.commandName.toString, tc.fileName.toString, tc.arguments)) flatMap { file =>
+      m.get((tidyCommand(tc.commandName), tidyFilename(tc.fileName), tc.arguments)) flatMap { file =>
         // FileSystemUtilities readFromFile ??
         val src = Source fromFile file
         val content = src.mkString
