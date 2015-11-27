@@ -38,6 +38,11 @@ class RunUtils(config: AppConfig) {
         SuccessfulBuildResult(runTestsWithCached(binDir, revision, foldersUsed)(f))
       }
 
+      // since binaries aren't stored for dirty revisions,
+      // if the repo is dirty, it's the same as if no binary is cached for it.
+      case Some(p) if revision.isDirty =>
+        runTestsWithRepo(revision)(f)
+
       case None =>
         runTestsWithRepo(revision)(f)
     }
