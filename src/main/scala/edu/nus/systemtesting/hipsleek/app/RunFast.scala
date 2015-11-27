@@ -135,26 +135,32 @@ class RunFast(config: AppConfig) {
     }
   }
 
-  private def generateFastTestablesForSuite(suite: Suite): List[Testable] = {
-    // get the universe of testable for the suite,
-    val allTestable = suite match {
+  private def constructForSuite(suite: Suite):
+      (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
+    suite match {
+      case HipOnly()           => HipTestCase.constructTestCase
+      case SleekOnly()         => SleekTestCase.constructTestCase
+
+      // This is more involved;
+      case All()               => allConstructTestCase
+      case SleekValidateOnly() => ValidateableSleekTestCase.constructTestCase
+    }
+
+  private def allTestableForSuite(suite: Suite): List[Testable with ExpectsOutput] =
+    suite match {
       case HipOnly()           => HipTestSuiteUsage.allTestable
       case SleekOnly()         => SleekTestSuiteUsage.allTestable
       case All()               => SleekTestSuiteUsage.allTestable ++ HipTestSuiteUsage.allTestable
       case SleekValidateOnly() => validate.allTestable
     }
 
-    val construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
-      suite match {
-        case HipOnly()           => HipTestCase.constructTestCase
-        case SleekOnly()         => SleekTestCase.constructTestCase
-
-        // This is more involved;
-        case All()               => allConstructTestCase
-        case SleekValidateOnly() => ValidateableSleekTestCase.constructTestCase
-      }
+  private def generateFastTestablesForSuite(suite: Suite): List[Testable] = {
+    // get the universe of testable for the suite,
+    val allTestable = allTestableForSuite(suite)
+    val construct = constructForSuite(suite)
 
     // Try to keep the timing under 2 mins for running the tests
+    // TODO RunFast customise FastTestTime
     val FastTestTime = 120 * 1000
 
 
@@ -269,7 +275,14 @@ class RunFast(config: AppConfig) {
     // Step 2. With the set of generated tests in hand, run these.
     //
 
-    // XXX cf. implementation in Validate's run
-    println("TODO: run suite..")
+    val testable = filterTestable(allTestableForSuite(suite), fastTests map rowFromTestable)
+
+    // TODO RunFast customise revision(?)
+    val repoC = repo.identify()
+
+    val runHipSleek = new RunHipSleek(config)
+    import runHipSleek.{ altRunTests, runTestCaseForRevision }
+
+    altRunTests(constructForSuite(suite), testable)(repoC)
   }
 }
