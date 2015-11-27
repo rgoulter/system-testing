@@ -1,15 +1,17 @@
 package edu.nus.systemtesting
 
-import scala.sys.process.Process
-import org.scalatest.FlatSpec
-import org.scalatest.BeforeAndAfterAll
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import org.scalatest.ConfigMap
+import java.nio.file.Paths
+import scala.sys.process.Process
+
 import com.typesafe.config.ConfigFactory
+import org.scalatest.FlatSpec
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.ConfigMap
 import org.scalatest.BeforeAndAfter
-import edu.nus.systemtesting.FileSystemUtilities
+
 import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.BuildFailed
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
@@ -18,7 +20,6 @@ import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.app.AppConfig
 import edu.nus.systemtesting.hipsleek.app.RunHipSleek
 import com.typesafe.config.ConfigException
-import java.nio.file.Paths
 
 /**
  * @author richardg

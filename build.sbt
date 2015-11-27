@@ -25,6 +25,8 @@ resolvers += Resolver.sonatypeRepo("public")
 mainClass in Compile := Some("edu.nus.systemtesting.hipsleek.app.Main")
 
 
+parallelExecution in Test := false
+
 import com.github.retronym.SbtOneJar._
 
 oneJarSettings

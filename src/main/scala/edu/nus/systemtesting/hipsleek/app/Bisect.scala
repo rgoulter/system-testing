@@ -45,8 +45,8 @@ class Bisect(config: AppConfig) {
     val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
 
     // Check that the given revisions to arg make sense
-    val tcr1 = results.resultFor(workingCommit.revHash)(tc)
-    val tcr2 = results.resultFor(failingCommit.revHash)(tc)
+    val tcr1 = results.resultFor(workingCommit)(tc)
+    val tcr2 = results.resultFor(failingCommit)(tc)
     assume(workingCommit != failingCommit, "Must be different commits")
     assume(!tcr1.isEmpty, "Must have result for " + workingCommit)
     assume(!tcr2.isEmpty, "Must have result for " + failingCommit)

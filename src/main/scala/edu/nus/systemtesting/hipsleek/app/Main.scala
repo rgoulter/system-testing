@@ -263,7 +263,7 @@ class ConfiguredMain(config: AppConfig) {
 
     // get proper expectedOutput for the testable
     val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
-    val workingTCR = results.resultFor(initWorkingCommit.revHash)(bisectTestable) getOrElse { 
+    val workingTCR = results.resultFor(initWorkingCommit)(bisectTestable) getOrElse { 
       // probably should be a bit more robust about this
       throw new IllegalArgumentException(s"Expected to find result for $initWorkingCommit")
     }

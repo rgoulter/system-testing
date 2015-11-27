@@ -105,7 +105,7 @@ class RunHipSleek(config: AppConfig) {
     val resultsArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
 
     { tc: Testable with ExpectsOutput =>
-      resultsArch.resultFor(repoRevision.revHash)(tc) match {
+      resultsArch.resultFor(repoRevision)(tc) match {
         case Some(tcr) => tcr
 
         case None => {

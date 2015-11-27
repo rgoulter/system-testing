@@ -118,8 +118,11 @@ class ResultsArchive(val resultsDir: String = "results", buildFailureFilename: S
     } flatMap resultFromFile
   }
 
-  def resultFor(repoRevision: String)(tc: Testable): Option[TestCaseResult] = {
-    resultFor(repoRevision, tc.commandName, tc.fileName, tc.arguments)
+  def resultFor(repoRevision: Commit)(tc: Testable): Option[TestCaseResult] = {
+    if (!repoRevision.isDirty)
+      resultFor(repoRevision.revHash, tc.commandName, tc.fileName, tc.arguments)
+    else
+      None
   }
 
   /**
