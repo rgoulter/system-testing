@@ -154,19 +154,27 @@ class RunFast(config: AppConfig) {
         case SleekValidateOnly() => ValidateableSleekTestCase.constructTestCase
       }
 
-    // if we have sufficent number of results, can compute from that,
+    // Try to keep the timing under 2 mins for running the tests
+    val FastTestTime = 120 * 1000
+
+
     val resArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
     val extantResults = allTestable map (resArch.resultsFor) filterNot (_.isEmpty)
 
-    val timeTestablePairs = if (extantResults.length == allTestable.length) {
-      extantResults map { res =>
-        val timings = res map { case (rev, tcr) => tcr.executionTime }
-        val avgTiming = timings.foldLeft(0L)({ (sum, time) => sum + time }) / timings.length
+    val extantTimeTestablePairs = extantResults map { res =>
+      val timings = res map { case (rev, tcr) => tcr.executionTime }
+      val avgTiming = timings.foldLeft(0L)({ (sum, time) => sum + time }) / timings.length
 
-        val testable = res.head._2
+      val testable = res.head._2
 
-        (avgTiming, testable)
-      }
+      (avgTiming, testable)
+    }
+    val extantTime = extantTimeTestablePairs.foldLeft(0L) { (sum, pair) => sum + pair._1 }
+
+
+    // if we have sufficent number of results, can compute from that,
+    val timeTestablePairs = if (extantTime >= FastTestTime) {
+      extantTimeTestablePairs
     } else {
       // otherwise, must run with a short timeout + don't save results (for T/O),
       // so as to see which tests are "quick"
@@ -190,10 +198,8 @@ class RunFast(config: AppConfig) {
       tsr.results map { tcr => (tcr.executionTime, tcr) }
     }
 
-    val sortedTCRs = timeTestablePairs.sortBy { case (time, tc) => time }
 
-    // Try to keep the timing under 2 mins for running the tests
-    val FastTestTime = 120 * 1000
+    val sortedTCRs = timeTestablePairs.sortBy { case (time, tc) => time }
 
     sortedTCRs.foldLeft(List[TestCaseResult]())({ (fastTests, timeTCPair) =>
       val (tcTime, tc) = timeTCPair
