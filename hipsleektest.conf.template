@@ -20,3 +20,26 @@ SLEEK_OUTPUT_DIRECTORY="results/"
 TIMEOUT="300"
 SIGNIFICANT_TIME_THRESHOLD = "1"
 DEFAULT_OUTPUT_DIRECTORY="results/"
+
+################################################
+# Tests using the `expect .` command are found
+# automatically in directories named `test`.
+#
+# If you want to run tests in additional
+# directories, configure this using the
+# `VALIDATE_DIRS` variable.
+#
+# These dirs will be resolved as relative to
+# the REPO_DIR.
+################################################
+
+## With one directory on each line:
+# VALIDATE_DIRS = [
+#   /path/to/one
+#   /path/to/another
+# ]
+## Or, in a format like:
+# VALIDATE_DIRS = [
+#   "/path/to/one",
+#   "/path/to/another"
+# ]
