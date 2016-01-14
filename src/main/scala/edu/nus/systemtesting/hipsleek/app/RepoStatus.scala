@@ -91,7 +91,7 @@ class RepoStatus(config: AppConfig) {
               diffResults(nextC, laterCommit)
             } else if (failedCommit == laterCommit) {
               val nextC = laterCommit.parents.head
-              diffResults(earlyCommit, laterCommit)
+              diffResults(earlyCommit, nextC)
             } else {
               throw new IllegalStateException()
             }
