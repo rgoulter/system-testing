@@ -112,7 +112,7 @@ class Repository(dir: Path) {
     execOutp.exitValue != 0
   }
 
-  def clone(dest: Path, revision: Option[Commit]): Unit = {
+  def clone(dest: Path, revision: Option[Commit]): Boolean = {
     val rev = revision.map(_.revHash)
 
     val cmd = "hg clone " + s"${rev.map(r => s" -u $r").getOrElse("")} . ${dest.toString()}"
@@ -122,8 +122,14 @@ class Repository(dir: Path) {
             s"(${rev.map(r => "Revision " + r).getOrElse("Current revision")})")
     val execOutp = Runnable.executeProc(proc)
 
+    if (execOutp.exitValue != 0) {
+      System.err.println("Error cloning repository!")
+      System.err.println(execOutp.output)
+      System.err.println(execOutp.errOutput)
+    }
+
     // for now, let's not deal with errors
-    execOutp.exitValue != 0
+    execOutp.exitValue == 0
   }
 
   /** Whether the given `rev` evaluaties to a revision hash in the repo. */

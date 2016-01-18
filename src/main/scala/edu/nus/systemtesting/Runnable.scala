@@ -42,7 +42,7 @@ object Runnable {
    *
    * @param timeout number of seconds before timeout.
    */
-  def executeProc(pb: ProcessBuilder, timeout: Int = 300): ExecutionOutput = {
+  def executeProc(pb: ProcessBuilder, timeout: Int = 600): ExecutionOutput = {
     // Collected lines from proc's STDOUT, ignore from STDERR.
     val stdoutLines = ArrayBuffer[String]()
     val stderrLines = ArrayBuffer[String]()

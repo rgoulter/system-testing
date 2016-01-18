@@ -60,7 +60,7 @@ class ResultArchiveUsageSpec extends FlatSpec with BeforeAndAfter {
     val repo = new Repository(REPO_DIR)
     val KnownGoodCommit = repo.identify(Some(KnownGoodRevision))
 
-    repo.clone(tmpRepoDir, Some(KnownGoodCommit))
+    assume(repo.clone(tmpRepoDir, Some(KnownGoodCommit)))
 
     // The easiest way to tell whether a result is used is to have a booby JSON result,
     // with a magic phrase which doesn't occur ...

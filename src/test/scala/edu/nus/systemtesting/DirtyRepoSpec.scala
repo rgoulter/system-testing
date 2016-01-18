@@ -57,7 +57,7 @@ class DirtyRepoSpec extends FlatSpec with BeforeAndAfter {
     tmpResultsDir = Files.createTempDirectory("edunussystestresults")
     tmpBinCacheDir = Files.createTempDirectory("edunussystestbincache")
 
-    repo.clone(tmpRepoDir, Some(KnownGoodCommit))
+    assume(repo.clone(tmpRepoDir, Some(KnownGoodCommit)))
 
     // Replace the expected output of "Valid." with anything else.
     // This works for this file, for this revision.
