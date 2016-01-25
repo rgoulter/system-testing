@@ -176,6 +176,10 @@ class ConfiguredMain(config: AppConfig) {
       case "status" => {
         System.err.println("To be implemented.")
       }
+      case "send-status" => {
+        val emailer = new EmailReports(config, All()) // XXX
+        emailer.run()
+      }
       case _        => showHelpText
     }
   }

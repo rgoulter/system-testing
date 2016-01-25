@@ -275,6 +275,9 @@ object AppConfig {
     cmd("status") action { (_, c) =>
         c.copy(command = "status") } text("Report on the status of the current commit or working directory.") children(
           )
+    cmd("send-status") action { (_, c) =>
+        c.copy(command = "send-status") } text("XXX Report on the status of the current commit or working directory.") children(
+          )
     checkConfig { c =>
         if (c.command == "diff" && c.commands.isEmpty)
           failure("Must specify --hip, --sleek, or --all to diff command")
