@@ -23,6 +23,9 @@ class Commit(repo: Repository, rev: String) {
   lazy val age: String =
     repo.logForTemplate("{date|age}\\n", revHash)
 
+  lazy val email: String =
+    repo.logForTemplate("{author|email}\\n", revHash)
+
   lazy val date = {
     val isoStr = repo.logForTemplate("{date|isodate}\\n", revHash)
     Repository.parseHgIsodate(isoStr)
@@ -245,16 +248,26 @@ class Repository(dir: Path) {
     //
     //     An alternative syntax is "x..y".
 
-    // TODO: Can simplify to use logForTemplate
-    val cmd = s"""hg log --template={node|short}\\n -r $oldest::$newest"""
-    val proc = Process(cmd, repoDir)
+    val template = "{note|short}\\n"
+    val revset = "$oldest::$newest"
 
-    val execOutp = Runnable.executeProc(proc)
+    val logOutp = logForTemplate(template, revset)
+    logOutp.lines.map(new Commit(this, _)).toList
+  }
 
-    if (execOutp.exitValue == 0)
-      execOutp.output.trim().lines.map(new Commit(this, _)).toList
-    else
-      throw new IllegalStateException
+  // NOT the DAG, unlike "commits in range".
+  def commitsBetween(rev1: Commit, rev2: Commit): List[Commit] = {
+    // from `hg help revsets`,
+    //   "x:y"
+    //     All changesets with revision numbers between x and y, both inclusive.
+    //     Either endpoint can be left out, they default to 0 and tip.
+
+    // want to ensure oldest-to-newest in output
+    val revset = s"min($rev1:$rev2):max($rev1:$rev2)"
+    val template = "{note|short}\\n"
+
+    val logOutp = logForTemplate(template, revset)
+    logOutp.lines.map(new Commit(this, _)).toList
   }
 
   def isDirty(): Boolean = {
