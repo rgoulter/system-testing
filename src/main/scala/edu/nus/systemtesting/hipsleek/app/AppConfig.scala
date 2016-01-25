@@ -8,6 +8,7 @@ import java.nio.file.{ Path, Paths }
 import edu.nus.systemtesting.output.OutputVisibility
 import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.hg.Repository
+import edu.nus.systemtesting.serialisation.ResultsArchive
 
 object ConfigDefaults {
   val DefaultTimeout = 300
@@ -115,6 +116,13 @@ case class AppConfig(repoDir: Option[Path],
 
     dir
   }
+
+  /**
+   * Use the config-specified results directory and build failures file to
+   * create a ResultsArchive.
+   */
+  def defaultResultsArchive: ResultsArchive =
+    new ResultsArchive(resultsDir, buildFailuresFile)
 }
 
 object AppConfig {

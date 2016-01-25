@@ -18,7 +18,6 @@ import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.ReporterColors
-import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.ExpectsOutput
 
 /**
@@ -42,7 +41,7 @@ class Bisect(config: AppConfig) {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
-    val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
+    val results = config.defaultResultsArchive
 
     // Check that the given revisions to arg make sense
     val tcr1 = results.resultFor(workingCommit)(tc)

@@ -54,8 +54,7 @@ class EmailReports(config: AppConfig, suite: Suite) {
       println("Contributors:")
       contributors.foreach(c => println(s"* $c"))
 
-      // TODO: DRY, this is repeated *many* times, and not apparent/obvious.
-      val ResArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
+      val ResArch = config.defaultResultsArchive
 
       println("Loading Results...")
       val resultComparisons = resultPairsForBranch(ResArch, commits)

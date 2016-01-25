@@ -17,9 +17,8 @@ import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.GlobalReporter
-import edu.nus.systemtesting.output.GlobalReporter.reporter
+import GlobalReporter.reporter
 import edu.nus.systemtesting.output.VisibilityOptions
-import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.ExpectsOutput
 
 class UnableToBuildException(repoDir: Path,
@@ -266,7 +265,7 @@ class ConfiguredMain(config: AppConfig) {
     // * newer rev is failing, older rev is passing
 
     // get proper expectedOutput for the testable
-    val results = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
+    val results = config.defaultResultsArchive
     val workingTCR = results.resultFor(initWorkingCommit)(bisectTestable) getOrElse { 
       // probably should be a bit more robust about this
       throw new IllegalArgumentException(s"Expected to find result for $initWorkingCommit")

@@ -16,10 +16,8 @@ import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
-import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.ExpectsOutput
 
 object RunHipSleek {
@@ -102,7 +100,7 @@ class RunHipSleek(config: AppConfig) {
   private[app] def runTestCaseForRevision(repoRevision: Commit, preparedSys: => PreparedSystem)
                                          (implicit construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase):
       (Testable with ExpectsOutput => TestCaseResult) = {
-    val resultsArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
+    val resultsArch = config.defaultResultsArchive
 
     { tc: Testable with ExpectsOutput =>
       resultsArch.resultFor(repoRevision)(tc) match {

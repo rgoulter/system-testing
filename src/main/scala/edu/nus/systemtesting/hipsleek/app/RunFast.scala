@@ -23,7 +23,6 @@ import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
-import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 
@@ -164,7 +163,7 @@ class RunFast(config: AppConfig) {
     val FastTestTime = 120 * 1000
 
 
-    val resArch = new ResultsArchive(config.resultsDir, config.buildFailuresFile)
+    val resArch = config.defaultResultsArchive
     val extantResults = allTestable map (resArch.resultsFor) filterNot (_.isEmpty)
 
     val extantTimeTestablePairs = extantResults map { res =>

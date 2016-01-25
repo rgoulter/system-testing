@@ -10,7 +10,6 @@ import edu.nus.systemtesting.{ Result, TestCase, Testable,
                                TestCaseResult, TestFailed, TestPassed }
 import edu.nus.systemtesting.output.GlobalReporter
 import GlobalReporter.reporter
-import edu.nus.systemtesting.serialisation.ResultsArchive
 import edu.nus.systemtesting.ExpectsOutput
 
 class TestSuite(tests: List[Testable with ExpectsOutput],
