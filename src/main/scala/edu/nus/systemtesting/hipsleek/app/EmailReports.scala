@@ -28,9 +28,7 @@ object EmailReports {
     }
 }
 
-class EmailReports(config: AppConfig, suite: Suite) {
-  val repo = new Repository(config.repoDirOrDie)
-
+class EmailReports(config: AppConfig, suite: Suite) extends UsesRepository(config) {
   // atm, more of a dry-run for these things.
   def run(): Unit = {
     println("RUNNING SEND EMAIL STATUS")

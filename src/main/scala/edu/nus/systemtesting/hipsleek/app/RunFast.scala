@@ -31,14 +31,7 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
  *
  * Does not deal with legacy, misnamed `run-fast-tests.pl`.
  */
-class RunFast(config: AppConfig) {
-  val repoDirPath = config.repoDirOrDie
-  val repoDir = repoDirPath.toFile
-
-  // Each instance of `ConfiguredMain` only ever uses the one `Repository`
-  val repo = new Repository(config.repoDirOrDie)
-
-
+class RunFast(config: AppConfig) extends UsesRepository(config) {
   val validate = new Validate(config)
 
 

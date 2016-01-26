@@ -19,13 +19,8 @@ import edu.nus.systemtesting.output.GlobalReporter.reporter
 /**
  * @author richardg
  */
-class RunUtils(config: AppConfig) {
+class RunUtils(config: AppConfig) extends UsesRepository(config) {
   val binCache = new BinCache(config.binCacheDir)
-
-  val repoDir: Path = config.repoDirOrDie
-
-  // Each instance of `ConfiguredMain` only ever uses the one `Repository`
-  val repo = new Repository(repoDir)
 
   private[app] def runTestsWith[T](revision: Commit, foldersUsed: List[String])
                              (f: (Path, Path, Commit) => T):

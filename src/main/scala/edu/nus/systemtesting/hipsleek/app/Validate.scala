@@ -20,14 +20,7 @@ import edu.nus.systemtesting.ExpectsOutput
 /**
  * @author richardg
  */
-class Validate(config: AppConfig) {
-  val repoDirPath = config.repoDirOrDie
-  val repoDir = repoDirPath.toFile
-
-  // Each instance of `ConfiguredMain` only ever uses the one `Repository`
-  val repo = new Repository(config.repoDirOrDie)
-
-
+class Validate(config: AppConfig) extends UsesRepository(config) {
   val runUtils = new RunUtils(config)
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
@@ -37,12 +30,12 @@ class Validate(config: AppConfig) {
   def listTestableDirs(): List[Path] = {
     // make use of unix commands: find, xargs, dirname, grep
     import scala.sys.process._
-    val testDirs = Process(s"find $repoDirPath -mindepth 2 -type d -name test") #| "grep -v \\.hg" !!
+    val testDirs = Process(s"find $repoDir -mindepth 2 -type d -name test") #| "grep -v \\.hg" !!
 
-    val foundDirs = testDirs.split("\n").toList.map(repoDirPath.resolve)
+    val foundDirs = testDirs.split("\n").toList.map(repoDir.resolve)
 
     // use VALIDATE_DIRS from the config.
-    val validateDirs = config.validateDirs map (repoDirPath resolve)
+    val validateDirs = config.validateDirs map (repoDir resolve)
 
     foundDirs ++ validateDirs
   }
@@ -67,7 +60,7 @@ class Validate(config: AppConfig) {
   private def testableForFile(f: File): Testable with ExpectsOutput =
     (new TestCaseBuilder()
        runCommand Paths.get("sleek")
-       onFile repoDirPath.relativize(f.toPath()))
+       onFile repoDir.relativize(f.toPath()))
 
   def allTestable: List[Testable with ExpectsOutput] =
     listTestableDirs() flatMap listValidateableInDir map testableForFile
@@ -80,7 +73,7 @@ class Validate(config: AppConfig) {
     // If developmentDir specified, use that, otherwise
     // rely on automated discovery / configured validate dirs.
     val testableDirPaths =
-      config.developmentDir map (ddir => List(repoDirPath.resolve(ddir))) getOrElse listTestableDirs()
+      config.developmentDir map (ddir => List(repoDir.resolve(ddir))) getOrElse listTestableDirs()
     val testableFiles =
       testableDirPaths flatMap listValidateableInDir
 

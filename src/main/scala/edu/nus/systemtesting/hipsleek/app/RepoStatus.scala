@@ -25,9 +25,7 @@ class BranchStatus(val branch: Branch,
                    val bisectResults: List[(Testable, Commit)]) {
 }
 
-class RepoStatus(config: AppConfig) {
-  val repo = new Repository(config.repoDirOrDie)
-
+class RepoStatus(config: AppConfig) extends UsesRepository(config) {
   // Don't run, but need ConfiguredMain to invoke diffs between commits
   val configuredMain = new ConfiguredMain(config)
   val diff = new Diff(config)

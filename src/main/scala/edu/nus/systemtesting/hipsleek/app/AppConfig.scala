@@ -118,6 +118,12 @@ case class AppConfig(repoDir: Option[Path],
   }
 
   /**
+   * Convenience method, to make use of repoDirOrDie method.
+   */
+  def repoOrDie: Repository =
+    new Repository(repoDirOrDie)
+
+  /**
    * Use the config-specified results directory and build failures file to
    * create a ResultsArchive.
    */

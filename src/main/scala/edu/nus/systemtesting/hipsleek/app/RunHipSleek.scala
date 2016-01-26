@@ -28,13 +28,7 @@ object RunHipSleek {
 /**
  * @author richardg
  */
-class RunHipSleek(config: AppConfig) {
-  val repoDir: Path = config.repoDirOrDie
-
-  // Each instance of `ConfiguredMain` only ever uses the one `Repository`
-  val repo = new Repository(repoDir)
-
-
+class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
   // Easier to split logic-heavy parts of main into other classes
   val runUtils = new RunUtils(config)
   import runUtils.runTestsWith

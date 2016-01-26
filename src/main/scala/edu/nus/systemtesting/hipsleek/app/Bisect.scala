@@ -23,11 +23,7 @@ import edu.nus.systemtesting.ExpectsOutput
 /**
  * @author richardg
  */
-class Bisect(config: AppConfig) {
-  // Each instance of `ConfiguredMain` only ever uses the one `Repository`
-  val repo = new Repository(config.repoDirOrDie)
-
-
+class Bisect(config: AppConfig) extends UsesRepository(config) {
   val runUtils = new RunUtils(config)
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
