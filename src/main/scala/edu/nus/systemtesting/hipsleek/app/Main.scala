@@ -103,13 +103,22 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
+    runWithConfig(args) { config =>
+      val configuredMain = new ConfiguredMain(config)
+
+      configuredMain.run()
+    }
+  }
+
+  /**
+   * Utility method, since many of the classes in app package need AppConfig to
+   * be able to run.
+   */
+  def runWithConfig(args: Array[String])(run: AppConfig => Unit): Unit = {
     val appCfg = loadConfig()
 
     // Override options from loaded config with CLAs,
-    // run with configuration.
     AppConfig.CommandLineOptionsParser.parse(args, appCfg) foreach { config =>
-      val configuredMain = new ConfiguredMain(config)
-
       // Configure output visibility
       import config.outputVis
       import VisibilityOptions.ShowANSI
@@ -120,7 +129,7 @@ object Main {
 
       GlobalReporter.visibility = outputVis
 
-      configuredMain.run()
+      run(config)
     }
   }
 }
