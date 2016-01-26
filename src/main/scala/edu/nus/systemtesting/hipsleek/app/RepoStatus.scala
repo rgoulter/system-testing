@@ -26,8 +26,6 @@ class BranchStatus(val branch: Branch,
 }
 
 class RepoStatus(config: AppConfig) extends UsesRepository(config) {
-  // Don't run, but need ConfiguredMain to invoke diffs between commits
-  val configuredMain = new ConfiguredMain(config)
   val diff = new Diff(config)
   import diff.{ allResultPairs, validateSleekResultPairs, diffSuiteResults }
   val bisector = new Bisect(config)
@@ -35,6 +33,7 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.runAllTests
 
+  // MAGIC: 'default' as the main development branch.
   val MainBranch = "default"
 
   private def runDefaultBranch(): DefaultBranchStatus = {
@@ -110,7 +109,7 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
       tsCmp.usedToPass.zipWithIndex map { case ((oldTC, _), idx) =>
         reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
 
-        val (bisectTC, construct) = configuredMain.recoverFromTCR(oldTC)
+        val (bisectTC, construct) = recoverFromTCR(oldTC)
 
         val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC, construct)
 
@@ -167,7 +166,6 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
     val diffableBranches = recentBranches.filterNot(_.branch.name == MainBranch)
 
-    // MAGIC: 'default' as the main development branch.
     val res = diffableBranches.zipWithIndex.map { case (c, idx) =>
       reporter.header(s"Run Branch (${idx+1}/${recentBranches.length})")
 
