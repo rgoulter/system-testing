@@ -1,5 +1,6 @@
 package edu.nus.systemtesting.hipsleek
 
+import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.PreparedSystem
 import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseConfiguration
@@ -7,12 +8,15 @@ import edu.nus.systemtesting.TestCaseBuilder
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.output.VisibilityOptions
-import edu.nus.systemtesting.ExpectsOutput
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 
 /**
  * @author richardg
  */
 package object app {
+  /** Used for `diffSuiteResults`, to save typing / screen space. */
+  type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
+
   private[app] def recoverFromTCR(tcr: TestCaseResult):
       (Testable with ExpectsOutput,
        (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase) = {

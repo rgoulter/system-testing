@@ -15,9 +15,6 @@ class Diff(config: AppConfig) {
   import validate.runSleekValidateTests
 
 
-  /** Used for `diffSuiteResults`, to save typing / screen space. */
-  type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
-
   /** For use with `diffSuiteResults`, for running just sleek results. */
   private[app] def sleekResultPairs(rev1: Commit, rev2: Commit):
       DiffableResults = {

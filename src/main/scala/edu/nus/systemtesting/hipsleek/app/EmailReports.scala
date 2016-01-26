@@ -97,7 +97,7 @@ class EmailReports(config: AppConfig, suite: Suite) extends UsesRepository(confi
     // (also, Validate is used to get TSR for that commit. So).
 
     val diff = new Diff(config)
-    import diff.{ DiffableResults, allResultPairs, hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
+    import diff.{ allResultPairs, hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
 
     // TODO: This snippet of code is duplicated from Main; depends on a Diff object, though.
     val resultPairs: (Commit, Commit) => DiffableResults =
