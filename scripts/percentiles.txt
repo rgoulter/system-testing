@@ -1,0 +1,72 @@
+Charting Results (5ab16720e27d)
+(719 results)
+
+For 10 Percentile:
+Longest Time:               27 ms
+Total Time:               1394 ms
+Percent of All Tests:      10%
+Percent of VALID   tests:   0%
+Percent of INVALID tests:  28%
+
+For 20 Percentile:
+Longest Time:               43 ms
+Total Time:               3968 ms
+Percent of All Tests:      20%
+Percent of VALID   tests:   3%
+Percent of INVALID tests:  52%
+
+For 30 Percentile:
+Longest Time:               67 ms
+Total Time:               7879 ms
+Percent of All Tests:      30%
+Percent of VALID   tests:   9%
+Percent of INVALID tests:  71%
+
+For 40 Percentile:
+Longest Time:              101 ms
+Total Time:              13861 ms
+Percent of All Tests:      40%
+Percent of VALID   tests:  21%
+Percent of INVALID tests:  77%
+
+For 50 Percentile:
+Longest Time:              143 ms
+Total Time:              22559 ms
+Percent of All Tests:      50%
+Percent of VALID   tests:  34%
+Percent of INVALID tests:  82%
+
+For 60 Percentile:
+Longest Time:              217 ms
+Total Time:              34826 ms
+Percent of All Tests:      60%
+Percent of VALID   tests:  46%
+Percent of INVALID tests:  89%
+
+For 70 Percentile:
+Longest Time:              358 ms
+Total Time:              55829 ms
+Percent of All Tests:      70%
+Percent of VALID   tests:  57%
+Percent of INVALID tests:  96%
+
+For 80 Percentile:
+Longest Time:              517 ms
+Total Time:              87076 ms
+Percent of All Tests:      80%
+Percent of VALID   tests:  71%
+Percent of INVALID tests:  98%
+
+For 90 Percentile:
+Longest Time:              830 ms
+Total Time:             134181 ms
+Percent of All Tests:      90%
+Percent of VALID   tests:  86%
+Percent of INVALID tests:  99%
+
+For All Tests:
+Longest Time:           300005 ms
+Total Time:            2475062 ms
+Percent of All Tests:     100%
+Percent of VALID   tests: 100%
+Percent of INVALID tests: 100%
