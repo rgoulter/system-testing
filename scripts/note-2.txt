@@ -1,0 +1,50 @@
+Using 5ab16720e27d results,
+
+For tentative timeout 2000 ms:
+Longest Time:                1864 ms
+Total Time (excl T/OUT):   182348 ms
+Total Time (incl T/OUT):   246348 ms
+Total Time (excl T/OUT):   186786 ms
+Total Time (incl T/OUT):   276786 ms
+Percent of All Tests:      95%
+Complement size (T/OUT):  30
+Percent of VALID   tests:  94%
+Percent of INVALID tests: 100%
+
+....
+
+For tentative timeout 5500 ms:
+Longest Time:                5412 ms
+Total Time (excl T/OUT):   200980 ms
+Total Time (incl T/OUT):   349480 ms
+Percent of All Tests:      96%
+Complement size (T/OUT):  27
+Percent of VALID   tests:  95%
+Percent of INVALID tests: 100%
+
+For All Tests:
+Longest Time:              300005 ms
+Total Time (excl T/OUT):  2475062 ms
+Total Time (incl T/OUT):  2475062 ms
+Percent of All Tests:     100%
+Complement size (T/OUT):  0
+Percent of VALID   tests: 100%
+Percent of INVALID tests: 100%
+
+Count > 300s: 5
+
+****************************************************
+
+* ALL tests takes 2,475s to run, or about 41m15s.
+
+* Using timeout of 2000ms, runs all but 30 of the 719 test cases.
+  i.e. 95% of tests, 94% of valid tests, 100% of invalid tests.
+  This takes 276s to run, or about 5m (not including time to build native bin).
+
+* There are 5 tests which TIMEOUT after 5m = 300s.
+  -- Have these ever not TIMED OUT?
+
+* There are about 25 tests which take longer than 2s, but will complete in
+  less than 5m.
+  -- Presumably these are the only ones where it's interesting to see if they
+  get faster/slower.

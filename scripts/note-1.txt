@@ -1,0 +1,49 @@
+Charting Results (5ab16720e27d)
+(719 results)
+
+For 80 Percentile:
+Longest Time:                 517 ms
+Total Time (excl T/OUT):    87076 ms
+Total Time (incl T/OUT):   161007 ms
+Percent of All Tests:      80%
+Percent of VALID   tests:  71%
+Percent of INVALID tests:  98%
+
+For 85 Percentile:
+Longest Time:                 651 ms
+Total Time (excl T/OUT):   107489 ms
+Total Time (incl T/OUT):   177146 ms
+Percent of All Tests:      85%
+Percent of VALID   tests:  78%
+Percent of INVALID tests:  99%
+
+For 90 Percentile:
+Longest Time:                 830 ms
+Total Time (excl T/OUT):   134181 ms
+Total Time (incl T/OUT):   193111 ms
+Percent of All Tests:      90%
+Percent of VALID   tests:  86%
+Percent of INVALID tests:  99%
+
+For 95 Percentile:
+Longest Time:                1751 ms
+Total Time (excl T/OUT):   176842 ms
+Total Time (incl T/OUT):   238127 ms
+Percent of All Tests:      95%
+Percent of VALID   tests:  93%
+Percent of INVALID tests: 100%
+
+For All Tests:
+Longest Time:              300005 ms
+Total Time (excl T/OUT):  2475062 ms
+Total Time (incl T/OUT):  2475062 ms
+Percent of All Tests:     100%
+Percent of VALID   tests: 100%
+Percent of INVALID tests: 100%
+
+*****************************************
+
+Remark:
+"incl T/OUT" means "if we set timeout, ideally, as longest time from test".
+Looking at 95-percentile, setting timeout at ~1.8s, takes 238s ~ 4mins to
+run ~93% of the valid tests.
