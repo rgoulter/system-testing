@@ -106,14 +106,12 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
     val bisectRes = diffs map { tsCmp =>
       val numBisects = tsCmp.usedToPass.length
 
-      tsCmp.usedToPass.zipWithIndex map { case ((oldTC, _), idx) =>
-        reporter.header(s"Running bisection for ${oldTC.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
+      tsCmp.usedToPass.zipWithIndex map { case ((oldTCR, _), idx) =>
+        reporter.header(s"Running bisection for ${oldTCR.cmdFnArgsKey} on branch ${branch.name}, (${idx+1}/$numBisects)")
 
-        val (bisectTC, construct) = recoverFromTCR(oldTC)
+        val firstFailingC = bisect(earliestCommit, latestCommit, oldTCR)
 
-        val firstFailingC = bisect(earliestCommit, latestCommit, bisectTC, construct)
-
-        (bisectTC, firstFailingC)
+        (oldTCR, firstFailingC)
       }
     } flatten
 
