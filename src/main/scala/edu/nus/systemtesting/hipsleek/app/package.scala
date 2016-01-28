@@ -9,6 +9,7 @@ import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.output.VisibilityOptions
 import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.ConstructTestCase
 
 /**
  * @author richardg
@@ -18,8 +19,7 @@ package object app {
   type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
 
   private[app] def recoverFromTCR(tcr: TestCaseResult):
-      (Testable with ExpectsOutput,
-       (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase) = {
+      (Testable with ExpectsOutput, ConstructTestCase) = {
     // n.b. cannot recover `expectedOutput` from tcr directly.
 
     val tcrExp = tcr.expected

@@ -25,6 +25,7 @@ import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.ConstructTestCase
 
 /**
  * Generates, runs a subset of some set of testables.
@@ -127,8 +128,7 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     }
   }
 
-  private def constructForSuite(suite: Suite):
-      (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase =
+  private def constructForSuite(suite: Suite): ConstructTestCase =
     suite match {
       case HipOnly()           => HipTestCase.constructTestCase
       case SleekOnly()         => SleekTestCase.constructTestCase

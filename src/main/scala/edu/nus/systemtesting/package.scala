@@ -3,6 +3,8 @@ package edu.nus
 import java.io.File
 
 package object systemtesting {
+  type ConstructTestCase = (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase
+
   val NEW_LINE = "\n"
 
   val SPACE = " "

@@ -19,6 +19,7 @@ import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.ReporterColors
 import edu.nus.systemtesting.ExpectsOutput
+import edu.nus.systemtesting.ConstructTestCase
 
 /**
  * @author richardg
@@ -30,10 +31,21 @@ class Bisect(config: AppConfig) extends UsesRepository(config) {
   import runHipSleek.runTestCaseForRevision
 
 
+  /**
+   * Convenience method, using TestCaseResult explicitly.
+   * Infers a construct function, and recovers Testable with ExpectsOutput on its own.
+   */
+  private[app] def bisect(workingCommit: Commit,
+                          failingCommit: Commit,
+                          tcr: TestCaseResult): Commit = {
+    val (bisectTC, construct) = recoverFromTCR(tcr)
+    bisect(workingCommit, failingCommit, bisectTC, construct)
+  }
+
   private[app] def bisect(workingCommit: Commit,
                           failingCommit: Commit,
                           tc: Testable with ExpectsOutput,
-                          construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase): Commit = {
+                          construct: ConstructTestCase): Commit = {
     import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 

@@ -19,6 +19,7 @@ import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.ExpectsOutput
+import edu.nus.systemtesting.ConstructTestCase
 
 object RunHipSleek {
   def foldersUsedFromTestable(testable: List[Testable]): List[String] =
@@ -49,7 +50,7 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
                 SleekTestSuiteUsage.allTestable)(rev)
 
   // construct e.g. HipTestCase.constructTestCase
-  def altRunTests(construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase,
+  def altRunTests(construct: ConstructTestCase,
                   allTestable: List[Testable with ExpectsOutput])
                  (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
@@ -92,7 +93,7 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
 
   // should be able to replace runWith, callback nature with this...
   private[app] def runTestCaseForRevision(repoRevision: Commit, preparedSys: => PreparedSystem)
-                                         (implicit construct: (PreparedSystem, Testable with ExpectsOutput, TestCaseConfiguration) => TestCase):
+                                         (implicit construct: ConstructTestCase):
       (Testable with ExpectsOutput => TestCaseResult) = {
     val resultsArch = config.defaultResultsArchive
 
