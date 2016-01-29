@@ -183,7 +183,7 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
                                     timeout = QuickTimeout)
 
       val runHipSleek = new RunHipSleek(quickConfig)
-      import runHipSleek.{ altRunTests, runTestCaseForRevision }
+      import runHipSleek.{ altRunTests }
 
       // If repo is dirty, this will be needlessly expensive.
       val repoC = repo.identify()
@@ -273,7 +273,7 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     val repoC = repo.identify()
 
     val runHipSleek = new RunHipSleek(config)
-    import runHipSleek.{ altRunTests, runTestCaseForRevision }
+    import runHipSleek.{ altRunTests }
 
     altRunTests(constructForSuite(suite), testable)(repoC)
   }
