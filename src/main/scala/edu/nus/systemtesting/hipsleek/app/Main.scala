@@ -2,24 +2,16 @@ package edu.nus.systemtesting.hipsleek.app
 
 import java.nio.file.Path
 import java.nio.file.Paths
+
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
-import edu.nus.systemtesting.PreparedSystem
-import edu.nus.systemtesting.TestCase
-import edu.nus.systemtesting.TestCaseConfiguration
+
 import edu.nus.systemtesting.TestCaseBuilder
-import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.hipsleek.HipTestCase
-import edu.nus.systemtesting.hipsleek.SleekTestCase
-import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
 import edu.nus.systemtesting.output.ANSIReporter
 import edu.nus.systemtesting.output.GlobalReporter
-import GlobalReporter.reporter
 import edu.nus.systemtesting.output.VisibilityOptions
-import edu.nus.systemtesting.ExpectsOutput
+import GlobalReporter.reporter
 
 class UnableToBuildException(repoDir: Path,
                              val rev: Commit,

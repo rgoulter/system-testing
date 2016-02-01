@@ -1,17 +1,13 @@
 package edu.nus.systemtesting.hipsleek.app
 
+import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hg.Branch
+import edu.nus.systemtesting.hg.Branch.branchToCommit
 import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.output.ANSIReporter
-import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.output.HTMLOutput
-import edu.nus.systemtesting.output.VisibilityOptions
-import org.joda.time.format.ISODateTimeFormat
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.Testable
 
 /**
  * For representing status of the `default` branch.

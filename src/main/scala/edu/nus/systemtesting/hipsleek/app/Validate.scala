@@ -3,19 +3,18 @@ package edu.nus.systemtesting.hipsleek.app
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
-import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.output.GlobalReporter.reporter
-import edu.nus.systemtesting.testsuite.TestSuiteComparison
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.hipsleek.BuildResult
-import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.PreparedSystem
-import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
-import edu.nus.systemtesting.TestCaseBuilder
-import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
-import edu.nus.systemtesting.Testable
+
+import scala.sys.process.Process
+import scala.sys.process.stringToProcess
+
 import edu.nus.systemtesting.ExpectsOutput
+import edu.nus.systemtesting.PreparedSystem
+import edu.nus.systemtesting.TestCaseBuilder
+import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.Testable
+import edu.nus.systemtesting.hg.Commit
+import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 
 /**
  * @author richardg

@@ -1,13 +1,12 @@
 package edu.nus.systemtesting.hipsleek.app
 
-import java.nio.file.Path
+import edu.nus.systemtesting.ConstructTestCase
+import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.PreparedSystem
-import edu.nus.systemtesting.TestCase
 import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.BuildFailed
 import edu.nus.systemtesting.hipsleek.BuildTimedOut
 import edu.nus.systemtesting.hipsleek.HipTestCase
@@ -18,8 +17,6 @@ import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.ExpectsOutput
-import edu.nus.systemtesting.ConstructTestCase
 
 object RunHipSleek {
   def foldersUsedFromTestable(testable: List[Testable]): List[String] =

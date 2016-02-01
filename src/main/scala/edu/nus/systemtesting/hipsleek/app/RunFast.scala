@@ -2,30 +2,23 @@ package edu.nus.systemtesting.hipsleek.app
 
 import java.io.File
 import java.io.PrintWriter
-import java.nio.file.Path
 import java.nio.file.Paths
+
 import scala.io.Source
-import scala.concurrent.Channel
+
+import edu.nus.systemtesting.ConstructTestCase
 import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.PreparedSystem
-import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.TestCase
-import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseBuilder
+import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.output.GlobalReporter.reporter
-import edu.nus.systemtesting.hipsleek.BuildResult
+import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hipsleek.HipTestCase
 import edu.nus.systemtesting.hipsleek.HipTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SleekTestSuiteUsage
 import edu.nus.systemtesting.hipsleek.ValidateableSleekTestCase
-import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
-import edu.nus.systemtesting.testsuite.TestSuiteComparison
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import edu.nus.systemtesting.ConstructTestCase
 
 /**
  * Generates, runs a subset of some set of testables.

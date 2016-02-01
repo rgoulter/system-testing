@@ -2,24 +2,20 @@ package edu.nus.systemtesting.hipsleek.app
 
 import java.lang.Math.ceil
 import java.lang.Math.log
-import java.nio.file.Path
+
+import edu.nus.systemtesting.ConstructTestCase
+import edu.nus.systemtesting.ExpectsOutput
 import edu.nus.systemtesting.PreparedSystem
-import edu.nus.systemtesting.TestCase
-import edu.nus.systemtesting.TestCaseConfiguration
 import edu.nus.systemtesting.TestCaseResult
 import edu.nus.systemtesting.Testable
 import edu.nus.systemtesting.hg.Commit
-import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.BuildFailed
 import edu.nus.systemtesting.hipsleek.BuildResult
 import edu.nus.systemtesting.hipsleek.BuildTimedOut
-import edu.nus.systemtesting.hipsleek.HipTestCase
-import edu.nus.systemtesting.hipsleek.SleekTestCase
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
-import edu.nus.systemtesting.output.GlobalReporter.reporter
+import edu.nus.systemtesting.output.GlobalReporter
 import edu.nus.systemtesting.output.ReporterColors
-import edu.nus.systemtesting.ExpectsOutput
-import edu.nus.systemtesting.ConstructTestCase
+import GlobalReporter.reporter
 
 /**
  * @author richardg
