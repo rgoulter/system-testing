@@ -23,7 +23,7 @@ class BranchStatus(val branch: Branch,
 
 class RepoStatus(config: AppConfig) extends UsesRepository(config) {
   val diff = new Diff(config)
-  import diff.{ allResultPairs, validateSleekResultPairs, diffSuiteResults }
+  import diff.{ sleekResultPairs, hipResultPairs, validateSleekResultPairs, diffSuiteResults }
   val bisector = new Bisect(config)
   import bisector.bisect
   val runHipSleek = new RunHipSleek(config)
@@ -55,7 +55,9 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
     val resultPairs =
       if (!configHasValidate)
-        allResultPairs(_, _)
+        // XXX Broken! Want *both* sleek, hip.
+        // The intention of "all" is "do sleek, followed by hip stuff".
+        sleekResultPairs(_, _)
       else
         validateSleekResultPairs(_, _)
 

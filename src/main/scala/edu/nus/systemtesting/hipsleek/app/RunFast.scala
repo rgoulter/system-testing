@@ -93,10 +93,6 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
         case HipOnly()   => filterTestable(HipTestSuiteUsage.allTestable, fastTests)
         case SleekOnly() => filterTestable(SleekTestSuiteUsage.allTestable, fastTests)
 
-        // This is a little more dubious,
-        // since typically Sleek+Hip are treated distinctly.
-        case All() => filterTestable(SleekTestSuiteUsage.allTestable ++ HipTestSuiteUsage.allTestable, fastTests)
-
         case SleekValidateOnly() => {
           // construct ValidateableSleekTestCase directly
           fastTests map { fastTest =>
@@ -111,23 +107,10 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     saveToFile(fileForSuite(suite), data map rowFromTestable)
   }
 
-  private def allConstructTestCase(ps: PreparedSystem, tc: Testable with ExpectsOutput, conf: TestCaseConfiguration):
-      TestCase = {
-    if (tc.toString endsWith "hip") {
-      HipTestCase.constructTestCase(ps, tc, conf)
-    } else {
-      // assume if-not-hip then must be sleek
-      SleekTestCase.constructTestCase(ps, tc, conf)
-    }
-  }
-
   private def constructForSuite(suite: Suite): ConstructTestCase =
     suite match {
       case HipOnly()           => HipTestCase.constructTestCase
       case SleekOnly()         => SleekTestCase.constructTestCase
-
-      // This is more involved;
-      case All()               => allConstructTestCase
       case SleekValidateOnly() => ValidateableSleekTestCase.constructTestCase
     }
 
@@ -135,8 +118,7 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     suite match {
       case HipOnly()           => HipTestSuiteUsage.allTestable
       case SleekOnly()         => SleekTestSuiteUsage.allTestable
-      case All()               => SleekTestSuiteUsage.allTestable ++ HipTestSuiteUsage.allTestable
-      case SleekValidateOnly() => validate.allTestable
+      case SleekValidateOnly() => validate.allTestable // XXX This is a bit dubious.
     }
 
   private def generateFastTestablesForSuite(suite: Suite): List[Testable] = {
@@ -205,11 +187,20 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     })
   }
 
-  private def suiteFromString(suite: String): Suite =
+  private def suiteSetFromString(suite: String): SuiteSet =
     suite match {
       case "hip" => HipOnly()
       case "sleek" => SleekOnly()
       case "all" => All()
+      case "sleek-validate" => SleekValidateOnly()
+      case "validate-sleek" => SleekValidateOnly()
+      case _ => throw new IllegalArgumentException(s"Unknown suite: $suite")
+    }
+
+  private def suiteFromString(suite: String): Suite =
+    suite match {
+      case "hip"            => HipOnly()
+      case "sleek"          => SleekOnly()
       case "sleek-validate" => SleekValidateOnly()
       case "validate-sleek" => SleekValidateOnly()
       case _ => throw new IllegalArgumentException(s"Unknown suite: $suite")
@@ -223,8 +214,8 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     // more/less expect suiteName to be one of:
     //   sleek
     //   hip
-    //   all
     //   validate-sleek
+    // XXX 'all' broken here. need to map over.
     val suite = suiteFromString(suiteName)
 
     //

@@ -23,12 +23,11 @@ object EmailReports {
     suite match {
       case HipOnly()           => HipTestSuiteUsage.allTestable
       case SleekOnly()         => SleekTestSuiteUsage.allTestable
-      case All()               => SleekTestSuiteUsage.allTestable ++ HipTestSuiteUsage.allTestable
       case SleekValidateOnly() => validate.allTestable
     }
 }
 
-class EmailReports(config: AppConfig, suite: Suite) extends UsesRepository(config) {
+class EmailReports(config: AppConfig, suiteSet: SuiteSet) extends UsesRepository(config) {
   // atm, more of a dry-run for these things.
   def run(): Unit = {
     println("RUNNING SEND EMAIL STATUS")
@@ -55,7 +54,9 @@ class EmailReports(config: AppConfig, suite: Suite) extends UsesRepository(confi
       val ResArch = config.defaultResultsArchive
 
       println("Loading Results...")
-      val resultComparisons = resultPairsForBranch(ResArch, commits)
+      // XXX need to combine results-for-branch from suites.
+      val suite = ???
+      resultPairsForBranch(ResArch, commits, suite)
 
       // XXX: Generate HTML (or plaintext?) from these comparisons.
       println("Generating HTML...")
@@ -69,7 +70,7 @@ class EmailReports(config: AppConfig, suite: Suite) extends UsesRepository(confi
   }
 
   // get the (from, to) result pairs for some segment of commits.
-  def resultPairsForBranch(resArch: ResultsArchive, domain: Seq[Commit]): List[TestSuiteComparison] = {
+  def resultPairsForBranch(resArch: ResultsArchive, domain: Seq[Commit], suite: Suite): List[TestSuiteComparison] = {
     implicit val validate = new Validate(config)
     val testables: List[Testable] = EmailReports.allTestableForSuite(suite)
 
@@ -97,12 +98,11 @@ class EmailReports(config: AppConfig, suite: Suite) extends UsesRepository(confi
     // (also, Validate is used to get TSR for that commit. So).
 
     val diff = new Diff(config)
-    import diff.{ allResultPairs, hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
+    import diff.{ hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
 
     // TODO: This snippet of code is duplicated from Main; depends on a Diff object, though.
     val resultPairs: (Commit, Commit) => DiffableResults =
       config.runCommand match {
-        case All()               => allResultPairs
         case SleekOnly()         => sleekResultPairs
         case HipOnly()           => hipResultPairs
         case SleekValidateOnly() => validateSleekResultPairs

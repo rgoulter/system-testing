@@ -33,21 +33,6 @@ class Diff(config: AppConfig) {
     List(("hip", oldRes, curRes))
   }
 
-  /**
-   * For use with `diffSuiteResults`, for running both sleek, hip results.
-   *
-   * The way it is implemented, the output of `diffSuiteResults` won't combine
-   * the diff results together, so sleek diff will be followed by hip diff.
-   */
-  private[app] def allResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val (oldSleekResults, oldHipResults) = runAllTests(rev1)
-    val (curSleekResults, curHipResults) = runAllTests(rev2)
-
-    List(("sleek", oldSleekResults, curSleekResults),
-         ("hip",   oldHipResults, curHipResults))
-  }
-
   private[app] def validateSleekResultPairs(rev1: Commit, rev2: Commit):
       DiffableResults = {
     val oldRes = runSleekValidateTests(rev1)

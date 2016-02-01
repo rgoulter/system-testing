@@ -32,19 +32,22 @@ case class SleekConfigArg(val isValidate: Boolean = false) extends ConfigCommand
 /** for whether Sleek, Hip (or all) are run. */
 sealed trait Suite
 
-case class HipOnly() extends Suite {
+/** for one (or more) combinations of Suites. Basically, Suite + All. */
+sealed trait SuiteSet
+
+case class HipOnly() extends Suite with SuiteSet {
   override def toString(): String = "hip"
 }
 
-case class SleekOnly() extends Suite {
+case class SleekOnly() extends Suite with SuiteSet {
   override def toString(): String = "sleek"
 }
 
-case class All() extends Suite {
+case class All() extends SuiteSet {
   override def toString(): String = "all"
 }
 
-case class SleekValidateOnly() extends Suite {
+case class SleekValidateOnly() extends Suite with SuiteSet {
   override def toString(): String = "sleek-validate"
 }
 
@@ -81,7 +84,8 @@ case class AppConfig(repoDir: Option[Path],
   def rev2(): Option[String] =
     if (revs.length == 2) Some(revs(1)) else None
 
-  def runCommand: Suite = {
+  /** Which (set of) suites to run. */
+  def runCommand: SuiteSet = {
     if ((commands contains SleekConfigArg(false)) && (commands contains HipConfigArg())) {
       All()
     } else if (commands contains HipConfigArg()) {
@@ -92,6 +96,16 @@ case class AppConfig(repoDir: Option[Path],
       SleekValidateOnly()
     } else {
       throw new IllegalArgumentException("Invalid combination of commands.")
+    }
+  }
+
+  /** Which (set of) suites to run. */
+  def runSuites: Seq[Suite] = {
+    runCommand match {
+      case All()               => Seq(SleekOnly(), HipOnly())
+      case SleekOnly()         => Seq(SleekOnly())
+      case HipOnly()           => Seq(HipOnly())
+      case SleekValidateOnly() => Seq(SleekValidateOnly())
     }
   }
 

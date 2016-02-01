@@ -137,7 +137,7 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.{ runAllTests, runHipTests, runSleekTests }
   val diff = new Diff(config)
-  import diff.{ allResultPairs, hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
+  import diff.{ hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
   val bisector = new Bisect(config)
   import bisector.bisect
 
@@ -173,7 +173,7 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
         System.err.println("To be implemented.")
       }
       case "send-status" => {
-        val emailer = new EmailReports(config, All()) // XXX
+        val emailer = new EmailReports(config, All())
         emailer.run()
       }
       case _        => showHelpText
@@ -183,9 +183,10 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
 
   private def runSuiteDiff(): Unit = {
     // Select whether to run sleek, hip or both
+    // XXX this should be a function of the suite, not of config.runCommand
+    val suite = config.runCommand // i.e. won't be "all" here.
     val resultPairs: (Commit, Commit) => DiffableResults =
-      config.runCommand match {
-        case All()               => allResultPairs
+      suite match {
         case SleekOnly()         => sleekResultPairs
         case HipOnly()           => hipResultPairs
         case SleekValidateOnly() => validateSleekResultPairs
