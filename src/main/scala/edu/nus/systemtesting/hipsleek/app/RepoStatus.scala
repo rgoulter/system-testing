@@ -27,7 +27,7 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
   val bisector = new Bisect(config)
   import bisector.bisect
   val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.runAllTests
+  import runHipSleek.{ runSleekTests, runHipTests }
 
   // MAGIC: 'default' as the main development branch.
   val MainBranch = "default"
@@ -38,7 +38,8 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
     // The 'status' of the default branch is by running the tests on the latest
     // commits.
-    val (sleekTSR, hipTSR) = runAllTests(defaultB)
+    val sleekTSR = runSleekTests(defaultB)
+    val hipTSR = runHipTests(defaultB)
     new DefaultBranchStatus(defaultB, List(("sleek", sleekTSR), ("hip", hipTSR)))
   }
 
@@ -152,7 +153,8 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
     // The 'status' of the default branch is by running the tests on the latest
     // commits.
-    val (sleekTSR, hipTSR) = runAllTests(defaultB)
+    val sleekTSR = runSleekTests(defaultB)
+    val hipTSR = runHipTests(defaultB)
     val defaultStatus = new DefaultBranchStatus(defaultB, List(("sleek", sleekTSR), ("hip", hipTSR)))
 
     //

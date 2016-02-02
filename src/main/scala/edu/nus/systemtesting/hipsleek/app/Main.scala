@@ -135,7 +135,7 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
   val runUtils = new RunUtils(config)
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.{ runAllTests, runHipTests, runSleekTests }
+  import runHipSleek.{ runHipTests, runSleekTests }
   val diff = new Diff(config)
   import diff.{ hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
   val bisector = new Bisect(config)
@@ -150,7 +150,10 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
     command match {
       case "sleek"  => runSleekTests(revision)
       case "hip"    => runHipTests(revision)
-      case "all"    => runAllTests(revision)
+      case "all"    => {
+        runSleekTests(revision)
+        runHipTests(revision)
+      }
       case "validate-sleek"  => {
         val validator = new Validate(config)
         validator.runSleekValidation()

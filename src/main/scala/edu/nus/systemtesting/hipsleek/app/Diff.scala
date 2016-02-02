@@ -10,7 +10,7 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
  */
 class Diff(config: AppConfig) {
   val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.{ runAllTests, runHipTests, runSleekTests }
+  import runHipSleek.{ runHipTests, runSleekTests }
   val validate = new Validate(config)
   import validate.runSleekValidateTests
 

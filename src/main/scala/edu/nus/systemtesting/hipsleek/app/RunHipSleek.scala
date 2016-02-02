@@ -32,12 +32,6 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
   import runUtils.runTestsWith
 
 
-  private[app] def runAllTests(rev: Commit): (TestSuiteResult, TestSuiteResult) =
-    (altRunTests(SleekTestCase.constructTestCase,
-                 SleekTestSuiteUsage.allTestable)(rev),
-     altRunTests(HipTestCase.constructTestCase,
-                 HipTestSuiteUsage.allTestable)(rev))
-
   private[app] def runHipTests(rev: Commit): TestSuiteResult =
     altRunTests(HipTestCase.constructTestCase,
                 HipTestSuiteUsage.allTestable)(rev)
