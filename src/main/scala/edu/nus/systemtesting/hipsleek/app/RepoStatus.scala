@@ -68,11 +68,11 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
     // Purpose of the diff(s) here is "did this branch break anything";
     // but commits may fail to build.
     // So, need to take some care.
-    def diffResults(earlyCommit: Commit, laterCommit: Commit): List[TestSuiteComparison] = {
+    def diffResults(earlyCommit: Commit, laterCommit: Commit): Option[TestSuiteComparison] = {
       // Base Case; need to be different commits..
       if (earlyCommit == laterCommit) {
         // Unable to find diff for this branch
-        List()
+        None
       } else {
         try {
           diffSuiteResults(earlyCommit, laterCommit, resultPairs)
@@ -112,9 +112,9 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
         (oldTCR, firstFailingC)
       }
-    } flatten
+    } getOrElse List()
 
-    new BranchStatus(branch, diffs, bisectRes)
+    new BranchStatus(branch, diffs.toList, bisectRes)
   }
 
   def runBranchStatus(branchName: String): Unit = {

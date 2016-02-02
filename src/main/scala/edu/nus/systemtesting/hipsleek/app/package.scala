@@ -16,7 +16,7 @@ import edu.nus.systemtesting.ConstructTestCase
  */
 package object app {
   /** Used for `diffSuiteResults`, to save typing / screen space. */
-  type DiffableResults = List[(String, TestSuiteResult, TestSuiteResult)]
+  type DiffableResults = (String, TestSuiteResult, TestSuiteResult)
 
   private[app] def recoverFromTCR(tcr: TestCaseResult):
       (Testable with ExpectsOutput, ConstructTestCase) = {

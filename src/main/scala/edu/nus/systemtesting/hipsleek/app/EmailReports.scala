@@ -101,7 +101,7 @@ class EmailReports(config: AppConfig, suiteSet: SuiteSet) extends UsesRepository
     import diff.{ hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
 
     // TODO: This snippet of code is duplicated from Main; depends on a Diff object, though.
-    val resultPairs: (Commit, Commit) => DiffableResults =
+    val resultPairs: (Commit, Commit) => Option[DiffableResults] =
       config.runCommand match {
         case SleekOnly()         => sleekResultPairs
         case HipOnly()           => hipResultPairs
@@ -110,7 +110,7 @@ class EmailReports(config: AppConfig, suiteSet: SuiteSet) extends UsesRepository
           throw new IllegalStateException
       }
 
-    diff.diffSuiteResults(oldRev, curRev, ???)
+    diff.diffSuiteResults(oldRev, curRev, resultPairs) toList
   }
 
   // construct email/report using (from, to) result pairs.

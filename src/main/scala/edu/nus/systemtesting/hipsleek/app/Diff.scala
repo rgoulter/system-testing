@@ -17,28 +17,40 @@ class Diff(config: AppConfig) {
 
   /** For use with `diffSuiteResults`, for running just sleek results. */
   private[app] def sleekResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val oldRes = runSleekTests(rev1)
-    val curRes = runSleekTests(rev2)
+      Option[DiffableResults] = {
+    try {
+      val oldRes = runSleekTests(rev1)
+      val curRes = runSleekTests(rev2)
 
-    List(("sleek", oldRes, curRes))
+      Some(("sleek", oldRes, curRes))
+    } catch {
+      case e: Throwable => None
+    }
   }
 
   /** For use with `diffSuiteResults`, for running just hip results. */
   private[app] def hipResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val oldRes = runHipTests(rev1)
-    val curRes = runHipTests(rev2)
+      Option[DiffableResults] = {
+    try {
+      val oldRes = runHipTests(rev1)
+      val curRes = runHipTests(rev2)
 
-    List(("hip", oldRes, curRes))
+      Some(("hip", oldRes, curRes))
+    } catch {
+      case e: Throwable => None
+    }
   }
 
   private[app] def validateSleekResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val oldRes = runSleekValidateTests(rev1)
-    val curRes = runSleekValidateTests(rev2)
+      Option[DiffableResults] = {
+    try {
+      val oldRes = runSleekValidateTests(rev1)
+      val curRes = runSleekValidateTests(rev2)
 
-    List(("sleek-validate", oldRes, curRes))
+      Some(("sleek-validate", oldRes, curRes))
+    } catch {
+      case e: Throwable => None
+    }
   }
 
   /**
@@ -47,7 +59,7 @@ class Diff(config: AppConfig) {
    */
   private[app] def diffSuiteResults(rev1: Commit,
                                     rev2: Commit,
-                                    resultsFor: (Commit, Commit) => DiffableResults): List[TestSuiteComparison] = {
+                                    resultsFor: (Commit, Commit) => Option[DiffableResults]): Option[TestSuiteComparison] = {
     val diffable = resultsFor(rev1, rev2)
 
     if (!diffable.isEmpty) {
@@ -61,7 +73,7 @@ class Diff(config: AppConfig) {
     } else {
       reporter.log(s"Results unavailable for one of $rev1 or $rev2")
 
-      List()
+      None
     }
   }
 }
