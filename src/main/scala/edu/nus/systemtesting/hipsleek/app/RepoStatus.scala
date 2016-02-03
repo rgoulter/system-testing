@@ -61,15 +61,17 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
       if (!configHasValidate)
         // XXX Broken! Want *both* sleek, hip.
         // The intention of "all" is "do sleek, followed by hip stuff".
-        sleekResultPairs(_, _)
+        List(sleekResultPairs(_, _), hipResultPairs(_, _))
       else
-        validateSleekResultPairs(_, _)
+        List(validateSleekResultPairs(_, _))
 
 
     // reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
 
-    // XXX So... toList concat toList
-    val diffs = diffSuiteResults(earliestCommit, latestCommit, resultPairs)
+    // This is slightly untidy in that it can mix sleek,hip TSCmps together.
+    val diffs = resultPairs map { rp =>
+      diffSuiteResults(earliestCommit, latestCommit, rp)
+    } flatten
 
     //
     // Bisect
@@ -85,7 +87,7 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
         (oldTCR, firstFailingC)
       }
-    } getOrElse List()
+    } flatten
 
     new BranchStatus(branch, diffs.toList, bisectRes)
   }
