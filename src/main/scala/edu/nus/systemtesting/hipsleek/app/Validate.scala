@@ -107,4 +107,9 @@ class Validate(config: AppConfig) extends UsesRepository(config) {
       })
     }
   }
+
+
+  /** For use with `diffSuiteResults`, for running just sleek-validate results. */
+  private[app] val validateSleekResultPairs: (Commit, Commit) => DiffableResults =
+    Diff.resultPairsFor("sleek-validate", runSleekValidateTests)
 }

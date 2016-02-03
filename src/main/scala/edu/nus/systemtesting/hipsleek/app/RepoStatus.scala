@@ -23,12 +23,14 @@ class BranchStatus(val branch: Branch,
 
 class RepoStatus(config: AppConfig) extends UsesRepository(config) {
   val diff = new Diff(config)
-  import diff.{ validateSleekResultPairs, diffSuiteResults }
+  import diff.diffSuiteResults
   val bisector = new Bisect(config)
   import bisector.bisect
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.{ runSleekTests, runHipTests }
   import runHipSleek.{ sleekResultPairs, hipResultPairs }
+  val validate = new Validate(config)
+  import validate.validateSleekResultPairs
 
   // MAGIC: 'default' as the main development branch.
   val MainBranch = "default"

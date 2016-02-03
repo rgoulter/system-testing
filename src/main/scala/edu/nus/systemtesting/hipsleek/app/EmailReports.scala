@@ -100,7 +100,8 @@ class EmailReports(config: AppConfig, suiteSet: SuiteSet) extends UsesRepository
     val runHS = new RunHipSleek(config)
     import runHS.{ hipResultPairs, sleekResultPairs }
     val diff = new Diff(config)
-    import diff.{ diffSuiteResults, validateSleekResultPairs }
+    import diff.{ diffSuiteResults }
+    import validate.validateSleekResultPairs
 
     // TODO: This snippet of code is duplicated from Main; depends on a Diff object, though.
     val resultPairs: (Commit, Commit) => DiffableResults =

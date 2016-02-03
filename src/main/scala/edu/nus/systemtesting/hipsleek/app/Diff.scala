@@ -22,19 +22,6 @@ object Diff {
  * @author richardg
  */
 class Diff(config: AppConfig) {
-  val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.{ runHipTests, runSleekTests }
-  val validate = new Validate(config)
-  import validate.runSleekValidateTests
-
-  private[app] def validateSleekResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val oldRes = runSleekValidateTests(rev1)
-    val curRes = runSleekValidateTests(rev2)
-
-    ("sleek-validate", oldRes, curRes)
-  }
-
   /**
    * Run the given `resultsFor` function, apply to `TestSuiteComparison`.
    * Outputs the result of the comparison.
