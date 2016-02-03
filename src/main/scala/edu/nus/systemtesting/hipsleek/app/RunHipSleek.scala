@@ -118,4 +118,13 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
       }
     }
   }
+
+
+  /** For use with `diffSuiteResults`, for running just sleek results. */
+  private[app] val sleekResultPairs: (Commit, Commit) => DiffableResults =
+    Diff.resultPairsFor("sleek", runSleekTests)
+
+  /** For use with `diffSuiteResults`, for running just hip results. */
+  private[app] val hipResultPairs: (Commit, Commit) => DiffableResults =
+    Diff.resultPairsFor("hip", runHipTests)
 }

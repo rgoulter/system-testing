@@ -97,8 +97,10 @@ class EmailReports(config: AppConfig, suiteSet: SuiteSet) extends UsesRepository
     // Since we (assume we) have results, this shouldn't take very long to 'run':
     // (also, Validate is used to get TSR for that commit. So).
 
+    val runHS = new RunHipSleek(config)
+    import runHS.{ hipResultPairs, sleekResultPairs }
     val diff = new Diff(config)
-    import diff.{ hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
+    import diff.{ diffSuiteResults, validateSleekResultPairs }
 
     // TODO: This snippet of code is duplicated from Main; depends on a Diff object, though.
     val resultPairs: (Commit, Commit) => DiffableResults =

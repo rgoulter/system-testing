@@ -136,8 +136,9 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.{ runHipTests, runSleekTests }
+  import runHipSleek.{ hipResultPairs, sleekResultPairs }
   val diff = new Diff(config)
-  import diff.{ hipResultPairs, sleekResultPairs, diffSuiteResults, validateSleekResultPairs }
+  import diff.{ diffSuiteResults, validateSleekResultPairs }
   val bisector = new Bisect(config)
   import bisector.bisect
 

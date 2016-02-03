@@ -5,6 +5,19 @@ import edu.nus.systemtesting.output.GlobalReporter.reporter
 import edu.nus.systemtesting.testsuite.TestSuiteComparison
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 
+object Diff {
+  /**
+   * Curry-able function, to abstract e.g. sleekResultPairs.
+   */
+  def resultPairsFor(name: String, suiteResultFor: Commit => TestSuiteResult)
+                    (rev1: Commit, rev2: Commit): DiffableResults = {
+    val oldRes = suiteResultFor(rev1)
+    val curRes = suiteResultFor(rev2)
+
+    (name, oldRes, curRes)
+  }
+}
+
 /**
  * @author richardg
  */
@@ -13,25 +26,6 @@ class Diff(config: AppConfig) {
   import runHipSleek.{ runHipTests, runSleekTests }
   val validate = new Validate(config)
   import validate.runSleekValidateTests
-
-
-  /** For use with `diffSuiteResults`, for running just sleek results. */
-  private[app] def sleekResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val oldRes = runSleekTests(rev1)
-    val curRes = runSleekTests(rev2)
-
-    ("sleek", oldRes, curRes)
-  }
-
-  /** For use with `diffSuiteResults`, for running just hip results. */
-  private[app] def hipResultPairs(rev1: Commit, rev2: Commit):
-      DiffableResults = {
-    val oldRes = runHipTests(rev1)
-    val curRes = runHipTests(rev2)
-
-    ("hip", oldRes, curRes)
-  }
 
   private[app] def validateSleekResultPairs(rev1: Commit, rev2: Commit):
       DiffableResults = {
