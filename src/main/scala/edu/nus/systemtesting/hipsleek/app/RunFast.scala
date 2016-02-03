@@ -210,14 +210,14 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     import config.{ runFastSuite, runFastGenerate => isForcedGenerate }
 
     val suiteName = runFastSuite.getOrElse(throw new IllegalArgumentException("must be given a suite name"))
+    val suiteSet = suiteSetFromString(suiteName)
 
-    // more/less expect suiteName to be one of:
-    //   sleek
-    //   hip
-    //   validate-sleek
-    // XXX 'all' broken here. need to map over.
-    val suite = suiteFromString(suiteName)
+    suiteSet.suites foreach { suite =>
+      runForSuite(suite, isForcedGenerate)
+    }
+  }
 
+  def runForSuite(suite: Suite, isForcedGenerate: Boolean): Unit = {
     //
     // Step 1. Generate set of fast tests (if need be)
     //

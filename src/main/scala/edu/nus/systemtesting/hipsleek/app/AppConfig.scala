@@ -33,22 +33,32 @@ case class SleekConfigArg(val isValidate: Boolean = false) extends ConfigCommand
 sealed trait Suite
 
 /** for one (or more) combinations of Suites. Basically, Suite + All. */
-sealed trait SuiteSet
+sealed trait SuiteSet {
+  val suites: List[Suite]
+}
 
 case class HipOnly() extends Suite with SuiteSet {
   override def toString(): String = "hip"
+
+  override val suites = List(this)
 }
 
 case class SleekOnly() extends Suite with SuiteSet {
   override def toString(): String = "sleek"
+
+  override val suites = List(this)
 }
 
 case class All() extends SuiteSet {
   override def toString(): String = "all"
+
+  override val suites = List(SleekOnly(), HipOnly())
 }
 
 case class SleekValidateOnly() extends Suite with SuiteSet {
   override def toString(): String = "sleek-validate"
+
+  override val suites = List(this)
 }
 
 
