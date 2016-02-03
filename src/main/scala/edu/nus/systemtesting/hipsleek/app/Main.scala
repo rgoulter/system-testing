@@ -188,7 +188,7 @@ class ConfiguredMain(config: AppConfig) extends UsesRepository(config) {
     // Select whether to run sleek, hip or both
     // XXX this should be a function of the suite, not of config.runCommand
     val suite = config.runCommand // i.e. won't be "all" here.
-    val resultPairs: (Commit, Commit) => Option[DiffableResults] =
+    val resultPairs: (Commit, Commit) => DiffableResults =
       suite match {
         case SleekOnly()         => sleekResultPairs
         case HipOnly()           => hipResultPairs

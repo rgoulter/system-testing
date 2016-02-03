@@ -65,38 +65,8 @@ class RepoStatus(config: AppConfig) extends UsesRepository(config) {
 
     // reporter.header(s"Run Diff (${idx+1}/${recentBranches.length})")
 
-    // Purpose of the diff(s) here is "did this branch break anything";
-    // but commits may fail to build.
-    // So, need to take some care.
-    def diffResults(earlyCommit: Commit, laterCommit: Commit): Option[TestSuiteComparison] = {
-      // Base Case; need to be different commits..
-      if (earlyCommit == laterCommit) {
-        // Unable to find diff for this branch
-        None
-      } else {
-        try {
-          diffSuiteResults(earlyCommit, laterCommit, resultPairs)
-        } catch {
-          case buildFailure: UnableToBuildException => {
-            val failedCommit = buildFailure.rev
-
-            // assume that we never run a diff on root commit of the repo.
-            // also, just take the first parent commit.
-            if (failedCommit == earlyCommit) {
-              val nextC = earlyCommit.parents.head
-              diffResults(nextC, laterCommit)
-            } else if (failedCommit == laterCommit) {
-              val nextC = laterCommit.parents.head
-              diffResults(earlyCommit, nextC)
-            } else {
-              throw new IllegalStateException()
-            }
-          }
-        }
-      }
-    }
-
-    val diffs = diffResults(earliestCommit, latestCommit)
+    // XXX So... toList concat toList
+    val diffs = diffSuiteResults(earliestCommit, latestCommit, resultPairs)
 
     //
     // Bisect
