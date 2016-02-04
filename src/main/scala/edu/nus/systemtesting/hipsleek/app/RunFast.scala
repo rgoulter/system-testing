@@ -158,14 +158,14 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
                                     timeout = QuickTimeout)
 
       val runHipSleek = new RunHipSleek(quickConfig)
-      import runHipSleek.{ altRunTests }
+      import runHipSleek.runTests
 
       // If repo is dirty, this will be needlessly expensive.
       val repoC = repo.identify()
 
       // n.b. *might* throw UnableToBuildException here
       // XXX BUG: It seems this doesn't save the test case result, even for non-timeout?
-      val tsr = altRunTests(construct, allTestable)(repoC)
+      val tsr = runTests(construct, allTestable)(repoC)
 
       // wait for the results
       tsr.results map { tcr => (tcr.executionTime, tcr) }
@@ -257,8 +257,8 @@ class RunFast(config: AppConfig) extends UsesRepository(config) {
     val repoC = repo.identify()
 
     val runHipSleek = new RunHipSleek(config)
-    import runHipSleek.{ altRunTests }
+    import runHipSleek.runTests
 
-    altRunTests(constructForSuite(suite), testable)(repoC)
+    runTests(constructForSuite(suite), testable)(repoC)
   }
 }

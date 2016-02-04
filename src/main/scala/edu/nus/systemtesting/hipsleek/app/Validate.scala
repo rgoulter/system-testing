@@ -23,7 +23,7 @@ class Validate(config: AppConfig) extends UsesRepository(config) {
   val runUtils = new RunUtils(config)
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
-  import runHipSleek.{ altRunTests, runTestCaseForRevision }
+  import runHipSleek.{ runTests, runTestCaseForRevision }
 
   /** Based upon the `test/` dirname convention. */
   def listTestableDirs(): List[Path] = {
@@ -65,8 +65,8 @@ class Validate(config: AppConfig) extends UsesRepository(config) {
     listTestableDirs() flatMap listValidateableInDir map testableForFile
 
   private[app] def runSleekValidateTests(rev: Commit): TestSuiteResult =
-    altRunTests(ValidateableSleekTestCase.constructTestCase,
-                allTestable)(rev)
+    runTests(ValidateableSleekTestCase.constructTestCase,
+             allTestable)(rev)
 
   def runSleekValidation(): Unit = {
     // If developmentDir specified, use that, otherwise

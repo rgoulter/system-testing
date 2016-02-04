@@ -33,15 +33,15 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
 
 
   private[app] def runHipTests(rev: Commit): TestSuiteResult =
-    altRunTests(HipTestCase.constructTestCase,
-                HipTestSuiteUsage.allTestable)(rev)
+    runTests(HipTestCase.constructTestCase,
+             HipTestSuiteUsage.allTestable)(rev)
 
   private[app] def runSleekTests(rev: Commit): TestSuiteResult =
-    altRunTests(SleekTestCase.constructTestCase,
-                SleekTestSuiteUsage.allTestable)(rev)
+    runTests(SleekTestCase.constructTestCase,
+             SleekTestSuiteUsage.allTestable)(rev)
 
   // construct e.g. HipTestCase.constructTestCase
-  def altRunTests(construct: ConstructTestCase,
+  def runTests(construct: ConstructTestCase,
                   allTestable: List[Testable with ExpectsOutput])
                  (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
