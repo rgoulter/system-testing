@@ -17,6 +17,7 @@ import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.hipsleek.TestSuiteResultAnalysis
 import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
+import edu.nus.systemtesting.ExpectsOutput
 
 object RunHipSleek {
   def foldersUsedFromTestable(testable: List[Testable]): List[String] =
@@ -68,6 +69,32 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
       testSuiteResult
     }) match {
       case SuccessfulBuildResult(tsr) => tsr
+      case BuildFailed() =>
+        throw new UnableToBuildException(repoDir, rev)
+      case BuildTimedOut() =>
+        throw new UnableToBuildException(repoDir, rev, timedOut = true)
+    }
+  }
+
+  // n.b. this exports archive to tmpDir each time, either to build, or
+  // just for the examples.
+  def runTest(tc: Testable with ExpectsOutput, construct: ConstructTestCase)(rev: Commit): TestCaseResult = {
+    val foldersUsed = List(tc.fileName.getParent().toString())
+
+    (runTestsWith(rev, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
+      // Ideally, preparedSys would itself do the building of repo.
+      // i.e. building the repo would be delayed until necessary.
+      // At the moment, though, since any system loading tests will *have* the
+      // tests, this is not going to slow things down.
+      lazy val preparedSys = PreparedSystem(binDir, corpusDir)
+
+      val resultsFor = runTestCaseForRevision(rev, preparedSys)(construct)
+
+      // by this point,
+      // tc *must* have proper expectedOutput
+      resultsFor(tc)
+    }) match {
+      case SuccessfulBuildResult(tcr) => tcr
       case BuildFailed() =>
         throw new UnableToBuildException(repoDir, rev)
       case BuildTimedOut() =>

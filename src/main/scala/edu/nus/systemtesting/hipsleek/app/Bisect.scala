@@ -42,7 +42,6 @@ class Bisect(config: AppConfig) extends UsesRepository(config) {
                           failingCommit: Commit,
                           tc: Testable with ExpectsOutput,
                           construct: ConstructTestCase): Commit = {
-    import Math.{ log, ceil, floor }
     import ReporterColors.{ ColorCyan, ColorMagenta }
 
     val results = config.defaultResultsArchive
@@ -56,25 +55,8 @@ class Bisect(config: AppConfig) extends UsesRepository(config) {
     assume(tcr1.get.passed, s"Assumed $tc passes for $workingCommit")
     assume(!tcr2.get.passed, s"Assumed $tc fails for $failingCommit")
 
-    // n.b. this exports archive to tmpDir each time, either to build, or
-    // just for the examples.
-    def runTest(rev: Commit): BuildResult[TestCaseResult] = {
-      val foldersUsed = List(tc.fileName.getParent().toString())
-
-      runTestsWith(rev, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
-        // Ideally, preparedSys would itself do the building of repo.
-        // i.e. building the repo would be delayed until necessary.
-        // At the moment, though, since any system loading tests will *have* the
-        // tests, this is not going to slow things down.
-        lazy val preparedSys = PreparedSystem(binDir, corpusDir)
-
-        val resultsFor = runTestCaseForRevision(rev, preparedSys)(construct)
-
-        // by this point,
-        // tc *must* have proper expectedOutput
-        resultsFor(tc)
-      }
-    }
+    val runTest: Commit => TestCaseResult =
+      runHipSleek.runTest(tc, construct)(_)
 
     // Load all the results we have for the given testable.
 //    val revResPairs = results resultsFor tc
@@ -100,6 +82,7 @@ class Bisect(config: AppConfig) extends UsesRepository(config) {
       new Commit(repo, revHash.trim())
     } toSet
 
+    import Math.{ log, ceil }
     def revRangeLen = revRange.length
     def numSteps = ceil(log(revRangeLen) / log(2)) toInt
 
@@ -117,35 +100,33 @@ class Bisect(config: AppConfig) extends UsesRepository(config) {
         // note that the commit fails (in this bisection), continue.
         buildFailureCommits += nextRev
       } else {
-        val maybeNextTCR = runTest(nextRev)
+        try {
+          val nextTCR = runTest(nextRev)
 
-        maybeNextTCR match {
-          case SuccessfulBuildResult(nextTCR) => {
-            // output result, right
-            nextTCR.displayResult()
+          // output result, right
+          nextTCR.displayResult()
 
-            if (nextTCR.passed) {
-              rev1 = nextRev
+          if (nextTCR.passed) {
+            rev1 = nextRev
+          } else {
+            rev2 = nextRev
+          }
+        } catch {
+          case e: UnableToBuildException => {
+            if (!e.timedOut) {
+              // Failed to build is the only reason runTestsWith will return None
+              println("Build failure.")
+
+              // Exclude the current `nextRev` from nextRevIdx
+              buildFailureCommits += nextRev
+              results.addBuildFailureCommit(nextRev.revHash)
             } else {
-              rev2 = nextRev
+              // Failed to build is the only reason runTestsWith will return None
+              println("Build timed out. Ignoring...")
+
+              // Do nothing, with the logic that maybe trying again will help.
+              // TODO: 'build timed out' is nonsense.
             }
-          }
-
-          case BuildTimedOut() => {
-            // Failed to build is the only reason runTestsWith will return None
-            println("Build timed out. Ignoring...")
-
-            // Do nothing, with the logic that maybe trying again will help.
-            // TODO: 'build timed out' is nonsense.
-          }
-
-          case BuildFailed() => {
-            // Failed to build is the only reason runTestsWith will return None
-            println("Build failure.")
-
-            // Exclude the current `nextRev` from nextRevIdx
-            buildFailureCommits += nextRev
-            results.addBuildFailureCommit(nextRev.revHash)
           }
         }
       }
