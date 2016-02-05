@@ -5,6 +5,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+import scala.concurrent.Channel
+
 import edu.nus.systemtesting.BinCache
 import edu.nus.systemtesting.FileSystemUtilities
 import edu.nus.systemtesting.hg.Commit
@@ -142,21 +144,29 @@ class RunUtils(config: AppConfig) extends UsesRepository(config) {
                            (f: Path => T): T = {
     val tmpDir = Files createTempDirectory "edunussystest"
 
-    val rtn = f(tmpDir)
+    val rtnChannel: Channel[T] = new Channel()
 
-    // Finished running the tests, clean up.
+    // Outer try-finally, in case f throws exception.
     try {
-      if (removeAfterUse) {
-        reporter.log("Deleting " + tmpDir)
-        FileSystemUtilities rmdir tmpDir
-      }
-    } catch {
-      case ioEx: IOException => {
-        System.err.println(s"Unable to delete dir $tmpDir")
-        ioEx.printStackTrace()
+      rtnChannel write f(tmpDir)
+    } finally {
+      // Finished calling f (or it threw an exception),
+      // important to clean up directory created.
+
+      // Inner try-catch for dealing with file I/O of deleting tmpDir.
+      try {
+        if (removeAfterUse) {
+          reporter.log("Deleting " + tmpDir)
+          FileSystemUtilities rmdir tmpDir
+        }
+      } catch {
+        case ioEx: IOException => {
+          System.err.println(s"Unable to delete dir $tmpDir")
+          ioEx.printStackTrace()
+        }
       }
     }
 
-    rtn
+    rtnChannel.read
   }
 }
