@@ -50,7 +50,8 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
 
   // construct e.g. HipTestCase.constructTestCase
   def runTests(construct: ConstructTestCase,
-               allTestable: List[Testable with ExpectsOutput])
+               allTestable: List[Testable with ExpectsOutput],
+               runTestsMethod: RunHipSleek.RunTestsMethod = RunHipSleek.RunTestsMethod(true, true))
               (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
     val foldersUsed = RunHipSleek.foldersUsedFromTestable(allTestable)
@@ -62,8 +63,16 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
       // tests, this is not going to slow things down.
       lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-      // XXX So... maybe use a different resultsFor function.
-      val resultsFor = runTestCaseForRevision(repoRevision, preparedSys, construct)(_)
+      val resultsFor = runTestsMethod match {
+        case RunHipSleek.RunTestsMethod(true, true) =>
+          runTestCaseForRevision(repoRevision, preparedSys, construct)(_)
+        case RunHipSleek.RunTestsMethod(false, true) =>
+          runTestCaseForRevisionOnly(repoRevision, preparedSys, construct)(_)
+        case RunHipSleek.RunTestsMethod(true, false) =>
+          tryLoadTestCaseForRevisionOnly(repoRevision)(_)
+        case _ =>
+          throw new IllegalArgumentException("Invalid argument, must use at least one method to load from " + runTestsMethod)
+      }
 
       val suite = suiteFor(allTestable, repoRevision)
 
@@ -86,7 +95,10 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
 
   // n.b. this exports archive to tmpDir each time, either to build, or
   // just for the examples.
-  def runTest(tc: Testable with ExpectsOutput, construct: ConstructTestCase)(rev: Commit): TestCaseResult = {
+  def runTest(tc: Testable with ExpectsOutput,
+              construct: ConstructTestCase,
+              runTestsMethod: RunHipSleek.RunTestsMethod = RunHipSleek.RunTestsMethod(true, true))
+             (rev: Commit): TestCaseResult = {
     val foldersUsed = List(tc.fileName.getParent().toString())
 
     (runTestsWith(rev, foldersUsed) { case (binDir, corpusDir, repoRevision) =>
@@ -96,8 +108,16 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
       // tests, this is not going to slow things down.
       lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-      // XXX So... maybe use a different resultsFor function.
-      val resultsFor = runTestCaseForRevision(rev, preparedSys, construct)(_)
+      val resultsFor = runTestsMethod match {
+        case RunHipSleek.RunTestsMethod(true, true) =>
+          runTestCaseForRevision(repoRevision, preparedSys, construct)(_)
+        case RunHipSleek.RunTestsMethod(false, true) =>
+          runTestCaseForRevisionOnly(repoRevision, preparedSys, construct)(_)
+        case RunHipSleek.RunTestsMethod(true, false) =>
+          tryLoadTestCaseForRevisionOnly(repoRevision)(_)
+        case _ =>
+          throw new IllegalArgumentException("Invalid argument, must use at least one method to load from " + runTestsMethod)
+      }
 
       // by this point,
       // tc *must* have proper expectedOutput
