@@ -94,7 +94,7 @@ class Validate(config: AppConfig) extends UsesRepository(config) {
         // tests, this is not going to slow things down.
         lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-        val resultsFor = runTestCaseForRevision(repoC, preparedSys)(ValidateableSleekTestCase.constructTestCase)
+        val resultsFor = runTestCaseForRevision(repoC, preparedSys, ValidateableSleekTestCase.constructTestCase)(_)
 
         // by this point,
         // tc *must* have proper expectedOutput

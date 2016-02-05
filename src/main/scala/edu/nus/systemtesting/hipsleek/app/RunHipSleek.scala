@@ -19,9 +19,16 @@ import edu.nus.systemtesting.testsuite.TestSuite
 import edu.nus.systemtesting.testsuite.TestSuiteResult
 import edu.nus.systemtesting.ExpectsOutput
 
+/** Used with runTests, if specified to load from result, but result not found. */
+class UnableToRunException(val rev: Commit, tc: Testable with ExpectsOutput)
+  extends RuntimeException(s"Could not run for revision ${rev.revHash} for $tc")
+
 object RunHipSleek {
   def foldersUsedFromTestable(testable: List[Testable]): List[String] =
     (testable map { t => t.fileName.getParent().toString() } toSet) toList
+
+  /** Used with runTests, for whether to only load results, to always run results, or to run tests only if no results available. */
+  case class RunTestsMethod(val loadResults: Boolean, val runSystem: Boolean)
 }
 
 /**
@@ -43,8 +50,8 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
 
   // construct e.g. HipTestCase.constructTestCase
   def runTests(construct: ConstructTestCase,
-                  allTestable: List[Testable with ExpectsOutput])
-                 (rev: Commit): TestSuiteResult = {
+               allTestable: List[Testable with ExpectsOutput])
+              (rev: Commit): TestSuiteResult = {
     // Folders used by e.g. SleekTestSuiteUsage, HipTestSuiteUsage
     val foldersUsed = RunHipSleek.foldersUsedFromTestable(allTestable)
 
@@ -55,7 +62,8 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
       // tests, this is not going to slow things down.
       lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-      val resultsFor = runTestCaseForRevision(repoRevision, preparedSys)(construct)
+      // XXX So... maybe use a different resultsFor function.
+      val resultsFor = runTestCaseForRevision(repoRevision, preparedSys, construct)(_)
 
       val suite = suiteFor(allTestable, repoRevision)
 
@@ -88,7 +96,8 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
       // tests, this is not going to slow things down.
       lazy val preparedSys = PreparedSystem(binDir, corpusDir)
 
-      val resultsFor = runTestCaseForRevision(rev, preparedSys)(construct)
+      // XXX So... maybe use a different resultsFor function.
+      val resultsFor = runTestCaseForRevision(rev, preparedSys, construct)(_)
 
       // by this point,
       // tc *must* have proper expectedOutput
@@ -110,42 +119,59 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
   }
 
   // should be able to replace runWith, callback nature with this...
-  private[app] def runTestCaseForRevision(repoRevision: Commit, preparedSys: => PreparedSystem)
-                                         (implicit construct: ConstructTestCase):
-      (Testable with ExpectsOutput => TestCaseResult) = {
-    val resultsArch = config.defaultResultsArchive
-
-    { tc: Testable with ExpectsOutput =>
-      resultsArch.resultFor(repoRevision)(tc) match {
-        case Some(tcr) => tcr
-
-        case None => {
-          val conf = TestCaseConfiguration(timeout = config.timeout)
-          val tcase = construct(preparedSys, tc, conf)
-
-          // Run the TestCase, save results
-          val tcr = tcase.generateOutput
-
-          // Didn't have results, save them.
-          try {
-            val isTimedOut = tcr.executionTime >= config.timeout
-            val canSave = config.saveResultOnTimeout || !isTimedOut
-
-            if (canSave) {
-              resultsArch.saveTestCaseResult(repoRevision, tcr)
-            }
-          } catch {
-            case e: Throwable => {
-              e.printStackTrace()
-            }
-          }
-
-          tcr
-        }
-      }
+  private[app] def runTestCaseForRevision(repoRevision: Commit,
+                                          preparedSys: => PreparedSystem,
+                                          construct: ConstructTestCase)
+                                         (tc: Testable with ExpectsOutput):
+      TestCaseResult = {
+    try {
+      tryLoadTestCaseForRevisionOnly(repoRevision)(tc)
+    } catch {
+      case e: UnableToRunException =>
+        runTestCaseForRevisionOnly(repoRevision, preparedSys, construct)(tc)
     }
   }
 
+  /** Try to load using results archive; throw UnableToRunException if result not found. */
+  private[app] def tryLoadTestCaseForRevisionOnly(repoRevision: Commit)(tc: Testable with ExpectsOutput):
+      TestCaseResult = {
+    val resultsArch = config.defaultResultsArchive
+
+    resultsArch.resultFor(repoRevision)(tc) match {
+      case Some(tcr) => tcr
+      case None => throw new UnableToRunException(repoRevision, tc)
+    }
+  }
+
+  private[app] def runTestCaseForRevisionOnly(repoRevision: Commit,
+                                              preparedSys: => PreparedSystem,
+                                              construct: ConstructTestCase)
+                                             (tc: Testable with ExpectsOutput):
+      TestCaseResult = {
+    val resultsArch = config.defaultResultsArchive
+
+    val conf = TestCaseConfiguration(timeout = config.timeout)
+    val tcase = construct(preparedSys, tc, conf)
+
+    // Run the TestCase, save results
+    val tcr = tcase.generateOutput
+
+    // Didn't have results, save them.
+    try {
+      val isTimedOut = tcr.executionTime >= config.timeout
+      val canSave = config.saveResultOnTimeout || !isTimedOut
+
+      if (canSave) {
+        resultsArch.saveTestCaseResult(repoRevision, tcr)
+      }
+    } catch {
+      case e: Throwable => {
+        e.printStackTrace()
+      }
+    }
+
+    tcr
+  }
 
   /** For use with `diffSuiteResults`, for running just sleek results. */
   private[app] val sleekResultPairs: (Commit, Commit) => DiffableResults =

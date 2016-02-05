@@ -46,6 +46,22 @@ class Diff(config: AppConfig) {
    * for the (first) parent of that commit.
    */
   def diffSuiteResults(earlyCommit: Commit, laterCommit: Commit, resultPairs: (Commit, Commit) => DiffableResults): Option[TestSuiteComparison] = {
+    def retry(failedCommit: Commit): Option[TestSuiteComparison] = {
+      // Since the "Resolution Strategy" here is
+      // "Commit Failed => Try its Parent Commit",
+      // assume that we never run a diff on root commit of the repo.
+      // also, just take the first parent commit.
+      if (failedCommit == earlyCommit) {
+        val nextC = earlyCommit.parents.head
+        diffSuiteResults(nextC, laterCommit, resultPairs)
+      } else if (failedCommit == laterCommit) {
+        val nextC = laterCommit.parents.head
+        diffSuiteResults(earlyCommit, nextC, resultPairs)
+      } else {
+        throw new IllegalStateException()
+      }
+    }
+
     // Base Case; need to be different commits..
     if (earlyCommit == laterCommit) {
       // Unable to find diff for this branch
@@ -54,23 +70,8 @@ class Diff(config: AppConfig) {
       try {
         Some(diffSuiteResultsOnce(earlyCommit, laterCommit, resultPairs))
       } catch {
-        case buildFailure: UnableToBuildException => {
-          val failedCommit = buildFailure.rev
-
-          // Since the "Resolution Strategy" here is
-          // "Commit Failed => Try its Parent Commit",
-          // assume that we never run a diff on root commit of the repo.
-          // also, just take the first parent commit.
-          if (failedCommit == earlyCommit) {
-            val nextC = earlyCommit.parents.head
-            diffSuiteResults(nextC, laterCommit, resultPairs)
-          } else if (failedCommit == laterCommit) {
-            val nextC = laterCommit.parents.head
-            diffSuiteResults(earlyCommit, nextC, resultPairs)
-          } else {
-            throw new IllegalStateException()
-          }
-        }
+        case buildFailure: UnableToBuildException => retry(buildFailure.rev)
+        case runFailure: UnableToRunException => retry(runFailure.rev)
       }
     }
   }
