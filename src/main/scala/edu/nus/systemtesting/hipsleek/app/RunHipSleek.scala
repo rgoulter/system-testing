@@ -135,7 +135,7 @@ class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
     // n.b. Technically this ignores 'dirty', since revHash doesn't include the `+`,
     // but since the only effect is for the cache folders (elsewhere), doesn't
     // matter too much here.
-    new TestSuite(allTests, repoRevision.revHash, config.significantTimeThreshold)
+    new TestSuite(allTests, repoRevision.revHash)
   }
 
   // should be able to replace runWith, callback nature with this...

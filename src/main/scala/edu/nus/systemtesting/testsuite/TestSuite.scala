@@ -13,8 +13,7 @@ import GlobalReporter.reporter
 import edu.nus.systemtesting.ExpectsOutput
 
 class TestSuite(tests: List[Testable with ExpectsOutput],
-                revision: String,
-                significantTime: Long) {
+                revision: String) {
   def runAllTests(resultFor: Testable with ExpectsOutput => TestCaseResult): TestSuiteResult = {
     // Use global ExecutionContext for executing context.
     import ExecutionContext.Implicits.global

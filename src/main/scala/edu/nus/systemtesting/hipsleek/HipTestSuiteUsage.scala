@@ -18,11 +18,10 @@ import edu.nus.systemtesting.ExpectsOutput
   */
 class HipTestSuiteUsage(
     binDir: Path,
-    significantTime: Long,
     timeout: Int,
     revision : String,
     examplesDir: Path = Paths.get("examples/working/hip"))
-    extends TestSuiteUsage(revision, significantTime) {
+    extends TestSuiteUsage(revision) {
   val usagePrepRepo = PreparedSystem(binDir, examplesDir)
   val usageConf = TestCaseConfiguration(timeout)
 

@@ -21,13 +21,12 @@ class TestSuiteSpec extends FlatSpec {
   "TestSuite" should "throw an exception if any resultFor throws an exception" in {
     // Values unused by TestSuite
     val ArbitraryRev = "rev1"
-    val ArbitraryDuration = 1000L
 
     // Need non-empty list of tests.
     // But, can each be null, since TestSuite doesn't consider them.
     val tests: List[Testable with ExpectsOutput] = List(null, null, null)
 
-    val testSuite = new TestSuite(tests, ArbitraryRev, ArbitraryDuration)
+    val testSuite = new TestSuite(tests, ArbitraryRev)
 
     // Deliberately throw some exception,
     // which TestSuite.runAllTests is unlikely to throw.

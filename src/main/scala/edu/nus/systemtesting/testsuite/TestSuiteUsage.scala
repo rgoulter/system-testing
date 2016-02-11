@@ -7,11 +7,10 @@ import edu.nus.systemtesting.ExpectsOutput
 /**
  * @author richardg
  */
-abstract class TestSuiteUsage(val revision: String,
-                              val significantTime: Long) {
+abstract class TestSuiteUsage(val revision: String) {
   /** To be implemented by subclass. */
   def allTests: List[TestCase with ExpectsOutput]
 
   def suite: TestSuite =
-    new TestSuite(allTests, revision, significantTime)
+    new TestSuite(allTests, revision)
 }
