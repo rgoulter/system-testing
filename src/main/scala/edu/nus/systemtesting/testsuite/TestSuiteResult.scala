@@ -22,7 +22,7 @@ import GlobalReporter.visibility
 case class TestSuiteResult(val hostname: String,
                            val datetime: DateTime,
                            val repoRevision: String,
-                           resultFutures: List[Future[TestCaseResult]]) {
+                           private[testsuite] val resultFutures: List[Future[TestCaseResult]]) {
   lazy val results = resultFutures map { future =>
     // timeout taken care of by TestCase
     Await result (future, Duration.Inf)
