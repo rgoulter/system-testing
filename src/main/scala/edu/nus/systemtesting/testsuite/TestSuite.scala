@@ -31,14 +31,20 @@ class TestSuite(tests: List[Testable with ExpectsOutput],
       val startTime = System.currentTimeMillis
 
       tcPromises foreach { case (tc, p) =>
-        // Load or run each result individually.
-        // May be worth recording how many loaded vs computed??..
-        val testResult = resultFor(tc)
+        try {
+          // Load or run each result individually.
+          // May be worth recording how many loaded vs computed??..
+          val testResult = resultFor(tc)
 
-        // the promise always succeeds.
-        // (not to be confused with the result of the test; even
-        //  if test is 'invalid', don't model that using promise failure).
-        p success testResult
+          // the promise always succeeds.
+          // (not to be confused with the result of the test; even
+          //  if test is 'invalid', don't model that using promise failure).
+          p success testResult
+        } catch {
+          // In case resultFor throws some exception,
+          // fail for *that* promise only.
+          case e: Throwable => p.failure(e)
+        }
       }
 
       val endTime = System.currentTimeMillis
@@ -54,8 +60,7 @@ class TestSuite(tests: List[Testable with ExpectsOutput],
     }
 
     fut onFailure { case e: Throwable =>
-      System.err.println("Something went wrong in future!!!")
-      e.printStackTrace()
+      System.err.println("Something went wrong in TestSuite.runAllTests Future!")
     }
 
     // assuming the `hostname` command can't/won't fail
