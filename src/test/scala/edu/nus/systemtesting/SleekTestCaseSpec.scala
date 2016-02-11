@@ -1,8 +1,10 @@
 package edu.nus.systemtesting
 
-import org.scalatest.FlatSpec
-import edu.nus.systemtesting.hipsleek.SleekTestCase
 import java.nio.file.Paths
+
+import org.scalatest.FlatSpec
+
+import edu.nus.systemtesting.hipsleek.SleekTestCase
 
 /**
  * @author richardg

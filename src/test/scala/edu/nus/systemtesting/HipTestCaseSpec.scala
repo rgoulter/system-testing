@@ -3,7 +3,6 @@ package edu.nus.systemtesting
 import org.scalatest.FlatSpec
 import edu.nus.systemtesting.hipsleek.HipTestCase
 import java.nio.file.Paths
-import edu.nus.systemtesting.hipsleek.HipTestCase
 
 /**
  * @author richardg

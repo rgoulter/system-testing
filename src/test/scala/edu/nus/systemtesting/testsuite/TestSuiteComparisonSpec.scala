@@ -1,13 +1,12 @@
 package edu.nus.systemtesting.testsuite
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import edu.nus.systemtesting.hipsleek.SleekTestCase
 import java.nio.file.Paths
-import org.scalatest.prop.PropertyChecks
+
 import org.joda.time.DateTime
-import edu.nus.systemtesting.TestCaseResult
+import org.scalatest.FlatSpec
+
 import edu.nus.systemtesting.Result
+import edu.nus.systemtesting.TestCaseResult
 
 class TestSuiteComparisonSpec extends FlatSpec {
   // Need to check

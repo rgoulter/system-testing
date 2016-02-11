@@ -1,19 +1,19 @@
 package edu.nus.systemtesting
 
-import org.scalatest.FlatSpec
-import org.scalatest.BeforeAndAfterAll
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import org.scalatest.ConfigMap
-import edu.nus.systemtesting.hg.Repository
-import com.typesafe.config.ConfigFactory
+import java.nio.file.Paths
+
 import org.scalatest.BeforeAndAfter
+import org.scalatest.FlatSpec
+
+import com.typesafe.config.ConfigException
+import com.typesafe.config.ConfigFactory
+
+import edu.nus.systemtesting.hg.Repository
 import edu.nus.systemtesting.hipsleek.BuildFailed
 import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
-import com.typesafe.config.ConfigException
-import java.nio.file.Paths
 
 /**
  * @author richardg

@@ -1,15 +1,16 @@
 package edu.nus.systemtesting.seralisation
 
-import org.scalatest.FlatSpec
-import edu.nus.systemtesting.Result
-import edu.nus.systemtesting.serialisation.ResultJson
-import edu.nus.systemtesting.TestCaseResult
-import edu.nus.systemtesting.serialisation.TestCaseResultJson
-import edu.nus.systemtesting.serialisation.TestCaseResultImplicits
-import edu.nus.systemtesting.serialisation.Json
-import edu.nus.systemtesting.testsuite.TestSuiteResult
-import org.joda.time.DateTime
 import java.nio.file.Paths
+
+import org.joda.time.DateTime
+import org.scalatest.FlatSpec
+
+import edu.nus.systemtesting.Result
+import edu.nus.systemtesting.TestCaseResult
+import edu.nus.systemtesting.serialisation.Json
+import edu.nus.systemtesting.serialisation.ResultJson
+import edu.nus.systemtesting.serialisation.TestCaseResultJson
+import edu.nus.systemtesting.testsuite.TestSuiteResult
 
 /**
  * @author richardg
