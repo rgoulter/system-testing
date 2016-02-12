@@ -19,6 +19,12 @@ case class BuildTimedOut[T]() extends BuildResult[T]
 case class BuildFailed[T]() extends BuildResult[T]
 
 
+trait SystemPreparation {
+  /** @return tuple of [[BuildResult]], and list of warnings or errors. */
+  def prepare(): (BuildResult[Unit], Iterable[String])
+}
+
+
 
 object HipSleekPreparation {
   /**
@@ -55,7 +61,7 @@ object HipSleekPreparation {
  * [[HipSleekPreparation]] will make the executables in place.
  * @author richardg
  */
-class HipSleekPreparation(val projectDir: Path) {
+class HipSleekPreparation(val projectDir: Path) extends SystemPreparation {
   def prepare(): (BuildResult[Unit], Iterable[String]) = {
     // In order to `make native`, need to make the xml dep.
     val xmlDepDir = projectDir resolve "xml"
