@@ -1,19 +1,14 @@
-package edu.nus.systemtesting
+package edu.nus.systemtesting.hipsleek
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FlatSpec
-
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
-
 import edu.nus.systemtesting.hg.Repository
-import edu.nus.systemtesting.hipsleek.BuildFailed
-import edu.nus.systemtesting.hipsleek.HipSleekPreparation
-import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
+import edu.nus.systemtesting.SlowTest
 
 /**
  * @author richardg
