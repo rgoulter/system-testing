@@ -18,15 +18,61 @@ import edu.nus.systemtesting.hipsleek.HipSleekPreparation
 import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 
+object RunUtils {
+  /**
+   * @param f synchronous function; tmpdir is removed after f finishes
+   */
+  def withTmpDir[T](name: String = "edunussystest",
+                    removeAfterUse: Boolean = true)
+                   (f: Path => T): T = {
+    val tmpDir = Files createTempDirectory name
+
+    val rtnChannel: Channel[T] = new Channel()
+
+    // Outer try-finally, in case f throws exception.
+    try {
+      rtnChannel write f(tmpDir)
+    } finally {
+      // Finished calling f (or it threw an exception),
+      // important to clean up directory created.
+
+      // Inner try-catch for dealing with file I/O of deleting tmpDir.
+      try {
+        if (removeAfterUse) {
+          reporter.log("Deleting " + tmpDir)
+          FileSystemUtilities rmdir tmpDir
+        }
+      } catch {
+        case ioEx: IOException => {
+          System.err.println(s"Unable to delete dir $tmpDir")
+          ioEx.printStackTrace()
+        }
+      }
+    }
+
+    rtnChannel.read
+  }
+
+  def fromConfig(config: AppConfig): RunUtils = {
+    val binCache = new BinCache(config.binCacheDir)
+    val repoDir = config.repoDirOrDie
+    val filesToCopy = List("hip", "sleek", "prelude.ss")
+    val prepare = HipSleekPreparation.prepare(_)
+
+    new RunUtils(repoDir, binCache, filesToCopy, prepare)
+  }
+}
+
 /**
  * @param filesToCopy list of files to cache from repository after a successful build.
  * @author richardg
  */
-class RunUtils(config: AppConfig,
+class RunUtils(repoDir: Path,
+               binCache: BinCache,
                filesToCopy: List[String] = List("hip", "sleek", "prelude.ss"),
                prepare: Path => (BuildResult[Unit], Iterable[String]) = HipSleekPreparation.prepare) // TODO Should probably be explicit about this assumption when used
-    extends UsesRepository(config) {
-  val binCache = new BinCache(config.binCacheDir)
+    {
+  val repo = new Repository(repoDir)
 
   private[app] def runTestsWith[T](revision: Commit, foldersUsed: List[String])
                              (f: (Path, Path, Commit) => T):
@@ -65,7 +111,7 @@ class RunUtils(config: AppConfig,
 
     val isDirty = revision.isDirty
 
-    withTmpDir("edunussystest") { tmpDir =>
+    RunUtils.withTmpDir("edunussystest") { tmpDir =>
       val projectDir = if (isDirty) {
         // i.e. LIVE, "in place"
         repoDir
@@ -114,7 +160,7 @@ class RunUtils(config: AppConfig,
     // Need to have corpusDir; easiest to get from archive.
     // May be nice if could just "hg cat" (or so) over a bunch of files,
     //  might save time.
-    withTmpDir("edunussystest") { tmpDir =>
+    RunUtils.withTmpDir("edunussystest") { tmpDir =>
       val projectDir = if (isDirty) {
         // XXX But we assume revision isn't dirty?
         // i.e. LIVE, "in place",
@@ -131,39 +177,5 @@ class RunUtils(config: AppConfig,
 
       f(binDir, projectDir, revision)
     }
-  }
-
-  /**
-   * @param f synchronous function; tmpdir is removed after f finishes
-   */
-  private def withTmpDir[T](name: String = "edunussystest",
-                            removeAfterUse: Boolean = true)
-                           (f: Path => T): T = {
-    val tmpDir = Files createTempDirectory "edunussystest"
-
-    val rtnChannel: Channel[T] = new Channel()
-
-    // Outer try-finally, in case f throws exception.
-    try {
-      rtnChannel write f(tmpDir)
-    } finally {
-      // Finished calling f (or it threw an exception),
-      // important to clean up directory created.
-
-      // Inner try-catch for dealing with file I/O of deleting tmpDir.
-      try {
-        if (removeAfterUse) {
-          reporter.log("Deleting " + tmpDir)
-          FileSystemUtilities rmdir tmpDir
-        }
-      } catch {
-        case ioEx: IOException => {
-          System.err.println(s"Unable to delete dir $tmpDir")
-          ioEx.printStackTrace()
-        }
-      }
-    }
-
-    rtnChannel.read
   }
 }

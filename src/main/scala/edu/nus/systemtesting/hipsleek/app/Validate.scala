@@ -20,7 +20,7 @@ import edu.nus.systemtesting.testsuite.TestSuiteResult
  * @author richardg
  */
 class Validate(config: AppConfig) extends UsesRepository(config) {
-  val runUtils = new RunUtils(config)
+  val runUtils = RunUtils.fromConfig(config)
   import runUtils.runTestsWith
   val runHipSleek = new RunHipSleek(config)
   import runHipSleek.{ runTests, runTestCaseForRevision }

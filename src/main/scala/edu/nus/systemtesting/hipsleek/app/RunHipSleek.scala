@@ -36,7 +36,7 @@ object RunHipSleek {
  */
 class RunHipSleek(config: AppConfig) extends UsesRepository(config) {
   // Easier to split logic-heavy parts of main into other classes
-  val runUtils = new RunUtils(config)
+  val runUtils = RunUtils.fromConfig(config)
   import runUtils.runTestsWith
 
 
