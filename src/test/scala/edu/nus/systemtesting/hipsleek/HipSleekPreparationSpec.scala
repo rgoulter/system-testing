@@ -54,16 +54,12 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
   }
 
   "Hip/Sleek system prep" should "make a valid repo" taggedAs(SlowTest) in {
-    val prep = new HipSleekPreparation(tmpArchiveDir)
-
-    val (res, remarks) = prep.prepare()
+    val (res, remarks) = HipSleekPreparation.prepare(tmpArchiveDir)
 
     assert(res.isInstanceOf[SuccessfulBuildResult[Unit]])
   }
 
   it should "detect when make failed" taggedAs(SlowTest) in {
-    val prep = new HipSleekPreparation(tmpArchiveDir)
-
     // Need to break something in the build.
     // remove main.ml would do it.
     val mainMl = tmpArchiveDir.resolve("main.ml")
@@ -72,7 +68,7 @@ class SystemPrepSpec extends FlatSpec with BeforeAndAfter {
     val deleted = mainMlFile.delete()
     assume(deleted)
 
-    val (res, remarks) = prep.prepare()
+    val (res, remarks) = HipSleekPreparation.prepare(tmpArchiveDir)
 
     assert(res.isInstanceOf[BuildFailed[Unit]])
   }

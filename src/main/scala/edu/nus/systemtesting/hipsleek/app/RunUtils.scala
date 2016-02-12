@@ -23,7 +23,8 @@ import edu.nus.systemtesting.output.GlobalReporter.reporter
  * @author richardg
  */
 class RunUtils(config: AppConfig,
-               filesToCopy: List[String] = List("hip", "sleek", "prelude.ss")) // TODO Should probably be explicit about this assumption when used
+               filesToCopy: List[String] = List("hip", "sleek", "prelude.ss"),
+               prepare: Path => (BuildResult[Unit], Iterable[String]) = HipSleekPreparation.prepare) // TODO Should probably be explicit about this assumption when used
     extends UsesRepository(config) {
   val binCache = new BinCache(config.binCacheDir)
 
@@ -77,8 +78,7 @@ class RunUtils(config: AppConfig,
         tmp
       }
 
-      val prep = new HipSleekPreparation(projectDir)
-      val (prepResult, prepRemarks) = prep.prepare()
+      val (prepResult, prepRemarks) = prepare(projectDir)
 
       prepRemarks.foreach(reporter.log)
       reporter.println()

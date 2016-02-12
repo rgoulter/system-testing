@@ -19,13 +19,6 @@ case class BuildTimedOut[T]() extends BuildResult[T]
 case class BuildFailed[T]() extends BuildResult[T]
 
 
-trait SystemPreparation {
-  /** @return tuple of [[BuildResult]], and list of warnings or errors. */
-  def prepare(): (BuildResult[Unit], Iterable[String])
-}
-
-
-
 object HipSleekPreparation {
   /**
    * Map of Prover name -> prover executable name.
@@ -50,19 +43,18 @@ object HipSleekPreparation {
       case (name, cmd) => existsOnPath(cmd)
     })
   }
-}
 
-/**
- * Encapsulate preparation of Hip/Sleek repo.
- * In particular, ensures there's a natively-compiled version of
- * Hip/Sleek in the repo dir.
- *
- * n.b. if no revision is given, and `repoDir` points to a dirty repository,
- * [[HipSleekPreparation]] will make the executables in place.
- * @author richardg
- */
-class HipSleekPreparation(val projectDir: Path) extends SystemPreparation {
-  def prepare(): (BuildResult[Unit], Iterable[String]) = {
+
+  /**
+   * Encapsulate preparation of Hip/Sleek repo.
+   * In particular, ensures there's a natively-compiled version of
+   * Hip/Sleek in the repo dir.
+   *
+   * n.b. if no revision is given, and `repoDir` points to a dirty repository,
+   * [[HipSleekPreparation]] will make the executables in place.
+   * @author richardg
+   */
+  def prepare(projectDir: Path): (BuildResult[Unit], Iterable[String]) = {
     // In order to `make native`, need to make the xml dep.
     val xmlDepDir = projectDir resolve "xml"
 
