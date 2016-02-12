@@ -19,9 +19,12 @@ import edu.nus.systemtesting.hipsleek.SuccessfulBuildResult
 import edu.nus.systemtesting.output.GlobalReporter.reporter
 
 /**
+ * @param filesToCopy list of files to cache from repository after a successful build.
  * @author richardg
  */
-class RunUtils(config: AppConfig) extends UsesRepository(config) {
+class RunUtils(config: AppConfig,
+               filesToCopy: List[String] = List("hip", "sleek", "prelude.ss")) // TODO Should probably be explicit about this assumption when used
+    extends UsesRepository(config) {
   val binCache = new BinCache(config.binCacheDir)
 
   private[app] def runTestsWith[T](revision: Commit, foldersUsed: List[String])
@@ -86,11 +89,9 @@ class RunUtils(config: AppConfig) extends UsesRepository(config) {
           val binDir = projectDir
 
           // Copy to cache..
-          // n.b. revision from repo.identify. (a type might help ensure it's 12 char long..)
-          binCache.cache(binDir, Paths.get("sleek"), revision)
-          binCache.cache(binDir, Paths.get("hip"), revision)
-          // apparently prelude.ss needs to be in, or hip will break.
-          binCache.cache(binDir, Paths.get("prelude.ss"), revision)
+          filesToCopy.foreach({ fileToCopy =>
+            binCache.cache(binDir, Paths.get(fileToCopy), revision)
+          })
 
           SuccessfulBuildResult(f(binDir, projectDir, revision))
         }
