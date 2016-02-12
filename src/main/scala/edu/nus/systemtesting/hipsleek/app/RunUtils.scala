@@ -28,9 +28,8 @@ class RunUtils(config: AppConfig) extends UsesRepository(config) {
                              (f: (Path, Path, Commit) => T):
       BuildResult[T] = {
     // check if bin cache has the binaries already
-    binCache.binFor(Paths.get("hip"), revision) match {
-      case Some(p) if !revision.isDirty => {
-        val binDir = p getParent()
+    binCache.cachedDirFor(revision) match {
+      case Some(binDir) if !revision.isDirty => {
         // *May* be worth distinguishing "SuccessfulBuild" vs "Loaded Results"
         SuccessfulBuildResult(runTestsWithCached(binDir, revision, foldersUsed)(f))
       }
@@ -107,10 +106,6 @@ class RunUtils(config: AppConfig) extends UsesRepository(config) {
 
   private def runTestsWithCached[T](binDir: Path, revision: Commit, foldersUsed: List[String])
                                    (f: (Path, Path, Commit) => T): T = {
-    // don't know whether it's hip/sleek we want, but we make/cache both, so.
-    require((binDir resolve "sleek").toFile().exists())
-    require((binDir resolve "hip").toFile().exists())
-
     reporter.log("Using cached binaries...")
 
     val isDirty = revision.isDirty
@@ -120,6 +115,7 @@ class RunUtils(config: AppConfig) extends UsesRepository(config) {
     //  might save time.
     withTmpDir("edunussystest") { tmpDir =>
       val projectDir = if (isDirty) {
+        // XXX But we assume revision isn't dirty?
         // i.e. LIVE, "in place",
         // esp. in case user makes use of example they modified/added
         repoDir
